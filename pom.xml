@@ -48,7 +48,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
         </dependency>
-
     </dependencies>
 
     <!-- dependencyManagement 与 dependencies 的区别
