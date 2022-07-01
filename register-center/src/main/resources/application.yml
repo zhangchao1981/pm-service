@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: register-center
+server:
+  port: 5001
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://localhost:5001/eureka
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 10000
