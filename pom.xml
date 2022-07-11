@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+
+    <groupId>org.example</groupId>
+    <artifactId>pm-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <!--spring boot 通用-->
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+        <spring-boot-admin.version>2.1.6</spring-boot-admin.version>
+        <spring-platform.version>Cairo-SR8</spring-platform.version>
+
+
+        <!--maven通用-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.build.timestamp.format>yyyyMMdd-HHmmssSSS</maven.build.timestamp.format>
+        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+<!--        &lt;!&ndash;打包、部署通用&ndash;&gt;-->
+        <jib-maven-plugin.version>1.6.1</jib-maven-plugin.version>
+        <jenkins.copy.jar.skip>true</jenkins.copy.jar.skip>
+        <jenkins.build.tar.skip>true</jenkins.build.tar.skip>
+        <store.jars.dir>${user.dir}/jenkinsJars</store.jars.dir>
+        <!--第三方依赖的版本-->
+        <mysql.connect.version>6.0.6</mysql.connect.version>
+        <swagger.version>2.9.2</swagger.version>
+        <druid.spring.version>1.1.9</druid.spring.version>
+        <mybatis.version>2.0.1</mybatis.version>
+        <mybatis.plus.version>3.1.0</mybatis.plus.version>
+        <apache.httpClient.version>4.5.2</apache.httpClient.version>
+        <mvel.version>2.4.4.Final</mvel.version>
+        <aspectj.version>1.8.13</aspectj.version>
+        <jfinal.version>3.6</jfinal.version>
+        <java.websocket.version>1.4.0</java.websocket.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <drools.version>7.0.0.Final</drools.version>
+        <easypoi.version>4.2.0</easypoi.version>
+        <thumbnailator.version>0.4.13</thumbnailator.version>
+        <flowable.version>6.4.1</flowable.version>
+        <google.zxing.version>3.3.0</google.zxing.version>
+        <logstash.version>5.1</logstash.version>
+        <guava.version>26.0-jre</guava.version>
+        <lombok.version>1.18.4</lombok.version>
+        <swaggerui.version>1.9.3</swaggerui.version>
+        <openoffice.home>/opt/openoffice4</openoffice.home>
+    </properties>
+
+
+    <modules>
+        <module>common</module>
+        <module>gateway-server</module>
+        <module>doc-generator</module>
+        <module>register-center</module>
+        <module>auth-service</module>
+    </modules>
+
+    <dependencies>
+        <!--注册中心客户端-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <!--hystrix断路器-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <!--配置文件处理器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <!--单元测试-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--swagger依赖-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <!-- swagger-bootstrap-ui包 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+            <version>${swaggerui.version}</version>
+        </dependency>
+        <!--guava限流-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>2.1.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.1.6.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.28</version>
+        </dependency>
+
+    </dependencies>
+
+
+
+    <!--springcloud的版本控制-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Greenwich.SR3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.spring.platform</groupId>
+                <artifactId>platform-bom</artifactId>
+                <version>${spring-platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-client-dto</artifactId>
+                <version>1.11.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>true</skipTests>    <!--默认关掉单元测试 -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+</project>

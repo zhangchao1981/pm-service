@@ -1,0 +1,28 @@
+2022-07-07 10:28:56.018[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'statFilter', defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class], could not be registered. A bean with that name has already been defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2022-07-07 10:30:56.522[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'statFilter', defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class], could not be registered. A bean with that name has already been defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+

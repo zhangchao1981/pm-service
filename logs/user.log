@@ -1,0 +1,38 @@
+2022-07-07 10:28:54.512[main]INFO com.user.UserApplication-No active profile set, falling back to default profiles: default
+2022-07-07 10:28:56.000[main]WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext-Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'statFilter' defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=transactionConfig; factoryMethodName=statFilter; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class]] for bean 'statFilter': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=com.alibaba.druid.spring.boot.autoconfigure.stat.DruidFilterConfiguration; factoryMethodName=statFilter; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class]] bound.
+2022-07-07 10:28:56.011[main]INFO o.s.b.a.l.ConditionEvaluationReportLoggingListener-
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2022-07-07 10:28:56.018[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'statFilter', defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class], could not be registered. A bean with that name has already been defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2022-07-07 10:30:55.427[main]INFO com.user.UserApplication-No active profile set, falling back to default profiles: default
+2022-07-07 10:30:56.503[main]WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext-Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'statFilter' defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=transactionConfig; factoryMethodName=statFilter; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class]] for bean 'statFilter': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=com.alibaba.druid.spring.boot.autoconfigure.stat.DruidFilterConfiguration; factoryMethodName=statFilter; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class]] bound.
+2022-07-07 10:30:56.516[main]INFO o.s.b.a.l.ConditionEvaluationReportLoggingListener-
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2022-07-07 10:30:56.522[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'statFilter', defined in class path resource [com/energy/common/databaseseparate/configuration/TransactionConfig.class], could not be registered. A bean with that name has already been defined in class path resource [com/alibaba/druid/spring/boot/autoconfigure/stat/DruidFilterConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+

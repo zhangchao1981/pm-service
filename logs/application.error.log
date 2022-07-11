@@ -1,0 +1,14 @@
+2022-07-07 10:20:27.057[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'methodValidationPostProcessor', defined in class path resource [com/energy/common/web/handler/exception/ExceptionHandlerAdvice.class], could not be registered. A bean with that name has already been defined in class path resource [org/springframework/boot/autoconfigure/validation/ValidationAutoConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+

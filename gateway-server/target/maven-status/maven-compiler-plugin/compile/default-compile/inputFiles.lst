@@ -1,0 +1,6 @@
+E:\pm-service\gateway-server\src\main\java\com\word\GatewayApplication.java
+E:\pm-service\gateway-server\src\main\java\com\word\util\JwtUtil.java
+E:\pm-service\gateway-server\src\main\java\com\word\feign\AuthServerClient.java
+E:\pm-service\gateway-server\src\main\java\com\word\filter\AccessGlobalFilter.java
+E:\pm-service\gateway-server\src\main\java\com\word\filter\AuthorizeFilter.java
+E:\pm-service\gateway-server\src\main\java\com\word\filter\URLFilter.java

@@ -1,0 +1,22 @@
+2022-07-07 10:20:24.819[main]INFO o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker-Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$4499591e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2022-07-07 10:20:25.342[main]INFO com.user.UserApplication-No active profile set, falling back to default profiles: default
+2022-07-07 10:20:27.041[main]WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext-Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'methodValidationPostProcessor' defined in class path resource [com/energy/common/web/handler/exception/ExceptionHandlerAdvice.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=exceptionHandlerAdvice; factoryMethodName=methodValidationPostProcessor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/energy/common/web/handler/exception/ExceptionHandlerAdvice.class]] for bean 'methodValidationPostProcessor': There is already [Root bean: class [org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=methodValidationPostProcessor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/validation/ValidationAutoConfiguration.class]] bound.
+2022-07-07 10:20:27.050[main]INFO o.s.b.a.l.ConditionEvaluationReportLoggingListener-
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2022-07-07 10:20:27.057[main]ERRORo.s.b.diagnostics.LoggingFailureAnalysisReporter-
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'methodValidationPostProcessor', defined in class path resource [com/energy/common/web/handler/exception/ExceptionHandlerAdvice.class], could not be registered. A bean with that name has already been defined in class path resource [org/springframework/boot/autoconfigure/validation/ValidationAutoConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2022-07-07 10:28:53.851[main]INFO o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker-Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$f14a83bf] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2022-07-07 10:30:54.810[main]INFO o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker-Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$ee4e73d1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
