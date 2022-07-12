@@ -1,9 +1,10 @@
 server:
-  port: 8001
+  port: 7002
+
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:7001/eureka
+      defaultZone: http://localhost:7001/eureka
     registry-fetch-interval-seconds: 5
   instance:
     lease-expiration-duration-in-seconds: 15
@@ -40,33 +41,24 @@ spring:
             - access-control-max-age
             - vary
       globalcors:
-          corsConfigurations:
-            '[/**]':# 匹配所有请求
-              allowCredentials: true
-              allowedOrigins: "*"#跨域处理 允许所有的域
-              allowedHeaders: "*"
-              allowedMethods: "*"# 支持的方法
-              maxAge: 3628800
-      routes: #配置微服务路由
-        - id: work-route
-          uri: lb://pjdata
+        corsConfigurations:
+          '[/**]':                     #设置允许跨域的路径
+            allowCredentials: true     #是否允许cookie
+            allowedOrigins: "*"        #设置允许跨域请求的域名
+            allowedHeaders: "*"        #设置允许的header属性
+            allowedMethods: "*"        #设置允许的请求方式
+            maxAge: 3628800            #跨域允许时间
+      #配置微服务路由
+      routes:
+        - id: auth-center
+          uri: lb://auth-center
           predicates:
-            - Path=/pjdata/**
-#          filters:
-#            - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
-#              args:
-#                key-resolver: "#{@ipKeyResolver}"
-#                redis-rate-limiter.replenishRate: 1
-#                redis-rate-limiter.burstCapacity: 1
-  #Redis配置
-  redis:
-    host: 192.168.211.132
-    port: 6379
-
-management:
-  endpoint:
-    gateway:
-      enabled: true
-    web:
-      exposure:
-        include: true
+            - Path=/auth-center/**
+          filters:
+            - StripPrefix=1
+        - id: project-management
+          uri: lb://project-management
+          predicates:
+            - Path=/project-management/**
+          filters:
+            - StripPrefix=1

@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>pm-service</artifactId>
-        <groupId>org.example</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>gateway-server</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <parent>
+        <artifactId>pm-service</artifactId>
+        <groupId>com.iscas.pm</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <dependencies>
         <!--Spring Cloud Gateway网关-->
         <dependency>
@@ -35,18 +31,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-        </dependency>
-<!--        &lt;!&ndash;api-model&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.energy-service</groupId>-->
-<!--            <artifactId>common-api-model</artifactId>-->
-<!--            <version>${project.parent.version}</version>-->
-<!--        </dependency>-->
-        <!--redis-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-            <version>2.1.3.RELEASE</version>
         </dependency>
     </dependencies>
 
