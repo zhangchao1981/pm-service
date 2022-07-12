@@ -43,7 +43,6 @@ out/
 build/
 
 # other
-*.iws
 *.tar
 *.lck
 
