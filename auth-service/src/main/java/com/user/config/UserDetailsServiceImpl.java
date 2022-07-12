@@ -55,7 +55,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
 
-        //根据用户名查询用户信息
+        //根据用户名查询用户信息   加密算法是BCry
+        //普通用户的账号任意， 密码 pmservice
+
         String pwd = new BCryptPasswordEncoder().encode("pmservice");
         //创建User对象
         String permissions = "goods_list,seckill_list";

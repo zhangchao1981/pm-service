@@ -1,10 +1,8 @@
 com\user\config\AuthorizationServerConfig.class
 com\user\service\impl\AuthServiceImpl$1.class
-com\user\controller\LoginController.class
 com\user\domain\UserLogin.class
 com\user\utils\RespBean.class
 com\user\service\impl\AuthServiceImpl.class
-com\user\service\impl\LoginServiceImpl.class
 com\user\config\SwaggerConfig.class
 com\user\domain\User.class
 com\user\config\CustomUserAuthenticationConverter.class

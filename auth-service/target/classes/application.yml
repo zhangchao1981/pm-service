@@ -36,15 +36,15 @@ eureka:
 auth:   #本地token
   ttl: 3600  #token存储到redis的过期时间
   clientId: pmservice
-  clientSecret: pmservice   #秘钥
+  clientSecret: pmservice
   cookieDomain: localhost
   cookieMaxAge: -1
 encrypt:
   key-store:
     location: classpath:/pmservice.jks   #证书认证位置   本地证书配置
-    secret: pmservice
+    secret: pmservice                #秘钥(用于加盐)
     alias: pmservice
-    password: pmservice
+    password: pmservice    #证书密码
 
 #
 #eureka:
