@@ -7,7 +7,7 @@ spring:
     username: root
     password: iscas654321
   redis:
-    host: 192.168.211.132
+    host: 127.0.0.1
     port: 6379
     password:
     jedis:

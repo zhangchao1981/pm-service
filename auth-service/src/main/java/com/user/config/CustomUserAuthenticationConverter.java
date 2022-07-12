@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
 
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
-        LinkedHashMap response = new LinkedHashMap();
+        HashMap response = new HashMap();
         String name = authentication.getName();
         response.put("username", name);
 
@@ -33,8 +34,10 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
             UserDetails userDetails = userDetailsService.loadUserByUsername(name);
             userJwt = (UserJwt) userDetails;
         }
+        //这里设置要存到token里的信息(在Userjwt里设置)
         response.put("name", userJwt.getName());
         response.put("id", userJwt.getId());
+        response.put("comny", userJwt.getComny());
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
         }
