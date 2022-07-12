@@ -22,7 +22,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--注册中心客户端-->
+        <!-- common组件 -->
+        <dependency>
+            <groupId>com.iscas.pm</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.freemarker</groupId>

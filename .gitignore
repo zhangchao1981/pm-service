@@ -2,9 +2,6 @@
 target/
 *.releaseBackup
 
-# web application files
-#/web-app/WEB-INF
-
 # IDE support files
 /.classpath
 /.launch
@@ -14,7 +11,6 @@ target/
 /*.tmproj
 /ivy*
 /eclipse
-deploy-local
 
 # default HSQL database files for production mode
 /prodDb.*
@@ -43,7 +39,6 @@ deploy-local
 /web-app/WEB-INF/classes
 
 # "temporary" build files
-target/
 out/
 build/
 
@@ -113,12 +108,10 @@ Desktop.ini
 $RECYCLE.BIN/
 
 ## .gitignore for mac os x
-
 .DS_Store
 .AppleDouble
 .LSOverride
 Icon
-
 
 # Thumbnails
 ._*

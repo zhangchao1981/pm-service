@@ -22,12 +22,11 @@
         <!--spring boot 通用-->
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
-
         <!--maven通用-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <!--第三方版本-->
         <mysql.connect.version>6.0.6</mysql.connect.version>
         <druid.spring.version>1.1.9</druid.spring.version>
         <swagger.version>2.9.2</swagger.version>

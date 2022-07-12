@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.user.mapper.UserMapper">
+<mapper namespace="com.iscas.pm.auth.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="com.user.domain.User">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.User">
             <id property="userId" column="userId" jdbcType="BIGINT"/>
             <result property="username" column="username" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
