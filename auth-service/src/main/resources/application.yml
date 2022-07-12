@@ -41,7 +41,7 @@ auth:   #本地token
   cookieMaxAge: -1
 encrypt:
   key-store:
-    location: classpath:/pmservice.jks   #证书认证位置
+    location: classpath:/pmservice.jks   #证书认证位置   本地证书配置
     secret: pmservice
     alias: pmservice
     password: pmservice

@@ -1,12 +1,8 @@
 package com.user.service.impl;
 
-import com.auth.exception.AuthenticateException;
-import com.user.domain.User;
-import com.user.mapper.UserMapper;
+
 import com.user.service.LoginService;
 import com.user.utils.AuthToken;
-import com.util.RSACoder;
-import com.util.RedisKeyConstants;
 import com.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +16,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 @Slf4j
 @Service
 public class LoginServiceImpl implements LoginService {
-    @Autowired
-    private UserMapper userMapper;
+
 
     @Autowired
     private RedisUtil redisUtil;

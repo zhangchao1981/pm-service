@@ -7,11 +7,11 @@ com\user\service\impl\AuthServiceImpl.class
 com\user\service\impl\LoginServiceImpl.class
 com\user\config\SwaggerConfig.class
 com\user\domain\User.class
+com\user\config\CustomUserAuthenticationConverter.class
 com\user\service\impl\UserServiceImpl.class
 com\user\utils\UserJwt.class
 com\user\config\UserDetailsServiceImpl.class
 com\user\utils\AuthToken.class
-com\user\config\ResourceServiceConfig.class
 com\user\mapper\UserMapper.class
 com\user\service\AuthService.class
 com\user\service\UserService.class

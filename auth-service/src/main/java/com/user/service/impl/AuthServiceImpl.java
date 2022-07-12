@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private AuthToken applyToken(String username, String password, String clientId, String clientSecret) {
         //选中认证服务的地址
-        ServiceInstance serviceInstance = loadBalancerClient.choose("user");
+        ServiceInstance serviceInstance = loadBalancerClient.choose("user-auth");
         if (serviceInstance == null) {
             throw new RuntimeException("找不到对应的服务");
         }

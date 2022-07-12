@@ -14,7 +14,7 @@
     <sql id="Base_Column_List">
         id,pjname,pjnumber,
         pjstage
-    </sql>//  防sql注入    *  #
+    </sql>
     <select id="selectAllById" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

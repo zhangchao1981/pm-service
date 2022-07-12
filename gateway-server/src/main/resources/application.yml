@@ -4,12 +4,16 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:7001/eureka
-    registry-fetch-interval-seconds: 5
+    registry-fetch-interval-seconds: 5 # 获取服务列表的周期 5s
   instance:
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+#    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+
+
+
 
 spring:
   application:
@@ -40,24 +44,24 @@ spring:
             - access-control-max-age
             - vary
       globalcors:
-          corsConfigurations:
-            '[/**]':# 匹配所有请求
-              allowCredentials: true
-              allowedOrigins: "*"#跨域处理 允许所有的域
-              allowedHeaders: "*"
-              allowedMethods: "*"# 支持的方法
-              maxAge: 3628800
+        corsConfigurations:
+          '[/**]':       #匹配所有请求
+            allowCredentials: true
+            allowedOrigins: "*"   #跨域处理 允许所有的域
+            allowedHeaders: "*"
+            allowedMethods: "*"   # 支持的方法
+            maxAge: 3628800
       routes: #配置微服务路由
         - id: work-route
-          uri: lb://pjdata
+          uri: lb://doc
           predicates:
             - Path=/pjdata/**
-#          filters:
-#            - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
-#              args:
-#                key-resolver: "#{@ipKeyResolver}"
-#                redis-rate-limiter.replenishRate: 1
-#                redis-rate-limiter.burstCapacity: 1
+  #          filters:
+  #            - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
+  #              args:
+  #                key-resolver: "#{@ipKeyResolver}"
+  #                redis-rate-limiter.replenishRate: 1
+  #                redis-rate-limiter.burstCapacity: 1
   #Redis配置
   redis:
     host: 192.168.211.132
