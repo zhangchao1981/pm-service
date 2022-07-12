@@ -62,3 +62,6 @@ spring:
             - Path=/project-management/**
           filters:
             - StripPrefix=1
+
+ignorePaths:
+  auth/login
