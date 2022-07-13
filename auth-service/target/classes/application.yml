@@ -34,7 +34,7 @@ eureka:
     prefer-ip-address: true
 
 auth:   #本地token
-  ttl: 3600  #token存储到redis的过期时间
+  ttl: 3600    #token存储到redis的过期时间
   clientId: pmservice
   clientSecret: pmservice
   cookieDomain: localhost

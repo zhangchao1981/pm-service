@@ -1,9 +1,13 @@
 com\doc\domain\Pjdata.class
-com\doc\util\DocumentHandler.class
 com\doc\controller\PjdataContoller.class
 com\doc\mapper\PjdataMapper.class
 com\doc\util\WordUtil.class
 com\doc\service\impl\PjdataServiceImpl.class
+com\doc\filter\AuthorizeFilter.class
+com\doc\filter\util\JwtUtil.class
+com\doc\util\DocumentHandler.class
+com\doc\filter\URLFilter.class
+com\doc\config\ResourceServerConfig.class
 com\doc\service\PjdataService.class
 com\doc\config\SwaggerConfig.class
 com\doc\DocApplication.class
