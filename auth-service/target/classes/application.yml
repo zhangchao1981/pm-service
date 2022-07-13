@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: user
@@ -37,8 +38,7 @@ auth:   #本地token
   ttl: 3600    #token存储到redis的过期时间
   clientId: pmservice
   clientSecret: pmservice
-  cookieDomain: localhost
-  cookieMaxAge: -1
+
 encrypt:
   key-store:
     location: classpath:/pmservice.jks   #证书认证位置   本地证书配置
@@ -56,4 +56,7 @@ encrypt:
 #    lease-expiration-duration-in-seconds: 15
 #    lease-renewal-interval-in-seconds: 5
 #    prefer-ip-address: true
+logging:
+  level:
+    com.user: debug
 #    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}

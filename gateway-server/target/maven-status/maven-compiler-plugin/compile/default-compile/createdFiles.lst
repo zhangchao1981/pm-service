@@ -1,2 +1,5 @@
+com\word\filter\AuthorizeFilter.class
 com\word\GatewayApplication$1.class
 com\word\GatewayApplication.class
+com\word\filter\URLFilter.class
+com\word\util\JwtUtil.class

@@ -103,7 +103,6 @@ public class AuthServiceImpl implements AuthService {
             //jti是jwt令牌的唯一标识作为用户身份令牌
             throw new RuntimeException("创建令牌失败！");
         }
-
         //将响应数据封装成AuthToken对象
         AuthToken authToken = new AuthToken();
         //访问令牌(jwt)

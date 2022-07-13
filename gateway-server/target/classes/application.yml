@@ -12,9 +12,6 @@ eureka:
 #    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
 
 
-
-
-
 spring:
   application:
     name: gateway-server
@@ -45,7 +42,7 @@ spring:
             - vary
       globalcors:
         corsConfigurations:
-          '[/**]':       #匹配所有请求
+          '[/**]': #匹配所有请求
             allowCredentials: true
             allowedOrigins: "*"   #跨域处理 允许所有的域
             allowedHeaders: "*"
@@ -56,12 +53,18 @@ spring:
           uri: lb://doc
           predicates:
             - Path=/pjdata/**
-  #          filters:
-  #            - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
-  #              args:
-  #                key-resolver: "#{@ipKeyResolver}"
-  #                redis-rate-limiter.replenishRate: 1
-  #                redis-rate-limiter.burstCapacity: 1
+        #          filters:
+        #            - name: RequestRateLimiter #请求数限流 名字不能随便写 ，使用默认的facatory
+        #              args:
+        #                key-resolver: "#{@ipKeyResolver}"
+        #                redis-rate-limiter.replenishRate: 1
+        #                redis-rate-limiter.burstCapacity: 1
+        - id: user
+          uri: lb://user
+          predicates:
+            - Path=/usercore/**
+
+
   #Redis配置
   redis:
     host: 192.168.211.132

@@ -34,7 +34,7 @@ import javax.validation.constraints.NotEmpty;
 @Wrapper
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/usercore")
 @Api(tags = {"用户管理"})
 public class UserController {
     @Autowired

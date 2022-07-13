@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+
+
 @Configuration
 @EnableWebSecurity
 @Order(-1)
@@ -24,8 +26,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
-                "/authxx/login","/user/oauth/token",
-                "/oauth/logout","/user-oauth/login");
+                "/authxx/login","/usercore/**", "/user-oauth/login");
     }
 
     /***
