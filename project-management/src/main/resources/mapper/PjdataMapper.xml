@@ -1,25 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.doc.mapper.PjdataMapper">
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<!DOCTYPE mapper-->
+<!--        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"-->
+<!--        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+<!--<mapper namespace="com.doc.mapper.PjdataMapper">-->
 
-    <resultMap id="BaseResultMap" type="com.doc.domain.Pjdata">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="pjname" column="pjname" jdbcType="VARCHAR"/>
-            <result property="pjnumber" column="pjnumber" jdbcType="INTEGER"/>
-            <result property="pjstage" column="pjstage" jdbcType="VARCHAR"/>
-    </resultMap>
+<!--    <resultMap id="BaseResultMap" type="com.doc.domain.ProjectInfo">-->
+<!--            <id property="id" column="id" jdbcType="INTEGER"/>-->
+<!--            <result property="pjname" column="pjname" jdbcType="VARCHAR"/>-->
+<!--            <result property="pjnumber" column="pjnumber" jdbcType="INTEGER"/>-->
+<!--            <result property="pjstage" column="pjstage" jdbcType="VARCHAR"/>-->
+<!--    </resultMap>-->
 
-    <sql id="Base_Column_List">
-        id,pjname,pjnumber,
-        pjstage
-    </sql>//  防sql注入    *  #
-    <select id="selectAllById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from pjdata
-        where
-        id = #{id,jdbcType=NUMERIC}
-    </select>
-</mapper>
+<!--    <sql id="Base_Column_List">-->
+<!--        id,pjname,pjnumber,-->
+<!--        pjstage-->
+<!--    </sql>//  防sql注入    *  #-->
+<!--    <select id="selectAllById" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from projectInfo-->
+<!--        where-->
+<!--        id = #{id,jdbcType=NUMERIC}-->
+<!--    </select>-->
+<!--</mapper>-->

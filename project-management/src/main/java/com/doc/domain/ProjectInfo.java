@@ -1,9 +1,9 @@
 package com.doc.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+//import com.baomidou.mybatisplus.annotation.IdType;
+//import com.baomidou.mybatisplus.annotation.TableField;
+//import com.baomidou.mybatisplus.annotation.TableId;
+//import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
@@ -13,12 +13,12 @@ import java.io.Serializable;
  * @TableName pjdata
  */
 @ApiModel(value = "Pjdata对象", description = "")
-@TableName(value ="pjdata")
-public class Pjdata implements Serializable {
+//@TableName(value ="pjdata")
+public class ProjectInfo implements Serializable {
     /**
      * 
      */
-    @TableId(type = IdType.AUTO)
+    //@TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -36,7 +36,7 @@ public class Pjdata implements Serializable {
      */
     private String pjstage;
 
-    @TableField(exist = false)
+    //@TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     /**
@@ -106,7 +106,7 @@ public class Pjdata implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Pjdata other = (Pjdata) that;
+        ProjectInfo other = (ProjectInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getPjname() == null ? other.getPjname() == null : this.getPjname().equals(other.getPjname()))
             && (this.getPjnumber() == null ? other.getPjnumber() == null : this.getPjnumber().equals(other.getPjnumber()))

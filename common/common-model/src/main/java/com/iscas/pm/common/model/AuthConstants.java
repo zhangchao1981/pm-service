@@ -13,4 +13,6 @@ public class AuthConstants {
     public static final String USER_NAME = "userName";
     public static final String FROM_IP = "fromIP";
     public static final String AUTHORIZATION_EXCEPTION_MESSAGE = "用户认证失败，请重新登录！";
+    public static final String CAPTCHA_EXCEPTION_MESSAGE = "未先通过验证码校验！";
+    public static final String AUTHORIZE_EXCEPTION_MESSAGE = "你没有权限访问该部分资源！";
 }
