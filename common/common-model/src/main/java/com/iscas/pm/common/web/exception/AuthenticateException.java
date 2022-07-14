@@ -1,4 +1,4 @@
-package com.iscas.pm.common.model.exception;
+package com.iscas.pm.common.web.exception;
 
 import com.iscas.pm.common.model.AuthConstants;
 import org.springframework.http.HttpStatus;

@@ -2,6 +2,7 @@ package com.doc.controller;
 
 import com.doc.domain.ProjectInfo;
 import com.doc.service.ProjectInfoService;
+import com.iscas.pm.common.web.exception.SimpleBaseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,8 @@ public class ProjectInfoController {
 
     @GetMapping(value = "/{id}")
     public ProjectInfo findProjectInfoById(@PathVariable String id){
-        return null;
+        throw new RuntimeException("dddd");
+        //return new ProjectInfo();
     }
 
 

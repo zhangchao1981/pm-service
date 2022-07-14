@@ -1,8 +1,8 @@
 package com.iscas.pm.gateway.filter;
 
 import com.iscas.pm.common.model.AuthConstants;
-import com.iscas.pm.common.model.exception.AuthenticateException;
-import com.iscas.pm.common.model.BaseResponse;
+import com.iscas.pm.common.web.exception.AuthenticateException;
+import com.iscas.pm.common.web.response.BaseResponse;
 import com.iscas.pm.common.model.User;
 import com.iscas.pm.gateway.feign.AuthCenter;
 import lombok.extern.slf4j.Slf4j;

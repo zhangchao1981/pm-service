@@ -1,4 +1,4 @@
-package com.iscas.pm.common.model;
+package com.iscas.pm.common.web.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

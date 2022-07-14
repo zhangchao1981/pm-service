@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>doc-generator</artifactId>
+    <artifactId>project-management</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,7 +19,7 @@
         <!-- common组件 -->
         <dependency>
             <groupId>com.iscas.pm</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>common-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

@@ -1,6 +1,6 @@
 package com.iscas.pm.gateway.feign;
 
-import com.iscas.pm.common.model.BaseResponse;
+import com.iscas.pm.common.web.response.BaseResponse;
 import com.iscas.pm.common.model.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
