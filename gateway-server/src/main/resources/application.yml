@@ -64,4 +64,6 @@ spring:
             - StripPrefix=1
 
 ignorePaths:
-  auth/login
+  auth/login,
+  v2/api-docs,
+  doc.html

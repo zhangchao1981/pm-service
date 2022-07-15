@@ -21,11 +21,11 @@ import java.util.List;
 /**
  * @Author： zhangchao
  * @Date： 2022/7/12
- * @Description： 覆盖网关默认的异常处理
+ * @Description： 覆盖网关默认的异常处理的配置类
  */
 @Configuration
 @EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})
-public class ErrorHandlerConfiguration {
+public class ExceptionHandlerConfig {
 
     private final ServerProperties serverProperties;
     private final ApplicationContext applicationContext;
@@ -33,11 +33,11 @@ public class ErrorHandlerConfiguration {
     private final List<ViewResolver> viewResolvers;
     private final ServerCodecConfigurer serverCodecConfigurer;
 
-    public ErrorHandlerConfiguration(ServerProperties serverProperties,
-                                     ResourceProperties resourceProperties,
-                                     ObjectProvider<List<ViewResolver>> viewResolversProvider,
-                                     ServerCodecConfigurer serverCodecConfigurer,
-                                     ApplicationContext applicationContext) {
+    public ExceptionHandlerConfig(ServerProperties serverProperties,
+                                  ResourceProperties resourceProperties,
+                                  ObjectProvider<List<ViewResolver>> viewResolversProvider,
+                                  ServerCodecConfigurer serverCodecConfigurer,
+                                  ApplicationContext applicationContext) {
         this.serverProperties = serverProperties;
         this.applicationContext = applicationContext;
         this.resourceProperties = resourceProperties;
