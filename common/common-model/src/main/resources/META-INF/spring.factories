@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    com.iscas.pm.common.config.CommonAutoScan
+    com.iscas.pm.common.core.config.CommonAutoScan
