@@ -3,6 +3,8 @@ package com.iscas.pm.common.core.web.exception;
 import com.iscas.pm.common.core.web.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ValidationException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 /**
@@ -120,38 +123,38 @@ public class ExceptionHandlerAdvice {
     /**
      * MySQL数据库中约束性异常处理。如：非空字段，唯一约束等
      */
-//    @ExceptionHandler(value = {DataIntegrityViolationException.class})
-//    public BaseResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-//        log.error("不符合数据库约束性，导致异常",ex);
-//        BaseResponse response = new BaseResponse();
-//        response.setCode(500);
-//        response.setMessage("不符合数据库约束性，导致异常");
-//        return response;
-//    }
+    @ExceptionHandler(value = {DataIntegrityViolationException.class})
+    public BaseResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.error("不符合数据库约束性，导致异常",ex);
+        BaseResponse response = new BaseResponse();
+        response.setCode(500);
+        response.setMessage("不符合数据库约束性，导致异常");
+        return response;
+    }
 
     /**
      * 数据库资源访问异常
      */
-//    @ExceptionHandler(value = {DataAccessException.class})
-//    public BaseResponse handleDataAccessException(DataAccessException ex) {
-//        log.error("数据库资源访问异常", ex);
-//        BaseResponse response = new BaseResponse();
-//        response.setCode(500);
-//        response.setMessage("数据库资源访问异常");
-//        return response;
-//    }
+    @ExceptionHandler(value = {DataAccessException.class})
+    public BaseResponse handleDataAccessException(DataAccessException ex) {
+        log.error("数据库资源访问异常", ex);
+        BaseResponse response = new BaseResponse();
+        response.setCode(500);
+        response.setMessage("数据库资源访问异常");
+        return response;
+    }
 
     /**
      * sql语法异常处理
      */
-//    @ExceptionHandler(value = {SQLException.class})
-//    public BaseResponse handleSQLException(SQLException ex) {
-//        log.error("sql语句执行出错",ex);
-//        BaseResponse response = new BaseResponse();
-//        response.setCode(ex.getErrorCode());
-//        response.setMessage("mysql中的sql语句执行出错");
-//        return response;
-//    }
+    @ExceptionHandler(value = {SQLException.class})
+    public BaseResponse handleSQLException(SQLException ex) {
+        log.error("sql语句执行出错",ex);
+        BaseResponse response = new BaseResponse();
+        response.setCode(ex.getErrorCode());
+        response.setMessage("mysql中的sql语句执行出错");
+        return response;
+    }
 
     /**
      * 验证码校验异常处理

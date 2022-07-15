@@ -11,10 +11,6 @@
 
     <artifactId>project-management</artifactId>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
     <dependencies>
         <!-- common组件 -->
         <dependency>
@@ -22,52 +18,29 @@
             <artifactId>common-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-<!--        &lt;!&ndash; common组件 &ndash;&gt;-->
+        <!-- common切库组件-->
         <dependency>
             <groupId>com.iscas.pm</groupId>
             <artifactId>common-database-separate</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
+        <!-- freemarker-->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.28</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <!--aop切面-->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-
-        <!--集成Swagger接口文档-->
-        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
+        <!--Swagger接口文档-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
         </dependency>
-
-
-
+        <!--web模块-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!--MySql连接器-->
         <dependency>
             <groupId>mysql</groupId>
@@ -81,12 +54,12 @@
             <version>${mybatis.version}</version>
         </dependency>
 
-        <!--Druid连接池-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${druid.spring.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-security</artifactId>-->
+        <!--        </dependency>-->
+
+
     </dependencies>
 
 </project>

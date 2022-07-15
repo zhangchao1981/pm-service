@@ -1,7 +1,7 @@
 package com.iscas.pm.api.mapper;
 
 
-import com.iscas.pm.api.domain.Project;
+import com.iscas.pm.api.model.project.Project;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,6 +16,9 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper{
     List<Project> selectAllById(@Param("id") String id);
+
+    void addProject(Project project);
+
 }
 
 

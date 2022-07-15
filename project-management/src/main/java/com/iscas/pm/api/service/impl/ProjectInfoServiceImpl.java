@@ -1,6 +1,6 @@
 package com.iscas.pm.api.service.impl;
 
-import com.iscas.pm.api.domain.Project;
+import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.mapper.ProjectMapper;
 import com.iscas.pm.api.service.ProjectInfoService;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,9 @@ public class ProjectInfoServiceImpl  implements ProjectInfoService {
 
 
     @Override
-    public List<Project> findProjectInfoById(String id) {
-        List<Project> projects = projectMapper.selectAllById(id);
-        return projects;
+    public void addProject(Project project) {
+        projectMapper.addProject(project);
     }
-
-
 }
 
 

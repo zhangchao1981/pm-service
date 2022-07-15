@@ -22,7 +22,7 @@ public class DatasourceRequestFilter implements Filter{
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         // 从redis中获取当前项目id
-        String currentProjectId = "";
+        String currentProjectId = "default";
 
         DataSourceHolder.setDB(currentProjectId);
         filterChain.doFilter(servletRequest, servletResponse);

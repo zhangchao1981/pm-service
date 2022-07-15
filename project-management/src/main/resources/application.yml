@@ -15,8 +15,10 @@ mybatis:
   mapper-locations: classpath*:/mapper/**Mapper.xml
   dynamic:
     basePackages: com.iscas.pm.api.mapper
+  # 控制台输出sql语句
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
 server:
   port: 8089
 

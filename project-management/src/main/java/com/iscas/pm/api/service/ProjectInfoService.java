@@ -1,7 +1,9 @@
 package com.iscas.pm.api.service;
 
-import com.iscas.pm.api.domain.Project;
+import com.iscas.pm.api.model.project.Project;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -11,5 +13,5 @@ import java.util.List;
 */
 public interface ProjectInfoService  {
 
-    List<Project> findProjectInfoById(String id);
+   void addProject(Project project);
 }

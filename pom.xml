@@ -32,6 +32,8 @@
         <swagger.version>2.9.2</swagger.version>
         <swaggerui.version>1.9.3</swaggerui.version>
         <mybatis.version>2.0.1</mybatis.version>
+        <lombok-version>1.18.20</lombok-version>
+        <mybatis.plus.version>3.2.0</mybatis.plus.version>
 
     </properties>
 
@@ -64,7 +66,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>${lombok-version}</version>
         </dependency>
         <!--swagger依赖-->
         <dependency>
