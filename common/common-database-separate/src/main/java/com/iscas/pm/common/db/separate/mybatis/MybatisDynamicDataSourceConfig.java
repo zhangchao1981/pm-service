@@ -24,7 +24,6 @@ import java.util.List;
 @EnableConfigurationProperties(MybatisProperties.class)
 @ConditionalOnBean(DataSource.class)
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
-@MapperScanner(basePackages = "${mybatis.dynamic.basePackages}", sqlSessionFactoryRef = "sqlSessionFactory")
 public class MybatisDynamicDataSourceConfig extends MybatisAutoConfiguration {
     private MybatisProperties properties;
 

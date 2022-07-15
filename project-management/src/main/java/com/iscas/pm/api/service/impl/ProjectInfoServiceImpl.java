@@ -9,15 +9,14 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* @author 66410
-* @description 针对表【pjdata】的数据库操作Service实现
-* @createDate 2022-07-04 13:44:25
-*/
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 项目基本信息管理service实现类
+ */
 @Service
 public class ProjectInfoServiceImpl  implements ProjectInfoService {
     @Resource
     private ProjectMapper projectMapper;
-
 
     @Override
     public void addProject(Project project) {
