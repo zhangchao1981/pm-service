@@ -19,6 +19,8 @@ public class AuthCenterApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthCenterApplication.class, args);
     }
+
+
     @Bean(name = "restTemplate")
     public RestTemplate restTemplate() {
         return new RestTemplate();

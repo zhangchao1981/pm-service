@@ -17,6 +17,14 @@ public class UserJwt extends User {
         super(username, password, authorities);
     }
 
+    public String getComny() {
+        return comny;
+    }
+
+    public void setComny(String comny) {
+        this.comny = comny;
+    }
+
     public String getId() {
         return id;
     }

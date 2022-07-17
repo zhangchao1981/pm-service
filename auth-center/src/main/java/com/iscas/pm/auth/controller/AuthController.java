@@ -1,28 +1,32 @@
 package com.iscas.pm.auth.controller;
 
-import com.entity.Result;
-import com.entity.StatusCode;
+
+
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
-import com.iscas.pm.auth.utils.CookieUtil;
+import com.iscas.pm.common.core.web.exception.AuthorizeException;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletResponse;
-
+import javax.validation.constraints.NotEmpty;
 
 /*****
+ * @author 李昶
  * @Date: 2019/7/7 16:42
  * @Description: com.changgou.oauth.controller
  ****/
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/authxx")
+@Api(tags = {"认证管理"})
 public class AuthController {
 
     //客户端ID
@@ -33,40 +37,26 @@ public class AuthController {
     @Value("${auth.clientSecret}")
     private String clientSecret;
 
-    //Cookie存储的域名
-    @Value("${auth.cookieDomain}")
-    private String cookieDomain;
-
-    //Cookie生命周期
-    @Value("${auth.cookieMaxAge}")
-    private int cookieMaxAge;
 
     @Autowired
     AuthService authService;
 
-    @PostMapping("/login")
-    public Result login(String username, String password) {
-        if(StringUtils.isEmpty(username)){
-            throw new RuntimeException("用户名不允许为空");
-        }
-        if(StringUtils.isEmpty(password)){
-            throw new RuntimeException("密码不允许为空");
-        }
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+
+    @ApiOperation(value = "用户登录(账号，密码)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String"),
+            @ApiImplicitParam(name = "password", value = "密码", dataType = "String")})
+    @RequestMapping(value = "/login")
+    public String login(@NotEmpty(message = "用户名不允许为空") String username, @NotEmpty(message = "密码不允许为空") String password) {
         //申请令牌
-        AuthToken authToken =  authService.login(username,password,clientId,clientSecret);
+        AuthToken authToken = authService.login(username, password, clientId, clientSecret);
+        if (authToken == null) {
+            throw new AuthorizeException("令牌申请失败");
+        }
         //用户身份令牌
         String access_token = authToken.getAccessToken();
-        //将令牌存储到cookie
-        saveCookie(access_token);
-        return new Result(true, StatusCode.OK,"登录成功！");
-    }
-
-    /***
-     * 将令牌存储到cookie
-     * @param token
-     */
-    private void saveCookie(String token){
-        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-        CookieUtil.addCookie(response,cookieDomain,"/","Authorization",token,cookieMaxAge,false);
+        return access_token;
     }
 }

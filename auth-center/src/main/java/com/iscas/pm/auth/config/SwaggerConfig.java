@@ -28,7 +28,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .enable(true) //配置是否启用Swagger，如果是false，在浏览器将无法访问
                 .select()// 通过.select()方法，去配置扫描接口,RequestHandlerSelectors配置如何扫描接口
-                .apis(RequestHandlerSelectors.basePackage("com.user.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.iscas.pm.auth.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
