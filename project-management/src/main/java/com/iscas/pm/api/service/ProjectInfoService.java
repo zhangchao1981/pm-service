@@ -7,11 +7,14 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
-* @author 66410
-* @description 针对表【pjdata】的数据库操作Service
-* @createDate 2022-07-04 13:44:25
-*/
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 项目基本信息管理service接口层
+ */
 public interface ProjectInfoService  {
 
+   /**
+    * 添加项目
+    */
    void addProject(Project project);
 }

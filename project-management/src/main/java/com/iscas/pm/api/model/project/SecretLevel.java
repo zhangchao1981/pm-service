@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * @Author： zhangchao
  * @Date： 2022/7/15
- * @Description：
+ * @Description： 项目密级 枚举类
  */
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -18,7 +18,7 @@ public enum SecretLevel {
     private final String code;
     private final String value;
 
-    SecretLevel(String value,String code) {
+    SecretLevel(String code,String value) {
         this.code = code;
         this.value = value;
     }

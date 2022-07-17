@@ -12,13 +12,16 @@
     <insert id="addProject" parameterType="com.iscas.pm.api.model.project.Project" keyProperty="id">
         insert into project
         (
-        id,name,secretLevel
+        id,name,secretLevel,projectType,startDate,endDate
         )
         values
         (
         #{id,jdbcType=VARCHAR},
         #{name,jdbcType=VARCHAR},
-        #{secretLevel,jdbcType=VARCHAR}
+        #{secretLevel,jdbcType=VARCHAR},
+        #{projectType,jdbcType=VARCHAR},
+        #{startDate,jdbcType=VARCHAR},
+        #{endDate,jdbcType=VARCHAR}
         )
     </insert>
 
