@@ -1,5 +1,7 @@
 package com.iscas.pm.common.db.separate.holder;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @Author： zhangchao
  * @Date： 2022/7/15
@@ -21,6 +23,8 @@ public class DataSourceHolder {
     }
 
     public static String getDB() {
+        if(StringUtils.isBlank(DATA_SOURCE_HOLDER.get()))
+            setDB(DEFAULT_DATASOURCE);
         return DATA_SOURCE_HOLDER.get();
     }
 

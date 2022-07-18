@@ -37,14 +37,10 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        //跳过不需要token可直接访问的请求
-        if (ignoreTokenCheck(path))
-            return chain.filter(exchange);
+//        //跳过不需要token可直接访问的请求
+//        if (ignoreTokenCheck(path))
+//            return chain.filter(exchange);
 
-        //获取token
-        String token = request.getHeaders().getFirst(AuthConstants.AUTHORIZATION_HEADER);
-        if (StringUtils.isBlank(token))
-            throw new AuthenticateException();
 
 
         return chain.filter(exchange);
