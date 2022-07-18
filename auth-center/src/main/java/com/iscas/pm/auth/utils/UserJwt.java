@@ -5,8 +5,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
-
-
+/****
+ * 自定义token携带信息
+ *
+ * @return
+ */
 public class UserJwt extends User {
     private String id;    //用户ID
     private String name;  //用户名字

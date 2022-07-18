@@ -1,18 +1,22 @@
 package com.iscas.pm.api.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.iscas.pm.api.config.TokenDecode;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.model.project.ProjectQo;
 import com.iscas.pm.api.model.project.ProjectDetailInfo;
 import com.iscas.pm.api.service.ProjectInfoService;
-import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.jwt.JwtHelper;
+import org.springframework.security.jwt.crypto.sign.RsaVerifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -25,6 +29,8 @@ import java.util.List;
 public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
+    @Autowired
+    private TokenDecode tokenDecode;
 
     @PostMapping("/addProject")
     @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
@@ -70,8 +76,15 @@ public class ProjectInfoController {
     @ApiOperation(value = "查询项目详情", notes = "查询指定项目的详细信息，支持前端查询接口")
     //@PreAuthorize("hasAuthority('/project-management/projectDetailInfo')")
     public ProjectDetailInfo getProjectDetailInfoById(@PathVariable String id) {
+        System.out.println("登录用户名为"+tokenDecode.getUserInfo().get("username"));
+        System.out.println(tokenDecode.getUserInfo().get(""));
 
+//        System.out.println(tokenDecode.getUserInfo().get(""));
+        System.out.println("请求进来了");
         return null;
     }
+
+
+
 
 }
