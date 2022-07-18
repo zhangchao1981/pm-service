@@ -15,11 +15,11 @@
     <description>切库模块</description>
 
     <dependencies>
-        <!-- mybatis -->
+        <!-- mybatis-plus -->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.version}</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

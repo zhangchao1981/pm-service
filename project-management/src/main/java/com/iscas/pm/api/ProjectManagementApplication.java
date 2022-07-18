@@ -5,11 +5,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * created By lichang on
- */
 @SpringBootApplication
-//@EnableTransactionManagement //开启事务支持
 @MapperScan("com.iscas.pm.api.mapper")
 @EnableDataBaseSeparate
 public class ProjectManagementApplication { public static void main(String[] args) {

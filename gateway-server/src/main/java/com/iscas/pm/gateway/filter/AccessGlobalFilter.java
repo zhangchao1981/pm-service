@@ -22,12 +22,6 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class AccessGlobalFilter implements GlobalFilter, Ordered {
-    /**测试：在网关过滤请求时获取用户权限
-     *
-     */
-//    @Autowired
-//    private TokenDecode tokenDecode;
-
 
 
     @Value("${ignorePaths}")
@@ -55,19 +49,6 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
             throw new AuthenticateException();
         }
 
-//        //调用auth-center接口，验证token是否有效
-//        BaseResponse<User> response = authCenter.check(token);
-//        if (response == null) {
-//            throw new AuthenticateException();
-//        }
-//        if (response.getCode() != 200 || response.getData() == null) {
-//            if (StringUtils.isBlank(response.getMessage())) {
-//                throw new AuthenticateException();
-//            }
-//            else {
-//                throw new AuthenticateException(response.getMessage());
-//            }
-//        }
 
         //设置header信息
 //        User user = response.getData();

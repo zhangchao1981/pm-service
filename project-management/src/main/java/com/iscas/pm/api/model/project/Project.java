@@ -1,5 +1,6 @@
 package com.iscas.pm.api.model.project;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
@@ -21,6 +22,7 @@ import java.util.Date;
 @Data
 @ApiModel(value = "项目信息", description = "项目基本信息，对应主库project表")
 @CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "项目开始日期不能大于项目结束日期")
+@TableName("pm_project")
 public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目编号")
