@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.Map;
 
 /*****
- * @Date: 2019/7/7 16:23
- * @Description: com.changgou.oauth.service.impl
+ * @Date:2022/7/14 14:52
+ * @Description:   授权认证login请求  service
  ****/
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private AuthToken applyToken(String username, String password, String clientId, String clientSecret) {
         //选中认证服务的地址
-        ServiceInstance serviceInstance = loadBalancerClient.choose("user");
+        ServiceInstance serviceInstance = loadBalancerClient.choose("auth-center");
         if (serviceInstance == null) {
             throw new RuntimeException("找不到对应的服务");
         }

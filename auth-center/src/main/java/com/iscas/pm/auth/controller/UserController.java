@@ -25,7 +25,6 @@ import javax.validation.constraints.NotEmpty;
  * </p>
  *
  * @author 李昶
- * @since 2022-06-05
  */
 @Wrapper
 @Slf4j

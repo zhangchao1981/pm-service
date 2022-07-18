@@ -3,7 +3,7 @@ package com.iscas.pm.auth.utils;
 import java.io.Serializable;
 
 /****
- * @Date:2019/5/18 14:52
+ * @Date:2022/7/14 14:52
  * @Description:用户令牌封装
  *****/
 public class AuthToken implements Serializable{
