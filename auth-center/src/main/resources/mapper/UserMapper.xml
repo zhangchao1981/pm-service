@@ -11,14 +11,13 @@
             <result property="phone" column="phone" jdbcType="VARCHAR"/>
             <result property="email" column="email" jdbcType="VARCHAR"/>
             <result property="created" column="created" jdbcType="TIMESTAMP"/>
-            <result property="updated" column="updated" jdbcType="TIMESTAMP"/>
             <result property="status" column="status" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         userId,username,password,
         phone,email,created,
-        updated,status,last_login_time
+        status,last_login_time
     </sql>
 
     <!--根据用户名查询用户是否存在-->

@@ -4,16 +4,19 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
+ * @author 李昶
+ * @description 针对表user
+ * @createDate 2022-07-06 11:17:11
  * 用户表
  * @TableName user
  */
@@ -67,12 +70,6 @@ public class User implements Serializable {
     @TableField(value = "created")
     private Date created;
 
-    /**
-     * 修改时间
-     */
-    @ApiModelProperty(value = "更新时间")
-    @TableField(value = "updated")
-    private Date updated;
 
     /**
      * 账号状态（1正常 0非正常）

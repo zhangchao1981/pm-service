@@ -10,10 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +19,8 @@ import javax.validation.constraints.NotEmpty;
 
 /*****
  * @author 李昶
- * @Date: 2019/7/7 16:42
- * @Description: com.changgou.oauth.controller
+ * @Date: 20122/7/14 16:42
+ * @Description: com..controller
  ****/
 @RestController
 @RequestMapping(value = "/authxx")
@@ -41,8 +39,6 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-//    @Autowired
-//    private RedisTemplate redisTemplate;
 
     @ApiOperation(value = "用户登录(账号，密码)")
     @ApiImplicitParams({

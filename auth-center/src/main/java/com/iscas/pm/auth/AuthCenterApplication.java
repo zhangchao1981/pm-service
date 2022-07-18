@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * created By lichang on
  */
-@EnableAsync
+//@EnableAsync
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableTransactionManagement //开启事务支持
@@ -19,7 +19,6 @@ public class AuthCenterApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthCenterApplication.class, args);
     }
-
 
     @Bean(name = "restTemplate")
     public RestTemplate restTemplate() {
