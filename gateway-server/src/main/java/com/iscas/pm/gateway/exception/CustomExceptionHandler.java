@@ -1,6 +1,5 @@
 package com.iscas.pm.gateway.exception;
 
-import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;

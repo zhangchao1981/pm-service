@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,10 +25,12 @@ public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目编号")
     @NotBlank(message = "项目编号不能为空")
+    @Size(max = 10)
     private String id;
 
     @ApiModelProperty(value = "项目名称")
     @NotBlank(message = "项目名称不能为空")
+    @Size(max = 25)
     private String name;
 
     @ApiModelProperty(value = "项目密级")

@@ -30,7 +30,6 @@ public class ProjectInfoController {
     @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
     //@PreAuthorize("hasAuthority('/project-management/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
-        DataSourceHolder.setDB("project1");
         projectInfoService.addProject(project);
         return project;
     }

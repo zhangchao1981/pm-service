@@ -11,6 +11,11 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 默认数据源，对应主库
+ */
 @Slf4j
 @Configuration
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)

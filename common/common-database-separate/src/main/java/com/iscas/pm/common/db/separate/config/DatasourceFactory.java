@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 数据源工厂类，通过druid创建数据源
+ */
 @Component
 @Slf4j
 public class DatasourceFactory {

@@ -15,6 +15,11 @@ import javax.sql.DataSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 动态数据源，通过改变DataSourceHolder值切换数据源
+ */
 @Component("dynamic")
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
 @Slf4j

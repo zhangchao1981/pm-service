@@ -1,5 +1,10 @@
 package com.iscas.pm.common.db.separate.holder;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： ThreadLocal变量，存放当前数据源
+ */
 public class DataSourceHolder {
 
     // 默认数据源名称为:default

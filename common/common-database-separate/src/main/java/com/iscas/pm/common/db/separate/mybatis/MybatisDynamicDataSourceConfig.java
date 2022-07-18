@@ -20,6 +20,11 @@ import org.springframework.core.io.ResourceLoader;
 import javax.sql.DataSource;
 import java.util.List;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： mybatis配置类，配置动态数据源
+ */
 @Configuration
 @EnableConfigurationProperties(MybatisProperties.class)
 @ConditionalOnBean(DataSource.class)

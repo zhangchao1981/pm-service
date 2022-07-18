@@ -1,13 +1,9 @@
 package com.iscas.pm.gateway.filter;
 
-import com.iscas.pm.common.core.model.AuthConstants;
-import com.iscas.pm.common.core.web.exception.AuthenticateException;
-import com.iscas.pm.common.core.web.response.BaseResponse;
-import com.iscas.pm.common.core.model.User;
-import com.iscas.pm.gateway.feign.AuthCenter;
+import com.iscas.pm.gateway.exception.AuthConstants;
+import com.iscas.pm.gateway.exception.AuthenticateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -26,8 +22,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AccessGlobalFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private AuthCenter authCenter;
 
     @Value("${ignorePaths}")
     private String[] ignorePaths;
@@ -52,28 +46,6 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
         if (StringUtils.isBlank(token))
             throw new AuthenticateException();
 
-        //调用auth-center接口，验证token是否有效
-        BaseResponse<User> response = authCenter.check(token);
-        if (response == null)
-            throw new AuthenticateException();
-        if (response.getCode() != 200 || response.getData() == null) {
-            if (StringUtils.isBlank(response.getMessage()))
-                throw new AuthenticateException();
-            else
-                throw new AuthenticateException(response.getMessage());
-        }
-
-        //设置header信息
-        User user = response.getData();
-        if (StringUtils.isNotBlank(user.getCurrentProjectId())) {
-            request.mutate().header("currentProjectId", user.getCurrentProjectId()).build();
-        }
-        if (StringUtils.isNotBlank(user.getUserId())) {
-            request.mutate().header("userId", user.getUserId()).build();
-        }
-        if (StringUtils.isNotBlank(user.getUserName())) {
-            request.mutate().header("userName", user.getUserName()).build();
-        }
 
         return chain.filter(exchange);
     }

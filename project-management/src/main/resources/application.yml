@@ -1,9 +1,9 @@
 spring:
   application:
-    name: doc
+    name: project-management
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/project?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: iscas654321
 
