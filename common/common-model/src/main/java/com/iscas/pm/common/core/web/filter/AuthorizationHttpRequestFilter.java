@@ -22,8 +22,8 @@ public class AuthorizationHttpRequestFilter implements Filter {
 
     private static final String SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+//    @Autowired
+//    private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private TokenDecode tokenDecode;
 
@@ -54,16 +54,16 @@ public class AuthorizationHttpRequestFilter implements Filter {
 //        Map<String, String> userInfo = tokenDecode.getUserInfo();
 //        String userId = userInfo.get("userId");
 
-        //从redis中去除当前项目id
+        //从redis中去找当前项目id
         String projectId = "kkkkkk";
 
         //获取用户权限信息并存入上下文中
-        UserDetails user = userDetailsService.loadUserByUsername("1", projectId);
-        setUserDetailsToSession(user, request);
+//        UserDetails user = userDetailsService.loadUserByUsername("1", projectId);
+//        setUserDetailsToSession(user, request);
 
-        if (!request.getRequestURI().contains("/role/getPermissionsByRoleIds"))
+        if (!request.getRequestURI().contains("/role/getPermissionsByRoleIds")) {
             log.info("访问:{}", request.getRequestURI());
-
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

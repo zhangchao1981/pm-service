@@ -5,32 +5,40 @@
 <mapper namespace="com.iscas.pm.auth.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.User">
-            <id property="userId" column="userId" jdbcType="BIGINT"/>
-            <result property="username" column="username" jdbcType="VARCHAR"/>
-            <result property="password" column="password" jdbcType="VARCHAR"/>
-            <result property="phone" column="phone" jdbcType="VARCHAR"/>
-            <result property="email" column="email" jdbcType="VARCHAR"/>
-            <result property="created" column="created" jdbcType="TIMESTAMP"/>
-            <result property="status" column="status" jdbcType="VARCHAR"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+        <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+
+
     </resultMap>
 
     <sql id="Base_Column_List">
-        userId,username,password,
-        phone,email,created,
-        status,last_login_time
+        id,user_name,password,
+        employee_name,department_id,phone,
+        email,status,create_time,
+        update_time
     </sql>
 
     <!--根据用户名查询用户是否存在-->
     <select id="existsByName" parameterType="java.lang.String" resultType="boolean">
         select count(*)
-        from user
-        where username=#{name}
+        from auth_user
+        where  user_name = #{name}
     </select>
 
 
     <!-- 根据用户名查询用户-->
     <select id="loadUserByUsername" resultMap="BaseResultMap">
-        select * from user where username=#{username}
+        select *
+        from auth_user
+        where user_name= #{username}
     </select>
 
 </mapper>

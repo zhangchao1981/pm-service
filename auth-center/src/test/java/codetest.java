@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class codetest {
 @Test
 public  void Test1(){
-    System.out.println(new BCryptPasswordEncoder().encode("22"));
-    System.out.println(BCrypt.checkpw("22", "$2a$10$h1qDDjYOoiRnRgTQGV.byugpY3ig607NXxNxTnNoKObiW/4oqNF.y"));
+    System.out.println(new BCryptPasswordEncoder().encode("123456"));
+//    System.out.println(BCrypt.checkpw("pmservice", "pmservice"));
 }
 }
 

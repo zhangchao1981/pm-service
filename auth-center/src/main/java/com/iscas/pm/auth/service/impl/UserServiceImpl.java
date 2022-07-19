@@ -33,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User addUser(UserLogin userlogin) {
-        User user = new User().setUsername(userlogin.getUsername()).setPassword(new BCryptPasswordEncoder().encode(userlogin.getPassword()));
+        User user = new User().setUserName(userlogin.getUsername()).setPassword(new BCryptPasswordEncoder().encode(userlogin.getPassword()));
         userMapper.insert(user);
         return user;
     }

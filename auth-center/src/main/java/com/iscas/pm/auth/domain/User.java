@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -32,15 +33,22 @@ public class User implements Serializable {
      * 用户id
      */
     @ApiModelProperty(value = "用户id")
-    @TableId(value = "userId", type = IdType.AUTO)
-    private Long userId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 用户名
      */
     @ApiModelProperty(value = "用户名")
-    @TableField(value = "username")
-    private String username;
+    @TableField(value = "userName")
+    private String  userName;
+
+    /**
+     * 人员姓名
+     */
+    private String employeeName;
+
+
 
     /**
      * 密码，加密存储
@@ -48,6 +56,21 @@ public class User implements Serializable {
     @ApiModelProperty(value = "密码")
     @TableField(value = "password")
     private String password;
+
+
+    /**
+     * 人员姓名
+     */
+    @ApiModelProperty(value = "人员姓名")
+    @TableField(value = "employee_name")
+    private String employeename;
+
+    /**
+     * 所属部门id
+     */
+    @ApiModelProperty(value = "所属部门id")
+    @TableField(value = "departmentId")
+    private Integer departmentId;
 
     /**
      * 注册手机号
@@ -57,25 +80,32 @@ public class User implements Serializable {
     private String phone;
 
     /**
-     * 注册邮箱
+     * 邮箱地址
      */
     @TableField(value = "email")
     @ApiModelProperty(value = "注册邮箱")
     private String email;
 
+
+    /**
+     * 是否注销，1 表示是，0 表示否
+     */
+    @ApiModelProperty(value = "是否注销")
+    @TableField(value = "status")
+    private Integer status;
+
+
     /**
      * 创建时间
      */
     @ApiModelProperty(value = "创建时间")
-    @TableField(value = "created")
-    private Date created;
+    @TableField(value = "createTime")
+    private Date createTime;
+
 
 
     /**
-     * 账号状态（1正常 0非正常）
+     * 最后修改时间
      */
-    @ApiModelProperty(value = "账号状态（1正常 0非正常）")
-    @TableField(value = "status")
-    private String status;
-
+    private LocalDateTime updateTime;
 }

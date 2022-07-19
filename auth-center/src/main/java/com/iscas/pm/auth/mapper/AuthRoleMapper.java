@@ -3,6 +3,9 @@ package com.iscas.pm.auth.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.auth.domain.AuthRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -12,6 +15,8 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface AuthRoleMapper extends BaseMapper<AuthRole> {
+
+
 
 }
 

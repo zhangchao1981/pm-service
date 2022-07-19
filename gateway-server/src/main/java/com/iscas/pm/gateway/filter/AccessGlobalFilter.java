@@ -62,8 +62,8 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
 //            request.mutate().header("userName", user.getUserName()).build();
 //        }
 //        System.out.println(tokenDecode.getUserInfo().get("username"));
-//        return chain.filter(exchange);
-//    }
+        return chain.filter(exchange);
+    }
 
     private boolean ignoreTokenCheck(String path) {
         for (String item : ignorePaths) {

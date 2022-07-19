@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.AuthRole;
 import com.iscas.pm.auth.mapper.AuthRoleMapper;
 import com.iscas.pm.auth.service.AuthRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -14,6 +17,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthRoleServiceImpl extends ServiceImpl<AuthRoleMapper, AuthRole>
     implements AuthRoleService {
+
+
+
+
+
 
 }
 
