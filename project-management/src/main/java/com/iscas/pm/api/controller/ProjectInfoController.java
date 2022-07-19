@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,8 +26,8 @@ import java.util.Map;
 public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
-    @Autowired
-    private TokenDecode tokenDecode;
+//    @Autowired
+//    private TokenDecode tokenDecode;
 
     @PostMapping("/addProject")
     @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
@@ -38,7 +39,7 @@ public class ProjectInfoController {
 
     @PostMapping("/editProject")
     @ApiOperation(value = "修改项目", notes = "修改处于未关闭状态的项目信息")
-    //@PreAuthorize("hasAuthority('/project-management/editProject')")
+    @PreAuthorize("hasAuthority('/project-management/editProject')")
     public Project editProject(@RequestBody Project project) {
 
         return project;
@@ -46,6 +47,7 @@ public class ProjectInfoController {
 
     @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
+    @PreAuthorize("hasAuthority('/project-management/projectList')")
     public List<Project> projectList(@RequestBody ProjectQo projectQo) {
         return projectInfoService.get();
     }
@@ -70,8 +72,8 @@ public class ProjectInfoController {
     @ApiOperation(value = "查询项目详情", notes = "查询指定项目的详细信息，支持前端查询接口")
     //@PreAuthorize("hasAuthority('/project-management/projectDetailInfo')")
     public ProjectDetailInfo getProjectDetailInfoById(@PathVariable String id) {
-        System.out.println("登录用户名为"+tokenDecode.getUserInfo().get("username"));
-        System.out.println(tokenDecode.getUserInfo().get(""));
+//        System.out.println("登录用户名为"+tokenDecode.getUserInfo().get("username"));
+//        System.out.println(tokenDecode.getUserInfo().get(""));
 
         return null;
     }
