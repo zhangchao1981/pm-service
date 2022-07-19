@@ -43,7 +43,6 @@ public class ProjectInfoController {
 
     @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
-    //@PreAuthorize("hasAuthority('/project-management/projectList')")
     public List<Project> projectList(@RequestBody ProjectQo projectQo) {
         return projectInfoService.get();
     }
@@ -74,7 +73,6 @@ public class ProjectInfoController {
 
     @GetMapping("/switchProject")
     @ApiOperation(value = "切换项目", notes = "根据projectId切换项目，projectId为空时，切换到第一个项目上")
-    //@PreAuthorize("hasAuthority('/project-management/switchProject')")
     public Project switchProject(@RequestParam String projectId) {
 
         return null;
