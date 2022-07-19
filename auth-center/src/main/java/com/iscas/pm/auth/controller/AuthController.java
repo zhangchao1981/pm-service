@@ -1,7 +1,6 @@
 package com.iscas.pm.auth.controller;
 
-
-
+import com.iscas.pm.auth.domain.UserLoginParam;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
 import com.iscas.pm.common.core.web.exception.AuthorizeException;
@@ -11,10 +10,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 /*****
@@ -23,31 +23,18 @@ import javax.validation.constraints.NotEmpty;
  * @Description: oauth认证的login请求入口
  ****/
 @RestController
-@RequestMapping(value = "/authxx")
+@RequestMapping(value = "/auth")
 @Api(tags = {"认证管理"})
 public class AuthController {
-
-    //客户端ID
-    @Value("${auth.clientId}")
-    private String clientId;
-
-    //秘钥
-    @Value("${auth.clientSecret}")
-    private String clientSecret;
-
 
     @Autowired
     AuthService authService;
 
-
-    @ApiOperation(value = "用户登录(账号，密码)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String"),
-            @ApiImplicitParam(name = "password", value = "密码", dataType = "String")})
+    @ApiOperation(value = "用户登录")
     @RequestMapping(value = "/login")
-    public String login(@NotEmpty(message = "用户名不允许为空") String username, @NotEmpty(message = "密码不允许为空") String password) {
+    public String login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请令牌
-        AuthToken authToken = authService.login(username, password, clientId, clientSecret);
+        AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
         if (authToken == null) {
             throw new AuthorizeException("令牌申请失败");
         }

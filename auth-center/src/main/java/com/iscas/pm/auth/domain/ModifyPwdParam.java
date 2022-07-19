@@ -5,20 +5,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @author 66410
- * @description 针对表【user(用户表)】修改密码封装
- * @createDate 2022-07-06 11:17:11
- * @Entity com.user.domain.ModifyPwdParam
+ * @Author： zhangchao
+ * @Date： 2022/7/19
+ * @Description： 修改密码请求参数
  */
 @Data
-@ApiModel("修改密码")
+@ApiModel("修改密码请求参数")
 public class ModifyPwdParam {
     @ApiModelProperty(value = "用户名")
     private String userName;
 
     @ApiModelProperty(value = "旧密码")
-    private String oldPassWord;
+    private String oldPassword;
 
     @ApiModelProperty(value = "新密码")
-    private String newPassWord;
+    private String newPassword;
 }

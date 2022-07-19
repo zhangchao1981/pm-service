@@ -1,10 +1,9 @@
 package com.iscas.pm.gateway.filter;
 
-import com.iscas.pm.common.core.model.AuthConstants;
-import com.iscas.pm.common.core.web.exception.AuthenticateException;
+import com.iscas.pm.gateway.exception.AuthConstants;
+import com.iscas.pm.gateway.exception.AuthenticateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;

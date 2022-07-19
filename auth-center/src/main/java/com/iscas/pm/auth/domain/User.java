@@ -1,81 +1,50 @@
 package com.iscas.pm.auth.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @author 李昶
- * @description 针对表user
- * @createDate 2022-07-06 11:17:11
- * 用户表
- * @TableName user
- */
-
-
-@TableName(value ="user")
 @Data
-@ApiModel(value = "User对象", description = "")
-@EqualsAndHashCode(callSuper = false)
+@TableName(value ="auth_user")
+@ApiModel(value = "人员信息", description = "用户信息、人员信息都存储在一张表中了")
 @Accessors(chain = true)
 public class User implements Serializable {
-    /**
-     * 用户id
-     */
     @ApiModelProperty(value = "用户id")
-    @TableId(value = "userId", type = IdType.AUTO)
-    private Long userId;
+    private Integer id;
 
-    /**
-     * 用户名
-     */
-    @ApiModelProperty(value = "用户名")
-    @TableField(value = "username")
-    private String username;
+    @ApiModelProperty(value = "用户名,根据人员姓名自动生成，前端无需传值，默认为姓名全拼，重复时后面加数字区分")
+    private String userName;
 
-    /**
-     * 密码，加密存储
-     */
-    @ApiModelProperty(value = "密码")
-    @TableField(value = "password")
+    @ApiModelProperty(value = "密码，系统自动生成初始密码，前端无需传值")
     private String password;
 
-    /**
-     * 注册手机号
-     */
-    @ApiModelProperty(value = "注册手机号")
-    @TableField(value = "phone")
+    @ApiModelProperty(value = "人员姓名")
+    private String employeeName;
+
+    @ApiModelProperty(value = "人员所在部门id")
+    private String departmentId;
+
+    @ApiModelProperty(value = "手机号")
     private String phone;
 
-    /**
-     * 注册邮箱
-     */
-    @TableField(value = "email")
-    @ApiModelProperty(value = "注册邮箱")
+    @ApiModelProperty(value = "邮箱")
     private String email;
 
-    /**
-     * 创建时间
-     */
+    @JsonIgnore
     @ApiModelProperty(value = "创建时间")
-    @TableField(value = "created")
-    private Date created;
+    private Date createTime;
 
+    @JsonIgnore
+    @ApiModelProperty(value = "最后更新时间")
+    private Date updateTime;
 
-    /**
-     * 账号状态（1正常 0非正常）
-     */
-    @ApiModelProperty(value = "账号状态（1正常 0非正常）")
-    @TableField(value = "status")
-    private String status;
+    @ApiModelProperty(value = "账号状态")
+    private UserStatusEnum status;
 
 }

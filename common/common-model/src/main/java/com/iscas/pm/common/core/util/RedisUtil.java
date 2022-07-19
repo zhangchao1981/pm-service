@@ -26,7 +26,6 @@ public class RedisUtil {
     public RedisUtil(RedisTemplate<String, Object> redisTemplate){
         this.redisTemplate = redisTemplate;
     }
-    // =============================common============================
 
     /**
      * 指定缓存失效时间
@@ -58,7 +57,6 @@ public class RedisUtil {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
-
     /**
      * 判断key是否存在
      *
@@ -79,7 +77,6 @@ public class RedisUtil {
      *
      * @param key 可以传一个值 或多个
      */
-    @SuppressWarnings("unchecked")
     public void del(String... key) {
         if (key != null && key.length > 0) {
             if (key.length == 1) {
@@ -100,7 +97,7 @@ public class RedisUtil {
     }
 
 
-    // ============================String=============================
+    // ============================String类型=============================
 
     /**
      * 获取单个值
@@ -161,9 +158,6 @@ public class RedisUtil {
         }
     }
 
-
-
-
     /**
      * 递减
      *
@@ -180,7 +174,7 @@ public class RedisUtil {
     }
 
 
-    // ================================hashMap=================================
+    // ================================hashMap类型=================================
 
     /**
      * 获取指定map键对应的值,如果存在该键则获取值，没有则返回null
@@ -203,7 +197,6 @@ public class RedisUtil {
     public List<Object> hmGet(String key, Collection<Object> hashKeys) {
         return redisTemplate.opsForHash().multiGet(key, hashKeys);
     }
-
 
     /**
      * 获取hash表中对应的所有键值
@@ -267,9 +260,6 @@ public class RedisUtil {
             return false;
         }
     }
-
-
-
 
     /**
      * 批量设置map键值 并设置过期时间
@@ -370,9 +360,7 @@ public class RedisUtil {
         return redisTemplate.opsForHash().increment(key, item, -by);
     }
 
-
-
-    // ============================set=============================
+    // ============================set类型=============================
 
     /**
      * 根据key获取Set中的所有值
@@ -474,8 +462,7 @@ public class RedisUtil {
         }
     }
 
-
-    // ===============================list=================================
+    // ===============================list类型=================================
 
     /**
      * 获取list缓存的内容

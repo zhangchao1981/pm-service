@@ -3,21 +3,22 @@ package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserLogin;
+import com.iscas.pm.auth.domain.UserLoginParam;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.common.core.util.RSACoder;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
-* @author 66410
-* @description 针对表【user(用户表)】的数据库操作Service实现
-* @createDate 2022-07-06 11:17:11
-*/
+ * @author 66410
+ * @description 针对表【user(用户表)】的数据库操作Service实现
+ * @createDate 2022-07-06 11:17:11
+ */
 @Service
-public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     //        user.setPassword(RSACoder.encryptByPublicKey(user.getPassword()));
 //        userMapper.insert(user);
 
@@ -30,33 +31,33 @@ public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements U
     }
 
     @Override
-    public User addUser(UserLogin userlogin) {
-        User user = new User().setUsername(userlogin.getUsername()).setPassword(RSACoder.encryptByPublicKey(userlogin.getPassword()));
+    public User addUser(User user) {
+        //根据姓名生成用户名
+
+        //设置初始密码
+
+        //存储人员信息
         userMapper.insert(user);
         return user;
     }
 
     @Override
-    public Boolean change(String username, String oldPwd,String newPwd) {
+    public Boolean changePassword(String username, String oldPwd, String newPwd) {
+        //数据库中查询出用户信息
         User user = userMapper.loadUserByUsername(username);
-        //如果用户密码正确，则可以更改密码
 
-//        boolean tag = BCrypt.checkpw(oldPwd, user.getPassword());
-        //查询数据库里存的用户旧密码，验证是否和用户输入的旧密码相同 (用RSACode 私钥解密)
-        boolean tag =oldPwd.equals(RSACoder.decryptByPrivateKey(user.getPassword()));
-        if (!tag) {
+        if (!oldPwd.equals(RSACoder.decryptByPrivateKey(user.getPassword()))) {
             throw new IllegalArgumentException("旧密码填写错误");
         }
 
         if (Objects.equals(oldPwd, newPwd)) {
             throw new IllegalArgumentException("请不要改成旧密码");
         }
-        if (tag){
-            user.setPassword( RSACoder.encryptByPublicKey(newPwd));
-        }
-        //更新密码
+
+        //加密密码后更新数据库
+        user.setPassword(RSACoder.encryptByPublicKey(newPwd));
         userMapper.updateById(user);
-        return tag;
+        return true;
     }
 
     @Override
