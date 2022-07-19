@@ -23,7 +23,7 @@ import java.util.Date;
  */
 
 
-@TableName(value ="user")
+@TableName(value ="auth_user")
 @Data
 @ApiModel(value = "User对象", description = "")
 @EqualsAndHashCode(callSuper = false)
@@ -62,7 +62,7 @@ public class User implements Serializable {
      * 人员姓名
      */
     @ApiModelProperty(value = "人员姓名")
-    @TableField(value = "employee_name")
+    @TableField(value = "employeename")
     private String employeename;
 
     /**
