@@ -58,6 +58,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //这里加载的pwd是用于验证的，也就是数据库存的用户密码，如果用户登录login输入的密码不是这个，就会报错
         String pwd = user.getPassword();//从数据库中查到的密码
         //
+            //
+
+        //获取系统角色下对应的权限列表 user_role
+
 
 
 
@@ -66,4 +70,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //userDetails.setComy(songsi);
         return userDetails;
     }
+
+
 }

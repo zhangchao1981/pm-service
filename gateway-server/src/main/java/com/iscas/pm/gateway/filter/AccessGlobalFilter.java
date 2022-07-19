@@ -49,7 +49,7 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
         }
 
 
-        //设置header信息
+//        设置header信息
 //        User user = response.getData();
 //        if (StringUtils.isNotBlank(user.getCurrentProjectId())) {
 //            request.mutate().header("currentProjectId", user.getCurrentProjectId()).build();
