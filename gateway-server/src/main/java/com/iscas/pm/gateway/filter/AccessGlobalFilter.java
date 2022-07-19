@@ -50,7 +50,7 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
         }
 
 
-        //设置header信息
+//        设置header信息
 //        User user = response.getData();
 //        if (StringUtils.isNotBlank(user.getCurrentProjectId())) {
 //            request.mutate().header("currentProjectId", user.getCurrentProjectId()).build();
@@ -62,8 +62,8 @@ public class AccessGlobalFilter implements GlobalFilter, Ordered {
 //            request.mutate().header("userName", user.getUserName()).build();
 //        }
 //        System.out.println(tokenDecode.getUserInfo().get("username"));
-        return chain.filter(exchange);
-    }
+//        return chain.filter(exchange);
+//    }
 
     private boolean ignoreTokenCheck(String path) {
         for (String item : ignorePaths) {

@@ -6,18 +6,20 @@ import com.iscas.pm.auth.domain.User;
 import com.iscas.pm.auth.domain.UserLogin;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.common.core.util.RSACoder;
+import com.iscas.pm.auth.utils.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
-* @author 66410
-* @description 针对表【user(用户表)】的数据库操作Service实现
-* @createDate 2022-07-06 11:17:11
-*/
+ * @author lichang
+ * @description 针对表【user(用户表)】的数据库操作Service实现
+ * @Date: 2019/7/7 16:23
+ */
 @Service
-public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     //        user.setPassword(RSACoder.encryptByPublicKey(user.getPassword()));
 //        userMapper.insert(user);
 
@@ -31,19 +33,19 @@ public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements U
 
     @Override
     public User addUser(UserLogin userlogin) {
-        User user = new User().setUsername(userlogin.getUsername()).setPassword(RSACoder.encryptByPublicKey(userlogin.getPassword()));
+        User user = new User().setUsername(userlogin.getUsername()).setPassword(new BCryptPasswordEncoder().encode(userlogin.getPassword()));
         userMapper.insert(user);
         return user;
     }
 
     @Override
-    public Boolean change(String username, String oldPwd,String newPwd) {
+    public Boolean change(String username, String oldPwd, String newPwd) {
         User user = userMapper.loadUserByUsername(username);
         //如果用户密码正确，则可以更改密码
 
-//        boolean tag = BCrypt.checkpw(oldPwd, user.getPassword());
-        //查询数据库里存的用户旧密码，验证是否和用户输入的旧密码相同 (用RSACode 私钥解密)
-        boolean tag =oldPwd.equals(RSACoder.decryptByPrivateKey(user.getPassword()));
+        //查询数据库里存的用户旧密码，验证是否和用户输入的旧密码相同 (密码加密方式： BCryptPasswordEncoder()  )
+        boolean tag = BCrypt.checkpw(oldPwd, user.getPassword());
+
         if (!tag) {
             throw new IllegalArgumentException("旧密码填写错误");
         }
@@ -51,8 +53,9 @@ public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements U
         if (Objects.equals(oldPwd, newPwd)) {
             throw new IllegalArgumentException("请不要改成旧密码");
         }
-        if (tag){
-            user.setPassword( RSACoder.encryptByPublicKey(newPwd));
+        if (tag) {
+            String encodenewpwd = new BCryptPasswordEncoder().encode(newPwd);
+            user.setPassword(encodenewpwd);
         }
         //更新密码
         userMapper.updateById(user);
@@ -63,9 +66,4 @@ public class UserServiceImpl  extends ServiceImpl<UserMapper, User> implements U
     public User loadUserByUsername(String username) {
         return userMapper.loadUserByUsername(username);
     }
-
 }
-
-
-
-

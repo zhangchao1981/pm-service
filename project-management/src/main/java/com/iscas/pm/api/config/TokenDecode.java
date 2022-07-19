@@ -34,9 +34,7 @@ public class TokenDecode {
     // 获取令牌
     public String getToken() {
         OAuth2AuthenticationDetails authentication = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-
         String tokenValue = authentication.getTokenValue();//ejebaldsfjalfjaljflajflajflajfla
-
         return tokenValue;
     }
 
