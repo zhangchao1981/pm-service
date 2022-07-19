@@ -63,7 +63,10 @@ spring:
           filters:
             - StripPrefix=1
 
+
+
 ignorePaths:
   auth/login,
+  projectInfo/projectDetailInfo,
   v2/api-docs,
   doc.html

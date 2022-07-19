@@ -27,7 +27,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--第三方版本-->
-        <mysql.connect.version>6.0.6</mysql.connect.version>
+        <mysql.connect.version>8.0.28</mysql.connect.version>
         <druid.spring.version>1.1.9</druid.spring.version>
         <swagger.version>2.9.2</swagger.version>
         <swaggerui.version>1.9.3</swaggerui.version>
@@ -36,6 +36,10 @@
         <lombok-version>1.18.20</lombok-version>
 
     </properties>
+
+
+
+
 
     <modules>
         <module>common</module>

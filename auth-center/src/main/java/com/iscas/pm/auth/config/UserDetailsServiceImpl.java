@@ -57,6 +57,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         //这里加载的pwd是用于验证的，也就是数据库存的用户密码，如果用户登录login输入的密码不是这个，就会报错
         String pwd = user.getPassword();//从数据库中查到的密码
+        //
+
+
+
         String permissions = "user,vip,admin";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
         UserJwt userDetails = new UserJwt(username, pwd, AuthorityUtils.commaSeparatedStringToAuthorityList(permissions));
         //userDetails.setComy(songsi);

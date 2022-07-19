@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -24,6 +25,8 @@ import java.util.List;
 public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
+    @Autowired
+    private TokenDecode tokenDecode;
 
     @PostMapping("/addProject")
     @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
@@ -67,6 +70,8 @@ public class ProjectInfoController {
     @ApiOperation(value = "查询项目详情", notes = "查询指定项目的详细信息，支持前端查询接口")
     //@PreAuthorize("hasAuthority('/project-management/projectDetailInfo')")
     public ProjectDetailInfo getProjectDetailInfoById(@PathVariable String id) {
+        System.out.println("登录用户名为"+tokenDecode.getUserInfo().get("username"));
+        System.out.println(tokenDecode.getUserInfo().get(""));
 
         return null;
     }
@@ -77,5 +82,8 @@ public class ProjectInfoController {
 
         return null;
     }
+
+
+
 
 }

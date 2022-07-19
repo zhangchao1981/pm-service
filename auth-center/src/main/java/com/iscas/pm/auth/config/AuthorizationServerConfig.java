@@ -58,6 +58,11 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     /***
      * 授权服务器端点配置
+
+     * @Description:  accessTokenConverter  将token转换成参数中的形式
+     *                  tokenStore           令牌存储方式
+     *                 userDetailsService    用户信息封装
+     *
      * @param endpoints
      * @throws Exception
      */
@@ -105,7 +110,7 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     }
 
     /****
-     * JWT令牌转换器
+     * JWT令牌转换器   ：将拿到的token转换成JWT令牌
      * @param customUserAuthenticationConverter
      * @return
      */

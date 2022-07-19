@@ -20,7 +20,7 @@ import javax.validation.constraints.NotEmpty;
 /*****
  * @author 李昶
  * @Date: 20122/7/14 16:42
- * @Description: com..controller
+ * @Description: oauth认证的login请求入口
  ****/
 @RestController
 @RequestMapping(value = "/authxx")
