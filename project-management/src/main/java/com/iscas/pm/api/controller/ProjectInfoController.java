@@ -79,8 +79,6 @@ public class ProjectInfoController {
         //判断是否有指定项目的权限
 
         //查询当前项目上的权限列表
-        //重新申请token，携带projectId
-        //刷新token，返回accesstoken
         //在redis中存储accesstoken 或jti与projectid的映射关系
         return null;
     }

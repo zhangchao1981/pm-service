@@ -3,7 +3,6 @@ package com.iscas.pm.auth.config;
 import com.iscas.pm.auth.service.UserService;
 
 import com.iscas.pm.auth.utils.UserJwt;
-import com.iscas.pm.common.core.web.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
