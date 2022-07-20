@@ -46,7 +46,6 @@ public class AuthorizationHttpRequestFilter implements Filter {
             //从token中解析出用户信息
             Map<String, String> userInfo = tokenDecode.getUserInfo();
             String userId = userInfo.get("userId");
-
             //从redis中取出当前项目id  todo redis无效token会越来越多，占用空间
             Object obj = redisUtil.get(token);
             String projectId = obj == null ? "pm_primary" : obj.toString();
@@ -54,7 +53,6 @@ public class AuthorizationHttpRequestFilter implements Filter {
             if (StringUtils.isBlank(projectId)) {
                 //feign调用获取当前用户的详细信息（主要是获取在当前项目上的权限列表） todo 每次访问都查库有性能问题
                 UserDetails userDetails = authCenterClient.getUserDetails(userId, projectId);
-
                 //存入security的上下文中
                 setUserDetailsToSession(userDetails, request);
             }
