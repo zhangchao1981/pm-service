@@ -1,43 +1,111 @@
 package com.iscas.pm.auth.controller;
 
-
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserLogin;
-import com.iscas.pm.auth.mapper.UserMapper;
+import com.iscas.pm.auth.domain.UserDetailInfo;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.common.core.util.Wrapper;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
-/**
- * <p>
- *  前端控制器
- * </p>
- *
- * @author 李昶
- */
-@Wrapper
 @Slf4j
 @RestController
-@RequestMapping("/usercore")
-@Api(tags = {"用户管理"})
+@RequestMapping("/user")
+@Api(tags = {"人员管理"})
 public class UserController {
     @Autowired
     UserService userService;
-    @Resource
-    private UserMapper userMapper;
-//    @Autowired
-//    private RedisUtil redisUtil;
+
+    @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
+    @GetMapping("/userList")
+    @PreAuthorize("hasAuthority('/user/userList')")
+    public Page<User> listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+
+        return null;
+    }
+
+    @ApiOperation(value = "添加人员")
+    @PostMapping("addUser")
+    @PreAuthorize("hasAuthority('/user/addUser')")
+    public User adduser(@RequestBody @Valid User user) {
+        userService.addUser(user);
+
+        //password不返回，避免安全隐患
+        user.setPassword(null);
+        return user;
+    }
+
+    @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
+    @PostMapping("editUser")
+    @PreAuthorize("hasAuthority('/user/editUser')")
+    public User editUser(@RequestBody @Valid User user) {
+        return user;
+    }
+
+    @ApiOperation(value = "注销人员")
+    @PostMapping("cancelUser")
+    @PreAuthorize("hasAuthority('/user/cancelUser')")
+    public User cancelUser(@RequestParam String userId) {
+        return null;
+    }
+
+    @ApiOperation(value = "重新启用人员")
+    @PostMapping("enableUser")
+    @PreAuthorize("hasAuthority('/user/enableUser')")
+    public User enableUser(@RequestParam String userId) {
+        return null;
+    }
+
+    @ApiOperation(value = "分配角色",notes = "为指定人员分配系统角色")
+    @PostMapping("settingSystemRole")
+    @PreAuthorize("hasAuthority('/user/settingSystemRole')")
+    public User settingSystemRole(@RequestBody @Valid User user) {
+        return user;
+    }
+
+    @ApiOperation(value = "修改用户密码")
+    @PostMapping(value = "/changePassword")
+    public Boolean change(@RequestBody @Valid ModifyPwdParam modifyPwdParam) {
+        return userService.changePassword(modifyPwdParam.getUserName(), modifyPwdParam.getOldPassword(), modifyPwdParam.getNewPassword());
+    }
+
+    @ApiOperation(value = "重置密码")
+    @PostMapping("/resetPassWord")
+    @PreAuthorize("hasAuthority('/user/resetPassWord')")
+    public String resetPassWord(@RequestParam("userId") Integer userId) {
+        return null;
+    }
+
+    @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")
+    @PostMapping("/getUserDetails")
+    @PreAuthorize("hasAuthority('/user/getUserDetails')")
+    public UserDetailInfo getUserDetails() {
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //返回用户详情里的密码是加密的
     @ApiOperation(value = "查看用户详情")
@@ -68,35 +136,6 @@ public class UserController {
         return   userService.loadUserByUsername(username);
     }
 
-
-    /***
-     * 新增User数据
-     * @param   userlogin
-     * @return
-     */
-    @ApiOperation(value = "用户新增")
-    @PostMapping("adduser")
-    @ApiImplicitParam(name = "userlogin",value = "username,password", required = true, dataType = "UserLogin", paramType = "body")
-    public User adduser(@RequestBody @Valid UserLogin userlogin) {
-        if (userMapper.existsByName(userlogin.getUsername())) {
-            throw new RuntimeException("该用户名已被使用，请重新输入");
-        }
-        User user = userService.addUser(userlogin);
-        user.setPassword(null);
-        return user;
-    }
-
-    /***
-     * 修改User密码
-     * @param   param  里面封装了用户请求的 用户名，旧密码，新密码
-     * @return
-     */
-    @ApiOperation(value = "修改用户密码")
-    @PostMapping(value = "/change")
-    @ApiImplicitParam(name = "param",value = "userName,oldPassWord,newPassWord", required = true, dataType = "ModifyPwdParam", paramType = "body")
-    public Boolean change(@RequestBody ModifyPwdParam param) {
-      return userService.change(param.getUserName(), param.getOldPassWord(), param.getNewPassWord());
-    }
 
 
 

@@ -35,7 +35,7 @@ public class TokenDecode {
     public String getToken() {
         OAuth2AuthenticationDetails authentication = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        String tokenValue = authentication.getTokenValue();//ejebaldsfjalfjaljflajflajflajfla
+        String tokenValue = authentication.getTokenValue();
 
         return tokenValue;
     }

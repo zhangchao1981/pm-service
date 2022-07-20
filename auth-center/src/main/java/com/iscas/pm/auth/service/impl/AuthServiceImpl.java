@@ -4,6 +4,7 @@ package com.iscas.pm.auth.service.impl;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpEntity;
@@ -23,10 +24,17 @@ import java.util.Map;
 
 /*****
  * @Date:2022/7/14 14:52
- * @Description:   授权认证login请求  service
+ * @Description: 授权认证login请求  service
  ****/
 @Service
 public class AuthServiceImpl implements AuthService {
+    //客户端ID
+    @Value("${auth.clientId}")
+    private String clientId;
+
+    //秘钥
+    @Value("${auth.clientSecret}")
+    private String clientSecret;
 
     @Autowired
     private LoadBalancerClient loadBalancerClient;
@@ -38,15 +46,13 @@ public class AuthServiceImpl implements AuthService {
      * 授权认证方法
      * @param username
      * @param password
-     * @param clientId
-     * @param clientSecret
      * @return
      */
     @Override
-    public AuthToken login(String username, String password, String clientId, String clientSecret) {
+    public AuthToken login(String username, String password) {
         //申请令牌
-        AuthToken authToken = applyToken(username,password,clientId, clientSecret);
-        if(authToken == null){
+        AuthToken authToken = applyToken(username, password, clientId, clientSecret);
+        if (authToken == null) {
             throw new RuntimeException("申请令牌失败");
         }
         return authToken;
@@ -62,11 +68,12 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     private AuthToken applyToken(String username, String password, String clientId, String clientSecret) {
-        //选中认证服务的地址
+        //注册中心获取认证服务的实例
         ServiceInstance serviceInstance = loadBalancerClient.choose("auth-center");
         if (serviceInstance == null) {
-            throw new RuntimeException("找不到对应的服务");
+            throw new RuntimeException("申请令牌时报错，找不到auth-center服务");
         }
+
         //获取令牌的url
         String path = serviceInstance.getUri().toString() + "/oauth/token";
         //定义body
@@ -80,7 +87,8 @@ public class AuthServiceImpl implements AuthService {
         //定义头
         MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
         header.add("Authorization", httpbasic(clientId, clientSecret));
-        //指定 restTemplate当遇到400或401响应时候也不要抛出异常，也要正常返回值
+
+        //配置restTemplate调用异常处理
         restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
@@ -90,16 +98,17 @@ public class AuthServiceImpl implements AuthService {
                 }
             }
         });
+
         Map map = null;
         try {
             //http请求spring security的申请令牌接口
-            ResponseEntity<Map> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST,new HttpEntity<MultiValueMap<String, String>>(formData, header), Map.class);
+            ResponseEntity<Map> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST, new HttpEntity<>(formData, header), Map.class);
             //获取响应数据
             map = mapResponseEntity.getBody();
         } catch (RestClientException e) {
             throw new RuntimeException(e);
         }
-        if(map == null || map.get("access_token") == null || map.get("refresh_token") == null || map.get("jti") == null) {
+        if (map == null || map.get("access_token") == null || map.get("refresh_token") == null || map.get("jti") == null) {
             //jti是jwt令牌的唯一标识作为用户身份令牌
             throw new RuntimeException("创建令牌失败！");
         }
@@ -111,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
         //刷新令牌(jwt)
         String refreshToken = (String) map.get("refresh_token");
         //jti，作为用户的身份标识
-        String jwtToken= (String) map.get("jti");
+        String jwtToken = (String) map.get("jti");
         authToken.setJti(jwtToken);
         authToken.setAccessToken(accessToken);
         authToken.setRefreshToken(refreshToken);
@@ -125,11 +134,11 @@ public class AuthServiceImpl implements AuthService {
      * @param clientSecret
      * @return
      */
-    private String httpbasic(String clientId,String clientSecret){
+    private String httpbasic(String clientId, String clientSecret) {
         //将客户端id和客户端密码拼接，按“客户端id:客户端密码”
-        String string = clientId+":"+clientSecret;
+        String string = clientId + ":" + clientSecret;
         //进行base64编码
         byte[] encode = Base64Utils.encode(string.getBytes());
-        return "Basic "+new String(encode);
+        return "Basic " + new String(encode);
     }
 }
