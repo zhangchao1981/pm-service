@@ -3,7 +3,6 @@ package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserLogin;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
@@ -20,8 +19,6 @@ import java.util.Objects;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-    //        user.setPassword(RSACoder.encryptByPublicKey(user.getPassword()));
-//        userMapper.insert(user);
 
     @Resource
     private UserMapper userMapper;
@@ -32,14 +29,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User addUser(UserLogin userlogin) {
-        User user = new User().setUserName(userlogin.getUsername()).setPassword(new BCryptPasswordEncoder().encode(userlogin.getPassword()));
+    public User addUser(User user) {
         userMapper.insert(user);
         return user;
     }
 
     @Override
-    public Boolean change(String username, String oldPwd, String newPwd) {
+    public Boolean changePassword(String username, String oldPwd, String newPwd) {
         User user = userMapper.loadUserByUsername(username);
         //如果用户密码正确，则可以更改密码
 
