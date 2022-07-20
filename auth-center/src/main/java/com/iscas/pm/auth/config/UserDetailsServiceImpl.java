@@ -62,7 +62,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String pwd = user.getPassword();//从数据库中查到的密码
         //获取系统角色下对应的权限列表 user_role
         List<String> permissionsList = authRolePermissionService.getPermissionsByUserId(user.getId());
-        String permissions = "user,vip,admin";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
+        String permissions = "";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
 
         for (String permission : permissionsList) {
             permissions+=permission+",";
