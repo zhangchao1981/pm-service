@@ -1,6 +1,5 @@
 package com.iscas.pm.api.controller;
 
-import com.iscas.pm.api.config.TokenDecode;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.model.project.ProjectQo;
 import com.iscas.pm.api.model.project.ProjectDetailInfo;
@@ -9,7 +8,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
