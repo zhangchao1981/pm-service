@@ -22,6 +22,8 @@ private AuthPermissionService authPermissionService;
 @RequestMapping(value = "permissionName")
 public String findPermissionNameById(String permissionId){
     return authPermissionService.findPermissionNameById(permissionId);
-
 }
+
+
+
 }

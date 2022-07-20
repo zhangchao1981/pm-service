@@ -46,5 +46,4 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "账号状态")
     private UserStatusEnum status;
-
 }
