@@ -59,8 +59,7 @@ public class ProjectInfoController {
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
     public List<Project> projectList(@RequestBody ProjectQo projectQo) {
         return  projectInfoService.projectList(projectQo);
-//        ProjectStatusEnum.valueOf("");
-        //返回的有可能是[]  需要解决
+
     }
 
     @PostMapping("/approveProject")
