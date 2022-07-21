@@ -1,7 +1,7 @@
 //package com.iscas.pm.auth.service;
 //
 //import com.alibaba.fastjson.JSONObject;
-//import com.iscas.pm.auth.domain.User;
+//import com.iscas.pm.auth.domain.user.User;
 //
 //import javax.servlet.http.HttpServletResponse;
 //import java.util.List;

@@ -2,8 +2,8 @@ package com.iscas.pm.auth.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserStatusEnum;
+import com.iscas.pm.auth.domain.user.User;
+import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.AuthRolePermissionService;
 import com.iscas.pm.auth.service.UserService;

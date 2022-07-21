@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.service;
 
-import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 

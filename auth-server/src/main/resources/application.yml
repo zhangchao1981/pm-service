@@ -7,7 +7,7 @@ spring:
     username: root
     password: iscas654321
 server:
-  port: 9088
+  port: 7003
 
 eureka:
   client:

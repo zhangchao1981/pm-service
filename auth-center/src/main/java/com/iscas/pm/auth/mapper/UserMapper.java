@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.mapper;
 
-import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

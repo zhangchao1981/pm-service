@@ -1,6 +1,7 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.UserLoginParam;
+import com.iscas.pm.auth.domain.user.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.AuthToken;
@@ -30,7 +31,7 @@ public class AuthController {
 
     @ApiOperation(value = "用户登录",notes = "用户名密码登录，密码暂且明文方式，后面改为加密方式")
     @PostMapping(value = "/login")
-    public UserDetailInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
+    public UserInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
 
@@ -38,8 +39,14 @@ public class AuthController {
         String access_token = authToken.getAccessToken();
 
         UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName(),"default");
-        userDetailInfo.setAccessToken(access_token);
-        return userDetailInfo;
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(userDetailInfo.getUserId());
+        userInfo.setUserName(userDetailInfo.getUsername());
+        userInfo.setEmployeeName(userDetailInfo.getEmployeeName());
+        userInfo.setAccessToken(access_token);
+        userInfo.setPermissions(userDetailInfo.getPermissions());
+        return userInfo;
     }
 
     @ApiOperation(value = "用户登出",notes = "退出系统，token失效")

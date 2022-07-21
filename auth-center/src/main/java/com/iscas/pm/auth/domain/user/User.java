@@ -1,7 +1,8 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.auth.domain.user;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

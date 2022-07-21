@@ -1,7 +1,8 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.ModifyPwdParam;
-import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.user.User;
+import com.iscas.pm.auth.domain.user.UserInfo;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;

@@ -54,7 +54,7 @@ public class ProjectInfoController {
         return project;
     }
 
-    @GetMapping("/projectList")
+    @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
     public List<Project> projectList(@RequestBody ProjectQo projectQo) {

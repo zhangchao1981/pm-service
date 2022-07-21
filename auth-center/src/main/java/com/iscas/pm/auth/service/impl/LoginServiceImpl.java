@@ -29,7 +29,7 @@
 //import com.gridsum.tac.auth.service.LoginService;
 //import com.gridsum.tac.auth.service.ProjectAuthorityService;
 //import com.gridsum.tac.auth.service.SsoAuthenticateService;
-//import com.iscas.pm.auth.domain.User;
+//import com.iscas.pm.auth.domain.user.User;
 //import lombok.extern.slf4j.Slf4j;
 //import org.apache.commons.lang.StringUtils;
 //import org.springframework.beans.factory.annotation.Autowired;
