@@ -47,6 +47,10 @@ encrypt:
     secret: pmservice
     alias: pmservice
     password: pmservice
+logging:
+  level:
+    root: info
+  file: logs/${spring.application.name}.log
 #feign:
 #  compression:
 #    request:

@@ -1,10 +1,13 @@
 package com.iscas.pm.api.model.project;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * @Author： zhangchao
  * @Date： 2022/7/15
  * @Description： 项目类型枚举类
  */
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ProjectType {
     INTERNAL("INTERNAL","内部项目"),
     RESEARCH("RESEARCH","科研项目"),

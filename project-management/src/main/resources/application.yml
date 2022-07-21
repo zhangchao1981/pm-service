@@ -36,3 +36,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+logging:
+  level:
+    root: info
+  file: logs/${spring.application.name}.log

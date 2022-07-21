@@ -63,7 +63,10 @@ spring:
           filters:
             - StripPrefix=1
 
-
+logging:
+  level:
+    root: info
+  file: logs/${spring.application.name}.log
 
 ignorePaths:
   auth/login,

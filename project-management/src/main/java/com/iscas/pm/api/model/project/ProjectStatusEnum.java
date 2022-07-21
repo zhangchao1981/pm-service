@@ -1,6 +1,7 @@
 package com.iscas.pm.api.model.project;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @date 2022/7/20.
  * @Description： 项目状态枚举类
  */
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ProjectStatusEnum {
     RUNNING("RUNNING", "进行中"),
     CLOSED("CLOSED", "已关闭");
