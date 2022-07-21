@@ -6,6 +6,7 @@ import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ import java.util.Date;
  * @Description： 项目基本信息PO
  */
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "项目信息", description = "项目基本信息，对应主库project表")
 @CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "项目开始日期不能大于项目结束日期")
 @TableName("pm_project")
@@ -42,6 +44,10 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "项目类型")
     @NotNull(message = "项目类型不能为空")
     private ProjectType projectType;
+
+    @ApiModelProperty(value = "项目状态")
+    @NotNull(message = "项目状态")
+    private ProjectStatusEnum status;
 
     @ApiModelProperty(value = "项目开始日期")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

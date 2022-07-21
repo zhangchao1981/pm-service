@@ -26,7 +26,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         //为了测试，把/usercore/**请求都放行了，后续要改
         web.ignoring().antMatchers(
-                "/auth/login","/usercore/**", "/permission/**","/v2/api-docs","doc.html");
+                "/auth/login","/user/**", "/permission/**","/v2/api-docs","doc.html");
     }
 
     /***

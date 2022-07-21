@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.*;
 public interface AuthCenterClient {
 
     @GetMapping(value = "/user/getUserDetails")
-    UserDetails getUserDetails(@RequestHeader String userId, @RequestHeader String projectId);
+    UserDetails getUserDetails(@RequestHeader("userId")  String userId, @RequestHeader("projectId") String projectId,@RequestHeader("Authorization") String token);
 
 }

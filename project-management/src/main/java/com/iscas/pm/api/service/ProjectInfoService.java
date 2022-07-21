@@ -2,6 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.project.Project;
+import com.iscas.pm.api.model.project.ProjectQo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface ProjectInfoService extends IService<Project> {
 
-    List<Project>  get();
+    List<Project> projectList(ProjectQo projectQo);
 }

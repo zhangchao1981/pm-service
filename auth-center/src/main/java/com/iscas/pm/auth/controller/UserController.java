@@ -3,7 +3,9 @@ package com.iscas.pm.auth.controller;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.User;
 import com.iscas.pm.auth.domain.UserDetailInfo;
+import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
+import com.iscas.pm.auth.utils.UserJwt;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,6 +29,9 @@ import javax.validation.constraints.NotEmpty;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    PmRolePermissionService pmRolePermissionService;
+
 
     @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
     @GetMapping("/userList")
@@ -88,9 +95,24 @@ public class UserController {
 
     @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")
     @PostMapping("/getUserDetails")
-    @PreAuthorize("hasAuthority('/user/getUserDetails')")
-    public UserDetailInfo getUserDetails() {
+//    @PreAuthorize("hasAuthority('/user/getUserDetails')")
+    public UserDetailInfo getUserDetails(String userId,String projectId) {
 
+        User user = userService.getById(userId);
+        if (user == null ) {//有可能没有数据
+            return null;
+        }
+        //这里加载的pwd是用于验证的，也就是数据库存的用户密码，如果用户登录login输入的密码不是这个，就会报错
+        String pwd = user.getPassword();//从数据库中查到的密码
+        //获取系统角色下对应的权限列表 user_role
+        List<String> permissionsList = pmRolePermissionService.getPermissionsByUserIdandProjectId(Integer.parseInt(userId),Integer.parseInt(projectId));
+        String permissions = "";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
+
+        for (String permission : permissionsList) {
+            permissions+=permission+",";
+        }
+        permissions = permissions.substring(0, permissions.length() - 1);
+        UserJwt userDetails = new UserJwt(user.getUserName(), pwd, AuthorityUtils.commaSeparatedStringToAuthorityList(permissions));
         return null;
     }
 
