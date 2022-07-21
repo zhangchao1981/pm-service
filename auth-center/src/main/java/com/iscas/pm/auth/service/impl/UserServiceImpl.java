@@ -3,13 +3,20 @@ package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.UserDetailInfo;
+import com.iscas.pm.auth.domain.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
+import com.iscas.pm.auth.service.AuthRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
+import com.iscas.pm.auth.utils.UserJwt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -22,6 +29,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserMapper userMapper;
+    @Autowired
+    private AuthRolePermissionService authRolePermissionService;
 
     @Override
     public User get(Integer id) {
@@ -61,5 +70,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User loadUserByUsername(String username) {
         return userMapper.loadUserByUsername(username);
+    }
+
+    @Override
+    public UserDetailInfo getUserDetails(String userName, String projectId) {
+        User user = loadUserByUsername(userName);
+        if (user == null) {//有可能没有数据
+            return null;
+        }
+        //这里加载的pwd是用于验证的，也就是数据库存的用户密码，如果用户登录login输入的密码不是这个，就会报错
+        String pwd = user.getPassword();//从数据库中查到的密码
+        //获取系统角色下对应的权限列表 user_role
+        List<String> permissionsList = authRolePermissionService.getPermissionsByUserId(user.getId());
+        String permissions = "";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
+
+        for (String permission : permissionsList) {
+            permissions += permission + ",";
+        }
+        permissions = permissions.substring(0, permissions.length() - 1);
+
+        UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(),userName,user.getPassword(),user.getEmployeeName(),user.getStatus()== UserStatusEnum.NORMAL,permissions);
+        return userDetailInfo;
     }
 }

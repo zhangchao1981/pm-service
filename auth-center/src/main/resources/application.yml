@@ -47,7 +47,13 @@ encrypt:
     secret: pmservice
     alias: pmservice
     password: pmservice
-
+#feign:
+#  compression:
+#    request:
+#      enabled: false
+#
+#    response:
+#      enabled: false
 #
 #eureka:
 #  client:

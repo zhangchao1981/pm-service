@@ -3,6 +3,9 @@ package com.iscas.pm.auth.service.impl;
 
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
+import com.iscas.pm.common.core.web.exception.AuthenticateException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
@@ -20,12 +23,14 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 /*****
  * @Date:2022/7/14 14:52
  * @Description: 授权认证login请求  service
  ****/
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
     //客户端ID
@@ -52,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthToken login(String username, String password) {
         //申请令牌
         AuthToken authToken = applyToken(username, password, clientId, clientSecret);
-        if (authToken == null) {
+        if (authToken == null || StringUtils.isBlank(authToken.getAccessToken())) {
             throw new RuntimeException("申请令牌失败");
         }
         return authToken;
@@ -69,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private AuthToken applyToken(String username, String password, String clientId, String clientSecret) {
         //注册中心获取认证服务的实例
-        ServiceInstance serviceInstance = loadBalancerClient.choose("auth-center");
+        ServiceInstance serviceInstance = loadBalancerClient.choose("auth-server");
         if (serviceInstance == null) {
             throw new RuntimeException("申请令牌时报错，找不到auth-center服务");
         }
@@ -92,22 +97,22 @@ public class AuthServiceImpl implements AuthService {
         restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                //当响应的值为400或401时候也要正常响应，不要抛出异常
-                if (response.getRawStatusCode() != 400 && response.getRawStatusCode() != 401) {
-                    super.handleError(response);
+                if (response.getRawStatusCode() == 401)
+                    throw new AuthenticateException("用户名密码错误！");
+                if (response.getRawStatusCode() == 400){
+                    String message = new String(super.getResponseBody(response), "UTF-8");
+                    log.error("获取token令牌报错，错误信息：{}",message);
+                    throw new AuthenticateException("用户名密码错误!");
                 }
+                super.handleError(response);
             }
         });
 
         Map map = null;
-        try {
-            //http请求spring security的申请令牌接口
-            ResponseEntity<Map> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST, new HttpEntity<>(formData, header), Map.class);
-            //获取响应数据
-            map = mapResponseEntity.getBody();
-        } catch (RestClientException e) {
-            throw new RuntimeException(e);
-        }
+        //http请求spring security的申请令牌接口
+        ResponseEntity<Map> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST, new HttpEntity<>(formData, header), Map.class);
+        //获取响应数据
+        map = mapResponseEntity.getBody();
         if (map == null || map.get("access_token") == null || map.get("refresh_token") == null || map.get("jti") == null) {
             //jti是jwt令牌的唯一标识作为用户身份令牌
             throw new RuntimeException("创建令牌失败！");

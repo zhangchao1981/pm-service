@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 /**
  * @Author： zhangchao
  * @Date： 2022/7/19
- * @Description： 用户登录VO
+ * @Description： 用户登录请求参数
  */
 @Data
 @ApiModel("用户登录请求参数")
@@ -18,12 +17,10 @@ import javax.validation.constraints.Size;
 public class UserLoginParam {
 
     @ApiModelProperty(value = "用户名",required = true)
-    @Size(max = 32,message = "用户名需要在0-32位之间")
-    @NotBlank
+    @NotBlank(message = "用户名不能为空")
     private String userName;
 
     @ApiModelProperty(value = "密码",required = true)
-    @Size(max = 32,min = 6,message = "密码长度请在6-32位之间")
-    @NotBlank
+    @NotBlank(message = "密码不能为空")
     private String password;
 }
