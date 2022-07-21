@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserCenterClient {
 
     @GetMapping(value = "/user/getUserDetails")
-    UserDetailInfo getUserDetails(@RequestParam String userName, @RequestParam String projectId);
+    UserDetailInfo getUserDetails(@RequestParam("userName") String userName, @RequestParam("projectId") String projectId);
 
 }
