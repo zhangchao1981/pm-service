@@ -6,6 +6,7 @@ import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.mapper.ProjectMapper;
 import com.iscas.pm.api.model.project.ProjectQo;
 import com.iscas.pm.api.service.ProjectInfoService;
+import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,9 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
     @Override
     public List<Project> projectList(ProjectQo projectQo) {
         QueryWrapper<Project> wrapper = new QueryWrapper<>();
-        wrapper.like("name",projectQo.getProjectname())
-                .eq("status",projectQo.getStatus());
+            wrapper.like(!StringUtil.isNullOrEmpty(projectQo.getProjectname()),"name",projectQo.getProjectname());
+            wrapper.eq(!StringUtil.isNullOrEmpty(projectQo.getStatus()),"status",projectQo.getStatus());
+
         //传入的无论是1还是clossed 都会被转化为closed
         //输出的
         return projectMapper.selectList(wrapper);
