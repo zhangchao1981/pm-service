@@ -3,15 +3,13 @@ package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserDetailInfo;
 import com.iscas.pm.auth.domain.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.AuthRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
-import com.iscas.pm.auth.utils.UserJwt;
+import com.iscas.pm.common.core.model.UserDetailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

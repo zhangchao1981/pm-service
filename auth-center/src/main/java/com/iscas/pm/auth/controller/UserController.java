@@ -2,8 +2,8 @@ package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserDetailInfo;
 import com.iscas.pm.auth.service.UserService;
+import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,12 +12,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/15
+ * @Description： 人员管理
+ */
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -88,7 +92,7 @@ public class UserController {
 
     @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")
     @GetMapping("/getUserDetails")
-    public UserDetailInfo getUserDetails(@RequestParam String userName,@RequestParam String projectId) {
+    public UserDetailInfo getUserDetails(@RequestParam String userName, @RequestParam String projectId) {
         return userService.getUserDetails(userName,projectId);
     }
 

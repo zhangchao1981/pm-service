@@ -2,7 +2,7 @@ package com.iscas.pm.auth.service;
 
 import com.iscas.pm.auth.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.iscas.pm.auth.domain.UserDetailInfo;
+import com.iscas.pm.common.core.model.UserDetailInfo;
 
 /**
 * @author 66410

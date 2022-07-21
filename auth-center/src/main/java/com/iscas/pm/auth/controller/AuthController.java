@@ -2,8 +2,10 @@ package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.UserLoginParam;
 import com.iscas.pm.auth.service.AuthService;
+import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.AuthToken;
 
+import com.iscas.pm.common.core.model.UserDetailInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,22 @@ import javax.validation.Valid;
 public class AuthController {
 
     @Autowired
-    AuthService authService;
+    private AuthService authService;
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value = "用户登录",notes = "用户名密码登录，密码暂且明文方式，后面改为加密方式")
     @PostMapping(value = "/login")
-    public String login(@RequestBody @Valid UserLoginParam userLoginParam) {
+    public UserDetailInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
 
         //获取访问token
         String access_token = authToken.getAccessToken();
-        return access_token;
+
+        UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName(),"default");
+        userDetailInfo.setAccessToken(access_token);
+        return userDetailInfo;
     }
 
     @ApiOperation(value = "用户登出",notes = "退出系统，token失效")

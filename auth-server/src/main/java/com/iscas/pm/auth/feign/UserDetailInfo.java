@@ -35,7 +35,7 @@ public class UserDetailInfo implements UserDetails, Serializable {
     private String employeeName;
 
     @ApiModelProperty("账号是否可用")
-    private boolean userEnabled;
+    private boolean enabled;
 
     @ApiModelProperty("权限列表字符串")
     private String permissions;
@@ -43,12 +43,12 @@ public class UserDetailInfo implements UserDetails, Serializable {
     @ApiModelProperty("权限例表")
     private Collection<GrantedAuthority> authorities;
 
-    public UserDetailInfo(Integer userId, String username, String password, String employeeName, boolean userEnabled, String permissions) {
+    public UserDetailInfo(Integer userId, String username, String password, String employeeName, boolean enabled, String permissions) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.employeeName = employeeName;
-        this.userEnabled = userEnabled;
+        this.enabled = enabled;
         this.permissions = permissions;
     }
 
@@ -79,7 +79,7 @@ public class UserDetailInfo implements UserDetails, Serializable {
 
     @Override
     public boolean isEnabled() {
-        return this.userEnabled;
+        return this.enabled;
     }
 
     @Override
