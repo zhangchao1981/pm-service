@@ -9,6 +9,7 @@ import com.iscas.pm.common.core.web.exception.SimpleBaseException;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +51,9 @@ public class ProjectInfoController {
     @ApiOperation(value = "修改项目", notes = "修改处于未关闭状态的项目信息")
 //    @PreAuthorize("hasAuthority('/projectInfo/editProject')")
     public Project editProject(@RequestBody Project project) {
+        if("CLOSED".equals(project.getStatus())){
+            throw new IllegalArgumentException("该项目处于关闭状态");
+        }
         projectInfoService.saveOrUpdate(project);
         return project;
     }
@@ -59,7 +63,6 @@ public class ProjectInfoController {
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
     public List<Project> projectList(@RequestBody ProjectQo projectQo) {
         return  projectInfoService.projectList(projectQo);
-
     }
 
     @PostMapping("/approveProject")
@@ -70,10 +73,7 @@ public class ProjectInfoController {
         Project project = projectInfoService.getById(audit.getId());
         //审批完成，通过审核(或不通过)，更改project的status
         project.setStatus(ProjectStatusEnum.RUNNING);
-
         //将审核结果通知申请人
-
-
         //更新project表
         projectInfoService.saveOrUpdate(project);
         return project;
@@ -85,7 +85,7 @@ public class ProjectInfoController {
     public Boolean closeProject(@PathVariable String id) {
        Project project = projectInfoService.getById(id);
         if (project==null){
-            throw new SimpleBaseException(404,"未查询到指定项目");
+            throw new IllegalArgumentException("未查询到指定项目");
         }
         projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
         return null;
