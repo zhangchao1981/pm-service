@@ -1,4 +1,4 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.common.core.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

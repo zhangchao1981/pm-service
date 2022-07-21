@@ -1,4 +1,4 @@
-package com.iscas.pm.common.core.util;
+package com.iscas.pm.common.core.model;
 
 /**
  * redis key  的前缀

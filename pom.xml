@@ -47,6 +47,7 @@
         <module>project-management</module>
         <module>register-center</module>
         <module>auth-center</module>
+        <module>auth-server</module>
     </modules>
 
     <dependencies>

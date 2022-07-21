@@ -2,6 +2,7 @@ package com.iscas.pm.auth.service;
 
 import com.iscas.pm.auth.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.iscas.pm.auth.domain.UserDetailInfo;
 
 /**
 * @author 66410
@@ -17,4 +18,6 @@ public interface UserService  extends IService<User>{
     Boolean changePassword(String username, String oldPwd, String newPwd);
 
     User loadUserByUsername(String username);
+
+    UserDetailInfo getUserDetails(String userName, String projectId);
 }

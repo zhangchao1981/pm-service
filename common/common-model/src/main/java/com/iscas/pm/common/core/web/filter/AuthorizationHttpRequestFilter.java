@@ -1,13 +1,16 @@
 package com.iscas.pm.common.core.web.filter;
 
-import com.iscas.pm.common.core.feign.AuthCenterClient;
+import com.iscas.pm.common.core.feign.UserCenterClient;
 import com.iscas.pm.common.core.model.AuthConstants;
+import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
+import com.iscas.pm.common.core.util.TokenDecodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -29,9 +32,9 @@ public class AuthorizationHttpRequestFilter implements Filter {
     private static final String SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
 
     @Autowired
-    private AuthCenterClient authCenterClient;
+    private UserCenterClient userCenterClient;
     @Autowired
-    private TokenDecode tokenDecode;
+    private TokenDecodeUtil tokenDecodeUtil;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -42,24 +45,26 @@ public class AuthorizationHttpRequestFilter implements Filter {
         //从header获取中获取token
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
 
-        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI())) {
+        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
             //从token中解析出用户信息
-            Map<String, String> userInfo = tokenDecode.getUserInfo();
-            String userId = userInfo.get("userId");
+            Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
+            String userName = userInfo.get("user_name");
+
             //从redis中取出当前项目id  todo redis无效token会越来越多，占用空间
             Object obj = redisUtil.get(token);
-            String projectId = obj == null ? "pm_primary" : obj.toString();
+            String projectId = obj == null ? "default" : obj.toString();
 
-            if (StringUtils.isBlank(projectId)) {
+            if (!"default".equals(projectId)) {
                 //feign调用获取当前用户的详细信息（主要是获取在当前项目上的权限列表） todo 每次访问都查库有性能问题
-                UserDetails userDetails = authCenterClient.getUserDetails(userId, projectId);
+                UserDetailInfo userDetails = userCenterClient.getUserDetails(userName, projectId);
+                userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(userDetails.getPermissions()));
+
                 //存入security的上下文中
                 setUserDetailsToSession(userDetails, request);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
-
 
     private void setUserDetailsToSession(UserDetails user, HttpServletRequest request) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getAuthorities(), user.getAuthorities());

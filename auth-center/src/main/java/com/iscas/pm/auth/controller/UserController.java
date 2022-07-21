@@ -80,18 +80,16 @@ public class UserController {
     }
 
     @ApiOperation(value = "重置密码")
-    @PostMapping("/resetPassWord")
+    @GetMapping("/resetPassWord")
     @PreAuthorize("hasAuthority('/user/resetPassWord')")
     public String resetPassWord(@RequestParam("userId") Integer userId) {
         return null;
     }
 
     @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")
-    @PostMapping("/getUserDetails")
-    @PreAuthorize("hasAuthority('/user/getUserDetails')")
-    public UserDetailInfo getUserDetails() {
-
-        return null;
+    @GetMapping("/getUserDetails")
+    public UserDetailInfo getUserDetails(@RequestParam String userName,@RequestParam String projectId) {
+        return userService.getUserDetails(userName,projectId);
     }
 
 

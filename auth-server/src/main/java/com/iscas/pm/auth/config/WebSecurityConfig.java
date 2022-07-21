@@ -11,28 +11,23 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @Configuration
 @EnableWebSecurity
 @Order(-1)
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /***
+    /**
      * 忽略安全拦截的URL
-     * @param web
-     * @throws Exception
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //为了测试，把/usercore/**请求都放行了，后续要改
-        web.ignoring().antMatchers(
-                "/auth/login","/usercore/**", "/permission/**","/v2/api-docs","doc.html");
+        web.ignoring().antMatchers("/auth/login",
+                "/v2/api-docs",
+                "doc.html");
     }
 
-    /***
+    /**
      * 创建授权管理认证对象
-     * @return
-     * @throws Exception
      */
     @Bean
     @Override
@@ -41,26 +36,23 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return manager;
     }
 
-    /***
+    /**
      * 采用BCryptPasswordEncoder对密码进行编码
-     * @return
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /****
+    /**
      *
-     * @param http
-     * @throws Exception
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic()        //启用Http基本身份验证
                 .and()
-                .formLogin()       //启用表单身份验证
+                .formLogin()        //启用表单身份验证
                 .and()
                 .authorizeRequests()    //限制基于Request请求访问
                 .anyRequest()

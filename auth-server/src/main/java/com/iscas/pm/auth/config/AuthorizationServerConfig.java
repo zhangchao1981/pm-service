@@ -24,32 +24,36 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.security.KeyPair;
 
-
+/**
+ * @Author： zhangchao
+ * @Date： 2022/7/12
+ * @Description： 认证服务器配置类
+ */
 @Configuration
 @EnableAuthorizationServer
 class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    //数据源，用于从数据库获取数据进行认证操作，测试可以从内存中获取
+    //数据源，用于从数据库获取数据进行认证操作
     @Autowired
     private DataSource dataSource;
+
     //jwt令牌转换器
     @Autowired
     private JwtAccessTokenConverter jwtAccessTokenConverter;
+
     //SpringSecurity 用户自定义授权认证类
     @Autowired
     UserDetailsService userDetailsService;
+
     //授权认证管理器
     @Autowired
     AuthenticationManager authenticationManager;
+
     //令牌持久化存储接口
     @Autowired
     TokenStore tokenStore;
-    @Autowired
-    private CustomUserAuthenticationConverter customUserAuthenticationConverter;
 
     /***
      * 客户端信息配置
-     * @param clients
-     * @throws Exception
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -58,26 +62,17 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     /***
      * 授权服务器端点配置
-
-     * @Description:  accessTokenConverter  将token转换成参数中的形式
-     *                  tokenStore           令牌存储方式
-     *                 userDetailsService    用户信息封装
-     *
-     * @param endpoints
-     * @throws Exception
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.accessTokenConverter(jwtAccessTokenConverter)
                 .authenticationManager(authenticationManager)//认证管理器
-                .tokenStore(tokenStore)                       //令牌存储
-                .userDetailsService(userDetailsService);     //用户信息service
+                .tokenStore(tokenStore)                      //令牌存储
+                .userDetailsService(userDetailsService);     //获取用户信息的service
     }
 
     /***
      * 授权服务器的安全配置
-     * @param oauthServer
-     * @throws Exception
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
@@ -86,7 +81,6 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()");
     }
-
 
     //读取密钥的配置
     @Bean("keyProp")
@@ -111,22 +105,21 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     /****
      * JWT令牌转换器   ：将拿到的token转换成JWT令牌
-     * @param customUserAuthenticationConverter
-     * @return
      */
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(CustomUserAuthenticationConverter customUserAuthenticationConverter) {
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         KeyPair keyPair = new KeyStoreKeyFactory(
-                keyProperties.getKeyStore().getLocation(),                          //证书路径 changgou.jks
-                keyProperties.getKeyStore().getSecret().toCharArray())              //证书秘钥 changgouapp
+                keyProperties.getKeyStore().getLocation(),                          //证书路径 pmservice.jks
+                keyProperties.getKeyStore().getSecret().toCharArray())              //证书秘钥
                 .getKeyPair(
-                        keyProperties.getKeyStore().getAlias(),                     //证书别名 changgou
-                        keyProperties.getKeyStore().getPassword().toCharArray());   //证书密码 changgou
+                        keyProperties.getKeyStore().getAlias(),                     //证书别名
+                        keyProperties.getKeyStore().getPassword().toCharArray());   //证书密码
         converter.setKeyPair(keyPair);
+
         //配置自定义的CustomUserAuthenticationConverter
-        DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
-        accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
+        //DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
+        //accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
         return converter;
     }
 }
