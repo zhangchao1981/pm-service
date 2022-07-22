@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.util.Map;
 
@@ -44,23 +45,27 @@ public class AuthorizationHttpRequestFilter implements Filter {
 
         //从header获取中获取token
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
-
         if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
             //从token中解析出用户信息
             Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
-            String userName = userInfo.get("user_name");
-
+            String userName = userInfo.get("name");
+            String userid =String.valueOf(userInfo.get("id"));
             //从redis中取出当前项目id  todo redis无效token会越来越多，占用空间
             Object obj = redisUtil.get(token);
             String projectId = obj == null ? "default" : obj.toString();
+            //将用户id放到request里
+            request.setAttribute("userid",userid);
 
+
+            //切换项目后：   加载用户信息和权限信息
             if (!"default".equals(projectId)) {
                 //feign调用获取当前用户的详细信息（主要是获取在当前项目上的权限列表） todo 每次访问都查库有性能问题
                 UserDetailInfo userDetails = userCenterClient.getUserDetails(userName, projectId);
                 userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(userDetails.getPermissions()));
-
                 //存入security的上下文中
                 setUserDetailsToSession(userDetails, request);
+            }else{
+                //不切换项目则把用户信息放到请求头里
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

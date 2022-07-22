@@ -15,12 +15,11 @@ public class ProjectQo {
 
     @ApiModelProperty(value = "项目名称")
     @Size(max = 20)
-    private String projectname;
+    private String projectName;
 
 
     @ApiModelProperty(value = "项目状态")
     @Size(max = 20)
-    private String status;
-
+    private ProjectStatusEnum status;
 
 }

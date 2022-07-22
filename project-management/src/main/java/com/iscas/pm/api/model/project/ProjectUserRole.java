@@ -7,10 +7,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
 
+
 /**
- * 
  * @TableName pm_project_user_role
+ * @Author：李昶
+ * @Date： 2022/7/21
+ * @Description： 表对应实体类
  */
+
 @TableName(value ="pm_project_user_role")
 @Data
 public class ProjectUserRole implements Serializable {

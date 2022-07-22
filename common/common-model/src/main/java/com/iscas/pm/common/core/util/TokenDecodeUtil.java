@@ -36,8 +36,10 @@ public class TokenDecodeUtil {
         //3.解析token
         Jwt jwt = JwtHelper.decodeAndVerify(token, new RsaVerifier(pubKey));
         //4.返回解析后内容
-        Map<String,String> map = JSON.parseObject( jwt.getClaims(), Map.class);
+        Map<String,String> map = JSON.parseObject(jwt.getClaims(), Map.class);
 
         return map;
     }
+
+
 }

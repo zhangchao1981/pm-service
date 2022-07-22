@@ -81,12 +81,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //获取系统角色下对应的权限列表 user_role
         List<String> permissionsList = authRolePermissionService.getPermissionsByUserId(user.getId());
         String permissions = "";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
-
         for (String permission : permissionsList) {
             permissions += permission + ",";
         }
         permissions = permissions.substring(0, permissions.length() - 1);
-
         UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(),userName,user.getPassword(),user.getEmployeeName(),user.getStatus()== UserStatusEnum.NORMAL,permissions);
         return userDetailInfo;
     }

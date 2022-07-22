@@ -17,4 +17,7 @@ import java.util.List;
 public interface ProjectInfoService extends IService<Project> {
 
     List<Project> projectList(ProjectQo projectQo);
+
+
+    List<String> projectPermissions(Project project);
 }
