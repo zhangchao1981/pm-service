@@ -1,6 +1,8 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectUserRoleService;
@@ -75,24 +77,8 @@ public class ProjectInfoController {
     @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
-    public List<Project> projectList(@RequestBody @Valid ProjectQo projectQo,Integer currentPage,Integer pageSize) {
-//        Page page = new Page(currentPage,pageSize,total);
-//
-//        try {
-//            Integer total = tGasService.count();
-//            Page page = new Page(currentPage,pageSize,total);
-//            Page page1 = tGasService.page(page);
-//            List<Page> list =new ArrayList<>();
-//            list.add(page1);
-//            result=new Result("200","success",null,list);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            result = new Result("500","failed",e.getMessage(),null);
-//        }
-//        return result;
-
-
-        return  projectInfoService.projectList(projectQo);
+    public IPage<Project> projectList(@RequestBody @Valid ProjectQo projectQo, Page page) {
+        return  projectInfoService.projectList(projectQo,page);
     }
 
     @PostMapping("/approveProject")
@@ -157,8 +143,6 @@ public class ProjectInfoController {
         // 有权限则查询该角色的权限列表
        List<String> permissions=rolePermissionService.getPermissions(roleInfo.getRoleId());
         //在redis中存储accesstoken 或jti与projectid的映射关系
-
-
         //返回对应Project信息
         QueryWrapper<Project> projectQuery = new QueryWrapper<>();
         projectQuery.eq("id",projectId);
