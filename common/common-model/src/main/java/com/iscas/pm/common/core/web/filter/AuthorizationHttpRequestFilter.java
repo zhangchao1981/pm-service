@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.util.Map;
 
@@ -45,7 +46,6 @@ public class AuthorizationHttpRequestFilter implements Filter {
 
         //从header获取中获取token
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
-
         if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
             //从redis中取出当前项目id
             Object obj = redisUtil.get(token);
@@ -62,9 +62,6 @@ public class AuthorizationHttpRequestFilter implements Filter {
             //用户信息中获取当前项目上的权限列表
             if (!"default".equals(currentProjectId)) {
                 String userName = userInfo.get("user_name");
-//                //feign调用获取当前用户的详细信息（主要是获取在当前项目上的权限列表） todo 每次访问都查库有性能问题
-//                UserDetailInfo userDetails = userCenterClient.getUserDetails(userName, currentProjectId);
-//                userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(userDetails.getSystemPermissions()));
 
                 //存入security的上下文中
                 //setUserDetailsToSession(userDetails, request);

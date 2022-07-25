@@ -1,5 +1,6 @@
 package com.iscas.pm.auth.config;
 
+import com.iscas.pm.auth.feign.UserDetailInfo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
@@ -24,13 +25,14 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
         HashMap response = new HashMap();
-        response.put("name","自定义");
-        response.put("id", "自定义");
+        UserDetailInfo userDetailInfo=(UserDetailInfo)authentication.getPrincipal();
+        response.put("name",userDetailInfo.getUsername());
+        response.put("id", userDetailInfo.getUserId());
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
         }
-
         return response;
     }
+    
 
 }

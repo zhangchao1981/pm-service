@@ -51,7 +51,6 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     //令牌持久化存储接口
     @Autowired
     TokenStore tokenStore;
-
     @Autowired
     private CustomUserAuthenticationConverter customUserAuthenticationConverter;
 
@@ -110,7 +109,7 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
      * JWT令牌转换器   ：将拿到的token转换成JWT令牌
      */
     @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+    public JwtAccessTokenConverter jwtAccessTokenConverter( CustomUserAuthenticationConverter customUserAuthenticationConverter) {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         KeyPair keyPair = new KeyStoreKeyFactory(
                 keyProperties.getKeyStore().getLocation(),                          //证书路径 pmservice.jks
@@ -121,8 +120,8 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
         converter.setKeyPair(keyPair);
 
         //配置自定义的CustomUserAuthenticationConverter
-//        DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
-//        accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
+        DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
+        accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
         return converter;
     }
 }

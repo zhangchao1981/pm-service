@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -59,6 +60,33 @@ public class Project implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
+    @ApiModelProperty(value = "项目负责人")
+    @NotBlank(message = "项目负责人不能为空")
+    @Size(max = 25)
+    private String managerName;
 
+    @ApiModelProperty(value = "项目概述")
+    private String description;
+
+
+
+    @ApiModelProperty(value = "研制单位")
+    private String manufacture;
+
+
+    @ApiModelProperty(value = "项目提出方")
+    private String projectProvider;
+
+    @ApiModelProperty(value = "需求提出方")
+    private String requirementProvider;
+
+    @ApiModelProperty(value = "合同编号")
+    private String contractId;
+
+    @ApiModelProperty(value = "合同金额")
+    private BigDecimal contractAmount;
+
+    @ApiModelProperty(value = "创建人的用户名")
+    private String createUser;
 
 }

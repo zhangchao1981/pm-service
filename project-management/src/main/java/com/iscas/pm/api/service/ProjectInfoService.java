@@ -1,12 +1,12 @@
 package com.iscas.pm.api.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.model.project.ProjectQo;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
+
 import java.util.List;
 
 /**
@@ -16,5 +16,8 @@ import java.util.List;
  */
 public interface ProjectInfoService extends IService<Project> {
 
-    List<Project> projectList(ProjectQo projectQo);
+    IPage<Project> projectList(ProjectQo projectQo, Page page);
+
+
+    List<String> projectPermissions(Project project);
 }
