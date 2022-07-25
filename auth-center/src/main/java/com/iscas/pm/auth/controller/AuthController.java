@@ -45,7 +45,8 @@ public class AuthController {
         userInfo.setUserName(userDetailInfo.getUsername());
         userInfo.setEmployeeName(userDetailInfo.getEmployeeName());
         userInfo.setAccessToken(access_token);
-        userInfo.setPermissions(userDetailInfo.getPermissions());
+        userInfo.setSystemPermissions(userDetailInfo.getSystemPermissions());
+        userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
         return userInfo;
     }
 

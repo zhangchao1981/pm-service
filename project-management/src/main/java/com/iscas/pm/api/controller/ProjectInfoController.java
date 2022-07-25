@@ -40,7 +40,7 @@ public class ProjectInfoController {
 
     @PostMapping("/addProject")
     @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
-//    @PreAuthorize("hasAuthority('/projectInfo/addProject')")
+    @PreAuthorize("hasAuthority('/projectInfo/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
         projectInfoService.save(project);
         return project;

@@ -2,6 +2,7 @@ package com.iscas.pm.auth.mapper;
 
 import com.iscas.pm.auth.domain.PmRolePermission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iscas.pm.auth.domain.ProjectPermission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -15,7 +16,7 @@ import java.util.List;
 * @Entity auth.domain.PmRolePermission
 */
 @Mapper
-public interface PmRolePermissionMapper extends BaseMapper<PmRolePermission> {
+public interface PmRolePermissionMapper {
 
     @Select("SELECT pm_role_permission.permission_id " +
             " FROM apm_role_permission " +"INNER JOIN pm_project_user_role "
@@ -23,8 +24,10 @@ public interface PmRolePermissionMapper extends BaseMapper<PmRolePermission> {
             " WHERE  pm_project_user_role.user_id=#{userId} "+"AND pm_project_user_role.project_id=#{projectId}" )
     List<String> PermissionsByUserIdandProjectId(@Param("userId")Integer userId,@Param("projectId") Integer projectId);
 
-
-
+    @Select("SELECT project_id,permission_id" +
+            " FROM pm_project_user_role,pm_role_permission" +
+            " WHERE pm_project_user_role.role_id=pm_role_permission.role_id "+" AND user_id =#{userId}" )
+    List<ProjectPermission> selectProjectPermissions(@Param("userId") Integer userId);
 }
 
 

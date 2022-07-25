@@ -5,6 +5,7 @@ import com.iscas.pm.common.core.model.AuthConstants;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.util.TokenDecodeUtil;
+import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,26 +47,24 @@ public class AuthorizationHttpRequestFilter implements Filter {
         //从header获取中获取token
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
         if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
-            //从token中解析出用户信息
-            Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
-            String userName = userInfo.get("name");
-            String userid =String.valueOf(userInfo.get("id"));
-            //从redis中取出当前项目id  todo redis无效token会越来越多，占用空间
+            //从redis中取出当前项目id
             Object obj = redisUtil.get(token);
-            String projectId = obj == null ? "default" : obj.toString();
-            //将用户id放到request里
-            request.setAttribute("userid",userid);
+            String currentProjectId = obj == null ? "default" : obj.toString();
 
+            //切换数据源
+            if (!request.getRequestURI().startsWith("/projectInfo") && !request.getRequestURI().startsWith("/auth")) {
+                DataSourceHolder.setDB(currentProjectId);
+            }
 
-            //切换项目后：   加载用户信息和权限信息
-            if (!"default".equals(projectId)) {
-                //feign调用获取当前用户的详细信息（主要是获取在当前项目上的权限列表） todo 每次访问都查库有性能问题
-                UserDetailInfo userDetails = userCenterClient.getUserDetails(userName, projectId);
-                userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(userDetails.getPermissions()));
+            //从token中解析出用户信息，放入ThreadLocal中
+            Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
+
+            //用户信息中获取当前项目上的权限列表
+            if (!"default".equals(currentProjectId)) {
+                String userName = userInfo.get("user_name");
+
                 //存入security的上下文中
-                setUserDetailsToSession(userDetails, request);
-            }else{
-                //不切换项目则把用户信息放到请求头里
+                //setUserDetailsToSession(userDetails, request);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

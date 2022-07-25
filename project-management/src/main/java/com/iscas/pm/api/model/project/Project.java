@@ -40,11 +40,11 @@ public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目密级")
     @NotNull(message = "项目密级不能为空")
-    private SecretLevel secretLevel;
+    private SecretLevelEnum secretLevel;
 
     @ApiModelProperty(value = "项目类型")
     @NotNull(message = "项目类型不能为空")
-    private ProjectType projectType;
+    private ProjectTypeEnum projectType;
 
     @ApiModelProperty(value = "项目状态")
     @NotNull(message = "项目状态")

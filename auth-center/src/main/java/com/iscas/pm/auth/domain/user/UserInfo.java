@@ -5,11 +5,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -27,7 +26,10 @@ public class UserInfo extends User implements Serializable {
     @ApiModelProperty("token令牌")
     private String accessToken;
 
-    @ApiModelProperty("权限列表字符串")
-    private String permissions;
+    @ApiModelProperty("系统角色对应的权限列表")
+    private List<String> systemPermissions;
+
+    @ApiModelProperty("项目角色对应的权限列表")
+    private Map<String,List<String> >projectPermissions;
 
 }
