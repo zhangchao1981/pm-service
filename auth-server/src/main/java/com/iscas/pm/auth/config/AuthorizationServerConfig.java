@@ -52,6 +52,9 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     TokenStore tokenStore;
 
+    @Autowired
+    private CustomUserAuthenticationConverter customUserAuthenticationConverter;
+
     /***
      * 客户端信息配置
      */
@@ -118,8 +121,8 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
         converter.setKeyPair(keyPair);
 
         //配置自定义的CustomUserAuthenticationConverter
-        //DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
-        //accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
+//        DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) converter.getAccessTokenConverter();
+//        accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
         return converter;
     }
 }

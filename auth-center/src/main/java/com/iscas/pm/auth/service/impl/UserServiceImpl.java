@@ -2,20 +2,25 @@ package com.iscas.pm.auth.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.iscas.pm.auth.controller.PermissionController;
+import com.iscas.pm.auth.domain.ProjectPermission;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.AuthRolePermissionService;
+import com.iscas.pm.auth.service.PmProjectUserRoleService;
+import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author lichang
@@ -29,6 +34,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
     @Autowired
     private AuthRolePermissionService authRolePermissionService;
+    @Autowired
+    private PmRolePermissionService pmRolePermissionService;
 
     @Override
     public User get(Integer id) {
@@ -73,21 +80,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public UserDetailInfo getUserDetails(String userName, String projectId) {
         User user = loadUserByUsername(userName);
-        if (user == null) {//有可能没有数据
+        if (user == null) {
             return null;
         }
-        //这里加载的pwd是用于验证的，也就是数据库存的用户密码，如果用户登录login输入的密码不是这个，就会报错
-        String pwd = user.getPassword();//从数据库中查到的密码
-        //获取系统角色下对应的权限列表 user_role
-        List<String> permissionsList = authRolePermissionService.getPermissionsByUserId(user.getId());
-        String permissions = "";//这里应该写成从数据库里获取，但是由于我们的表中没存，所以就简化了
 
-        for (String permission : permissionsList) {
-            permissions += permission + ",";
-        }
-        permissions = permissions.substring(0, permissions.length() - 1);
+        //返回系统角色对应的权限列表，去重
+        List<String> SystemPermissions = authRolePermissionService.getPermissionsByUserId(user.getId());
+        SystemPermissions = SystemPermissions.stream().distinct().collect(Collectors.toList());
+        //String permissions_str = StringUtils.join(SystemPermissions, ",");
 
-        UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(),userName,user.getPassword(),user.getEmployeeName(),user.getStatus()== UserStatusEnum.NORMAL,permissions);
+        //获取所有项目角色对应的权限列表
+        List<ProjectPermission> projectPermissionList = pmRolePermissionService.selectProjectPermissions(user.getId());
+            Map<String, List<String>> projectPermissions = projectPermissionList.stream().collect(Collectors.groupingBy(ProjectPermission::getProjectId, Collectors.mapping(ProjectPermission::getPermissionId, Collectors.toList())));
+
+        //封装成UserDetails对象
+        UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(), userName, user.getPassword(), user.getEmployeeName(), user.getStatus() == UserStatusEnum.NORMAL, SystemPermissions,projectPermissions);
         return userDetailInfo;
     }
 }

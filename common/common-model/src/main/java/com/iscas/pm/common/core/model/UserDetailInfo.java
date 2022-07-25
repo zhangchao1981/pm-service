@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -37,19 +39,23 @@ public class UserDetailInfo implements UserDetails, Serializable {
     @ApiModelProperty("账号是否可用")
     private boolean enabled;
 
-    @ApiModelProperty("权限列表字符串")
-    private String permissions;
+    @ApiModelProperty("系统角色对应的权限列表")
+    private List<String> SystemPermissions;
+
+    @ApiModelProperty("项目角色对应的权限列表,key为项目id，value为项目下的权限列表")
+    private Map<String, List<String>> projectPermissions;
 
     @ApiModelProperty("权限例表")
     private Collection<GrantedAuthority> authorities;
 
-    public UserDetailInfo(Integer userId, String username, String password, String employeeName, boolean enabled, String permissions) {
+    public UserDetailInfo(Integer userId, String username, String password, String employeeName, boolean enabled, List<String> SystemPermissions, Map<String, List<String>> projectPermissions) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.employeeName = employeeName;
         this.enabled = enabled;
-        this.permissions = permissions;
+        this.SystemPermissions = SystemPermissions;
+        this.projectPermissions = projectPermissions;
     }
 
     @Override

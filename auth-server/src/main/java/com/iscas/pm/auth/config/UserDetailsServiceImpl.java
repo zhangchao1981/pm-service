@@ -2,6 +2,7 @@ package com.iscas.pm.auth.config;
 
 import com.iscas.pm.auth.feign.UserDetailInfo;
 import com.iscas.pm.auth.feign.UserCenterClient;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -43,7 +44,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         UserDetailInfo userDetails = userCenterClient.getUserDetails(username, "default");
-        userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(userDetails.getPermissions()));
+
+        userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(StringUtils.join(userDetails.getSystemPermissions(), ",")));
 
         return userDetails;
     }

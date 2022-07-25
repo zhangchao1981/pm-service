@@ -2,6 +2,7 @@ package com.iscas.pm.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.auth.domain.AuthRolePermission;
+import com.iscas.pm.auth.domain.ProjectPermission;
 import com.sun.org.apache.xpath.internal.operations.Plus;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,6 +31,9 @@ public interface AuthRolePermissionMapper extends BaseMapper<AuthRolePermission>
             +"ON auth_user_role.role_id=auth_role_permission.role_id "+
             " WHERE auth_user_role.user_id=#{userid}" )
     List<String> getPerMissionByUserId(@Param("userid") Integer userid);
+
+
+
 }
 
 

@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum SecretLevel {
+public enum SecretLevelEnum {
     NO_SECRET("NO_SECRET","非密"),
     INTERNAL("INTERNAL","内部"),
     SECRET("SECRET","秘密");
@@ -18,7 +18,7 @@ public enum SecretLevel {
     private final String code;
     private final String value;
 
-    SecretLevel(String code,String value) {
+    SecretLevelEnum(String code, String value) {
         this.code = code;
         this.value = value;
     }

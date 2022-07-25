@@ -2,20 +2,18 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.iscas.pm.auth.mapper.PmProjectUserRoleMapper">
+<mapper namespace="com.iscas.pm.auth.mapper.PmRolePermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.PmProjectUserRole">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="userId" column="user_id" jdbcType="INTEGER"/>
-            <result property="roleId" column="role_id" jdbcType="INTEGER"/>
-            <result property="projectId" column="project_id" jdbcType="VARCHAR"/>
-    </resultMap>
+<!--    <resultMap id="ProjectPermission" type="com.iscas.pm.auth.domain.ProjectPermission">-->
+<!--        <result property="projectId" column="project_id" jdbcType="VARCHAR"/>-->
+<!--        <result property="permissionId" column="permission_id" jdbcType="VARCHAR"/>-->
+<!--    </resultMap>-->
 
-    <sql id="Base_Column_List">
-        id,user_id,role_id,
-        project_id
-    </sql>
 
-    <select id="selectRoleByUserIdAndProjectId" resultType="java.lang.Integer"></select>
+<!--    <select id="selectProjectPermissions" resultType="ProjectPermission">-->
+<!--        select project_id,permission_id-->
+<!--        from pm_project_user_role,pm_role_permission-->
+<!--        where pm_project_user_role.role_id=pm_role_permission.role_id and user_id =#{userId}-->
+<!--    </select>-->
 
 </mapper>
