@@ -22,6 +22,9 @@ public interface PmRolePermissionMapper extends BaseMapper<PmRolePermission> {
             +"ON  pm_role_permission.role_id=pm_project_user_role.role_id  "+
             " WHERE  pm_project_user_role.user_id=#{userId} "+"AND pm_project_user_role.project_id=#{projectId}" )
     List<String> PermissionsByUserIdandProjectId(@Param("userId")Integer userId,@Param("projectId") Integer projectId);
+
+
+
 }
 
 

@@ -8,24 +8,14 @@ import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectUserRoleService;
 import com.iscas.pm.api.service.RolePermissionService;
 import com.iscas.pm.common.core.util.TokenDecodeUtil;
-import com.iscas.pm.common.core.web.exception.SimpleBaseException;
-import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.management.relation.Role;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +67,8 @@ public class ProjectInfoController {
     @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
-    public IPage<Project> projectList(@RequestBody @Valid ProjectQo projectQo, Page page) {
+    public IPage<Project> projectList(@RequestBody @Valid ProjectQo projectQo) {
+        Page page = projectQo.getPage();
         return  projectInfoService.projectList(projectQo,page);
     }
 

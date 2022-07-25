@@ -1,8 +1,10 @@
 package com.iscas.pm.api.model.project;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
@@ -19,7 +21,10 @@ public class ProjectQo {
 
 
     @ApiModelProperty(value = "项目状态")
-    @Size(max = 20)
     private ProjectStatusEnum status;
+
+    @NotEmpty
+    @ApiModelProperty(value = "分页信息")
+    private Page page;
 
 }
