@@ -42,11 +42,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 return new User(username,clientSecret, AuthorityUtils.commaSeparatedStringToAuthorityList(""));
             }
         }
-
-        UserDetailInfo userDetails = userCenterClient.getUserDetails(username, "default");
-
+        UserDetailInfo userDetails = userCenterClient.getUserDetails(username);
         userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(StringUtils.join(userDetails.getSystemPermissions(), ",")));
-
         return userDetails;
     }
 }

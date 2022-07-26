@@ -28,6 +28,10 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
         UserDetailInfo userDetailInfo=(UserDetailInfo)authentication.getPrincipal();
         response.put("name",userDetailInfo.getUsername());
         response.put("id", userDetailInfo.getUserId());
+        response.put("projectPermissions",userDetailInfo.getProjectPermissions());
+
+        //把系统权限列表放进token里
+//        response.put(userDetailInfo.get)
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
             response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
         }

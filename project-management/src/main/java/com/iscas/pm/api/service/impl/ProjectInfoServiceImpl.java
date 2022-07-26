@@ -46,6 +46,8 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
         Object userid = RequestContextHolder.getRequestAttributes().getAttribute("userid", 0);
         //拿到userid 和 projectid  判断用户是否在该project里面是有编辑权限的角色
         String projectId = project.getId();
+
+
         return permissionMapper.getPerMissions((Integer) userid, Integer.parseInt(projectId));
     }
 }

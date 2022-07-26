@@ -110,8 +110,8 @@ public class UserController {
 
     @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")
     @GetMapping("/getUserDetails")
-    public UserDetailInfo getUserDetails(@RequestParam String userName, @RequestParam String projectId) {
-        return userService.getUserDetails(userName,projectId);
+    public UserDetailInfo getUserDetails(@RequestParam String userName) {
+        return userService.getUserDetails(userName);
     }
 
 }

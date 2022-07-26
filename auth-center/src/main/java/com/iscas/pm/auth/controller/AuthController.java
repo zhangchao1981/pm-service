@@ -38,7 +38,7 @@ public class AuthController {
         //获取访问token
         String access_token = authToken.getAccessToken();
 
-        UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName(),"default");
+        UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName());
 
         UserInfo userInfo = new UserInfo();
         userInfo.setId(userDetailInfo.getUserId());

@@ -1,6 +1,7 @@
 package com.iscas.pm.common.core.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.common.core.config.ResourceServerConfig;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.jwt.Jwt;
@@ -27,8 +28,9 @@ public class TokenDecodeUtil {
 
     /**
      * 解析token，获取当前的登录的用户的用户信息
+     * @return
      */
-    public Map<String, String> getUserInfo() {
+    public Map<String, Object> getUserInfo() {
         //1.获取令牌
         String token = getToken();
         //2.获取公钥
@@ -36,7 +38,7 @@ public class TokenDecodeUtil {
         //3.解析token
         Jwt jwt = JwtHelper.decodeAndVerify(token, new RsaVerifier(pubKey));
         //4.返回解析后内容
-        Map<String,String> map = JSON.parseObject(jwt.getClaims(), Map.class);
+        Map<String, Object> map = JSON.parseObject(jwt.getClaims(), Map.class);
 
         return map;
     }

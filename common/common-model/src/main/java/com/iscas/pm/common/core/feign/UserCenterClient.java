@@ -10,5 +10,4 @@ public interface UserCenterClient {
 
     @GetMapping(value = "/user/getUserDetails")
     UserDetailInfo getUserDetails(@RequestParam(value = "userName") String userName, @RequestParam(value = "projectId") String projectId);
-
 }

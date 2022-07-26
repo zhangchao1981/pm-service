@@ -83,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserDetailInfo getUserDetails(String userName, String projectId) {
+    public UserDetailInfo getUserDetails(String userName) {
         User user = loadUserByUsername(userName);
         if (user == null) {
             return null;
