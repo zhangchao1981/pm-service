@@ -17,8 +17,6 @@ import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -126,11 +124,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Boolean adduserroles(Integer userid, List<Integer> roles) {
-        AuthUserRole authUserRole = new AuthUserRole();
-        authUserRole.setUser_id(userid);
-        for (int i = 0; i < roles.size(); i++) {
-            authUserRole.setRole_id(roles.get(i));
 
+        AuthUserRole authUserRole = new AuthUserRole();
+        authUserRole.setUserId(userid);
+        //先把原来分配的角色删了
+        QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userid);
+        authUserRoleService.remove(wrapper);
+
+        for (int i = 0; i < roles.size(); i++) {
+            authUserRole.setRoleId(roles.get(i));
             if (!authUserRoleService.save(authUserRole)){
                 return false;
             }

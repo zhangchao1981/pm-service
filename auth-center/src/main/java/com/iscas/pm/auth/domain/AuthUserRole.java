@@ -25,12 +25,12 @@ public class AuthUserRole implements Serializable {
      * 角色id
      */
     @TableField(value = "role_id")
-    private Integer role_id;
+    private Integer roleId;
 
     /**
      * 用户id
      */
     @TableField(value = "user_id")
-    private Integer user_id;
+    private Integer userId;
 
 }
