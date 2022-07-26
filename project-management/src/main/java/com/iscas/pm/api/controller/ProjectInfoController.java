@@ -1,5 +1,6 @@
 package com.iscas.pm.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -48,7 +49,7 @@ public class ProjectInfoController {
 
     @PostMapping("/editProject")
     @ApiOperation(value = "修改项目", notes = "修改处于未关闭状态的项目信息")
-    @PreAuthorize("hasAuthority('/projectInfo/editProject')")
+//    @PreAuthorize("hasAuthority('/projectInfo/editProject')")
     public Project editProject(@RequestBody @Valid Project project) {
         //首先判断项目状态
         if(ProjectStatusEnum.CLOSED==project.getStatus()){
@@ -122,7 +123,7 @@ public class ProjectInfoController {
         //判断是否有指定项目的权限
         //从 pm_project_user_role表里面找到userid-projectid对应的role
         //从请求头里获取userid
-        Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
+        Map<String, Object> userInfo = tokenDecodeUtil.getUserInfo();
         QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id",projectId);
 //        queryWrapper.eq("user_id",userId);

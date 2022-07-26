@@ -97,8 +97,9 @@ public class AuthServiceImpl implements AuthService {
         restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                if (response.getRawStatusCode() == 401)
+                if (response.getRawStatusCode() == 401) {
                     throw new AuthenticateException("用户名密码错误！");
+                }
                 if (response.getRawStatusCode() == 400){
                     String message = new String(super.getResponseBody(response), "UTF-8");
                     log.error("获取token令牌报错，错误信息：{}",message);

@@ -1,5 +1,9 @@
 package com.iscas.pm.common.core.web.filter;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonParser;
 import com.iscas.pm.common.core.feign.UserCenterClient;
 import com.iscas.pm.common.core.model.AuthConstants;
 import com.iscas.pm.common.core.model.UserDetailInfo;
@@ -8,9 +12,12 @@ import com.iscas.pm.common.core.util.TokenDecodeUtil;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tomcat.util.http.parser.Authorization;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +27,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * @Author： zhangchao
@@ -57,14 +65,36 @@ public class AuthorizationHttpRequestFilter implements Filter {
             }
 
             //从token中解析出用户信息，放入ThreadLocal中
-            Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
+            Map<String, Object> userInfo = tokenDecodeUtil.getUserInfo();
+
+//            (JSONObject)(userInfo.get("projectPermissions"));  //报错：string无法转化为JSONObject
+
+            //正确做法
+//         JSON.toJSONString()
+//            JSON.parseObject(userInfo.get("projectPermissions"), HashMap.class);
+//            JSON.parseArray(userInfo.get("projectPermissions"), String.class);
+//            userInfo.get("projectPermissions");
+//            JSON.parseObject(JSON.toJSONString(userInfo.get("projectPermissions")), HashMap.class);
+////            List<Student> studentList1 = JSON.parseArray(JSON.parseObject(json).getString("studentList"), Student.class);
+            Map<String, Object> hashMapPermissions = JSONObject.parseObject(JSON.toJSONString(userInfo.get("projectPermissions")), HashMap.class);
+
+            //把token里存的当前用户对应的所有项目的权限列表以hashmap形式放进threadlocal里
+
+            ThreadLocal<Object> threadLocal = new ThreadLocal<>();
+            threadLocal.set(hashMapPermissions);
+
+            //测试：
+            currentProjectId="demo";
 
             //用户信息中获取当前项目上的权限列表
             if (!"default".equals(currentProjectId)) {
-                String userName = userInfo.get("user_name");
-
                 //存入security的上下文中
-                //setUserDetailsToSession(userDetails, request);
+                Collection<GrantedAuthority> pressions= JSONObject.parseObject( JSON.toJSONString(hashMapPermissions.get(currentProjectId)), Collection.class);
+                UserDetailInfo userDetailInfo = new UserDetailInfo();
+                userDetailInfo.setUserId((Integer)userInfo.get("id"));
+                userDetailInfo.setUsername((String)userInfo.get("name"));
+                userDetailInfo.setAuthorities(pressions);//不知可不可
+                setUserDetailsToSession((UserDetails) hashMapPermissions.get(currentProjectId), request);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

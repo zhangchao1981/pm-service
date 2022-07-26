@@ -19,5 +19,5 @@ public interface UserService  extends IService<User>{
 
     User loadUserByUsername(String username);
 
-    UserDetailInfo getUserDetails(String userName, String projectId);
+    UserDetailInfo getUserDetails(String userName);
 }
