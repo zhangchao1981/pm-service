@@ -2,12 +2,12 @@ package com.iscas.pm.auth.domain.user;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,6 +26,7 @@ public class User implements Serializable {
     private String password;
 
     @ApiModelProperty(value = "人员姓名")
+    @NotBlank(message = "人员姓名不能为空")
     private String employeeName;
 
     @ApiModelProperty(value = "人员所在部门id")

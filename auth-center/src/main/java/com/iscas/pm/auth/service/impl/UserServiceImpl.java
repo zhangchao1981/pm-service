@@ -44,6 +44,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User addUser(User user) {
+        //设置初始密码
+
+        //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
+
+        //插入用户表
         userMapper.insert(user);
         return user;
     }

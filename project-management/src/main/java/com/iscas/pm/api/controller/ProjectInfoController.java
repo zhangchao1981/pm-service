@@ -31,11 +31,11 @@ public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
     @Autowired
-    private ProjectUserRoleService  projectUserRoleService;
+    private ProjectUserRoleService projectUserRoleService;
     @Autowired
     private RolePermissionService rolePermissionService;
     @Autowired
-    TokenDecodeUtil  tokenDecodeUtil;
+    TokenDecodeUtil tokenDecodeUtil;
 
 
     @PostMapping("/addProject")
@@ -51,15 +51,15 @@ public class ProjectInfoController {
     @PreAuthorize("hasAuthority('/projectInfo/editProject')")
     public Project editProject(@RequestBody @Valid Project project) {
         //首先判断项目状态
-        if(ProjectStatusEnum.CLOSED==project.getStatus()){
+        if (ProjectStatusEnum.CLOSED == project.getStatus()) {
             throw new IllegalArgumentException("该项目处于关闭状态");
         }
         //然后判断是否有权限
-        if (projectInfoService.projectPermissions(project).contains("/projectInfo/editProject")){
+        if (projectInfoService.projectPermissions(project).contains("/projectInfo/editProject")) {
             //有权限就可以保存修改信息
             projectInfoService.saveOrUpdate(project);
-        }else {
-            throw new  IllegalArgumentException("无权限修改该项目");
+        } else {
+            throw new IllegalArgumentException("无权限修改该项目");
         }
         return project;
     }
@@ -68,13 +68,13 @@ public class ProjectInfoController {
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
 //    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
     public IPage<Project> projectList(@RequestBody @Valid ProjectQo projectQo, Page page) {
-        return  projectInfoService.projectList(projectQo,page);
+        return projectInfoService.projectList(projectQo, page);
     }
 
     @PostMapping("/approveProject")
     @ApiOperation(value = "审批项目", notes = "审批通过后，新建项目分库，可以开始其他项目操作")
     //    @PreAuthorize("hasAuthority('/projectInfo/approveProject')")
-    public Project approveProject(@RequestBody @Valid  Audit audit) {
+    public Project approveProject(@RequestBody @Valid Audit audit) {
         //点击审批项目，用户开始审批(拿到project信息)
         Project project = projectInfoService.getById(audit.getId());
         //审批完成，通过审核(或不通过)，更改project的status
@@ -89,8 +89,8 @@ public class ProjectInfoController {
     @ApiOperation(value = "关闭项目", notes = "关闭指定项目，关闭后只能进行查询操作")
 //    @PreAuthorize("hasAuthority('/projectInfo/closeProject')")
     public Boolean closeProject(@PathVariable @NotBlank(message = "项目Id不能为空") String id) {
-       Project project = projectInfoService.getById(id);
-        if (project==null){
+        Project project = projectInfoService.getById(id);
+        if (project == null) {
             throw new IllegalArgumentException("未查询到指定项目");
         }
         //然后判断是否有权限
@@ -102,6 +102,7 @@ public class ProjectInfoController {
 
     /**
      * 这个详细信息还没写
+     *
      * @param id
      * @return
      */
@@ -123,19 +124,19 @@ public class ProjectInfoController {
         //从请求头里获取userid
         Map<String, String> userInfo = tokenDecodeUtil.getUserInfo();
         QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",projectId);
+        queryWrapper.eq("project_id", projectId);
 //        queryWrapper.eq("user_id",userId);
         ProjectUserRole roleInfo = projectUserRoleService.getOne(queryWrapper);
-        if (roleInfo.getRoleId()==null){
+        if (roleInfo.getRoleId() == null) {
             //没有找到对应的角色，判断为无权限
             return null;
         }
         // 有权限则查询该角色的权限列表
-       List<String> permissions=rolePermissionService.getPermissions(roleInfo.getRoleId());
+        List<String> permissions = rolePermissionService.getPermissions(roleInfo.getRoleId());
         //在redis中存储accesstoken 或jti与projectid的映射关系
         //返回对应Project信息
         QueryWrapper<Project> projectQuery = new QueryWrapper<>();
-        projectQuery.eq("id",projectId);
-        return  projectInfoService.getOne(projectQuery);
+        projectQuery.eq("id", projectId);
+        return projectInfoService.getOne(projectQuery);
     }
 }

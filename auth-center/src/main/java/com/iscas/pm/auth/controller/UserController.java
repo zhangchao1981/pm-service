@@ -3,6 +3,7 @@ package com.iscas.pm.auth.controller;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserInfo;
+import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @Author： zhangchao
@@ -34,9 +36,9 @@ public class UserController {
     @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
     @GetMapping("/userList")
     @PreAuthorize("hasAuthority('/user/userList')")
-    public Page<User> listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-
-        return null;
+    public List<User> listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        //密码全部置空
+        return userService.list();
     }
 
     @ApiOperation(value = "添加人员")
@@ -54,21 +56,36 @@ public class UserController {
     @PostMapping("editUser")
     @PreAuthorize("hasAuthority('/user/editUser')")
     public User editUser(@RequestBody @Valid User user) {
+        userService.saveOrUpdate(user);
         return user;
     }
 
     @ApiOperation(value = "注销人员")
     @PostMapping("cancelUser")
     @PreAuthorize("hasAuthority('/user/cancelUser')")
-    public User cancelUser(@RequestParam String userId) {
-        return null;
+    public Boolean cancelUser(@RequestParam String userId) {
+        User user = userService.getById(userId);
+        if (user==null)
+            throw new IllegalArgumentException("注销的用户不存在");
+
+        user.setStatus(UserStatusEnum.CANCEL);
+        userService.saveOrUpdate(user);
+
+        return true;
     }
 
     @ApiOperation(value = "重新启用人员")
     @PostMapping("enableUser")
     @PreAuthorize("hasAuthority('/user/enableUser')")
-    public User enableUser(@RequestParam String userId) {
-        return null;
+    public Boolean enableUser(@RequestParam String userId) {
+        User user = userService.getById(userId);
+        if (user==null)
+            throw new IllegalArgumentException("启用的用户不存在");
+
+        user.setStatus(UserStatusEnum.NORMAL);
+        userService.saveOrUpdate(user);
+
+        return true;
     }
 
     @ApiOperation(value = "分配角色",notes = "为指定人员分配系统角色")
@@ -96,47 +113,5 @@ public class UserController {
     public UserDetailInfo getUserDetails(@RequestParam String userName, @RequestParam String projectId) {
         return userService.getUserDetails(userName,projectId);
     }
-
-
-
-
-
-
-
-
-
-
-
-    //返回用户详情里的密码是加密的
-    @ApiOperation(value = "查看用户详情")
-    @ApiImplicitParam(name = "userId", value = "用户id", required = true, dataType = "Integer", paramType = "path")
-    @GetMapping("{userId}")
-//    @PreAuthorize("hasPermission(null,'/users/modify')")
-    public User finduserbyid(@PathVariable Integer userId) throws AuthenticateException {
-        User user = userService.get(userId);
-        if (user == null) {
-            throw new AuthenticateException("用户未找到");
-        }
-        return user;
-    }
-
-    //返回的用户信息中不带密码(设为null)
-    @ApiOperation(value = "根据用户id获取用户信息(不含密码)")
-    @ApiImplicitParam(name = "id", required = true, dataType = "Integer", paramType = "query")
-    @GetMapping("/getUserById")
-    public User getUserById(@RequestParam("id") @NotEmpty Integer id) {
-        return userService.get(id).setPassword(null);
-    }
-
-    //根据用户名返回完整用户信息
-    @ApiOperation(value = "根据用户名获取用户信息(不含密码)")
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", paramType = "query")
-    @GetMapping("/loadUserByUsername")
-    public User loadUserByUsername(@RequestParam("id") @NotEmpty String username) {
-        return   userService.loadUserByUsername(username);
-    }
-
-
-
 
 }
