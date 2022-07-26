@@ -10,13 +10,18 @@ import com.iscas.pm.api.mapper.RolePermissionMapper;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.mapper.ProjectMapper;
 import com.iscas.pm.api.model.project.ProjectQo;
+import com.iscas.pm.api.model.project.ProjectUserRole;
 import com.iscas.pm.api.service.ProjectInfoService;
+import com.iscas.pm.api.service.ProjectUserRoleService;
+import com.iscas.pm.common.core.model.AuthConstants;
+import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -30,6 +35,16 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
     private ProjectMapper projectMapper;
     @Autowired
     RolePermissionMapper  permissionMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private ProjectUserRoleService projectUserRoleService;
+
     @Override
     public IPage<Project>  projectList(ProjectQo projectQo,Page page) {
         QueryWrapper<Project> wrapper = new QueryWrapper<>();
@@ -55,6 +70,27 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
         Object permissionsJSONString = RequestHolder.getPermissions().get(projectId);
         List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
         return  permissionsList;
+    }
+
+    @Override
+    public Project switchProject(String projectId) {
+        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("project_id",projectId);
+//        queryWrapper.eq("user_id",userId);
+        ProjectUserRole roleInfo = projectUserRoleService.getOne(queryWrapper);
+        if (roleInfo.getRoleId()==null){
+            //没有找到对应的角色，判断为无权限
+            return null;
+        }
+        // 有权限则存储到redis里(更新token对应projectid)
+        //拿到token
+        String token =request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
+        Object obj = redisUtil.set(token,projectId);
+
+        //返回对应Project信息
+        QueryWrapper<Project> projectQuery = new QueryWrapper<>();
+        projectQuery.eq("id",projectId);
+        return  getOne(projectQuery);
     }
 }
 

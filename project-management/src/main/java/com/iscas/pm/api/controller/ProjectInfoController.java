@@ -1,13 +1,13 @@
 package com.iscas.pm.api.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectUserRoleService;
-import com.iscas.pm.api.service.RolePermissionService;
+import com.iscas.pm.common.core.model.AuthConstants;
+import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.util.TokenDecodeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -31,12 +30,11 @@ import java.util.Map;
 public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
-    @Autowired
-    private ProjectUserRoleService  projectUserRoleService;
-    @Autowired
-    private RolePermissionService rolePermissionService;
+
     @Autowired
     TokenDecodeUtil  tokenDecodeUtil;
+
+
 
 
     @PostMapping("/addProject")
@@ -119,25 +117,10 @@ public class ProjectInfoController {
 
     @GetMapping("/switchProject")
     @ApiOperation(value = "切换项目", notes = "根据projectId切换项目，projectId为空时，切换到第一个项目上")
-    public Project switchProject(@NotBlank(message = "projectId不能为空") @RequestParam Integer projectId) {
+    public Project switchProject(@NotBlank(message = "projectId不能为空") @RequestParam String projectId) {
+
+        return projectInfoService.switchProject(projectId);
         //判断是否有指定项目的权限
         //从 pm_project_user_role表里面找到userid-projectid对应的role
-        //从请求头里获取userid
-        Map<String, Object> userInfo = tokenDecodeUtil.getUserInfo();
-        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",projectId);
-//        queryWrapper.eq("user_id",userId);
-        ProjectUserRole roleInfo = projectUserRoleService.getOne(queryWrapper);
-        if (roleInfo.getRoleId()==null){
-            //没有找到对应的角色，判断为无权限
-            return null;
-        }
-        // 有权限则查询该角色的权限列表
-       List<String> permissions=rolePermissionService.getPermissions(roleInfo.getRoleId());
-        //在redis中存储accesstoken 或jti与projectid的映射关系
-        //返回对应Project信息
-        QueryWrapper<Project> projectQuery = new QueryWrapper<>();
-        projectQuery.eq("id",projectId);
-        return  projectInfoService.getOne(projectQuery);
     }
 }

@@ -38,7 +38,7 @@
     <select id="loadUserByUsername" resultMap="BaseResultMap">
         select *
         from auth_user
-        where user_name= #{username}
+        where user_name= #{userName}
     </select>
 
 </mapper>

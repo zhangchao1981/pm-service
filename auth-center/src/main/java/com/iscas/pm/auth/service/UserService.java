@@ -18,13 +18,13 @@ public interface UserService  extends IService<User>{
 
     User addUser(User user);
 
-    Boolean changePassword(String username, String oldPwd, String newPwd);
+    Boolean changePassword(String userName, String oldPwd, String newPwd);
 
-    User loadUserByUsername(String username);
+    User loadUserByUsername(String userName);
 
     UserDetailInfo getUserDetails(String userName);
 
     IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize);
 
-    Boolean adduserroles(Integer userid, List<Integer> roles);
+    Boolean addUserRoles(Integer userId, List<Integer> roles);
 }

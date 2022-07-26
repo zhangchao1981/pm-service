@@ -40,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PmRolePermissionService pmRolePermissionService;
 
     @Autowired
-    private AuthUserRoleServiceImpl  authUserRoleService;
+    private AuthUserRoleServiceImpl authUserRoleService;
 
     @Override
     public User get(Integer id) {
@@ -52,6 +52,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //设置初始密码
         user.setPassword(new BCryptPasswordEncoder().encode("123456"));
         //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
+        //名字全拼怎么弄?
+        String userName=user.getEmployeeName();
+        int i=0;
+        while(loadUserByUsername(userName)!=null){
+            userName+="0"+i;
+            i++;
+        }
+        user.setUserName(userName);
         //插入用户表
         userMapper.insert(user);
         user.setPassword(null);
@@ -59,8 +67,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Boolean changePassword(String username, String oldPwd, String newPwd) {
-        User user = userMapper.loadUserByUsername(username);
+    public Boolean changePassword(String userName, String oldPwd, String newPwd) {
+        User user = userMapper.loadUserByUsername(userName);
         //如果用户密码正确，则可以更改密码
 
         //查询数据库里存的用户旧密码，验证是否和用户输入的旧密码相同 (密码加密方式： BCryptPasswordEncoder()  )
@@ -83,8 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User loadUserByUsername(String username) {
-        return userMapper.loadUserByUsername(username);
+    public User loadUserByUsername(String userName) {
+        return userMapper.loadUserByUsername(userName);
     }
 
     @Override
@@ -95,49 +103,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         //返回系统角色对应的权限列表，去重
-        List<String> SystemPermissions = authRolePermissionService.getPermissionsByUserId(user.getId());
-        SystemPermissions = SystemPermissions.stream().distinct().collect(Collectors.toList());
-        //String permissions_str = StringUtils.join(SystemPermissions, ",");
+        List<String> systemPermissions = authRolePermissionService.getPermissionsByUserId(user.getId());
+        systemPermissions = systemPermissions.stream().distinct().collect(Collectors.toList());
+        //String permissions_str = StringUtils.join(systemPermissions, ",");
 
         //获取所有项目角色对应的权限列表
         List<ProjectPermission> projectPermissionList = pmRolePermissionService.selectProjectPermissions(user.getId());
-            Map<String, List<String>> projectPermissions = projectPermissionList.stream().collect(Collectors.groupingBy(ProjectPermission::getProjectId, Collectors.mapping(ProjectPermission::getPermissionId, Collectors.toList())));
+        Map<String, List<String>> projectPermissions = projectPermissionList.stream().collect(Collectors.groupingBy(ProjectPermission::getProjectId, Collectors.mapping(ProjectPermission::getPermissionId, Collectors.toList())));
 
         //封装成UserDetails对象
-        UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(), userName, user.getPassword(), user.getEmployeeName(), user.getStatus() == UserStatusEnum.NORMAL, SystemPermissions,projectPermissions);
+        UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(), userName, user.getPassword(), user.getEmployeeName(), user.getStatus() == UserStatusEnum.NORMAL, systemPermissions, projectPermissions);
         return userDetailInfo;
     }
 
     @Override
     public IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize) {
-        Page<User> userPage = new Page<>(pageNum,pageSize);
+        Page<User>  page= new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(StringUtils.isEmpty(userName),"user_name",userName);
-        IPage<User> userIPage = userMapper.selectPage(userPage, wrapper);
+        wrapper.like(StringUtils.isEmpty(userName), "user_name", userName);
+        //状态：NORMAL
+        wrapper.eq("status", "NORMAL");
+        IPage<User> userPage= userMapper.selectPage(page, wrapper);
         //需要把返回的字段改一下
-        List<User> records = userIPage.getRecords();
+        List<User> records = userPage.getRecords();
         for (int i = 0; i < records.size(); i++) {
             records.get(i).setPassword(null);
         }
-        return userIPage;
+        return userPage;
     }
 
     @Override
-    public Boolean adduserroles(Integer userid, List<Integer> roles) {
-
-        AuthUserRole authUserRole = new AuthUserRole();
-        authUserRole.setUserId(userid);
+    public Boolean addUserRoles(Integer userId, List<Integer> roles) {
         //先把原来分配的角色删了
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",userid);
+        wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
-
+        //批量插入
+        List<AuthUserRole> userRoles = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {
+            AuthUserRole authUserRole = new AuthUserRole();
+            authUserRole.setUserId(userId);
             authUserRole.setRoleId(roles.get(i));
-            if (!authUserRoleService.save(authUserRole)){
-                return false;
-            }
+            userRoles.add(authUserRole);
         }
-        return null;
+        return authUserRoleService.saveBatch(userRoles);
     }
 }

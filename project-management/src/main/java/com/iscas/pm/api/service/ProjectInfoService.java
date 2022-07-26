@@ -20,4 +20,6 @@ public interface ProjectInfoService extends IService<Project> {
 
 
     List<String> projectPermissions(Project project);
+
+    Project switchProject(String projectId);
 }
