@@ -1,5 +1,7 @@
 package com.iscas.pm.api.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,6 +11,7 @@ import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.mapper.ProjectMapper;
 import com.iscas.pm.api.model.project.ProjectQo;
 import com.iscas.pm.api.service.ProjectInfoService;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,8 +50,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
         //拿到userid 和 projectid  判断用户是否在该project里面是有编辑权限的角色
         String projectId = project.getId();
 
+        //测试
+        projectId="demo";
 
-        return permissionMapper.getPerMissions((Integer) userid, Integer.parseInt(projectId));
+        Object permissionsJSONString = RequestHolder.getPermissions().get(projectId);
+        List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
+        return  permissionsList;
     }
 }
 

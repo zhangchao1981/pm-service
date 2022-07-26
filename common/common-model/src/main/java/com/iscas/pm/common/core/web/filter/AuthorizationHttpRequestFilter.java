@@ -66,35 +66,28 @@ public class AuthorizationHttpRequestFilter implements Filter {
 
             //从token中解析出用户信息，放入ThreadLocal中
             Map<String, Object> userInfo = tokenDecodeUtil.getUserInfo();
-
-//            (JSONObject)(userInfo.get("projectPermissions"));  //报错：string无法转化为JSONObject
-
-            //正确做法
-//         JSON.toJSONString()
-//            JSON.parseObject(userInfo.get("projectPermissions"), HashMap.class);
-//            JSON.parseArray(userInfo.get("projectPermissions"), String.class);
-//            userInfo.get("projectPermissions");
-//            JSON.parseObject(JSON.toJSONString(userInfo.get("projectPermissions")), HashMap.class);
-////            List<Student> studentList1 = JSON.parseArray(JSON.parseObject(json).getString("studentList"), Student.class);
-            Map<String, Object> hashMapPermissions = JSONObject.parseObject(JSON.toJSONString(userInfo.get("projectPermissions")), HashMap.class);
+            HashMap<String, Object> hashMapPermissions = JSONObject.parseObject(JSON.toJSONString(userInfo.get("projectPermissions")), HashMap.class);
 
             //把token里存的当前用户对应的所有项目的权限列表以hashmap形式放进threadlocal里
+            RequestHolder.add(hashMapPermissions);
 
-            ThreadLocal<Object> threadLocal = new ThreadLocal<>();
-            threadLocal.set(hashMapPermissions);
 
             //测试：
-            currentProjectId="demo";
+            currentProjectId = "demo";
 
             //用户信息中获取当前项目上的权限列表
             if (!"default".equals(currentProjectId)) {
                 //存入security的上下文中
-                Collection<GrantedAuthority> pressions= JSONObject.parseObject( JSON.toJSONString(hashMapPermissions.get(currentProjectId)), Collection.class);
+
+                //首先转成list  然后拼成一个string  最后传入AuthorityUtils的方法中转成authority
+                List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(hashMapPermissions.get(currentProjectId)), List.class);
+                String permissions = StringUtils.join(permissionsList, ",");
+
                 UserDetailInfo userDetailInfo = new UserDetailInfo();
-                userDetailInfo.setUserId((Integer)userInfo.get("id"));
-                userDetailInfo.setUsername((String)userInfo.get("name"));
-                userDetailInfo.setAuthorities(pressions);//不知可不可
-                setUserDetailsToSession((UserDetails) hashMapPermissions.get(currentProjectId), request);
+                userDetailInfo.setUserId((Integer) userInfo.get("id"));
+                userDetailInfo.setUsername((String) userInfo.get("name"));
+                userDetailInfo.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(permissions));
+                setUserDetailsToSession(userDetailInfo, request);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

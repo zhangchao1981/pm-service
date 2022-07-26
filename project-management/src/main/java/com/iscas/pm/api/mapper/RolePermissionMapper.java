@@ -22,12 +22,12 @@ public interface RolePermissionMapper extends BaseMapper<RolePermission> {
             " WHERE  role_id=#{roleId}")
     List<String> selectList(Integer roleId);
 
-
-    @Select("SELECT pm_role_permission.permission_id " +
-            " FROM pm_role_permission" +"INNER JOIN pm_project_user_role "
-            +"ON pm_project_user_role.role_id=pm_role_permission.role_id "+
-            " WHERE pm_project_user_role.user_id=#{userid}"+"AND pm_project_user_role.project_id=#{projectid}" )
-    List<String> getPerMissions(@Param("userid") Integer userid,@Param("projectid") Integer projectid);
+//    已经换成从thread里面取了
+//    @Select("SELECT pm_role_permission.permission_id " +
+//            " FROM pm_role_permission" +"INNER JOIN pm_project_user_role "
+//            +"ON pm_project_user_role.role_id=pm_role_permission.role_id "+
+//            " WHERE pm_project_user_role.user_id=#{userid}"+"AND pm_project_user_role.project_id=#{projectid}" )
+//    List<String> getPerMissions(@Param("userid") Integer userid,@Param("projectid") Integer projectid);
 
 }
 
