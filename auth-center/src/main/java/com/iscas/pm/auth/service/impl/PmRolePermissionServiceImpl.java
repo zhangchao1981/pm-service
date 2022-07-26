@@ -1,7 +1,5 @@
 package com.iscas.pm.auth.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.domain.PmRolePermission;
 import com.iscas.pm.auth.domain.ProjectPermission;
 import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.mapper.PmRolePermissionMapper;
@@ -25,7 +23,7 @@ PmRolePermissionMapper pmRolePermissionMapper;
 
     @Override
     public List<String> getPermissionsByUserIdandProjectId(Integer userId, Integer projectId) {
-        return pmRolePermissionMapper.PermissionsByUserIdandProjectId(userId,projectId);
+        return pmRolePermissionMapper.getPermissionsByUserIdandProjectId(userId,projectId);
     }
 
     @Override

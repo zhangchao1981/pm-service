@@ -21,7 +21,7 @@
 <!--    " FROM apm_role_permission " +"INNER JOIN pm_project_user_role "-->
 <!--    +"ON  pm_role_permission.role_id=pm_project_user_role.role_id  "+-->
 <!--    " WHERE  pm_project_user_role.user_id=#{userId} "+"AND pm_project_user_role.project_id=#{projectId}" )-->
-    <select id="PermissionsByUserIdandProjectId" >
+    <select id="getPermissionsByUserIdandProjectId" >
         SELECT pm_role_permission.permission_id
         FROM
         apm_role_permission

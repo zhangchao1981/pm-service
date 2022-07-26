@@ -36,7 +36,7 @@ public class AuthController {
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
 
         //获取访问token
-        String access_token = authToken.getAccessToken();
+        String accessToken = authToken.getAccessToken();
 
         UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName());
 
@@ -44,7 +44,7 @@ public class AuthController {
         userInfo.setId(userDetailInfo.getUserId());
         userInfo.setUserName(userDetailInfo.getUsername());
         userInfo.setEmployeeName(userDetailInfo.getEmployeeName());
-        userInfo.setAccessToken(access_token);
+        userInfo.setAccessToken(accessToken);
         userInfo.setSystemPermissions(userDetailInfo.getSystemPermissions());
         userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
         return userInfo;
