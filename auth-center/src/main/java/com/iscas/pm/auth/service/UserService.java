@@ -1,8 +1,11 @@
 package com.iscas.pm.auth.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -20,4 +23,8 @@ public interface UserService  extends IService<User>{
     User loadUserByUsername(String username);
 
     UserDetailInfo getUserDetails(String userName);
+
+    IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize);
+
+    Boolean adduserroles(Integer userid, List<Integer> roles);
 }

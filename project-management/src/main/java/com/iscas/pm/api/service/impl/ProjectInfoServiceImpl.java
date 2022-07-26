@@ -36,7 +36,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
         //拿到用户id--->找到该用户隶属的项目
             wrapper.like(!StringUtil.isNullOrEmpty(projectQo.getProjectName()),"name",projectQo.getProjectName());
             wrapper.eq(!StringUtil.isNullOrEmpty(projectQo.getStatus().getCode()),"status",projectQo.getStatus());
-
         //传入的无论是1还是clossed 都会被转化为closed
         //输出的
         IPage projectIPage = projectMapper.selectPage(page, wrapper);

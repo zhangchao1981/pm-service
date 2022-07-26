@@ -1,20 +1,24 @@
 package com.iscas.pm.auth.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.controller.PermissionController;
+import com.iscas.pm.auth.domain.AuthUserRole;
 import com.iscas.pm.auth.domain.ProjectPermission;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.AuthRolePermissionService;
-import com.iscas.pm.auth.service.PmProjectUserRoleService;
 import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private PmRolePermissionService pmRolePermissionService;
 
+    @Autowired
+    private AuthUserRoleServiceImpl  authUserRoleService;
+
     @Override
     public User get(Integer id) {
         return userMapper.selectById(id);
@@ -45,11 +52,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User addUser(User user) {
         //设置初始密码
-
+        user.setPassword(new BCryptPasswordEncoder().encode("123456"));
         //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
-
         //插入用户表
         userMapper.insert(user);
+        user.setPassword(null);
         return user;
     }
 
@@ -101,5 +108,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //封装成UserDetails对象
         UserDetailInfo userDetailInfo = new UserDetailInfo(user.getId(), userName, user.getPassword(), user.getEmployeeName(), user.getStatus() == UserStatusEnum.NORMAL, SystemPermissions,projectPermissions);
         return userDetailInfo;
+    }
+
+    @Override
+    public IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize) {
+        Page<User> userPage = new Page<>(pageNum,pageSize);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.like(StringUtils.isEmpty(userName),"user_name",userName);
+        IPage<User> userIPage = userMapper.selectPage(userPage, wrapper);
+        //需要把返回的字段改一下
+        List<User> records = userIPage.getRecords();
+        for (int i = 0; i < records.size(); i++) {
+            records.get(i).setPassword(null);
+        }
+        return userIPage;
+    }
+
+    @Override
+    public Boolean adduserroles(Integer userid, List<Integer> roles) {
+        AuthUserRole authUserRole = new AuthUserRole();
+        authUserRole.setUser_id(userid);
+        for (int i = 0; i < roles.size(); i++) {
+            authUserRole.setRole_id(roles.get(i));
+
+            if (!authUserRoleService.save(authUserRole)){
+                return false;
+            }
+        }
+        return null;
     }
 }

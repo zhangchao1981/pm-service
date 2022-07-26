@@ -1,5 +1,7 @@
 package com.iscas.pm.auth.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserInfo;
@@ -12,12 +14,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,26 +39,31 @@ public class UserController {
     @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
     @GetMapping("/userList")
     @PreAuthorize("hasAuthority('/user/userList')")
-    public List<User> listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+    public IPage<User>  listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        //用户名模糊查询
+        //状态
         //密码全部置空
-        return userService.list();
+        return userService.selectUserList(userName, pageNum,pageSize);
     }
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
-    @PreAuthorize("hasAuthority('/user/addUser')")
+//    @PreAuthorize("hasAuthority('/user/addUser')")
     public User adduser(@RequestBody @Valid User user) {
+        //初始密码统一设置成123456
         userService.addUser(user);
-
-        //password不返回，避免安全隐患
-        user.setPassword(null);
         return user;
     }
 
     @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
     @PostMapping("editUser")
-    @PreAuthorize("hasAuthority('/user/editUser')")
+//    @PreAuthorize("hasAuthority('/user/editUser')")
     public User editUser(@RequestBody @Valid User user) {
+        //待新增功能：用户id，用户名和姓名都不允许修改
+        User aimuser = userService.get(user.getId());
+        user.setUserName(aimuser.getUserName());
+        user.setEmployeeName(aimuser.getEmployeeName());
+
         userService.saveOrUpdate(user);
         return user;
     }
@@ -65,9 +73,9 @@ public class UserController {
     @PreAuthorize("hasAuthority('/user/cancelUser')")
     public Boolean cancelUser(@RequestParam String userId) {
         User user = userService.getById(userId);
-        if (user==null)
+        if (user==null) {
             throw new IllegalArgumentException("注销的用户不存在");
-
+        }
         user.setStatus(UserStatusEnum.CANCEL);
         userService.saveOrUpdate(user);
 
@@ -79,20 +87,27 @@ public class UserController {
     @PreAuthorize("hasAuthority('/user/enableUser')")
     public Boolean enableUser(@RequestParam String userId) {
         User user = userService.getById(userId);
-        if (user==null)
+        if (user==null) {
             throw new IllegalArgumentException("启用的用户不存在");
-
+        }
         user.setStatus(UserStatusEnum.NORMAL);
         userService.saveOrUpdate(user);
 
         return true;
     }
 
+
     @ApiOperation(value = "分配角色",notes = "为指定人员分配系统角色")
     @PostMapping("settingSystemRole")
-    @PreAuthorize("hasAuthority('/user/settingSystemRole')")
-    public User settingSystemRole(@RequestBody @Valid User user) {
-        return user;
+//    @PreAuthorize("hasAuthority('/user/settingSystemRole')")
+    public Boolean settingSystemRole(@RequestParam Integer userid,@RequestBody List<Integer> roles) {//多角色分配  user
+        //  首先判断user是否在auth_user表中
+        if (userService.get(userid)==null){
+            throw new IllegalArgumentException("指定人员未注册");
+        }
+        //  更新/添加  auth_user_role表记录
+        return    userService.adduserroles(userid,roles);
+
     }
 
     @ApiOperation(value = "修改用户密码")
@@ -105,7 +120,10 @@ public class UserController {
     @GetMapping("/resetPassWord")
     @PreAuthorize("hasAuthority('/user/resetPassWord')")
     public String resetPassWord(@RequestParam("userId") Integer userId) {
-        return null;
+        String resetpassword= "$2a$10$BDWORFgZFrZgBgJJptbSC.StH6RkQQA/ZlAQ0i/WEi9wJvHRirZBW";
+        User user = userService.get(userId).setPassword(resetpassword);
+        userService.saveOrUpdate(user);
+        return resetpassword;
     }
 
     @ApiOperation(value = "获取用户信息",notes = "获取当前登录用户信息")

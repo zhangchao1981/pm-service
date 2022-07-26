@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -78,9 +79,13 @@ public class AuthorizationHttpRequestFilter implements Filter {
             //用户信息中获取当前项目上的权限列表
             if (!"default".equals(currentProjectId)) {
                 //存入security的上下文中
-
                 //首先转成list  然后拼成一个string  最后传入AuthorityUtils的方法中转成authority
                 List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(hashMapPermissions.get(currentProjectId)), List.class);
+                //拿到系统权限 拼上去
+                List<String> authorities = JSONObject.parseObject(JSON.toJSONString(userInfo.get("authorities")),List.class);
+
+                permissionsList.addAll(authorities);
+                permissionsList=permissionsList.stream().distinct().collect(Collectors.toList());
                 String permissions = StringUtils.join(permissionsList, ",");
 
                 UserDetailInfo userDetailInfo = new UserDetailInfo();
