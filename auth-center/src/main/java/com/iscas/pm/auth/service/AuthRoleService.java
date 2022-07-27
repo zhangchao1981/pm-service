@@ -12,5 +12,9 @@ import java.util.List;
 */
 public interface AuthRoleService extends IService<AuthRole> {
 
+    List<AuthRole> getRolesByUserName(String userName, String type);
+
+    List<AuthRole> selectRoleList(String name, String type);
+
 //    List<String> getPermissionsByRoleId(Integer roleid);
 }

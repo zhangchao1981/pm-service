@@ -46,6 +46,13 @@ public class AuthRole implements Serializable {
     @TableField(value = "update_time")
     private LocalDateTime update_time;
 
+    /**
+     * 角色类型
+     */
+    @TableField(value = "type")
+    private String type;
+
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
