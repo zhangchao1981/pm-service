@@ -132,8 +132,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         Page<User>  page= new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(!StringUtils.isEmpty(employeeName), "employee_name",  employeeName );
-        wrapper.like(!StringUtils.isEmpty(userName), "user_name", userName);
+        wrapper.like(!StringUtils.isEmpty(employeeName), "employee_name",  employeeName )
+                .or().like(!StringUtils.isEmpty(userName),"user_name", userName);
         wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
         //状态：NORMAL
         wrapper.eq(!StringUtils.isEmpty(status),"status",status);
