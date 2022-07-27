@@ -10,10 +10,11 @@
             <result property="description" column="description" jdbcType="VARCHAR"/>
             <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,name,description,
-        create_time,update_time
+        create_time,update_time,type
     </sql>
 </mapper>

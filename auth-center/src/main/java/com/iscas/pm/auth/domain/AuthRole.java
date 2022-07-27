@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,41 +17,36 @@ import java.time.LocalDateTime;
 @TableName(value ="auth_role")
 @Data
 public class AuthRole implements Serializable {
-    /**
-     * 角色id
-     */
+
+
+    @ApiModelProperty(value = "角色id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 角色名称
-     */
+
+    @ApiModelProperty(value = "角色名称")
     @TableField(value = "name")
     private String name;
 
-    /**
-     * 角色描述
-     */
+
+    @ApiModelProperty(value = "角色描述")
     @TableField(value = "description")
     private String description;
 
-    /**
-     * 创建时间
-     */
+
+    @ApiModelProperty(value = "创建时间")
     @TableField(value = "create_time")
     private LocalDateTime create_time;
 
-    /**
-     * 最后修改时间
-     */
+
+    @ApiModelProperty(value = "最后修改时间")
     @TableField(value = "update_time")
     private LocalDateTime update_time;
 
-    /**
-     * 角色类型
-     */
+
+    @ApiModelProperty(value = "角色类型")
     @TableField(value = "type")
-    private String type;
+    private RoleTypeEnum type;
 
 
     @TableField(exist = false)

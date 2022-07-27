@@ -1,7 +1,5 @@
 package com.iscas.pm.auth.mapper;
 
-import com.iscas.pm.auth.domain.PmRolePermission;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.auth.domain.ProjectPermission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

@@ -1,9 +1,6 @@
 package com.iscas.pm.auth.service;
 
-import com.iscas.pm.auth.domain.PmRolePermission;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.auth.domain.ProjectPermission;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

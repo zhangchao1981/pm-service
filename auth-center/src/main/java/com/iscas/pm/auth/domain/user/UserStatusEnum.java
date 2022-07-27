@@ -1,10 +1,15 @@
 package com.iscas.pm.auth.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+
 /**
  * @Author： zhangchao
  * @Date： 2022/7/19
  * @Description： 用户状态枚举类
  */
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum UserStatusEnum {
     NORMAL("NORMAL","正常"),
     CANCEL("CANCEL","已注销");

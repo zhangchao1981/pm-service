@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,21 +16,18 @@ import java.io.Serializable;
 @TableName(value ="auth_user_role")
 @Data
 public class AuthUserRole implements Serializable {
-    /**
-     * id
-     */
+
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 角色id
-     */
+
+    @ApiModelProperty(value = "角色id")
     @TableField(value = "role_id")
     private Integer roleId;
 
-    /**
-     * 用户id
-     */
+
+    @ApiModelProperty(value = "用户id")
     @TableField(value = "user_id")
     private Integer userId;
 
