@@ -1,4 +1,4 @@
-package com.iscas.pm.auth.domain.user;
+package com.iscas.pm.auth.domain;
 
 /**
  * @Author： zhangchao

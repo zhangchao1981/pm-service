@@ -1,36 +1,25 @@
 package com.iscas.pm.auth.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 
- * @TableName auth_user_role
- */
 @TableName(value ="auth_user_role")
 @Data
 public class AuthUserRole implements Serializable {
-    /**
-     * id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
+
+    @ApiModelProperty(value = "id")
+    @TableId(value="id", type= IdType.AUTO)
     private Integer id;
 
-    /**
-     * 角色id
-     */
-    @TableField(value = "role_id")
+    @ApiModelProperty(value = "角色id")
     private Integer roleId;
 
-    /**
-     * 用户id
-     */
-    @TableField(value = "user_id")
+    @ApiModelProperty(value = "用户id")
     private Integer userId;
 
 }

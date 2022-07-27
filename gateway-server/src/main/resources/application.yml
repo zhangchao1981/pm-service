@@ -70,6 +70,5 @@ logging:
 
 ignorePaths:
   auth/login,
-  projectInfo/projectDetailInfo,
   v2/api-docs,
   doc.html

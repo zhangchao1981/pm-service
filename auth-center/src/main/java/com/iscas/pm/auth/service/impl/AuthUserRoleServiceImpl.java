@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2022-07-18 20:53:49
 */
 @Service
-public class AuthUserRoleServiceImpl extends ServiceImpl<AuthUserRoleMapper, AuthUserRole>
-    implements AuthUserRoleService {
+public class AuthUserRoleServiceImpl extends ServiceImpl<AuthUserRoleMapper, AuthUserRole> implements AuthUserRoleService {
 
 }
 

@@ -10,8 +10,8 @@ import lombok.Data;
  */
 @Data
 public class ProjectPermission {
-    @TableField("project_id")
+
     private String projectId;
-    @TableField("permission_id")
+
     private String permissionId;
 }
