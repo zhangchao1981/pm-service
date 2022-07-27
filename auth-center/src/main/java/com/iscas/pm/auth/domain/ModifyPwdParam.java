@@ -12,9 +12,6 @@ import lombok.Data;
 @Data
 @ApiModel("修改密码请求参数")
 public class ModifyPwdParam {
-    @ApiModelProperty(value = "用户名")
-    private String userName;
-
     @ApiModelProperty(value = "旧密码")
     private String oldPassword;
 

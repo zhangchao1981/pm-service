@@ -64,9 +64,13 @@ public class AuthorizationHttpRequestFilter implements Filter {
             if (!"default".equals(currentProjectId)) {
                 //获取当前项目的权限列表+系统角色权限列表，去重
                 List<String> projectPermissions = userInfo.getProjectPermissions().get(currentProjectId);
+                projectPermissions = projectPermissions == null ? new ArrayList<>() : projectPermissions;
+
                 List<String> systemPermissions = userInfo.getSystemPermissions();
+                systemPermissions = systemPermissions == null ? new ArrayList<>() : systemPermissions;
+
                 projectPermissions.addAll(systemPermissions);
-                projectPermissions=projectPermissions.stream().distinct().collect(Collectors.toList());
+                projectPermissions = projectPermissions.stream().distinct().collect(Collectors.toList());
                 String permissions = StringUtils.join(projectPermissions, ",");
 
                 //新的权限列表存入security的上下文中

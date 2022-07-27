@@ -1,6 +1,5 @@
 package com.iscas.pm.auth.service.impl;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,6 +15,7 @@ import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
+import com.iscas.pm.common.core.util.Pinyin4jUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,30 +39,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private AuthRolePermissionService authRolePermissionService;
     @Autowired
     private PmRolePermissionService pmRolePermissionService;
-
     @Autowired
     private AuthUserRoleServiceImpl authUserRoleService;
-
-    @Override
-    public User get(Integer id) {
-        return userMapper.selectById(id);
-    }
 
     @Override
     public User addUser(User user) {
         //设置初始密码
         user.setPassword(new BCryptPasswordEncoder().encode("123456"));
-        //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
-        //名字全拼怎么弄?
-        String userName=user.getEmployeeName();
-        int i=0;
-        while(loadUserByUsername(userName)!=null){
-            userName+="0"+i;
+
+        //人员姓名全拼生成用户名
+        String userName = Pinyin4jUtil.getPingYin(user.getEmployeeName());
+
+        //重名后面追加0x
+        String duplicateUserName = userName;
+        int i = 1;
+        while (loadUserByUsername(duplicateUserName) != null) {
+            duplicateUserName = userName + "0" + i;
             i++;
         }
-        user.setUserName(userName);
-        //插入用户表
+        user.setUserName(duplicateUserName);
+
+        //补全信息后，插入用户表
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
+        user.setStatus(UserStatusEnum.NORMAL);
         userMapper.insert(user);
+
+        //密码置空
         user.setPassword(null);
         return user;
     }
@@ -70,25 +73,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Boolean changePassword(String userName, String oldPwd, String newPwd) {
         User user = userMapper.loadUserByUsername(userName);
-        //如果用户密码正确，则可以更改密码
+        if (user == null)
+            throw new IllegalArgumentException("用户不存在");
 
-        //查询数据库里存的用户旧密码，验证是否和用户输入的旧密码相同 (密码加密方式： BCryptPasswordEncoder()  )
-        boolean tag = BCrypt.checkpw(oldPwd, user.getPassword());
-
-        if (!tag) {
+        if (!BCrypt.checkpw(oldPwd, user.getPassword())) {
             throw new IllegalArgumentException("旧密码填写错误");
         }
 
         if (Objects.equals(oldPwd, newPwd)) {
             throw new IllegalArgumentException("请不要改成旧密码");
         }
-        if (tag) {
-            String encodenewpwd = new BCryptPasswordEncoder().encode(newPwd);
-            user.setPassword(encodenewpwd);
-        }
+
         //更新密码
+        user.setPassword(new BCryptPasswordEncoder().encode(newPwd));
         userMapper.updateById(user);
-        return tag;
+
+        return true;
     }
 
     @Override
@@ -106,7 +106,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //返回系统角色对应的权限列表，去重
         List<String> systemPermissions = authRolePermissionService.getPermissionsByUserId(user.getId());
         systemPermissions = systemPermissions.stream().distinct().collect(Collectors.toList());
-        //String permissions_str = StringUtils.join(systemPermissions, ",");
 
         //获取所有项目角色对应的权限列表
         List<ProjectPermission> projectPermissionList = pmRolePermissionService.selectProjectPermissions(user.getId());
@@ -117,7 +116,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userDetailInfo;
     }
 
-
     @Override
     public IPage<User> selectUserList(UserQueryParam queryParam) {
         //查询条件
@@ -126,14 +124,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String status = queryParam.getStatus();
 
         //封装查询语句
-        Page<User>  page= new Page<>(queryParam.getPageNum(), queryParam.getPageSize());
+        Page<User> page = new Page<>(queryParam.getPageNum(), queryParam.getPageSize());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(!StringUtils.isEmpty(name), "employee_name",  name )
-                .or().like(!StringUtils.isEmpty(name),"user_name", name);
+        wrapper.like(!StringUtils.isEmpty(name), "employee_name", name)
+                .or().like(!StringUtils.isEmpty(name), "user_name", name);
         wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
-        wrapper.eq(!StringUtils.isEmpty(status),"status",status);
+        wrapper.eq(!StringUtils.isEmpty(status), "status", status);
 
-        IPage<User> userPage= userMapper.selectPage(page, wrapper);
+        IPage<User> userPage = userMapper.selectPage(page, wrapper);
 
         //密码置为空
         List<User> records = userPage.getRecords();
@@ -145,10 +143,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Boolean addUserRoles(Integer userId, List<Integer> roles) {
-        //先把原来分配的角色删了
+        //删除原来分配的角色
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
+
         //批量插入
         List<AuthUserRole> userRoles = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {
@@ -157,6 +156,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             authUserRole.setRoleId(roles.get(i));
             userRoles.add(authUserRole);
         }
+
         return authUserRoleService.saveBatch(userRoles);
     }
 }

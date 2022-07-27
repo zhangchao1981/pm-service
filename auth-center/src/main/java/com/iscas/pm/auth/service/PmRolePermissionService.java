@@ -14,7 +14,7 @@ import java.util.List;
 */
 public interface PmRolePermissionService {
 
-    List<String> getPermissionsByUserIdandProjectId(Integer userId, Integer projectId);
+//    List<String> getPermissionsByUserIdandProjectId(Integer userId, Integer projectId);
 
     List<ProjectPermission> selectProjectPermissions(Integer userId);
 }

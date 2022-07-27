@@ -15,8 +15,6 @@ import java.util.List;
 */
 public interface UserService  extends IService<User>{
 
-    User get(Integer userId);
-
     User addUser(User user);
 
     Boolean changePassword(String userName, String oldPwd, String newPwd);
@@ -24,7 +22,6 @@ public interface UserService  extends IService<User>{
     User loadUserByUsername(String userName);
 
     UserDetailInfo getUserDetails(String userName);
-
 
     Boolean addUserRoles(Integer userId, List<Integer> roles);
 
