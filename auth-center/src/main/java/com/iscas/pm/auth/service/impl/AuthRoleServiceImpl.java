@@ -24,8 +24,11 @@ public class AuthRoleServiceImpl extends ServiceImpl<AuthRoleMapper, AuthRole>
 
 
     @Override
-    public List<AuthRole> getRolesByUserId(Integer userId) {
-        return  authRoleMapper.getRolesByUserId(userId);
+    public List<AuthRole> getRolesByUserName(String userName) {
+
+
+
+        return  authRoleMapper.getRolesByUserName(userName);
     }
 }
 

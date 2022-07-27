@@ -31,11 +31,8 @@ public class RoleController {
 
     @ApiOperation(value = "角色列表",notes = "查询userid对应角色信息")
     @GetMapping("/userList")
-    public List< AuthRole> listAll(@RequestParam Integer userId) {
-
-        //
-        return  authRoleService.getRolesByUserId(userId);
-
+    public List< AuthRole> listAll(@RequestParam String userName) {
+        return  authRoleService.getRolesByUserName(userName);
     }
 
 

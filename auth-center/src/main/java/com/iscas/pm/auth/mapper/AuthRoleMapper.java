@@ -18,8 +18,9 @@ public interface AuthRoleMapper extends BaseMapper<AuthRole> {
 
     @Select("SELECT *" + " FROM auth_role " +"INNER JOIN auth_user_role "
             +"ON  auth_role.id=auth_user_role.role_id  "+
-            " WHERE  auth_user_role.user_id=#{userId}" )
-    List<AuthRole> getRolesByUserId(Integer userId);
+            " WHERE  auth_user_role.user_id="+
+            "(select  user_id"+"from"+"where auth_user.user_name="+"#{userName}"     )
+    List<AuthRole> getRolesByUserName(String userName);
 }
 
 
