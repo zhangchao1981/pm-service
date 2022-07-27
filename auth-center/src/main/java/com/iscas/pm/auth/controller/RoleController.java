@@ -33,12 +33,12 @@ public class RoleController {
         return  authRoleService.list();
     }
 
-    //查询user对应角色信息
-    @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
+    @ApiOperation(value = "角色列表",notes = "查询userid对应角色信息")
     @GetMapping("/userList")
     public List< AuthRole> listAll(@RequestParam Integer userId) {
 
-        return  authRoleService.list();
+        //
+        return  authRoleService.getRolesByUserId(userId);
 
     }
 

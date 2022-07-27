@@ -31,14 +31,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
-
-
-
-
-
-
     @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
-    @GetMapping("/userList")
+    @PostMapping("/userList")
 //    @PreAuthorize("hasAuthority('/user/userList')")
     public IPage<User>  listAll( @RequestBody ListQueryCondition condition ) {
         //用户名模糊查询

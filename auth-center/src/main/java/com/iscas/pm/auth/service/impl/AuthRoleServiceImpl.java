@@ -17,12 +17,16 @@ import java.util.List;
 @Service
 public class AuthRoleServiceImpl extends ServiceImpl<AuthRoleMapper, AuthRole>
     implements AuthRoleService {
+    @Autowired
+    AuthRoleMapper authRoleMapper;
 
 
 
 
-
-
+    @Override
+    public List<AuthRole> getRolesByUserId(Integer userId) {
+        return  authRoleMapper.getRolesByUserId(userId);
+    }
 }
 
 

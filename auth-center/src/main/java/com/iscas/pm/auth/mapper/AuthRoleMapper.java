@@ -8,16 +8,18 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
-* @author 66410
-* @description 针对表【auth_role】的数据库操作Mapper
-* @createDate 2022-07-18 20:45:28
-* @Entity auth.domain.AuthRole
-*/
+ * @author 66410
+ * @description 针对表【auth_role】的数据库操作Mapper
+ * @createDate 2022-07-18 20:45:28
+ * @Entity auth.domain.AuthRole
+ */
 @Mapper
 public interface AuthRoleMapper extends BaseMapper<AuthRole> {
 
-
-
+    @Select("SELECT *" + " FROM auth_role " +"INNER JOIN auth_user_role "
+            +"ON  auth_role.id=auth_user_role.role_id  "+
+            " WHERE  auth_user_role.user_id=#{userId}" )
+    List<AuthRole> getRolesByUserId(Integer userId);
 }
 
 
