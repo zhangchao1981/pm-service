@@ -2,6 +2,7 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
+import com.iscas.pm.auth.domain.user.ListQueryCondition;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
@@ -35,14 +36,15 @@ public class UserController {
 
 
 
+
     @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
     @GetMapping("/userList")
-    @PreAuthorize("hasAuthority('/user/userList')")
-    public IPage<User>  listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+//    @PreAuthorize("hasAuthority('/user/userList')")
+    public IPage<User>  listAll( @RequestBody ListQueryCondition condition ) {
         //用户名模糊查询
-        //状态
+        //状态  雇员姓名  人员所在部门id
         //密码全部置空
-        return userService.selectUserList(userName, pageNum,pageSize);
+        return userService.selectUserList(condition);
     }
 
     @ApiOperation(value = "添加人员")

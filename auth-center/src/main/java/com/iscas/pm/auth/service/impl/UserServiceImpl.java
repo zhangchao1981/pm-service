@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.AuthUserRole;
 import com.iscas.pm.auth.domain.ProjectPermission;
+import com.iscas.pm.auth.domain.user.ListQueryCondition;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
@@ -116,13 +117,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userDetailInfo;
     }
 
+
     @Override
-    public IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize) {
+    public IPage<User> selectUserList(ListQueryCondition condition) {
+        //查询条件
+        Integer pageNum = condition.getPageNum();
+        Integer pageSize = condition.getPageSize();
+        String departmentId = condition.getDepartmentId();
+        String userName = condition.getUserName();
+        String employeeName = condition.getEmployeeName();
+        String status = condition.getStatus();
+
+        //employeeName需要处理一下
+
         Page<User>  page= new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(StringUtils.isEmpty(userName), "user_name", userName);
+        wrapper.like(!StringUtils.isEmpty(employeeName), "employee_name",  employeeName );
+        wrapper.like(!StringUtils.isEmpty(userName), "user_name", userName);
+        wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
         //状态：NORMAL
-        wrapper.eq("status", "NORMAL");
+        wrapper.eq(!StringUtils.isEmpty(status),"status",status);
         IPage<User> userPage= userMapper.selectPage(page, wrapper);
         //需要把返回的字段改一下
         List<User> records = userPage.getRecords();
