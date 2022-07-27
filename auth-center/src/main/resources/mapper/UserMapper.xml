@@ -15,24 +15,7 @@
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-
-
     </resultMap>
-
-    <sql id="Base_Column_List">
-        id,user_name,password,
-        employee_name,department_id,phone,
-        email,status,create_time,
-        update_time
-    </sql>
-
-    <!--根据用户名查询用户是否存在-->
-    <select id="existsByName" parameterType="java.lang.String" resultType="boolean">
-        select count(*)
-        from auth_user
-        where  user_name = #{name}
-    </select>
-
 
     <!-- 根据用户名查询用户-->
     <select id="loadUserByUsername" resultMap="BaseResultMap">

@@ -2,9 +2,7 @@ package com.iscas.pm.auth.mapper;
 
 import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * @author 李昶
@@ -13,7 +11,6 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    boolean existsByName(@Param("name") String name);
 
     User loadUserByUsername(String userName);
 

@@ -21,10 +21,10 @@ PmRolePermissionMapper pmRolePermissionMapper;
 
 
 
-    @Override
-    public List<String> getPermissionsByUserIdandProjectId(Integer userId, Integer projectId) {
-        return pmRolePermissionMapper.getPermissionsByUserIdandProjectId(userId,projectId);
-    }
+//    @Override
+//    public List<String> getPermissionsByUserIdandProjectId(Integer userId, Integer projectId) {
+//        return pmRolePermissionMapper.getPermissionsByUserIdandProjectId(userId,projectId);
+//    }
 
     @Override
     public List<ProjectPermission> selectProjectPermissions(Integer userId) {

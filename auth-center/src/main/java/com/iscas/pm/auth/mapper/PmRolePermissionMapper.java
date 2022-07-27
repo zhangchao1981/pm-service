@@ -18,15 +18,15 @@ import java.util.List;
 @Mapper
 public interface PmRolePermissionMapper {
 
-    @Select("SELECT pm_role_permission.permission_id " +
-            " FROM apm_role_permission " +"INNER JOIN pm_project_user_role "
-            +"ON  pm_role_permission.role_id=pm_project_user_role.role_id  "+
-            " WHERE  pm_project_user_role.user_id=#{userId} "+"AND pm_project_user_role.project_id=#{projectId}" )
-    List<String> getPermissionsByUserIdandProjectId(@Param("userId")Integer userId, @Param("projectId") Integer projectId);
+//    @Select("SELECT pm_role_permission.permission_id " +
+//            " FROM apm_role_permission " +"INNER JOIN pm_project_user_role "
+//            +"ON  pm_role_permission.role_id=pm_project_user_role.role_id  "+
+//            " WHERE  pm_project_user_role.user_id=#{userId} "+"AND pm_project_user_role.project_id=#{projectId}" )
+//    List<String> getPermissionsByUserIdandProjectId(@Param("userId")Integer userId, @Param("projectId") Integer projectId);
 
     @Select("SELECT project_id,permission_id" +
-            " FROM pm_project_user_role,pm_role_permission" +
-            " WHERE pm_project_user_role.role_id=pm_role_permission.role_id "+" AND user_id =#{userId}" )
+            " FROM pm_project_user_role,auth_role_permission" +
+            " WHERE pm_project_user_role.role_id=auth_role_permission.role_id "+" AND user_id =#{userId}" )
     List<ProjectPermission> selectProjectPermissions(@Param("userId") Integer userId);
 }
 

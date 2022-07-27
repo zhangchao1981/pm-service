@@ -48,11 +48,11 @@ public class PermissionController {
        return authPermissionService.save(authPermission);
     }
 
-    @ApiOperation(value = "根据userId和projectId查询pm表中的permission")
-    @PostMapping(value = "getPermissionByUserIdandProjectId")
-    public List<String> getPermissionsByUserIdandProjectId(@Valid Integer userId, @Valid Integer projectId) {
-        return pmRolePermissionService.getPermissionsByUserIdandProjectId(userId, projectId);
-    }
+//    @ApiOperation(value = "根据userId和projectId查询pm表中的permission")
+//    @PostMapping(value = "getPermissionByUserIdandProjectId")
+//    public List<String> getPermissionsByUserIdandProjectId(@Valid Integer userId, @Valid Integer projectId) {
+//        return pmRolePermissionService.getPermissionsByUserIdandProjectId(userId, projectId);
+//    }
 
     @ApiOperation(value = "根据userId查询auth表中的permission")
     @PostMapping(value = "getPermissionByUserId")
