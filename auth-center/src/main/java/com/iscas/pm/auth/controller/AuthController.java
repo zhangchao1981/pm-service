@@ -1,7 +1,7 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.UserLoginParam;
-import com.iscas.pm.auth.domain.user.UserInfo;
+import com.iscas.pm.auth.domain.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.AuthToken;

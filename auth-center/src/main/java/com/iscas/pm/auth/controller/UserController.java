@@ -2,9 +2,9 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
-import com.iscas.pm.auth.domain.user.UserQueryParam;
-import com.iscas.pm.auth.domain.user.User;
-import com.iscas.pm.auth.domain.user.UserStatusEnum;
+import com.iscas.pm.auth.domain.UserQueryParam;
+import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
@@ -96,7 +96,7 @@ public class UserController {
         return true;
     }
 
-    @ApiOperation(value = "分配角色", notes = "为指定人员分配系统角色")
+    @ApiOperation(value = "分配角色", notes = "为指定用户分配系统角色")
     @PostMapping("settingSystemRole")
     @PreAuthorize("hasAuthority('/user/settingSystemRole')")
     public Boolean settingSystemRole(@NotNull @RequestParam Integer userId, @RequestBody List<Integer> roles) {

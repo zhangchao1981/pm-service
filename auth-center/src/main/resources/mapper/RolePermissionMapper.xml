@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.iscas.pm.auth.mapper.AuthRolePermissionMapper">
+<mapper namespace="com.iscas.pm.auth.mapper.RolePermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.AuthRolePermission">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.RolePermission">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="role_id" column="role_id" jdbcType="INTEGER"/>
             <result property="permission_id" column="permission_id" jdbcType="INTEGER"/>

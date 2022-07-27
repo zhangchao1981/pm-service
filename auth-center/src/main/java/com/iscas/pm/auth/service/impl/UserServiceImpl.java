@@ -6,12 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.AuthUserRole;
 import com.iscas.pm.auth.domain.ProjectPermission;
-import com.iscas.pm.auth.domain.user.UserQueryParam;
-import com.iscas.pm.auth.domain.user.User;
-import com.iscas.pm.auth.domain.user.UserStatusEnum;
+import com.iscas.pm.auth.domain.UserQueryParam;
+import com.iscas.pm.auth.domain.User;
+import com.iscas.pm.auth.domain.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
-import com.iscas.pm.auth.service.AuthRolePermissionService;
-import com.iscas.pm.auth.service.PmRolePermissionService;
+import com.iscas.pm.auth.service.PermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
@@ -36,9 +35,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private UserMapper userMapper;
     @Autowired
-    private AuthRolePermissionService authRolePermissionService;
-    @Autowired
-    private PmRolePermissionService pmRolePermissionService;
+    private PermissionService permissionService;
     @Autowired
     private AuthUserRoleServiceImpl authUserRoleService;
 
@@ -104,11 +101,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         //返回系统角色对应的权限列表，去重
-        List<String> systemPermissions = authRolePermissionService.getPermissionsByUserId(user.getId());
+        List<String> systemPermissions = permissionService.getSystemPerMissions(user.getId());
         systemPermissions = systemPermissions.stream().distinct().collect(Collectors.toList());
 
         //获取所有项目角色对应的权限列表
-        List<ProjectPermission> projectPermissionList = pmRolePermissionService.selectProjectPermissions(user.getId());
+        List<ProjectPermission> projectPermissionList = permissionService.getProjectPermissions(user.getId());
         Map<String, List<String>> projectPermissions = projectPermissionList.stream().collect(Collectors.groupingBy(ProjectPermission::getProjectId, Collectors.mapping(ProjectPermission::getPermissionId, Collectors.toList())));
 
         //封装成UserDetails对象

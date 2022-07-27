@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.auth.domain.user.UserQueryParam;
-import com.iscas.pm.auth.domain.user.User;
+import com.iscas.pm.auth.domain.UserQueryParam;
+import com.iscas.pm.auth.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 
