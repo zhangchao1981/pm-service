@@ -2,6 +2,7 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
+import com.iscas.pm.auth.domain.user.ListQueryCondition;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
@@ -31,32 +32,41 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @ApiOperation(value = "人员列表",notes = "分页返回符合条件的人员列表")
+
+
+
+
+
+    @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
     @GetMapping("/userList")
-    @PreAuthorize("hasAuthority('/user/userList')")
-    public IPage<User>  listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        return userService.selectUserList(userName, pageNum,pageSize);
+//    @PreAuthorize("hasAuthority('/user/userList')")
+    public IPage<User>  listAll( @RequestBody ListQueryCondition condition ) {
+        //用户名模糊查询
+        //状态  雇员姓名  人员所在部门id
+        //密码全部置空
+        return userService.selectUserList(condition);
     }
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
-    @PreAuthorize("hasAuthority('/user/addUser')")
+//    @PreAuthorize("hasAuthority('/user/addUser')")
     public User adduser(@Valid @RequestBody  User user) {
+        //初始密码统一设置成123456
         userService.addUser(user);
         return user;
     }
 
     @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
     @PostMapping("editUser")
-    @PreAuthorize("hasAuthority('/user/editUser')")
-    public Boolean editUser(@Valid @RequestBody  User user) {
-        //修改用户时，用户名、姓名、密码都不允许修改
-        user.setUserName(null);
-        user.setPassword(null);
-        user.setEmployeeName(null);
+//    @PreAuthorize("hasAuthority('/user/editUser')")
+    public User editUser(@Valid @RequestBody  User user) {
+        //待新增功能：用户id，用户名和姓名都不允许修改
+        User aimUser = userService.get(user.getId());
+        user.setUserName(aimUser.getUserName());
+        user.setEmployeeName(aimUser.getEmployeeName());
 
         userService.saveOrUpdate(user);
-        return true;
+        return user;
     }
 
     @ApiOperation(value = "注销人员")
@@ -70,7 +80,8 @@ public class UserController {
         user.setStatus(UserStatusEnum.CANCEL);
         userService.saveOrUpdate(user);
 
-        //todo 缺少清空token信息，待开发
+
+        //缺少清空token信息，待开发
 
         return true;
     }
@@ -96,10 +107,10 @@ public class UserController {
     public Boolean settingSystemRole(@NotNull  @RequestParam Integer userId, @RequestBody List<Integer> roles) {//多角色分配  user
         //  首先判断user是否在auth_user表中
         if (userService.get(userId)==null){
-            throw new IllegalArgumentException("该用户不存在");
+            throw new IllegalArgumentException("指定人员未注册");
         }
         //  更新/添加  auth_user_role表记录
-        return  userService.addUserRoles(userId,roles);
+        return    userService.addUserRoles(userId,roles);
 
     }
 

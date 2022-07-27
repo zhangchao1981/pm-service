@@ -1,13 +1,13 @@
 package com.iscas.pm.auth.service.impl;
 
 
-import com.alibaba.druid.sql.visitor.functions.Now;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.AuthUserRole;
 import com.iscas.pm.auth.domain.ProjectPermission;
+import com.iscas.pm.auth.domain.user.ListQueryCondition;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
@@ -16,16 +16,12 @@ import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
-import com.iscas.pm.common.core.util.Pinyin4jUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,23 +52,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User addUser(User user) {
         //设置初始密码
         user.setPassword(new BCryptPasswordEncoder().encode("123456"));
-
-        //人员姓名全拼生成用户名，重名后面追加0x
-        String userName = Pinyin4jUtil.getPingYin(user.getEmployeeName());
-        int i=1;
+        //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
+        //名字全拼怎么弄?
+        String userName=user.getEmployeeName();
+        int i=0;
         while(loadUserByUsername(userName)!=null){
             userName+="0"+i;
             i++;
         }
         user.setUserName(userName);
-
-        //补全信息后，插入用户表
-        user.setCreateTime(new Date());
-        user.setUpdateTime(new Date());
-        user.setStatus(UserStatusEnum.NORMAL);
+        //插入用户表
         userMapper.insert(user);
-
-        //密码置空
         user.setPassword(null);
         return user;
     }
@@ -127,20 +117,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userDetailInfo;
     }
 
+
     @Override
-    public IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize) {
-        //查询符合条件的用户例表
+    public IPage<User> selectUserList(ListQueryCondition condition) {
+        //查询条件
+        Integer pageNum = condition.getPageNum();
+        Integer pageSize = condition.getPageSize();
+        String departmentId = condition.getDepartmentId();
+        String userName = condition.getUserName();
+        String employeeName = condition.getEmployeeName();
+        String status = condition.getStatus();
+
+        //employeeName需要处理一下
+
         Page<User>  page= new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(StringUtils.isEmpty(userName), "user_name", userName);
-
-        wrapper.eq("status", "NORMAL");
+        wrapper.like(!StringUtils.isEmpty(employeeName), "employee_name",  employeeName )
+                .or().like(!StringUtils.isEmpty(userName),"user_name", userName);
+        wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
+        //状态：NORMAL
+        wrapper.eq(!StringUtils.isEmpty(status),"status",status);
         IPage<User> userPage= userMapper.selectPage(page, wrapper);
-
-        //返回列表密码置为空
+        //需要把返回的字段改一下
         List<User> records = userPage.getRecords();
-        records.stream().forEach(item -> item.setPassword(null));
-
+        for (int i = 0; i < records.size(); i++) {
+            records.get(i).setPassword(null);
+        }
         return userPage;
     }
 
@@ -150,7 +152,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
-
         //批量插入
         List<AuthUserRole> userRoles = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {
