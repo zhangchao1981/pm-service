@@ -19,23 +19,20 @@ import java.util.List;
 @RequestMapping("/role")
 @Api(tags = {"角色管理"})
 public class RoleController {
-   @Autowired
-   AuthRoleService  authRoleService;
+    @Autowired
+    AuthRoleService authRoleService;
 
     //查询角色列表
     @ApiOperation(value = "角色列表")
     @GetMapping("/roleList")
     public List<AuthRole> listAll() {
-        return  authRoleService.list();
+        return authRoleService.list();
     }
 
-    @ApiOperation(value = "角色列表",notes = "查询userid对应角色信息")
-    @GetMapping("/userList")
-    public List< AuthRole> listAll(@RequestParam String userName) {
-        return  authRoleService.getRolesByUserName(userName);
-    }
+//    @ApiOperation(value = "角色列表", notes = "查询userid对应角色信息")
+//    @GetMapping("/userList")
+//    public List<AuthRole> listAll(@RequestParam String userName, @RequestParam String type) {
+//        return authRoleService.getRolesByUserName(userName,type);
+//    }
 
-
-
-
-    }
+}

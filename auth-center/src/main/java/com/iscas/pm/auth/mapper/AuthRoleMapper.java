@@ -3,6 +3,7 @@ package com.iscas.pm.auth.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.auth.domain.AuthRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public interface AuthRoleMapper extends BaseMapper<AuthRole> {
     @Select("SELECT *" + " FROM auth_role " +"INNER JOIN auth_user_role "
             +"ON  auth_role.id=auth_user_role.role_id  "+
             " WHERE  auth_user_role.user_id="+
-            "(select  user_id"+"from"+"where auth_user.user_name="+"#{userName}"     )
-    List<AuthRole> getRolesByUserName(String userName);
+            "(select  user_id"+"from"+"where auth_user.user_name="+"#{userName}"
+            )
+    List<AuthRole> getRolesByUserName(@Param("userName") String userName);
 }
 
 
