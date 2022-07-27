@@ -1,7 +1,7 @@
 package com.iscas.pm.auth.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.auth.domain.user.ListQueryCondition;
+import com.iscas.pm.auth.domain.user.UserQueryParam;
 import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
@@ -28,5 +28,5 @@ public interface UserService  extends IService<User>{
 
     Boolean addUserRoles(Integer userId, List<Integer> roles);
 
-    IPage<User> selectUserList(ListQueryCondition condition);
+    IPage<User> selectUserList(UserQueryParam condition);
 }

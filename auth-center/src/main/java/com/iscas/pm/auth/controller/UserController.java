@@ -2,7 +2,7 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
-import com.iscas.pm.auth.domain.user.ListQueryCondition;
+import com.iscas.pm.auth.domain.user.UserQueryParam;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
@@ -31,19 +31,17 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
-    @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
+
+    @ApiOperation(value = "人员列表",notes = "分页返回符合条件的人员列表")
     @PostMapping("/userList")
-//    @PreAuthorize("hasAuthority('/user/userList')")
-    public IPage<User>  listAll( @RequestBody ListQueryCondition condition ) {
-        //用户名模糊查询
-        //状态  雇员姓名  人员所在部门id
-        //密码全部置空
-        return userService.selectUserList(condition);
+    @PreAuthorize("hasAuthority('/user/userList')")
+    public IPage<User>  listAll( @RequestBody @Valid UserQueryParam queryParam ) {
+        return userService.selectUserList(queryParam);
     }
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
-//    @PreAuthorize("hasAuthority('/user/addUser')")
+    @PreAuthorize("hasAuthority('/user/addUser')")
     public User adduser(@Valid @RequestBody  User user) {
         //初始密码统一设置成123456
         userService.addUser(user);
@@ -52,7 +50,7 @@ public class UserController {
 
     @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
     @PostMapping("editUser")
-//    @PreAuthorize("hasAuthority('/user/editUser')")
+    @PreAuthorize("hasAuthority('/user/editUser')")
     public User editUser(@Valid @RequestBody  User user) {
         //待新增功能：用户id，用户名和姓名都不允许修改
         User aimUser = userService.get(user.getId());
@@ -97,7 +95,7 @@ public class UserController {
 
     @ApiOperation(value = "分配角色",notes = "为指定人员分配系统角色")
     @PostMapping("settingSystemRole")
-//    @PreAuthorize("hasAuthority('/user/settingSystemRole')")
+    @PreAuthorize("hasAuthority('/user/settingSystemRole')")
     public Boolean settingSystemRole(@NotNull  @RequestParam Integer userId, @RequestBody List<Integer> roles) {//多角色分配  user
         //  首先判断user是否在auth_user表中
         if (userService.get(userId)==null){

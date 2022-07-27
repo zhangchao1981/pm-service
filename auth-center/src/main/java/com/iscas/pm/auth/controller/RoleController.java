@@ -1,11 +1,7 @@
 package com.iscas.pm.auth.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.AuthRole;
-import com.iscas.pm.auth.domain.user.ListQueryCondition;
-import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.service.AuthRoleService;
-import com.iscas.pm.auth.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

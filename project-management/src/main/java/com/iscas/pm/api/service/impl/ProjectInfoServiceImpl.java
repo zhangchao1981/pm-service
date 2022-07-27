@@ -67,7 +67,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
         //测试
         projectId="demo";
 
-        Object permissionsJSONString = RequestHolder.getPermissions().get(projectId);
+        Object permissionsJSONString = RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
         List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
         return  permissionsList;
     }

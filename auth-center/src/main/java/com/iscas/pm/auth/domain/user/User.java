@@ -1,5 +1,7 @@
 package com.iscas.pm.auth.domain.user;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
@@ -17,6 +19,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class User implements Serializable {
     @ApiModelProperty(value = "用户id")
+    @TableId(value="id", type= IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "用户名,根据人员姓名自动生成，前端无需传值，默认为姓名全拼，重复时后面加数字区分")

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.domain.AuthUserRole;
 import com.iscas.pm.auth.domain.ProjectPermission;
-import com.iscas.pm.auth.domain.user.ListQueryCondition;
+import com.iscas.pm.auth.domain.user.UserQueryParam;
 import com.iscas.pm.auth.domain.user.User;
 import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
@@ -119,26 +119,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
-    public IPage<User> selectUserList(ListQueryCondition condition) {
+    public IPage<User> selectUserList(UserQueryParam queryParam) {
         //查询条件
-        Integer pageNum = condition.getPageNum();
-        Integer pageSize = condition.getPageSize();
-        String departmentId = condition.getDepartmentId();
-        String userName = condition.getUserName();
-        String employeeName = condition.getEmployeeName();
-        String status = condition.getStatus();
+        String departmentId = queryParam.getDepartmentId();
+        String name = queryParam.getName();
+        String status = queryParam.getStatus();
 
-        //employeeName需要处理一下
-
-        Page<User>  page= new Page<>(pageNum, pageSize);
+        //封装查询语句
+        Page<User>  page= new Page<>(queryParam.getPageNum(), queryParam.getPageSize());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(!StringUtils.isEmpty(employeeName), "employee_name",  employeeName )
-                .or().like(!StringUtils.isEmpty(userName),"user_name", userName);
+        wrapper.like(!StringUtils.isEmpty(name), "employee_name",  name )
+                .or().like(!StringUtils.isEmpty(name),"user_name", name);
         wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
-        //状态：NORMAL
         wrapper.eq(!StringUtils.isEmpty(status),"status",status);
+
         IPage<User> userPage= userMapper.selectPage(page, wrapper);
-        //需要把返回的字段改一下
+
+        //密码置为空
         List<User> records = userPage.getRecords();
         for (int i = 0; i < records.size(); i++) {
             records.get(i).setPassword(null);
