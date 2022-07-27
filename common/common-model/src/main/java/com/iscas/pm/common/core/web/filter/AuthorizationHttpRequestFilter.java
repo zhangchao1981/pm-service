@@ -4,6 +4,7 @@ import com.iscas.pm.common.core.model.AuthConstants;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.util.TokenDecodeUtil;
+import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +46,14 @@ public class AuthorizationHttpRequestFilter implements Filter {
         //从header获取中获取token
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
 
-        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
+        //放行部分请求
+        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
+            //从redis里查询是否有相应的token，如果没有就拦截
+            if (ObjectUtils.isEmpty(redisUtil.get(StringUtils.substring(token,7,token.length())))) {
+                throw new AuthenticateException("redis中的token已被清除");
+            }
+
+
             //从redis中取出当前项目id
             Object obj = redisUtil.get(token);
             String currentProjectId = obj == null ? "default" : obj.toString();

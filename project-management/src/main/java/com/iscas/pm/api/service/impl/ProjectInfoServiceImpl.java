@@ -15,8 +15,10 @@ import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectUserRoleService;
 import com.iscas.pm.common.core.model.AuthConstants;
 import com.iscas.pm.common.core.util.RedisUtil;
+import com.iscas.pm.common.core.web.exception.AuthorizeException;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -60,10 +62,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
 
     @Override
     public List<String> projectPermissions(Project project) {
-        Object userid = RequestContextHolder.getRequestAttributes().getAttribute("userid", 0);
-        //拿到userid 和 projectid  判断用户是否在该project里面是有编辑权限的角色
         String projectId = project.getId();
-
         //测试
         projectId="demo";
 
@@ -74,20 +73,25 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
 
     @Override
     public Project switchProject(String projectId) {
+
+        //判断当前用户在要切换的项目上是否有权限
+        Integer userId = RequestHolder.getUserInfo().getUserId();
         QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id",projectId);
-//        queryWrapper.eq("user_id",userId);
-        ProjectUserRole roleInfo = projectUserRoleService.getOne(queryWrapper);
-        if (roleInfo.getRoleId()==null){
-            //没有找到对应的角色，判断为无权限
-            return null;
+        queryWrapper.eq("user_id",userId);
+        if (projectUserRoleService.getOne(queryWrapper)==null){
+            throw new AuthorizeException("当前用户无权限访问目标项目");
         }
-        // 有权限则存储到redis里(更新token对应projectid)
-        //拿到token
-        String token =request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
-        Object obj = redisUtil.set(token,projectId);
 
-        //返回对应Project信息
+
+        // 有权限则存储到redis里(更新token对应projectid)
+
+        String token =request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
+        //请求头里拿到的token有bear 开头
+        redisUtil.set(StringUtils.substring(token,7,token.length()),projectId);
+
+
+        //返回目标Project信息
         QueryWrapper<Project> projectQuery = new QueryWrapper<>();
         projectQuery.eq("id",projectId);
         return  getOne(projectQuery);

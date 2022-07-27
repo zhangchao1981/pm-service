@@ -37,7 +37,7 @@ public class ProjectUserRole implements Serializable {
     /**
      * 项目id
      */
-    private Integer projectId;
+    private String projectId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

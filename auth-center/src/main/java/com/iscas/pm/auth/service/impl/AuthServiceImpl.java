@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
+import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,10 @@ public class AuthServiceImpl implements AuthService {
     private LoadBalancerClient loadBalancerClient;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisUtil redisUtil;
+
+
 
     @Override
     public AuthToken login(String username, String password) {
@@ -52,6 +57,16 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("申请令牌失败");
         }
         return authToken;
+    }
+
+    @Override
+    public boolean logout(String token) {
+        //如果token是以bear 开头的，去掉开头
+        if (token.startsWith("bearer")){
+            token=StringUtils.substring(token,7,token.length());
+        }
+            redisUtil.del(token);
+            return true;
     }
 
     /****

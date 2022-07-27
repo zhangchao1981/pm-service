@@ -118,7 +118,6 @@ public class ProjectInfoController {
     @GetMapping("/switchProject")
     @ApiOperation(value = "切换项目", notes = "根据projectId切换项目，projectId为空时，切换到第一个项目上")
     public Project switchProject(@NotBlank(message = "projectId不能为空") @RequestParam String projectId) {
-
         return projectInfoService.switchProject(projectId);
         //判断是否有指定项目的权限
         //从 pm_project_user_role表里面找到userid-projectid对应的role
