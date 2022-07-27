@@ -35,16 +35,15 @@ public class AuthController {
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
 
-        //获取访问token
-        String accessToken = authToken.getAccessToken();
-
+        //获取用户详细信息，包括权限列表
         UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName());
 
+        //专为前端封装返回值，去除一些前端不用的信息
         UserInfo userInfo = new UserInfo();
         userInfo.setId(userDetailInfo.getUserId());
         userInfo.setUserName(userDetailInfo.getUsername());
         userInfo.setEmployeeName(userDetailInfo.getEmployeeName());
-        userInfo.setAccessToken(accessToken);
+        userInfo.setAccessToken(authToken.getAccess_token());
         userInfo.setSystemPermissions(userDetailInfo.getSystemPermissions());
         userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
         return userInfo;

@@ -1,5 +1,6 @@
 package com.iscas.pm.auth.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
@@ -22,51 +23,43 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
- * @Date:2022/7/14 14:52
- * @Description: 授权认证login请求  service
- **/
+ * @author 李昶
+ * @Date: 20122/7/14 16:42
+ * @Description: 调用oauth请求token、注销token
+ */
 @Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
     //客户端ID
     @Value("${auth.clientId}")
     private String clientId;
-
-    //秘钥
+    //客户端秘钥
     @Value("${auth.clientSecret}")
     private String clientSecret;
 
     @Autowired
     private LoadBalancerClient loadBalancerClient;
-
     @Autowired
     private RestTemplate restTemplate;
 
-    /***
-     * 授权认证方法
-     * @param username
-     * @param password
-     * @return
-     */
     @Override
     public AuthToken login(String username, String password) {
         //申请令牌
         AuthToken authToken = applyToken(username, password, clientId, clientSecret);
-        if (authToken == null || StringUtils.isBlank(authToken.getAccessToken())) {
+        if (authToken == null || StringUtils.isBlank(authToken.getAccess_token())) {
             throw new RuntimeException("申请令牌失败");
         }
         return authToken;
     }
 
     /****
-     * 认证方法
-     * @param username:用户登录名字
+     * oauth中获取token令牌
+     * @param username:用户名
      * @param password：用户密码
      * @param clientId：配置文件中的客户端ID
-     * @param clientSecret：配置文件中的秘钥
+     * @param clientSecret：配置文件中的客户端秘钥
      * @return
      */
     private AuthToken applyToken(String username, String password, String clientId, String clientSecret) {
@@ -88,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         formData.add("password", password);
         //定义头
         MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
-        header.add("Authorization", httpbasic(clientId, clientSecret));
+        header.add("Authorization", httpBasic64(clientId, clientSecret));
 
         //配置restTemplate调用异常处理
         restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
@@ -110,27 +103,16 @@ public class AuthServiceImpl implements AuthService {
             }
         });
 
-        Map map = null;
         //http请求spring security的申请令牌接口
-        ResponseEntity<Map> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST, new HttpEntity<>(formData, header), Map.class);
+        ResponseEntity<AuthToken> mapResponseEntity = restTemplate.exchange(path, HttpMethod.POST, new HttpEntity<>(formData, header), AuthToken.class);
+
         //获取响应数据
-        map = mapResponseEntity.getBody();
-        if (map == null || map.get("access_token") == null || map.get("refresh_token") == null || map.get("jti") == null) {
-            //jti是jwt令牌的唯一标识作为用户身份令牌
+        AuthToken authToken = mapResponseEntity.getBody();
+        if (authToken == null || StringUtils.isBlank(authToken.getAccess_token())  || StringUtils.isBlank(authToken.getRefresh_token()) || StringUtils.isBlank(authToken.getJti())) {
+            log.error("创建令牌失败！错误原因："+ JSON.toJSONString(mapResponseEntity.getBody()));
             throw new RuntimeException("创建令牌失败！");
         }
 
-        //将响应数据封装成AuthToken对象
-        AuthToken authToken = new AuthToken();
-        //访问令牌(jwt)
-        String accessToken = (String) map.get("access_token");
-        //刷新令牌(jwt)
-        String refreshToken = (String) map.get("refresh_token");
-        //jti，作为用户的身份标识
-        String jwtToken = (String) map.get("jti");
-        authToken.setJti(jwtToken);
-        authToken.setAccessToken(accessToken);
-        authToken.setRefreshToken(refreshToken);
         return authToken;
     }
 
@@ -140,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
      * @param clientSecret
      * @return
      */
-    private String httpbasic(String clientId, String clientSecret) {
+    private String httpBasic64(String clientId, String clientSecret) {
         //将客户端id和客户端密码拼接，按“客户端id:客户端密码”
         String string = clientId + ":" + clientSecret;
         //进行base64编码
