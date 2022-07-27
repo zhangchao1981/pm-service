@@ -1,6 +1,7 @@
 package com.iscas.pm.auth.service.impl;
 
 
+import com.alibaba.druid.sql.visitor.functions.Now;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,12 +16,16 @@ import com.iscas.pm.auth.service.PmRolePermissionService;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.auth.utils.BCrypt;
 import com.iscas.pm.common.core.model.UserDetailInfo;
+import com.iscas.pm.common.core.util.Pinyin4jUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,17 +56,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User addUser(User user) {
         //设置初始密码
         user.setPassword(new BCryptPasswordEncoder().encode("123456"));
-        //人员姓名转成用户名（姓名全拼，用户名如有重复后面追加01，02 ...）
-        //名字全拼怎么弄?
-        String userName=user.getEmployeeName();
-        int i=0;
+
+        //人员姓名全拼生成用户名，重名后面追加0x
+        String userName = Pinyin4jUtil.getPingYin(user.getEmployeeName());
+        int i=1;
         while(loadUserByUsername(userName)!=null){
             userName+="0"+i;
             i++;
         }
         user.setUserName(userName);
-        //插入用户表
+
+        //补全信息后，插入用户表
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
+        user.setStatus(UserStatusEnum.NORMAL);
         userMapper.insert(user);
+
+        //密码置空
         user.setPassword(null);
         return user;
     }
@@ -118,17 +129,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public IPage<User> selectUserList(String userName, Integer pageNum, Integer pageSize) {
+        //查询符合条件的用户例表
         Page<User>  page= new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.like(StringUtils.isEmpty(userName), "user_name", userName);
-        //状态：NORMAL
+
         wrapper.eq("status", "NORMAL");
         IPage<User> userPage= userMapper.selectPage(page, wrapper);
-        //需要把返回的字段改一下
+
+        //返回列表密码置为空
         List<User> records = userPage.getRecords();
-        for (int i = 0; i < records.size(); i++) {
-            records.get(i).setPassword(null);
-        }
+        records.stream().forEach(item -> item.setPassword(null));
+
         return userPage;
     }
 
@@ -138,6 +150,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
+
         //批量插入
         List<AuthUserRole> userRoles = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {

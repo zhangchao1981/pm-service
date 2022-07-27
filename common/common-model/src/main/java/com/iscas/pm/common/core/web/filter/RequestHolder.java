@@ -1,22 +1,19 @@
 package com.iscas.pm.common.core.web.filter;
 
-
-import java.security.Permissions;
-import java.util.HashMap;
-import java.util.Map;
+import com.iscas.pm.common.core.model.UserDetailInfo;
 
 /**
  * 将用户信息存放到ThreadLocal中
  */
 public class RequestHolder {
 
-    private final static ThreadLocal<HashMap> requestHolder = new ThreadLocal<HashMap>();
+    private final static ThreadLocal<UserDetailInfo> requestHolder = new ThreadLocal<>();
 
-    public static void add(HashMap permissions) {
-        requestHolder.set(permissions);
+    public static void add(UserDetailInfo userDetailInfo) {
+        requestHolder.set(userDetailInfo);
     }
 
-    public static HashMap getPermissions() {
+    public static UserDetailInfo getUserInfo() {
         return requestHolder.get();
     }
 

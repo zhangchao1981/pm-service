@@ -31,37 +31,29 @@ public class UserController {
     @Autowired
     UserService userService;
 
-
-
-
-
-    @ApiOperation(value = "人员列表",notes = "分页返回人员列表")
+    @ApiOperation(value = "人员列表",notes = "分页返回符合条件的人员列表")
     @GetMapping("/userList")
     @PreAuthorize("hasAuthority('/user/userList')")
     public IPage<User>  listAll(@RequestParam String userName, @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        //用户名模糊查询
-        //状态
-        //密码全部置空
         return userService.selectUserList(userName, pageNum,pageSize);
     }
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
-//    @PreAuthorize("hasAuthority('/user/addUser')")
+    @PreAuthorize("hasAuthority('/user/addUser')")
     public User adduser(@Valid @RequestBody  User user) {
-        //初始密码统一设置成123456
         userService.addUser(user);
         return user;
     }
 
     @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
     @PostMapping("editUser")
-//    @PreAuthorize("hasAuthority('/user/editUser')")
+    @PreAuthorize("hasAuthority('/user/editUser')")
     public User editUser(@Valid @RequestBody  User user) {
-        //待新增功能：用户id，用户名和姓名都不允许修改
-        User aimUser = userService.get(user.getId());
-        user.setUserName(aimUser.getUserName());
-        user.setEmployeeName(aimUser.getEmployeeName());
+        //修改用户时，用户名、姓名、密码都不允许修改
+        user.setUserName(null);
+        user.setPassword(null);
+        user.setEmployeeName(null);
 
         userService.saveOrUpdate(user);
         return user;
@@ -78,8 +70,7 @@ public class UserController {
         user.setStatus(UserStatusEnum.CANCEL);
         userService.saveOrUpdate(user);
 
-
-        //缺少清空token信息，待开发
+        //todo 缺少清空token信息，待开发
 
         return true;
     }
@@ -105,10 +96,10 @@ public class UserController {
     public Boolean settingSystemRole(@NotNull  @RequestParam Integer userId, @RequestBody List<Integer> roles) {//多角色分配  user
         //  首先判断user是否在auth_user表中
         if (userService.get(userId)==null){
-            throw new IllegalArgumentException("指定人员未注册");
+            throw new IllegalArgumentException("该用户不存在");
         }
         //  更新/添加  auth_user_role表记录
-        return    userService.addUserRoles(userId,roles);
+        return  userService.addUserRoles(userId,roles);
 
     }
 

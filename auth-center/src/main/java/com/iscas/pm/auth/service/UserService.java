@@ -3,6 +3,7 @@ package com.iscas.pm.auth.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.user.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.iscas.pm.auth.domain.user.UserStatusEnum;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.service.impl;
 
-
+import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.utils.AuthToken;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
@@ -19,17 +19,15 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Map;
 
-/*****
+/**
  * @Date:2022/7/14 14:52
  * @Description: 授权认证login请求  service
- ****/
+ **/
 @Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -62,7 +60,6 @@ public class AuthServiceImpl implements AuthService {
         }
         return authToken;
     }
-
 
     /****
      * 认证方法
@@ -100,9 +97,13 @@ public class AuthServiceImpl implements AuthService {
                 if (response.getRawStatusCode() == 401) {
                     throw new AuthenticateException("用户名密码错误！");
                 }
-                if (response.getRawStatusCode() == 400){
+                if (response.getRawStatusCode() == 400) {
                     String message = new String(super.getResponseBody(response), "UTF-8");
-                    log.error("获取token令牌报错，错误信息：{}",message);
+                    log.error("获取token令牌报错，错误信息：{}", message);
+                    if (StringUtils.isNotBlank(message)) {
+                        JSONObject res = JSONObject.parseObject(message);
+                        throw new AuthenticateException(res.get("error_description").toString());
+                    }
                     throw new AuthenticateException("用户名密码错误!");
                 }
                 super.handleError(response);
@@ -132,7 +133,6 @@ public class AuthServiceImpl implements AuthService {
         authToken.setRefreshToken(refreshToken);
         return authToken;
     }
-
 
     /***
      * base64编码
