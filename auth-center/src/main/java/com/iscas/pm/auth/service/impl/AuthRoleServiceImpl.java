@@ -25,7 +25,7 @@ public class AuthRoleServiceImpl extends ServiceImpl<AuthRoleMapper, AuthRole>
 
 
     @Override
-    public List<AuthRole> listAll(String name, String type) {
+    public List<AuthRole> selectRoleList(String name, String type) {
         QueryWrapper<AuthRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(!StringUtils.isEmpty(name),"name",name);
         queryWrapper.eq(!StringUtils.isEmpty(type),"type",type);
