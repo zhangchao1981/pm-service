@@ -1,12 +1,12 @@
 package com.iscas.pm.auth.service;
 
-
 import com.iscas.pm.auth.utils.AuthToken;
 
-/*****
- * @Date: 2019/7/7 16:23
- * @Description: com.changgou.oauth.service
- ****/
+/**
+ * @author 李昶
+ * @Date: 20122/7/14 16:42
+ * @Description: 用户认证service
+ */
 public interface AuthService {
 
     /***

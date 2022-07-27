@@ -9,26 +9,26 @@ import java.io.Serializable;
 public class AuthToken implements Serializable{
 
     //令牌信息
-    String accessToken;
+    String access_token;
     //刷新token(refresh_token)
-    String refreshToken;
+    String refresh_token;
     //jwt短令牌
     String jti;
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getAccess_token() {
+        return access_token;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
+    public String getRefresh_token() {
+        return refresh_token;
     }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
     }
 
     public String getJti() {
