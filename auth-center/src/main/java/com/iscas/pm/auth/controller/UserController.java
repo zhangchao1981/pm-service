@@ -49,14 +49,14 @@ public class UserController {
     @ApiOperation(value = "编辑人员",notes = "用户id，用户名和姓名都不允许修改")
     @PostMapping("editUser")
     @PreAuthorize("hasAuthority('/user/editUser')")
-    public User editUser(@Valid @RequestBody  User user) {
+    public Boolean editUser(@Valid @RequestBody  User user) {
         //修改用户时，用户名、姓名、密码都不允许修改
         user.setUserName(null);
         user.setPassword(null);
         user.setEmployeeName(null);
 
         userService.saveOrUpdate(user);
-        return user;
+        return true;
     }
 
     @ApiOperation(value = "注销人员")
