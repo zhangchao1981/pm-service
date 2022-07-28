@@ -49,13 +49,14 @@ public class AuthorizationHttpRequestFilter implements Filter {
         //放行部分请求
         if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
             //从redis里查询是否有相应的token，如果没有就拦截
-            if (ObjectUtils.isEmpty(redisUtil.get(StringUtils.substring(token,7,token.length())))) {
+            Object redistoken = redisUtil.get(StringUtils.substring(token, 7, token.length()));
+            if (ObjectUtils.isEmpty(token)) {
                 throw new AuthenticateException("redis中的token已被清除");
             }
 
 
             //从redis中取出当前项目id
-            Object obj = redisUtil.get(token);
+            Object obj = redistoken.toString();
             String currentProjectId = obj == null ? "default" : obj.toString();
 
             //切换数据源
