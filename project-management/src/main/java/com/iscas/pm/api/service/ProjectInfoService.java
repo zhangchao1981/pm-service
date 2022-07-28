@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.project.Project;
-import com.iscas.pm.api.model.project.ProjectQo;
+import com.iscas.pm.api.model.project.ProjectQueryParam;
 
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
  */
 public interface ProjectInfoService extends IService<Project> {
 
-    IPage<Project> projectList(ProjectQo projectQo, Page page);
+    IPage<Project> projectList(ProjectQueryParam projectQo);
 
 
-    List<String> projectPermissions(Project project);
+    List<String> projectPermissions(String projectId);
 
     Project switchProject(String projectId);
 }

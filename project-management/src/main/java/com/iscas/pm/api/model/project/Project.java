@@ -2,6 +2,7 @@ package com.iscas.pm.api.model.project;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -68,11 +69,8 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "项目概述")
     private String description;
 
-
-
     @ApiModelProperty(value = "研制单位")
     private String manufacture;
-
 
     @ApiModelProperty(value = "项目提出方")
     private String projectProvider;
@@ -86,7 +84,16 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "合同金额")
     private BigDecimal contractAmount;
 
+    @JsonIgnore
     @ApiModelProperty(value = "创建人的用户名")
     private String createUser;
+
+    @JsonIgnore
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    @JsonIgnore
+    @ApiModelProperty(value = "最后修改时间")
+    private Date updateTime;
 
 }

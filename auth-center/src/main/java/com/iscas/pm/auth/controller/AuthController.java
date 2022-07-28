@@ -13,8 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -39,6 +37,7 @@ public class AuthController {
     public UserInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
+
         //存入redis   key=token  value="default"
        redisUtil.set(authToken.getAccess_token(),"default");
 
