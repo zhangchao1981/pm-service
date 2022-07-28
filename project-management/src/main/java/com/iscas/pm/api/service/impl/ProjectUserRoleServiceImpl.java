@@ -7,6 +7,8 @@ import com.iscas.pm.api.service.ProjectUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author 66410
 * @description 针对表【pm_project_user_role】的数据库操作Service实现
@@ -15,9 +17,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectUserRoleServiceImpl extends ServiceImpl<ProjectUserRoleMapper, ProjectUserRole>
     implements ProjectUserRoleService {
+@Autowired
+ProjectUserRoleMapper projectUserRoleMapper;
 
-
-
+    @Override
+    public List<String> getProjectIdList(Integer userId) {
+       return projectUserRoleMapper.getProjectIdListByUserId(userId);
+    }
 }
 
 

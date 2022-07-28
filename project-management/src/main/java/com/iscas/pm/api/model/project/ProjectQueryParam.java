@@ -31,6 +31,4 @@ public class ProjectQueryParam {
     @NotNull(message = "每页显示的条数不能为空")
     @Min(value = 1, message = "每页显示的条数不能小于1")
     private Integer pageSize;
-
-
 }

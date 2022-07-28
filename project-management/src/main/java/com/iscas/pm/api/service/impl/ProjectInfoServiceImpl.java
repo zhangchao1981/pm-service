@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.RolePermissionMapper;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.mapper.ProjectMapper;
-import com.iscas.pm.api.model.project.ProjectQo;
+import com.iscas.pm.api.model.project.ProjectQueryParam;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectUserRoleService;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,17 +49,19 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
     private ProjectUserRoleService projectUserRoleService;
 
     @Override
-    public IPage<Project>  projectList(ProjectQo projectQo,Page page) {
+    public IPage<Project>  projectList(ProjectQueryParam projectQueryParam) {
         QueryWrapper<Project> wrapper = new QueryWrapper<>();
+        Page<Project> page = new Page<>(projectQueryParam.getPageNum(),projectQueryParam.getPageSize());
+        String projectName = projectQueryParam.getProjectName();
+
         //拿到用户id--->找到该用户隶属的项目
-        //
-        RequestHolder
+        //方案2. 通过用户id找到所有所在项目id，然后查询其中满足like条件的
+        Integer userId = RequestHolder.getUserInfo().getUserId();
+        List<String> projectIdList=projectUserRoleService.getProjectIdList(userId);
 
-
-
-
-            wrapper.like(!StringUtil.isNullOrEmpty(projectQo.getProjectName()),"name",projectQo.getProjectName());
-            wrapper.eq(!StringUtil.isNullOrEmpty(projectQo.getStatus().getCode()),"status",projectQo.getStatus());
+        wrapper.like(!StringUtil.isNullOrEmpty(projectName),"name", projectName);
+        wrapper.eq(!StringUtil.isNullOrEmpty(projectQueryParam.getStatus()),"status",projectQueryParam.getStatus());
+        wrapper.in("id",(Collection<String>)projectIdList );
         //传入的无论是1还是clossed 都会被转化为closed
         //输出的
         IPage projectIPage = projectMapper.selectPage(page, wrapper);
@@ -67,15 +70,14 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper,Project> i
     }
 
     @Override
-    public List<String> projectPermissions(Project project) {
-        String projectId = project.getId();
-        //测试
-        projectId="demo";
-
+    public List<String> projectPermissions(String projectId) {
         Object permissionsJSONString = RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
         List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
         return  permissionsList;
     }
+
+
+
 
     @Override
     public Project switchProject(String projectId) {

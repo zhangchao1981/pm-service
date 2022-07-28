@@ -1,13 +1,11 @@
 package com.iscas.pm.api.controller;
 
-import com.iscas.pm.api.model.project.Project;
-import com.iscas.pm.api.model.project.ProjectPlan;
-import com.iscas.pm.api.service.ProjectPlanService;
+import com.iscas.pm.api.model.project.Plan;
+import com.iscas.pm.api.service.PlanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,32 +23,29 @@ import javax.validation.Valid;
 @RequestMapping("/projectPlan")
 public class ProjectPlanController {
     @Autowired
-    ProjectPlanService projectPlanService;
+    PlanService planService;
 
 
     @PostMapping("/addProjectPlan")
-    @ApiOperation(value = "发布项目计划", notes = "建立一个项目计划")
+    @ApiOperation(value = "添加项目计划", notes = "建立一个项目计划")
     @PreAuthorize("hasAuthority('/projectPlan/addProjectPlan')")
-    public ProjectPlan addProjectPlan(@Valid @RequestBody ProjectPlan projectPlan){
-        projectPlanService.save(projectPlan);
-        return  projectPlan;
+    public Plan addProjectPlan(@Valid @RequestBody Plan plan){
+        planService.save(plan);
+        return  plan;
     }
-
 
 
     /**
      * 待完善
-     * @param projectPlan
+     * @param
      * @return
      */
-    @PostMapping("/addProjectPlan")
+    @PostMapping("/importTemplate")
     @ApiOperation(value = "模板导入", notes = "根据模板自动生成一个项目计划")
-    @PreAuthorize("hasAuthority('/projectPlan/addProjectPlan')")
-    public ProjectPlan importProjectPlan(@Valid @RequestBody ProjectPlan projectPlan){
-        projectPlanService.save(projectPlan);
+//    @PreAuthorize("hasAuthority('/projectPlan/addProjectPlan')")
+    public Plan importByTemplate(@Valid @RequestBody String projectId){
 
-
-        return  projectPlan;
+        return  null;
     }
 
 
