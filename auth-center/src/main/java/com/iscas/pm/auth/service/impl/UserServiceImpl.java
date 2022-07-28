@@ -121,13 +121,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String status = queryParam.getStatus();
 
         //封装查询语句
-        Page<User> page = new Page<>(queryParam.getPageNum(), queryParam.getPageSize());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.like(!StringUtils.isEmpty(name), "employee_name", name)
                 .or().like(!StringUtils.isEmpty(name), "user_name", name);
         wrapper.eq(!StringUtils.isEmpty(departmentId), "department_id", departmentId);
         wrapper.eq(!StringUtils.isEmpty(status), "status", status);
 
+        Page<User> page = new Page<>(queryParam.getPageNum(), queryParam.getPageSize());
         IPage<User> userPage = userMapper.selectPage(page, wrapper);
 
         //密码置为空

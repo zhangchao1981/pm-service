@@ -1,28 +1,23 @@
 package com.iscas.pm.api.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
-import com.iscas.pm.api.service.ProjectUserRoleService;
-import com.iscas.pm.common.core.model.AuthConstants;
-import com.iscas.pm.common.core.util.RedisUtil;
-import com.iscas.pm.common.core.util.TokenDecodeUtil;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 /**
  * @Author： zhangchao
  * @Date： 2022/7/12
- * @Description： 项目基本信息管理
+ * @Description： 项目基本信息管理控制类
  */
 @RestController
 @Api(tags = {"项目基本信息"})
@@ -31,44 +26,43 @@ public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
 
-    @Autowired
-    TokenDecodeUtil  tokenDecodeUtil;
-
-
-
-
     @PostMapping("/addProject")
-    @ApiOperation(value = "申请立项", notes = "申请建立一个新的项目")
+    @ApiOperation(value = "添加项目", notes = "添加一个新的项目")
     @PreAuthorize("hasAuthority('/projectInfo/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
+
+        project.setCreateUser(RequestHolder.getUserInfo().getUsername());
+        project.setStatus(ProjectStatusEnum.RUNNING);
+        project.setCreateTime(new Date());
+        project.setUpdateTime(new Date());
+
         projectInfoService.save(project);
         return project;
     }
 
     @PostMapping("/editProject")
     @ApiOperation(value = "修改项目", notes = "修改处于未关闭状态的项目信息")
-//    @PreAuthorize("hasAuthority('/projectInfo/editProject')")
+    @PreAuthorize("hasAuthority('/projectInfo/editProject')")
     public Project editProject(@RequestBody @Valid Project project) {
-        //首先判断项目状态
-        if(ProjectStatusEnum.CLOSED==project.getStatus()){
-            throw new IllegalArgumentException("该项目处于关闭状态");
-        }
-        //然后判断是否有权限
-        if (projectInfoService.projectPermissions(project).contains("/projectInfo/editProject")){
-            //有权限就可以保存修改信息
-            projectInfoService.saveOrUpdate(project);
-        }else {
-            throw new  IllegalArgumentException("无权限修改该项目");
-        }
+        Project db_project = projectInfoService.getById(project.getId());
+        if (db_project == null)
+            throw new IllegalArgumentException("修改的项目不存在");
+
+        if(ProjectStatusEnum.CLOSED==db_project.getStatus())
+            throw new IllegalArgumentException("该项目处于关闭状态,不允许修改");
+
+        if (!projectInfoService.projectPermissions(project.getId()).contains("/projectInfo/editProject"))
+            throw new  IllegalArgumentException("您无权限修改该项目");
+
+        projectInfoService.saveOrUpdate(project);
+
         return project;
     }
 
     @PostMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
-//    @PreAuthorize("hasAuthority('/projectInfo/projectList')")
-    public IPage<Project> projectList(@RequestBody @Valid ProjectQo projectQo) {
-        Page page = projectQo.getPage();
-        return  projectInfoService.projectList(projectQo,page);
+    public IPage<Project> projectList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
+        return  projectInfoService.projectList(projectQueryParam);
     }
 
     @PostMapping("/approveProject")
@@ -94,7 +88,7 @@ public class ProjectInfoController {
             throw new IllegalArgumentException("未查询到指定项目");
         }
         //然后判断是否有权限
-        if (projectInfoService.projectPermissions(project).contains("/projectInfo/editProject")) {
+        if (projectInfoService.projectPermissions(project.getId()).contains("/projectInfo/editProject")) {
             return projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
         }
         return false;
