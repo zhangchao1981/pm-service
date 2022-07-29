@@ -40,11 +40,11 @@ public class ProjectInfoController {
     @ApiOperation(value = "修改项目", notes = "修改处于未关闭状态的项目信息")
     @PreAuthorize("hasAuthority('/projectInfo/editProject')")
     public Project editProject(@RequestBody @Valid Project project) {
-        Project db_project = projectInfoService.getById(project.getId());
-        if (db_project == null)
+        Project dbProject = projectInfoService.getById(project.getId());
+        if (dbProject == null)
             throw new IllegalArgumentException("修改的项目不存在");
 
-        if (ProjectStatusEnum.CLOSED == db_project.getStatus())
+        if (ProjectStatusEnum.CLOSED == dbProject.getStatus())
             throw new IllegalArgumentException("该项目处于关闭状态,不允许修改");
 
         if (projectInfoService.findProjectByNotIdAndName(project.getId(), project.getName()))
