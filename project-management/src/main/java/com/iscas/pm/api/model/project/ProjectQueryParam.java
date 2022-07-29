@@ -1,7 +1,9 @@
 package com.iscas.pm.api.model.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.bouncycastle.cms.PasswordRecipientId;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -32,5 +34,8 @@ public class ProjectQueryParam {
     @Min(value = 1, message = "每页显示的条数不能小于1")
     private Integer pageSize;
 
+    @ApiModelProperty(value = "用户id")
+    @JsonIgnore
+    private Integer userId;
 
 }

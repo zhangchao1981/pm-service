@@ -2,7 +2,7 @@ spring:
   application:
     name: register-center
 server:
-  port: 7001
+  port: 5001
 eureka:
   client:
     register-with-eureka: false

@@ -6,23 +6,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.RolePermissionMapper;
-import com.iscas.pm.api.model.project.Project;
+import com.iscas.pm.api.mapper.ProjectUserRoleMapper;
+import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.mapper.ProjectMapper;
-import com.iscas.pm.api.model.project.ProjectQueryParam;
-import com.iscas.pm.api.model.project.ProjectUserRole;
+import com.iscas.pm.api.service.InitSchemaService;
 import com.iscas.pm.api.service.ProjectInfoService;
-import com.iscas.pm.api.service.ProjectUserRoleService;
-import com.iscas.pm.common.core.model.AuthConstants;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.exception.AuthorizeException;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,17 +33,15 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private HttpServletRequest request;
+    private ProjectUserRoleMapper projectUserRoleMapper;
     @Autowired
-    private ProjectUserRoleService projectUserRoleService;
+    private InitSchemaService initSchemaService;
 
     @Override
-    public IPage<Project> projectList(ProjectQueryParam projectQueryParam) {
-        QueryWrapper<Project> wrapper = new QueryWrapper<>();
-        wrapper.like(!StringUtil.isNullOrEmpty(projectQueryParam.getProjectName()), "name", projectQueryParam.getProjectName());
-
-        Page<Project> page = new Page<>(projectQueryParam.getPageNum(), projectQueryParam.getPageSize());
-        IPage projectIPage = projectMapper.selectPage(page, wrapper);
+    public IPage<Project> projectList(ProjectQueryParam param) {
+        Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
+        param.setUserId(RequestHolder.getUserInfo().getUserId());
+        IPage projectIPage = projectMapper.getProjectList(page, param);
 
         return projectIPage;
     }
@@ -60,29 +54,59 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     }
 
     @Override
-    public Project switchProject(String projectId) {
-
+    public Boolean switchProject(String token,String projectId) {
         //判断当前用户在要切换的项目上是否有权限
         Integer userId = RequestHolder.getUserInfo().getUserId();
         QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id", projectId);
         queryWrapper.eq("user_id", userId);
-        if (projectUserRoleService.getOne(queryWrapper) == null) {
+        if (projectUserRoleMapper.selectOne(queryWrapper) == null) {
             throw new AuthorizeException("当前用户无权限访问目标项目");
         }
 
-
-        // 有权限则存储到redis里(更新token对应projectid)
-
-        String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
-        //请求头里拿到的token有bear 开头
+        //redis中更新当前项目
         redisUtil.set(StringUtils.substring(token, 7, token.length()), projectId);
 
+        return true;
+    }
 
-        //返回目标Project信息
-        QueryWrapper<Project> projectQuery = new QueryWrapper<>();
-        projectQuery.eq("id", projectId);
-        return getOne(projectQuery);
+    @Override
+    public Project addProject(Project project) {
+        project.setCreateUser(RequestHolder.getUserInfo().getUsername());
+        project.setStatus(ProjectStatusEnum.CHECK);
+        project.setCreateTime(new Date());
+        project.setUpdateTime(new Date());
+
+        projectMapper.insert(project);
+        return project;
+    }
+
+    @Override
+    public Boolean findProjectByIdAndName(String id, String name) {
+        Project project = projectMapper.findProjectByIdAndName(id, name);
+        if (project == null)
+            return false;
+        return true;
+    }
+
+    @Override
+    public Boolean findProjectByNotIdAndName(String id, String name) {
+        Project project = projectMapper.findProjectByNotIdAndName(id, name);
+        if (project == null)
+            return false;
+        return true;
+    }
+
+    @Override
+    public Boolean approveProject(Project project) {
+        //审批结果存库
+        projectMapper.updateById(project);
+
+        //审批通过，初始化mysql项目分库
+        if (project.getStatus() == ProjectStatusEnum.RUNNING) {
+            initSchemaService.initSchema(project.getId());
+        }
+        return true;
     }
 }
 

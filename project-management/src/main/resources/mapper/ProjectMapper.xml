@@ -4,4 +4,46 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.iscas.pm.api.mapper.ProjectMapper">
 
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.project.Project">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="secretLevel" column="secret_level" jdbcType="VARCHAR"/>
+            <result property="projectType" column="project_type" jdbcType="VARCHAR"/>
+            <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+            <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+            <result property="managerName" column="manager_name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="manufacture" column="manufacture" jdbcType="VARCHAR"/>
+            <result property="projectProvider" column="project_provider" jdbcType="VARCHAR"/>
+            <result property="requirementProvider" column="requirement_provider" jdbcType="VARCHAR"/>
+            <result property="contractId" column="contract_id" jdbcType="VARCHAR"/>
+            <result property="contractAmount" column="contract_amount" jdbcType="DECIMAL"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        pm_project.id as id,name,secret_level,
+        project_type,start_date,end_date,
+        manager_name,description,status,
+        manufacture,project_provider,requirement_provider,
+        contract_id,contract_amount,create_user,
+        create_time,update_time
+    </sql>
+
+    <select id="getProjectList" resultType="com.iscas.pm.api.model.project.Project">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM pm_project_user_role ,pm_project
+        WHERE pm_project_user_role.project_id=pm_project.id and pm_project_user_role.user_id=#{param.userId}
+        <if test="param.projectName !=null and param.projectName != ''">
+            and name like concat('%',#{param.projectName},'%')
+        </if>
+        <if test="param.status !=null and param.status != ''">
+            and status=#{param.status}
+        </if>
+    </select>
+
 </mapper>

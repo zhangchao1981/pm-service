@@ -24,7 +24,7 @@ mybatis-plus:
 #    #开启返回map结果集的下划线转驼峰
 #    object-wrapper-factory: com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory
 server:
-  port: 7005
+  port: 5005
 
 eureka:
   client:

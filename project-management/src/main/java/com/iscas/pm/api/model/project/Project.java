@@ -48,7 +48,6 @@ public class Project implements Serializable {
     private ProjectTypeEnum projectType;
 
     @ApiModelProperty(value = "项目状态")
-    @NotNull(message = "项目状态")
     private ProjectStatusEnum status;
 
     @ApiModelProperty(value = "项目开始日期")
@@ -96,4 +95,7 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "最后修改时间")
     private Date updateTime;
 
+    @JsonIgnore
+    @ApiModelProperty(value = "审核意见")
+    private String approveComments;
 }
