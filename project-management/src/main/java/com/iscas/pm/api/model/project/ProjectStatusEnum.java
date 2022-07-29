@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ProjectStatusEnum {
     RUNNING("RUNNING", "进行中"),
+    CHECK("CHECK", "待审核"),
+    UN_PASS("UN_PASS", "未通过"),
     CLOSED("CLOSED", "已关闭");
 
     @EnumValue

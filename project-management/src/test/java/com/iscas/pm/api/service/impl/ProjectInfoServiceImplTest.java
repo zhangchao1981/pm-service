@@ -1,10 +1,15 @@
 package com.iscas.pm.api.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.iscas.pm.api.mapper.InitializationMapper;
 import com.iscas.pm.api.mapper.ProjectMapper;
 import com.iscas.pm.api.model.project.Project;
+import com.iscas.pm.api.model.project.ProjectQueryParam;
+import com.iscas.pm.api.model.project.ProjectStatusEnum;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,12 +26,20 @@ import java.util.List;
 public class ProjectInfoServiceImplTest{
     @Resource
     private ProjectMapper projectMapper;
+    @Autowired
+    private InitSchemaServiceImpl initSchemaService;
 
     @Test
     public void testSelect(){
-        DataSourceHolder.setDB("project1");
-        List<Project> projects = projectMapper.selectList(null);
-        System.out.println(projects.toString());
+//        ProjectQueryParam projectQueryParam = new ProjectQueryParam();
+//        projectQueryParam.setProjectName("te");
+//        projectQueryParam.setUserId(2);projectQueryParam.setStatus(ProjectStatusEnum.CLOSED.name());
+//        Page<Project> page = new Page<>(1, 1);
+//        Page<Project> projectList = projectMapper.getProjectList(page,projectQueryParam);
+//        System.out.println(projectList.toString());
+
+        initSchemaService.initSchema("project6");
+        System.out.println(1111);
     }
 
 

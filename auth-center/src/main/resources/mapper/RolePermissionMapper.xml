@@ -6,9 +6,9 @@
 
     <resultMap id="BaseResultMap" type="com.iscas.pm.auth.domain.RolePermission">
             <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="role_id" column="role_id" jdbcType="INTEGER"/>
-            <result property="permission_id" column="permission_id" jdbcType="INTEGER"/>
-            <result property="project_id" column="project_id" jdbcType="VARCHAR"/>
+            <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+            <result property="permissionId" column="permission_id" jdbcType="INTEGER"/>
+            <result property="projectId" column="project_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">

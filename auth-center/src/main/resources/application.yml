@@ -22,7 +22,7 @@ spring:
 mybatis:
   mapper-locations: classpath*:/mapper/**Mapper.xml
 server:
-  port: 7004
+  port: 5004
 
 eureka:
   client:

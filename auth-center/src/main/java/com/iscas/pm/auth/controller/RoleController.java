@@ -46,7 +46,6 @@ public class RoleController {
     @PostMapping("addRole")
     @PreAuthorize("hasAuthority('/role/addRole')")
     public Role addRole(@Valid @RequestBody Role role) {
-        //重名校验
         if (roleService.existRole(null, role.getName()))
             throw new IllegalArgumentException("角色名称已经存在");
 

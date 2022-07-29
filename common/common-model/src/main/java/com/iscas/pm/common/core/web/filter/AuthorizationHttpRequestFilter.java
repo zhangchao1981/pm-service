@@ -49,27 +49,23 @@ public class AuthorizationHttpRequestFilter implements Filter {
         //放行部分请求
         if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
             //从redis里查询是否有相应的token，如果没有就拦截
-            Object redisTokenValue = redisUtil.get(StringUtils.substring(token, 7, token.length()));
-            if (ObjectUtils.isEmpty(redisTokenValue)) {
+            Object obj = redisUtil.get(StringUtils.substring(token, 7, token.length()));
+            if (ObjectUtils.isEmpty(obj)) {
                 throw new AuthenticateException("redis中的token已被清除");
             }
 
-
-            //从redis中取出当前项目id
-            Object obj = redisTokenValue.toString();
-            String currentProjectId = obj == null ? "default" : obj.toString();
+            String currentProjectId =obj.toString();
 
             //切换数据源
-            if (!request.getRequestURI().startsWith("/projectInfo") && !request.getRequestURI().startsWith("/auth")) {
+            if (request.getRequestURI().startsWith("/projectInfo") || request.getRequestURI().startsWith("/auth")) {
+                DataSourceHolder.setDB("default");
+            }else{
                 DataSourceHolder.setDB(currentProjectId);
             }
 
             //从token中解析出用户信息，放入ThreadLocal中
             UserDetailInfo userInfo = tokenDecodeUtil.getUserInfo();
             RequestHolder.add(userInfo);
-
-            //测试：
-            currentProjectId = "demo";
 
             if (!"default".equals(currentProjectId)) {
                 //获取当前项目的权限列表+系统角色权限列表，去重
