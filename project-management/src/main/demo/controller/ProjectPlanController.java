@@ -1,7 +1,7 @@
-package com.iscas.pm.api.controller;
+package com.demo.controller;
 
-import com.iscas.pm.api.model.project.Plan;
-import com.iscas.pm.api.service.PlanService;
+import com.demo.model.project.Plan;
+import com.demo.service.PlanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +47,6 @@ public class ProjectPlanController {
 
         return  null;
     }
-
-
-
-
 
 
 

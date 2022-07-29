@@ -1,9 +1,9 @@
-package com.iscas.pm.api.service.impl;
+package com.demo.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.DocumentMapper;
-import com.iscas.pm.api.model.project.Document;
-import com.iscas.pm.api.service.DocumentService;
+import com.demo.mapper.DocumentMapper;
+import com.demo.model.project.Document;
+import com.demo.service.DocumentService;
 import org.springframework.stereotype.Service;
 
 /**

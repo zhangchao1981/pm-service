@@ -32,7 +32,7 @@ public class AuthController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @ApiOperation(value = "用户登录",notes = "用户名密码登录，密码暂且明文方式，后面改为加密方式")
+    @ApiOperation(value = "用户登录",notes = "用户名密码登录，登录后需将token放到header里，key为:Authorization，value为:bearer +token(注意bearer后面有个空格) ")
     @PostMapping(value = "/login")
     public UserInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请token令牌
