@@ -3,6 +3,9 @@ package com.iscas.pm.api.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author 李昶
@@ -12,7 +15,10 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface ProjectUserRoleMapper extends BaseMapper<ProjectUserRole> {
-
+    @Select("SELECT project_id " +
+            " FROM pm_project_user_role" +
+            " WHERE user_id=#{userId}")
+    List<String> getProjectIdListByUserId(Integer userId);
 }
 
 

@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface ProjectInfoService extends IService<Project> {
 
-    IPage<Project> projectList(ProjectQueryParam projectQo);
+    IPage<Project> projectList(ProjectQueryParam projectQueryParam);
 
     List<String> projectPermissions(String projectId);
 
