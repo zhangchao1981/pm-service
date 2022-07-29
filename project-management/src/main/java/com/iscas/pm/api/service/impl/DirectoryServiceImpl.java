@@ -81,7 +81,7 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         //验证是否有效：  判断父id是否存在
         String name = directory.getName();
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(parentId != null, "id", parentId);
+        queryWrapper.eq(parentId != null ||parentId==0, "id", parentId);
         if (1 > directoryMapper.selectList(queryWrapper).size()) {
             throw new IllegalArgumentException("父id不存在");
         }
