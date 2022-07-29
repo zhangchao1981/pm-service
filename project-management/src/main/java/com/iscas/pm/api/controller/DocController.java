@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ import java.util.List;
 @RestController
 @Api(tags = {"项目基本信息"})
 @RequestMapping("/projectDoc")
-public class DemoDocController {
+public class DocController {
     @Autowired
     DirectoryService directoryService;
 
@@ -33,25 +34,24 @@ public class DemoDocController {
     @ApiOperation(value = "添加目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/addDirectory')")
     public Directory addDirectory(@Valid @RequestBody Directory directory) {
-        return directoryService.addDirectory(directory);
+        return directoryService.addDirectory(directory
+        );
     }
 
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查找目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
-    public List<Directory> getAll(Integer id, String name) {
-        return directoryService.getDirectoryTree(id, name);
+    public List<Directory> getAll(@NotNull @RequestParam  Integer id) {
+        return directoryService.getDirectoryTree(id, null);
     }
 
 
-//引用文档和修订记录
 
     @PostMapping("/deleteDirectory")
     @ApiOperation(value = "删除目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
-    public List<Directory> deleteDirectory(Integer id, String name) {
-        return directoryService.deleteDirectory(id, name);
-
+    public boolean deleteDirectory(@NotNull @RequestParam Integer id) {
+        return directoryService.deleteDirectory(id);
     }
 
     @PostMapping("/editDirectory")
@@ -64,15 +64,16 @@ public class DemoDocController {
 
     @PostMapping("/addDocument")
     @ApiOperation(value = "添加文档", notes = "")
-    @PreAuthorize("hasAuthority('/projectDoc/addDocument')")
+//    @PreAuthorize("hasAuthority('/projectDoc/addDocument')")
     public Document addDocument(@Valid @RequestBody Document document) {
+        //首先要重名校验，然后是
         documentService.saveOrUpdate(document);
         return document;
     }
 
     @PostMapping("/editDocument")
     @ApiOperation(value = "修改文档", notes = "")
-    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
+//    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
     public Document editDocument(@Valid @RequestBody Document document) {
         documentService.saveOrUpdate(document);
         return document;
@@ -81,15 +82,15 @@ public class DemoDocController {
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档", notes = "")
-    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public Document deleteDocument(@Valid @RequestBody Document document) {
         documentService.removeById(document.getId());
         return document;
     }
 
-    @PostMapping("/deleteDocument")
+    @PostMapping("/deleteBatchDocument")
     @ApiOperation(value = "批量删除文档", notes = "")
-    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+//    @PreAuthorize("hasAuthority('/projectDoc/deleteBatchDocument')")
     public boolean deleteBatchDocument(List<Integer> docIdList) {
         return  documentService.remove(new QueryWrapper<Document>().in("id",docIdList));
     }
@@ -98,10 +99,12 @@ public class DemoDocController {
 
     @GetMapping("/getDocument")
     @ApiOperation(value = "查询文档", notes = "")
-    @PreAuthorize("hasAuthority('/projectDoc/getDocument')")
+//    @PreAuthorize("hasAuthority('/projectDoc/getDocument')")
     public List<Document> getDocument(Integer directoryId, String documentName) {
         return documentService.getDocument(directoryId, documentName);
     }
+
+
 
 
 

@@ -13,8 +13,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
-@ApiModel(value = "项目文档", description = "项目文档基本信息，对应demo库document表")
-@TableName(value ="document")
+@ApiModel(value = "项目文档", description = "项目文档基本信息，对应demo库doc_document表")
+@TableName(value ="doc_document")
 @Data
 public class Document implements Serializable {
 

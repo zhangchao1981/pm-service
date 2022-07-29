@@ -15,9 +15,9 @@ import lombok.experimental.Accessors;
 
 
 @Accessors(chain = true)
-@ApiModel(value = "项目计划", description = "项目计划基本信息，对应demo库plan表")
+@ApiModel(value = "项目计划", description = "项目计划基本信息，对应demo库project_plan表")
 @CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "计划开始日期不能大于结束日期")
-@TableName(value ="plan")
+@TableName(value ="project_plan")
 @Data
 public class Plan implements Serializable {
     /**

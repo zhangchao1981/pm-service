@@ -16,7 +16,8 @@ public interface DirectoryService extends IService<Directory> {
 
     Directory addDirectory(Directory directory);
 
-    List<Directory> deleteDirectory(Integer id, String name);
 
     Directory editDirectory(Directory directory);
+
+    boolean deleteDirectory(Integer id);
 }

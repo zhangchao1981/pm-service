@@ -13,53 +13,65 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 /**
-* @author 66410
-* @description 针对表【doc_directory】的数据库操作Service实现
-* @createDate 2022-07-28 18:21:01
-*/
+ * @author 66410
+ * @description 针对表【doc_directory】的数据库操作Service实现
+ * @createDate 2022-07-28 18:21:01
+ */
 @Service
 public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory>
-    implements DirectoryService {
-@Autowired
-DirectoryMapper directoryMapper;
+        implements DirectoryService {
+    @Autowired
+    DirectoryMapper directoryMapper;
+
     @Override
     public List<Directory> getDirectoryTree(Integer id, String name) {
-
         //查找id为 id或者parentid=id的所有目录
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(null!=id,"id",id).or()
-                .eq(null!=id,"parent_id",id);
-        queryWrapper.like(!StringUtils.isEmpty(name),"name",name);
-        //如果只输目录名，子目录查不出来？
+        queryWrapper.eq(null != id, "id", id).or()
+                .eq(null != id, "parent_id", id);
+        queryWrapper.like(!StringUtils.isEmpty(name), "name", name);
         return list2Tree(directoryMapper.selectList(queryWrapper));
     }
 
     @Override
     public Directory addDirectory(Directory directory) {
         Integer parentId = directory.getParentId();
+        Integer id = directory.getId();
+        String name = directory.getName();
+        //    父id没有则置0
+        //名字、id重复的校验
+        QueryWrapper<Directory> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name).or().eq("id", id);
+        if (directoryMapper.selectList(wrapper).size() > 0) {
+            throw new IllegalArgumentException("名称或id重复");
+        }
         //判断parentId不存在的情况
-        //父节点id 查出来为空则报错  or 名字查出来不为空则报错
-        //重名问题--->mysql约束解决
-        if(null==parentId){
+        if (null != parentId && 0 != parentId) {
             QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("id",parentId);
-            if (1>directoryMapper.selectList(queryWrapper).size()){
+            queryWrapper.eq("id", parentId);
+            if (1 > directoryMapper.selectList(queryWrapper).size()) {
                 throw new IllegalArgumentException("父节点id不存在");
             }
+        } else {
+            //父节点默认置0
+            parentId = 0;
         }
         directoryMapper.insert(directory);
         return directory;
     }
 
     @Override
-    public List<Directory> deleteDirectory(Integer id, String name) {
-        List<Directory> directoryTree = getDirectoryTree(id, name);
+    public boolean deleteDirectory(Integer id) {
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        //问题：删目录时 id(name)是否可以为空
-        queryWrapper.eq("id",id).or().eq("parent_id",id);
-        queryWrapper.eq(!StringUtils.isEmpty(name),"name",name);
-        directoryMapper.delete(queryWrapper);
-        return null;
+        queryWrapper.eq("id", id).or().eq("parent_id", id);
+        if (directoryMapper.selectList(queryWrapper).size() > 1) {
+            //有子节点，不能删
+            throw new IllegalArgumentException("有子节点存在，拒绝删除");
+        }
+        if (directoryMapper.delete(queryWrapper) == 0) {
+            throw new IllegalArgumentException("该目录已被删除");
+        }
+        return true;
     }
 
     @Override
@@ -69,12 +81,12 @@ DirectoryMapper directoryMapper;
         //验证是否有效：  判断父id是否存在
         String name = directory.getName();
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(parentId !=null,"id",parentId);
-       if (1>directoryMapper.selectList(queryWrapper).size()){
-           throw new IllegalArgumentException("父id不存在");
-       }
+        queryWrapper.eq(parentId != null, "id", parentId);
+        if (1 > directoryMapper.selectList(queryWrapper).size()) {
+            throw new IllegalArgumentException("父id不存在");
+        }
         //id不存在返回0
-        if (1>directoryMapper.update(directory,null)){
+        if (1 > directoryMapper.update(directory, null)) {
             throw new IllegalArgumentException("要修改目录id不存在");
         }
         return directory;
@@ -109,7 +121,6 @@ DirectoryMapper directoryMapper;
         }
         return resultList;
     }
-
 
 
 }
