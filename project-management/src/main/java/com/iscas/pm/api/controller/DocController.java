@@ -129,7 +129,7 @@ public class DocController {
 
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
     public boolean deleteReferenceDoc(@NotNull @RequestParam List<Integer> idList) {
         QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id", idList);
@@ -138,13 +138,15 @@ public class DocController {
 
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         //重名提示？
         QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", referenceDoc.getName());
             return referenceDocService.saveOrUpdate(referenceDoc);
     }
+
+
 
 
 }
