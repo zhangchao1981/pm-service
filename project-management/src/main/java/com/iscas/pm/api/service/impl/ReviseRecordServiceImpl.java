@@ -1,8 +1,8 @@
 package com.iscas.pm.api.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.ReviseRecordMapper;
-import com.iscas.pm.api.model.project.ReviseRecord;
+import com.iscas.pm.api.mapper.doc.ReviseRecordMapper;
+import com.iscas.pm.api.model.doc.ReviseRecord;
 import com.iscas.pm.api.service.ReviseRecordService;
 import org.springframework.stereotype.Service;
 

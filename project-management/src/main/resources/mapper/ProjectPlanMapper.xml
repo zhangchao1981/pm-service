@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.iscas.pm.api.mapper.PlanMapper">
+<mapper namespace="com.iscas.pm.api.mapper.ProjectPlanMapper">
 
-    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.project.Plan">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.planTask.PlanTask">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="wbs" column="wbs" jdbcType="VARCHAR"/>
             <result property="docPath" column="doc_path" jdbcType="VARCHAR"/>

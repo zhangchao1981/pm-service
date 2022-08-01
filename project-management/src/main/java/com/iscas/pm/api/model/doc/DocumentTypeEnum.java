@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.project;
+package com.iscas.pm.api.model.doc;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;

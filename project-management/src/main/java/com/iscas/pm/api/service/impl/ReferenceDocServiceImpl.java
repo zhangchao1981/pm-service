@@ -1,8 +1,8 @@
 package com.iscas.pm.api.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.ReferenceDocMapper;
-import com.iscas.pm.api.model.project.ReferenceDoc;
+import com.iscas.pm.api.mapper.doc.ReferenceDocMapper;
+import com.iscas.pm.api.model.doc.ReferenceDoc;
 import com.iscas.pm.api.service.ReferenceDocService;
 import org.springframework.stereotype.Service;
 
