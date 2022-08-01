@@ -4,18 +4,24 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.iscas.pm.api.model.project.Directory;
 import com.iscas.pm.api.model.project.Document;
+import com.iscas.pm.api.model.project.ReferenceDoc;
+import com.iscas.pm.api.model.project.ReviseRecord;
 import com.iscas.pm.api.service.DirectoryService;
 import com.iscas.pm.api.service.DocumentService;
+import com.iscas.pm.api.service.ReferenceDocService;
+import com.iscas.pm.api.service.ReviseRecordService;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +31,7 @@ import java.util.List;
  * @date 2022/7/29.
  */
 @RestController
-@Api(tags = {"项目文档"})
+@Api(tags = {"项目基本信息"})
 @RequestMapping("/projectDoc")
 public class DocController {
     @Autowired
@@ -34,36 +40,40 @@ public class DocController {
     @Autowired
     DocumentService documentService;
 
+    @Autowired
+    ReferenceDocService referenceDocService;
+
+    @Autowired
+    ReviseRecordService reviseRecordService;
 
     @PostMapping("/addDirectory")
     @ApiOperation(value = "添加目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/addDirectory')")
     public Directory addDirectory(@Valid @RequestBody Directory directory) {
-        return directoryService.addDirectory(directory);
+        return directoryService.addDirectory(directory
+        );
     }
 
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查找目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
-    public List<Directory> getAll(Integer id, String name) {
-        return directoryService.getDirectoryTree(id, name);
+    public List<Directory> getAll(@NotNull @RequestParam Integer id) {
+        return directoryService.getDirectoryTree(id, null);
     }
 
-
-//引用文档和修订记录
 
     @PostMapping("/deleteDirectory")
     @ApiOperation(value = "删除目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
-    public List<Directory> deleteDirectory(Integer id, String name) {
-        return directoryService.deleteDirectory(id, name);
-
+    public boolean deleteDirectory(@NotNull @RequestParam Integer id) {
+        return directoryService.deleteDirectory(id);
     }
 
     @PostMapping("/editDirectory")
     @ApiOperation(value = "修改目录", notes = "不允许改id, 要求前端传过来的是要修改的值 ")
 //    @PreAuthorize("hasAuthority('/projectDoc/editDirectory')")
     public Directory editDirectory(@Valid @RequestBody Directory directory) {
+        //需测试 调接口但是不修改
         return directoryService.editDirectory(directory);
     }
 
@@ -128,5 +138,26 @@ public class DocController {
     public List<Document> downloadDocument(Integer directoryId, String documentName) {
         return documentService.getDocuments(directoryId, documentName);
     }
+
+
+    @PostMapping("/deleteReferenceDoc")
+    @ApiOperation(value = "删除引用文档", notes = "")
+//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    public boolean deleteReferenceDoc(@NotNull @RequestParam List<Integer> idList) {
+        QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", idList);
+        return referenceDocService.remove(queryWrapper);
+    }
+
+    @PostMapping("/editReferenceDoc")
+    @ApiOperation(value = "修改引用文档", notes = "")
+//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
+        //重名提示？
+        QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name", referenceDoc.getName());
+            return referenceDocService.saveOrUpdate(referenceDoc);
+    }
+
 
 }

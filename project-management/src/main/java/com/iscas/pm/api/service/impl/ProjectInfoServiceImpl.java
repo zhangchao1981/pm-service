@@ -66,7 +66,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         //redis中更新当前项目
         redisUtil.set(StringUtils.substring(token, 7, token.length()), projectId);
-
         return true;
     }
 

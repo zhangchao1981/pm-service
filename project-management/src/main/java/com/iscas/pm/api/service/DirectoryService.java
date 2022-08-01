@@ -2,10 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.project.Directory;
-import com.iscas.pm.api.model.project.Document;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -19,8 +16,8 @@ public interface DirectoryService extends IService<Directory> {
 
     Directory addDirectory(Directory directory);
 
-    List<Directory> deleteDirectory(Integer id, String name);
 
     Directory editDirectory(Directory directory);
 
+    boolean deleteDirectory(Integer id);
 }
