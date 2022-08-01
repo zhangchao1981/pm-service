@@ -3,7 +3,7 @@ package com.iscas.pm.auth.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.auth.service.AuthService;
-import com.iscas.pm.auth.utils.AuthToken;
+import com.iscas.pm.auth.domain.AuthToken;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
 import lombok.extern.slf4j.Slf4j;

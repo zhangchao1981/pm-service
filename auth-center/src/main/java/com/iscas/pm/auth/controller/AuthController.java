@@ -4,7 +4,7 @@ import com.iscas.pm.auth.domain.UserLoginParam;
 import com.iscas.pm.auth.domain.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.auth.utils.AuthToken;
+import com.iscas.pm.auth.domain.AuthToken;
 
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;

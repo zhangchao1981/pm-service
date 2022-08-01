@@ -12,7 +12,7 @@ import com.iscas.pm.auth.domain.UserStatusEnum;
 import com.iscas.pm.auth.mapper.UserMapper;
 import com.iscas.pm.auth.service.PermissionService;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.auth.utils.BCrypt;
+import com.iscas.pm.auth.utils.BCryptUtil;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.Pinyin4jUtil;
 import org.apache.commons.lang.StringUtils;
@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null)
             throw new IllegalArgumentException("用户不存在");
 
-        if (!BCrypt.checkpw(oldPwd, user.getPassword())) {
+        if (!BCryptUtil.checkpw(oldPwd, user.getPassword())) {
             throw new IllegalArgumentException("旧密码填写错误");
         }
 

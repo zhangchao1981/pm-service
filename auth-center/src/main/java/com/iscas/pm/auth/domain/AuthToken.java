@@ -1,4 +1,4 @@
-package com.iscas.pm.auth.utils;
+package com.iscas.pm.auth.domain;
 
 import java.io.Serializable;
 

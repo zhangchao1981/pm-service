@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.service;
 
-import com.iscas.pm.auth.utils.AuthToken;
+import com.iscas.pm.auth.domain.AuthToken;
 
 /**
  * @author 李昶

@@ -5,12 +5,18 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Accessors(chain = true)
 @ApiModel(value = "项目文档", description = "项目文档基本信息，对应demo库document表")
@@ -22,38 +28,35 @@ public class Document implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
-
     @ApiModelProperty(value = "文档名称")
+    @NotBlank(message = "文档名称不能为空")
     private String name;
 
-
-
-    @ApiModelProperty(value = "上传者姓名")
+    @ApiModelProperty(value = "上传者姓名，后端自动生成，前端无需传参")
     private String uploader;
-
-
-
-    @ApiModelProperty(value = "生成时间")
-    private LocalDate createTime;
-
-
 
     @ApiModelProperty(value = "版本号")
     private String version;
 
-
-
     @ApiModelProperty(value = "文档类型")
-    private String type;
-
+    @NotNull(message = "文档类型不能为空")
+    private DocumentTypeEnum type;
 
     @ApiModelProperty(value = "所属的目录id")
+    @NotNull(message = "文档目录id不能为空")
     private Integer directoryId;
 
-
-    @ApiModelProperty(value = "文档路径")
+    @ApiModelProperty(value = "文档路径，链接类型的文档需要传参，其他类型不需要")
     private String path;
+
+    @JsonIgnore
+    @ApiModelProperty(value = "生成时间")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    @JsonIgnore
+    @ApiModelProperty(value = "最后更新时间")
+    private Date updateTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
