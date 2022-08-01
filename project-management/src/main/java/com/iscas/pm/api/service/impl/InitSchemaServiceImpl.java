@@ -1,6 +1,6 @@
 package com.iscas.pm.api.service.impl;
 
-import com.iscas.pm.api.mapper.InitializationMapper;
+import com.iscas.pm.api.mapper.project.InitializationMapper;
 import com.iscas.pm.api.service.InitSchemaService;
 import com.mysql.jdbc.Driver;
 import lombok.extern.slf4j.Slf4j;

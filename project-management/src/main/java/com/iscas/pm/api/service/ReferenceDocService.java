@@ -1,7 +1,7 @@
 package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.iscas.pm.api.model.project.ReferenceDoc;
+import com.iscas.pm.api.model.doc.ReferenceDoc;
 
 /**
 * @author 66410

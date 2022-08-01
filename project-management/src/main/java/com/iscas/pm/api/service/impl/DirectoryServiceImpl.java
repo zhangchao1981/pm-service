@@ -2,8 +2,8 @@ package com.iscas.pm.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.DirectoryMapper;
-import com.iscas.pm.api.model.project.Directory;
+import com.iscas.pm.api.mapper.doc.DirectoryMapper;
+import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.api.service.DirectoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,10 @@
 package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.iscas.pm.api.model.project.Document;
+import com.iscas.pm.api.model.doc.Document;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,7 +21,9 @@ public interface DocumentService extends IService<Document> {
 
     Document addLinkDocument(Document document);
 
-    Boolean editDocument(Document document);
+    Boolean deleteDocument(Integer id);
 
+    Boolean deleteDocumentBatch(List<Integer> ids);
 
+    void downloadDocument(Integer id, HttpServletResponse response);
 }

@@ -1,7 +1,7 @@
-package com.iscas.pm.api.mapper;
+package com.iscas.pm.api.mapper.doc;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.iscas.pm.api.model.project.Document;
+import com.iscas.pm.api.model.doc.Document;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

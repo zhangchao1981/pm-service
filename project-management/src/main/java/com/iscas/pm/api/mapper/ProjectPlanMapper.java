@@ -1,7 +1,7 @@
 package com.iscas.pm.api.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.iscas.pm.api.model.project.Plan;
+import com.iscas.pm.api.model.projectPlan.PlanTask;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,8 +11,9 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity /api.model/project.Plan
 */
 @Mapper
-public interface PlanMapper extends BaseMapper<Plan> {
+public interface ProjectPlanMapper extends BaseMapper<PlanTask> {
 
+    void updatePosition(Integer parentId, Integer position);
 }
 
 

@@ -32,7 +32,7 @@ CREATE TABLE `doc_document`  (
 
 
 -- ----------------------------
--- Table structure for plan
+-- Table structure for planTask
 -- ----------------------------
 DROP TABLE IF EXISTS `project_plan`;
 CREATE TABLE `project_plan`  (

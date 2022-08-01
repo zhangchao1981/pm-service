@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.iscas.pm.api.mapper.TemplateMapper">
+<mapper namespace="com.iscas.pm.api.mapper.doc.TemplateMapper">
 
-    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.project.Template">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.doc.Template">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>

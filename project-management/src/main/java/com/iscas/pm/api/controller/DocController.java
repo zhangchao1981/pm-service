@@ -2,10 +2,9 @@ package com.iscas.pm.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.iscas.pm.api.model.project.Directory;
-import com.iscas.pm.api.model.project.Document;
-import com.iscas.pm.api.model.project.ReferenceDoc;
-import com.iscas.pm.api.model.project.ReviseRecord;
+import com.iscas.pm.api.model.doc.Directory;
+import com.iscas.pm.api.model.doc.Document;
+import com.iscas.pm.api.model.doc.ReferenceDoc;
 import com.iscas.pm.api.service.DirectoryService;
 import com.iscas.pm.api.service.DocumentService;
 import com.iscas.pm.api.service.ReferenceDocService;
@@ -20,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -36,13 +36,10 @@ import java.util.List;
 public class DocController {
     @Autowired
     DirectoryService directoryService;
-
     @Autowired
     DocumentService documentService;
-
     @Autowired
     ReferenceDocService referenceDocService;
-
     @Autowired
     ReviseRecordService reviseRecordService;
 
@@ -61,7 +58,6 @@ public class DocController {
         return directoryService.getDirectoryTree(id, null);
     }
 
-
     @PostMapping("/deleteDirectory")
     @ApiOperation(value = "删除目录", notes = "")
 //    @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
@@ -79,11 +75,10 @@ public class DocController {
 
 
 
-
     @PostMapping("/addLocalDocument")
     @ApiOperation(value = "添加本地文档", notes = "上传本地文档到服务器")
     @ApiImplicitParam(name = "documentJson", value = "前端封装成json字符串，参见Model对象Document")
-//    @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(MultipartFile file, String documentJson) throws IOException {
         @Valid Document document = JSONObject.parseObject(documentJson, Document.class);
 
@@ -97,7 +92,7 @@ public class DocController {
 
     @PostMapping("/addLinkDocument")
     @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
-//    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
     public Document addLinkDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath()))
             throw new IllegalArgumentException("文档路径不能为空");
@@ -109,35 +104,27 @@ public class DocController {
         return document;
     }
 
-    @PostMapping("/editDocument")
-    @ApiOperation(value = "修改文档信息", notes = "修改文档信息，文档类型不能修改")
-//    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
-    public Boolean editDocument(@Valid @RequestBody Document document) {
-        return documentService.editDocument(document);
-    }
-
-
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
-    public Document deleteDocument(@Valid @RequestBody Document document) {
-        documentService.removeById(document.getId());
-        return document;
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    public Boolean deleteDocument(@RequestParam Integer id) {
+        return documentService.deleteDocument(id);
     }
 
     @PostMapping("/deleteDocumentBatch")
-    @ApiOperation(value = "批量删除文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
-    public boolean deleteBatchDocument(List<Integer> docIdList) {
-        return documentService.remove(new QueryWrapper<Document>().in("id", docIdList));
+    @ApiOperation(value = "批量删除文档", notes = "批量删除文档")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
+    public Boolean deleteDocumentBatch(List<Integer> ids) {
+        return documentService.deleteDocumentBatch(ids);
     }
 
     @GetMapping("/downloadDocument")
     @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
-//    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
-    public List<Document> downloadDocument(Integer directoryId, String documentName) {
-        return documentService.getDocuments(directoryId, documentName);
+    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
+    public void downloadDocument(Integer id, HttpServletResponse response) {
+        documentService.downloadDocument(id,response);
     }
+
 
 
     @PostMapping("/deleteReferenceDoc")

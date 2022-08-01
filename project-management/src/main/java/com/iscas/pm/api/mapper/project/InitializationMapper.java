@@ -1,4 +1,4 @@
-package com.iscas.pm.api.mapper;
+package com.iscas.pm.api.mapper.project;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

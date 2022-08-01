@@ -1,4 +1,4 @@
-package com.iscas.pm.api.mapper;
+package com.iscas.pm.api.mapper.project;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
