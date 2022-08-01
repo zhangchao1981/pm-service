@@ -97,7 +97,7 @@ public class DocController {
 
     @PostMapping("/addLinkDocument")
     @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
-//    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
     public Document addLinkDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath()))
             throw new IllegalArgumentException("文档路径不能为空");
@@ -111,7 +111,7 @@ public class DocController {
 
     @PostMapping("/editDocument")
     @ApiOperation(value = "修改文档信息", notes = "修改文档信息，文档类型不能修改")
-//    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
     public Boolean editDocument(@Valid @RequestBody Document document) {
         return documentService.editDocument(document);
     }
@@ -119,7 +119,7 @@ public class DocController {
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public Document deleteDocument(@Valid @RequestBody Document document) {
         documentService.removeById(document.getId());
         return document;
@@ -127,14 +127,14 @@ public class DocController {
 
     @PostMapping("/deleteDocumentBatch")
     @ApiOperation(value = "批量删除文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteBatchDocument(List<Integer> docIdList) {
         return documentService.remove(new QueryWrapper<Document>().in("id", docIdList));
     }
 
     @GetMapping("/downloadDocument")
     @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
-//    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
     public List<Document> downloadDocument(Integer directoryId, String documentName) {
         return documentService.getDocuments(directoryId, documentName);
     }
@@ -142,7 +142,7 @@ public class DocController {
 
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
     public boolean deleteReferenceDoc(@NotNull @RequestParam List<Integer> idList) {
         QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id", idList);
@@ -151,13 +151,15 @@ public class DocController {
 
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         //重名提示？
         QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", referenceDoc.getName());
             return referenceDocService.saveOrUpdate(referenceDoc);
     }
+
+
 
 
 }
