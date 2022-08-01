@@ -79,19 +79,23 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
         Integer parentId = directory.getParentId();
         //验证是否有效：  判断父id是否存在
-        String name = directory.getName();
-        QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(parentId != null ||parentId==0, "id", parentId);
-        if (1 > directoryMapper.selectList(queryWrapper).size()) {
-            throw new IllegalArgumentException("父id不存在");
+        if (parentId == null) {
+            directory.setParentId(0);
+        } else if (parentId != 0) {
+            String name = directory.getName();
+            QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id", parentId);
+            if (1 > directoryMapper.selectList(queryWrapper).size()) {
+                throw new IllegalArgumentException("父id不存在");
+            }
         }
-        //id不存在返回0
-        if (1 > directoryMapper.update(directory, null)) {
+
+        //进行更新，更新失败(id不存在)抛出异常
+        if (1 > directoryMapper.updateById(directory)) {
             throw new IllegalArgumentException("要修改目录id不存在");
         }
         return directory;
     }
-
 
     //sourceList 平铺的原始数据集合
     public List<Directory> list2Tree(List<Directory> sourceList) {

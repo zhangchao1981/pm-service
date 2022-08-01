@@ -60,7 +60,7 @@ public class AuthorizationHttpRequestFilter implements Filter {
             if (request.getRequestURI().startsWith("/projectInfo") || request.getRequestURI().startsWith("/auth")) {
                 DataSourceHolder.setDB("default");
             }else{
-                DataSourceHolder.setDB(currentProjectId);
+                DataSourceHolder.setDB("project_"+currentProjectId);
             }
 
             //从token中解析出用户信息，放入ThreadLocal中

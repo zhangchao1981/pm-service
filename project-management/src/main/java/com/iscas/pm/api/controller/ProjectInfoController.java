@@ -103,7 +103,7 @@ public class ProjectInfoController {
     @GetMapping("/projectDetailInfo/{id}")
     @ApiOperation(value = "查询项目详情", notes = "查询指定项目的详细信息，支持前端查询接口")
     @PreAuthorize("hasAuthority('/projectInfo/projectDetailInfo')")
-    public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank String id) {
+    public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank(message ="项目Id不能为空") String id) {
         Project project = projectInfoService.getById(id);
         if (project == null)
             throw new IllegalArgumentException("该项目不存在");

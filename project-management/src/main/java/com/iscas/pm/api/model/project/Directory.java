@@ -13,9 +13,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 
 @Accessors(chain = true)
-@ApiModel(value = "项目文档目录", description = "项目文档目录信息，对应demo库doc_directory表")
+@ApiModel(value = "项目文档目录", description = "项目文档目录信息，对应项目库doc_directory表")
 @TableName(value ="doc_directory")
 @Data
 public class Directory implements Serializable {
@@ -24,13 +26,14 @@ public class Directory implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
+    @NotBlank
     @ApiModelProperty(value = "目录名称")
     private String name;
 
 
     @ApiModelProperty(value = "父节点id")
     private Integer parentId;
+
 
     @TableField(exist = false)
     @ApiModelProperty(value = "子节点")

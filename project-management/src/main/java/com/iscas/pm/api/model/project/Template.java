@@ -11,10 +11,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 
 @Accessors(chain = true)
-@ApiModel(value = "文档生成模板", description = "文档生成模板，对应demo库template表")
-@TableName(value ="template")
+@ApiModel(value = "文档生成模板", description = "文档生成模板，对应project_demo库doc_template表")
+@TableName(value ="doc_template")
 @Data
 public class Template implements Serializable {
 
@@ -23,7 +25,7 @@ public class Template implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
+    @NotBlank(message = "模板名称不能为空")
     @ApiModelProperty(value = "模板名称")
     private String name;
 
