@@ -1,4 +1,4 @@
-package com.iscas.pm.common.core.util.validation;
+package com.iscas.pm.common.core.util;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.SneakyThrows;

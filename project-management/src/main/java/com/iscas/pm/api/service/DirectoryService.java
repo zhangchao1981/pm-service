@@ -12,7 +12,7 @@ import java.util.List;
 */
 public interface DirectoryService extends IService<Directory> {
 
-    List<Directory> getDirectoryTree(Integer id, String name);
+    List<Directory> getDirectoryTree();
 
     Directory addDirectory(Directory directory);
 

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.doc.DirectoryMapper;
 import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.api.service.DirectoryService;
-import com.iscas.pm.common.core.util.validation.TreeUtil;
+import com.iscas.pm.common.core.util.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +23,10 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
     DirectoryMapper directoryMapper;
 
     @Override
-    public List<Directory> getDirectoryTree(Integer id, String name) {
-        //查找id为 id或者parentid=id的所有目录
+    public List<Directory> getDirectoryTree() {
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq(null != id, "id", id).or()
-//                    .eq(null != id, "parent_id", id);
         List<Directory> directoryList = directoryMapper.selectList(queryWrapper);
-        List<Directory> treeOut = TreeUtil.treeOut(directoryList, Directory::getId, Directory::getParentId, Directory::getChildren);
-//
-//        Directory topElement = ListTreeConvertUtil.getTopElement(directoryList, "parentId", "id");
-//
-//        ListTreeConvertUtil.listToTree(directoryList, topElement, "parentId", "id", "children");
-      return treeOut;
+        return TreeUtil.treeOut(directoryList, Directory::getId, Directory::getParentId, Directory::getChildren);
     }
 
     @Override

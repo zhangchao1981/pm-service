@@ -54,10 +54,10 @@ public class DocController {
     }
 
     @GetMapping("/findDirectory")
-    @ApiOperation(value = "查找目录", notes = "根据目录id查询父节点列表")
+    @ApiOperation(value = "查找目录", notes = "查询目录列表数")
     @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
-    public List<Directory> getAll(@RequestParam Integer id) {
-        return directoryService.getDirectoryTree(id, null);
+    public List<Directory> getAll() {
+        return directoryService.getDirectoryTree();
     }
 
     @PostMapping("/deleteDirectory")
