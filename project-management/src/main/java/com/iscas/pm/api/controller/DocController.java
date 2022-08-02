@@ -32,7 +32,7 @@ import java.util.List;
  * @date 2022/7/29.
  */
 @RestController
-@Api(tags = {"项目基本信息"})
+@Api(tags = {"项目文档信息"})
 @RequestMapping("/projectDoc")
 public class DocController {
 
