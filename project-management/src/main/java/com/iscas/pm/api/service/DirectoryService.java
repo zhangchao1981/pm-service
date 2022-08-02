@@ -10,7 +10,7 @@ import com.iscas.pm.api.model.doc.Directory;
 */
 public interface DirectoryService extends IService<Directory> {
 
-    String getDirectoryTree(Integer id, String name);
+    Directory getDirectoryTree(Integer id, String name);
 
     Directory addDirectory(Directory directory);
 
