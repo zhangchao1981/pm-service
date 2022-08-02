@@ -7,6 +7,7 @@ import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.ProjectPlanService;
 import com.iscas.pm.api.util.DateUtil;
+import com.iscas.pm.common.core.util.validation.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,10 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     public List<PlanTask> getTaskList() {
 
         List<PlanTask> planTasks = super.list();
+
         //转成树结构
-        return planTasks;
+        List<PlanTask> planTaskTree = TreeUtil.treeOut(planTasks, PlanTask::getId, PlanTask::getParentId, PlanTask::getChildren);
+        return planTaskTree;
     }
 
     @Override

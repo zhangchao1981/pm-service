@@ -24,9 +24,8 @@ public class ProjectPlanController {
     @Autowired
     ProjectPlanService projectPlanService;
 
-    @PostMapping("/taskList")
+    @GetMapping("/taskList")
     @ApiOperation(value = "查询任务列表", notes = "查询任务列表")
-    @ApiImplicitParam(name = "parentId",value = "父任务id",required = true,dataType = "Integer")
     public List<PlanTask> taskList(){
         return  projectPlanService.getTaskList();
     }
@@ -47,7 +46,7 @@ public class ProjectPlanController {
         return  true;
     }
 
-    @PostMapping("/deleteTask")
+    @GetMapping("/deleteTask")
     @ApiOperation(value = "删除任务", notes = "删除指定任务，若任务已经填写了反馈，不允许删除")
     @PreAuthorize("hasAuthority('/projectPlan/taskManage')")
     public Boolean deleteTask(String id){
