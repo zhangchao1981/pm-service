@@ -15,10 +15,10 @@ import java.util.List;
 */
 @Mapper
 public interface ProjectUserRoleMapper extends BaseMapper<ProjectUserRole> {
-    @Select("SELECT project_id " +
-            " FROM pm_project_user_role" +
-            " WHERE user_id=#{userId}")
-    List<String> getProjectIdListByUserId(Integer userId);
+    @Select("SELECT pm_project_user_role.id as id,pm_project_user_role.user_id as user_id ,project_id, role_id,employee_name" +
+            " FROM pm_project_user_role , auth_user" +
+            " WHERE pm_project_user_role.user_id=auth_user.id and project_id=#{projectId}")
+    List<ProjectUserRole> selectAllByProjectId(String projectId);
 }
 
 

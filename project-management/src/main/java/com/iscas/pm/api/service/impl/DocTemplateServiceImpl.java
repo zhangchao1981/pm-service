@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iscas.pm.api.mapper.doc.TemplateMapper;
 import com.iscas.pm.api.model.doc.Template;
-import com.iscas.pm.api.service.TemplateService;
+import com.iscas.pm.api.service.DocTemplateService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2022-07-28 18:18:33
 */
 @Service
-public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> implements TemplateService {
+public class DocTemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> implements DocTemplateService {
 
 }
 

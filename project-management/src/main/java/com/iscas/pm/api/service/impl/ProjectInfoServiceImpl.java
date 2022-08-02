@@ -2,11 +2,9 @@ package com.iscas.pm.api.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.project.ProjectUserRoleMapper;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.mapper.project.ProjectMapper;
 import com.iscas.pm.api.service.InitSchemaService;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： zhangchao
@@ -32,8 +31,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private ProjectMapper projectMapper;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
-    private ProjectUserRoleMapper projectUserRoleMapper;
     @Autowired
     private InitSchemaService initSchemaService;
 
@@ -54,15 +51,10 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     }
 
     @Override
-    public Boolean switchProject(String token,String projectId) {
+    public Boolean switchProject(String token, String projectId) {
         //判断当前用户在要切换的项目上是否有权限
-
-        Integer userId = RequestHolder.getUserInfo().getUserId();
-        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
-//两种方案  1. 在这里截断 project_项目名   2.在放的地方
-        queryWrapper.eq("project_id", projectId);
-        queryWrapper.eq("user_id", userId);
-        if (projectUserRoleMapper.selectOne(queryWrapper) == null) {
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (projectPermissions == null || projectPermissions.get(projectId) == null || projectPermissions.get(projectId).size() == 0) {
             throw new AuthorizeException("当前用户无权限访问目标项目");
         }
 

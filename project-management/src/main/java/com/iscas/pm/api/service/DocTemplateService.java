@@ -8,6 +8,6 @@ import com.iscas.pm.api.model.doc.Template;
 * @description 针对表【template】的数据库操作Service
 * @createDate 2022-07-28 18:18:33
 */
-public interface TemplateService extends IService<Template> {
+public interface DocTemplateService extends IService<Template> {
 
 }
