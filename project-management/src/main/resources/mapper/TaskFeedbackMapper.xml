@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iscas.pm.api.mapper.projectPlan.TaskFeedbackMapper">
+
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.projectPlan.TaskFeedback">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="personName" column="person_name" jdbcType="VARCHAR"/>
+            <result property="date" column="date" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="progress" column="progress" jdbcType="TINYINT"/>
+            <result property="workingHour" column="working_hour" jdbcType="TINYINT"/>
+            <result property="workingContent" column="working_content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,person_name,date,
+        create_time,progress,working_hour,
+        working_content
+    </sql>
+</mapper>
