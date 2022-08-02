@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="test.mapper.EnvSoftwareMapper">
+<mapper namespace="com.iscas.pm.api.mapper.env.EnvSoftwareMapper">
 
-    <resultMap id="BaseResultMap" type="test.EnvSoftware">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.env.EnvSoftware">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="category" column="category" jdbcType="VARCHAR"/>
             <result property="versionId" column="version_id" jdbcType="VARCHAR"/>
