@@ -11,9 +11,7 @@ import com.iscas.pm.api.model.env.EnvInformation;
 import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,8 +30,9 @@ import java.util.List;
  * @date 2022/7/29.
  */
 @RestController
-@Api(tags = {"项目文档信息"})
+@Api(tags = {"项目文档"})
 @RequestMapping("/projectDoc")
+@ApiSort(1)
 public class DocController {
 
     @Autowired
@@ -47,15 +46,16 @@ public class DocController {
 
 
     @PostMapping("/addDirectory")
-    @ApiOperation(value = "添加目录", notes = "")
+    @ApiOperation(value = "添加目录", tags = "添加文档目录")
+    @ApiOperationSupport(order = 1)
     @PreAuthorize("hasAuthority('/projectDoc/addDirectory')")
     public Directory addDirectory(@Valid @RequestBody Directory directory) {
-        return directoryService.addDirectory(directory
-        );
+        return directoryService.addDirectory(directory);
     }
 
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查找目录", notes = "查询目录列表数")
+    @ApiOperationSupport(order = 2)
     @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
     public List<Directory> getAll() {
         return directoryService.getDirectoryTree();

@@ -33,13 +33,14 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         Integer parentId = directory.getParentId();
         Integer id = directory.getId();
         String name = directory.getName();
-        //    父id没有则置0
+
         //名字、id重复的校验
         QueryWrapper<Directory> wrapper = new QueryWrapper<>();
         wrapper.eq("name", name).or().eq("id", id);
         if (directoryMapper.selectList(wrapper).size() > 0) {
             throw new IllegalArgumentException("名称或id重复");
         }
+
         //判断parentId不存在的情况
         if (null != parentId && 0 != parentId) {
             QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
@@ -91,36 +92,6 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         }
         return directory;
     }
-
-//    //sourceList 平铺的原始数据集合
-//    public <T>List<T> list2Tree(List<T> sourceList) {
-//        if (CollectionUtils.isEmpty(sourceList)) {
-//            return Collections.emptyList();
-//        }
-//        List<T> resultList = new ArrayList<>();
-//        //将数据封装成树形结构
-//        Map<Integer, T> map = new HashMap<>(4);
-//        for (T data : sourceList) {
-//            map.put(data.getId(), data);
-//        }
-//        for (T data : sourceList) {
-//            T obj = map.get(data.getParentId());
-//            if (obj != null) {
-//                List<T> children = obj.getChildren();
-//                if (children == null || children.isEmpty()) {
-//                    children = new ArrayList<>();
-//                }
-//                children.add(data);
-//                obj.setChildren(children);
-//
-//            } else {
-//                resultList.add(data);
-//            }
-//
-//        }
-//        return resultList;
-//    }
-
 
 }
 

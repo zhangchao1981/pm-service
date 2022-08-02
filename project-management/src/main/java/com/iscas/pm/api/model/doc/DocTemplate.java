@@ -13,13 +13,11 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 
-
 @Accessors(chain = true)
 @ApiModel(value = "文档生成模板", description = "文档生成模板，对应project_demo库doc_template表")
 @TableName(value ="doc_template")
 @Data
-public class Template implements Serializable {
-
+public class DocTemplate implements Serializable {
 
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)
@@ -29,10 +27,8 @@ public class Template implements Serializable {
     @ApiModelProperty(value = "模板名称")
     private String name;
 
-
     @ApiModelProperty(value = "模板描述")
     private String description;
-
 
     @ApiModelProperty(value = "模板文件路径")
     private String path;

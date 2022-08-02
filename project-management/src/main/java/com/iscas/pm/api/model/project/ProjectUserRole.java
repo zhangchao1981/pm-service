@@ -5,8 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 
 /**
  * @TableName pm_project_user_role
@@ -18,25 +22,24 @@ import lombok.Data;
 @TableName(value ="pm_project_user_role")
 @Data
 public class ProjectUserRole implements Serializable {
-    /**
-     * id
-     */
     @TableId(type = IdType.AUTO)
+    @ApiModelProperty("id")
     private Integer id;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty("用户id")
+    @NotNull
     private Integer userId;
 
-    /**
-     * 角色id
-     */
+    @TableField(exist = false)
+    @ApiModelProperty("人员名称")
+    private String employeeName;
+
+    @ApiModelProperty("角色id")
+    @NotNull
     private Integer roleId;
 
-    /**
-     * 项目id
-     */
+    @JsonIgnore
+    @ApiModelProperty("项目id")
     private String projectId;
 
     @TableField(exist = false)
