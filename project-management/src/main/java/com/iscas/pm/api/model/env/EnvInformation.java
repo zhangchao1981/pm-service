@@ -47,7 +47,9 @@ public class EnvInformation implements Serializable {
     private String password;
 
     @ApiModelProperty(value = "说明")
-    private String explain;
+    private String description;
+
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

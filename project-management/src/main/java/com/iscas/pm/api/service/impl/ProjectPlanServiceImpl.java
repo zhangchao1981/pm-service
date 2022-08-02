@@ -71,7 +71,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         }
 
         //父任务未发生变化
-        if (planTask.getParentId() == db_task.getParentId()) {
+        if (planTask.getParentId().equals(db_task.getParentId())) {
             //排序位置前移
             if (planTask.getPosition() < db_task.getPosition()) {
                 movePosition(planTask.getParentId(), planTask.getPosition(), db_task.getPosition(), false);
