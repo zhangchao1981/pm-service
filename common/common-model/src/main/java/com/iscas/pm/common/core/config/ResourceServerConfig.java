@@ -70,7 +70,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         //所有请求必须认证通过
         http.authorizeRequests().
                 //配置放行的url
-                antMatchers("/auth/login","/user/getUserDetails","/v2/api-docs","doc.html").
+                antMatchers("/auth/login","/user/getUserDetails","/v2/api-docs","/v2/api-docs-ext","doc.html").
                 permitAll().
                 anyRequest().
                 authenticated();

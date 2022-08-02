@@ -30,7 +30,7 @@
         <mysql.connect.version>6.0.6</mysql.connect.version>
         <druid.spring.version>1.1.9</druid.spring.version>
         <swagger.version>2.9.2</swagger.version>
-        <swaggerui.version>1.9.3</swaggerui.version>
+        <swaggerui.version>1.9.6</swaggerui.version>
         <mybatis.version>2.0.1</mybatis.version>
         <mybatis.plus.version>3.2.0</mybatis.plus.version>
         <lombok-version>1.18.20</lombok-version>

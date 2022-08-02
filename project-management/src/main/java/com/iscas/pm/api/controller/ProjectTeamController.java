@@ -1,8 +1,8 @@
 package com.iscas.pm.api.controller;
 
 import com.iscas.pm.api.model.project.ProjectUserRole;
-import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.ProjectTeamService;
+import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +32,25 @@ public class ProjectTeamController {
 
     @PostMapping("/addMember")
     @ApiOperation(value = "添加团队成员", notes = "添加一个团队成员")
-    @PreAuthorize("hasAuthority('/projectTeam/addMember')")
+    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
     public ProjectUserRole addMember(@Valid @RequestBody ProjectUserRole member){
+        String projectId = DataSourceHolder.getDB();
+        DataSourceHolder.setDB("default");
+
+        member.setProjectId(projectId);
+        member.setEmployeeName(null);
         projectTeamService.save(member);
         return member;
     }
 
     @GetMapping("/deleteMember")
     @ApiOperation(value = "删除团队成员", notes = "删除指定的团队成员")
-    @PreAuthorize("hasAuthority('/projectTeam/deleteMember')")
+    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
     public Boolean deleteMember(String id){
+        DataSourceHolder.setDB("default");
+        if (projectTeamService.getById(id) == null)
+            throw new IllegalArgumentException("不存在的人员授权");
+
         projectTeamService.removeById(id);
         return  true;
     }

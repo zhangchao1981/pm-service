@@ -19,7 +19,7 @@ import java.util.List;
  * @Description： 项目基本信息管理控制类
  */
 @RestController
-@Api(tags = {"项目基本信息"})
+@Api(tags = {"项目列表"})
 @RequestMapping("/projectInfo")
 public class ProjectInfoController {
     @Autowired

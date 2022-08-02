@@ -30,6 +30,7 @@ public class ProjectUserRole implements Serializable {
     @NotNull
     private Integer userId;
 
+    @TableField(exist = false)
     @ApiModelProperty("人员名称")
     private String employeeName;
 
