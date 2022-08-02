@@ -1,21 +1,25 @@
-package com.iscas.pm.api.model.project;
+package com.iscas.pm.api.model.projectPlan;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotNull;
 
 
 @Accessors(chain = true)
-@ApiModel(value = "项目计划", description = "项目计划基本信息，对应demo库project_plan表")
+@ApiModel(value = "项目计划", description = "项目计划管理，对应project_plan表")
 @CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "计划开始日期不能大于结束日期")
 @TableName(value ="project_plan")
 @Data
@@ -27,6 +31,9 @@ public class PlanTask implements Serializable {
 
     @ApiModelProperty(value = "WBS编号")
     private String wbs;
+
+    @ApiModelProperty(value = "父任务id，根节点的父任务id为0")
+    private Integer parentId;
 
     @ApiModelProperty(value = "关联文档路径")
     private String docPath;
@@ -42,8 +49,7 @@ public class PlanTask implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String name;
 
-    @NotNull(message = "责任人不能为空")
-    @ApiModelProperty(value = "责任人")
+   @ApiModelProperty(value = "责任人")
     private String worker;
 
     @ApiModelProperty(value = "人数")
@@ -63,7 +69,7 @@ public class PlanTask implements Serializable {
     private Date endDate;
 
     @ApiModelProperty(value = "计划工时")
-    private Object scheduleHour;
+    private Float scheduleHour;
 
     @ApiModelProperty(value = "任务状态")
     private TaskStatusEnum status;

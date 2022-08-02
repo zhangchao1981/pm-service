@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2022-07-28 18:18:16
 */
 @Service
-public class ReviseRecordServiceImpl extends ServiceImpl<ReviseRecordMapper, ReviseRecord>
-    implements ReviseRecordService {
+public class ReviseRecordServiceImpl extends ServiceImpl<ReviseRecordMapper, ReviseRecord> implements ReviseRecordService {
 
 }
 

@@ -2,10 +2,10 @@ package com.iscas.pm.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.iscas.pm.api.model.project.Directory;
-import com.iscas.pm.api.model.project.Document;
-import com.iscas.pm.api.model.project.ReferenceDoc;
-import com.iscas.pm.api.model.project.ReviseRecord;
+import com.iscas.pm.api.model.doc.Directory;
+import com.iscas.pm.api.model.doc.Document;
+import com.iscas.pm.api.model.doc.ReferenceDoc;
+import com.iscas.pm.api.model.doc.ReviseRecord;
 import com.iscas.pm.api.service.DirectoryService;
 import com.iscas.pm.api.service.DocumentService;
 import com.iscas.pm.api.service.ReferenceDocService;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -36,15 +35,13 @@ import java.util.List;
 @Api(tags = {"项目基本信息"})
 @RequestMapping("/projectDoc")
 public class DocController {
+
     @Autowired
     DirectoryService directoryService;
-
     @Autowired
     DocumentService documentService;
-
     @Autowired
     ReferenceDocService referenceDocService;
-
     @Autowired
     ReviseRecordService reviseRecordService;
 
@@ -56,14 +53,12 @@ public class DocController {
         );
     }
 
-
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查找目录", notes = "根据tempte_id查询")
     @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
     public List<Directory> getAll(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
         return directoryService.getDirectoryTree(id, null);
     }
-
 
     @PostMapping("/deleteDirectory")
     @ApiOperation(value = "删除目录", notes = "根据目录id删除")
@@ -78,7 +73,6 @@ public class DocController {
     public Directory editDirectory(@Valid @RequestBody Directory directory) {
         return directoryService.editDirectory(directory);
     }
-
 
     @PostMapping("/addLocalDocument")
     @ApiOperation(value = "添加本地文档", notes = "上传本地文档到服务器")
@@ -95,7 +89,6 @@ public class DocController {
         return document;
     }
 
-
     @PostMapping("/addLinkDocument")
     @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
     @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
@@ -110,15 +103,6 @@ public class DocController {
         return document;
     }
 
-
-    @PostMapping("/editDocument")
-    @ApiOperation(value = "修改文档信息", notes = "修改文档信息，文档类型不能修改")
-    @PreAuthorize("hasAuthority('/projectDoc/editDocument')")
-    public Boolean editDocument(@Valid @RequestBody Document document) {
-        return documentService.editDocument(document);
-    }
-
-
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
@@ -127,14 +111,12 @@ public class DocController {
         return document;
     }
 
-
     @PostMapping("/deleteDocumentBatch")
     @ApiOperation(value = "批量删除文档", notes = "参数不可为空")
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") List<Integer> docIdList) {
         return documentService.remove(new QueryWrapper<Document>().in("id", docIdList));
     }
-
 
     @GetMapping("/downloadDocument")
     @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
@@ -143,17 +125,12 @@ public class DocController {
         return documentService.getDocuments(directoryId, documentName);
     }
 
-
-
-
-
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
     @PreAuthorize("hasAuthority('/projectDoc/addReferenceDoc')")
     public Boolean addReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         return referenceDocService.save(referenceDoc);
     }
-
 
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档")
@@ -162,7 +139,6 @@ public class DocController {
        return referenceDocService.updateById(referenceDoc);
 
     }
-
 
     @PostMapping("/referenceDocList")
     @ApiOperation(value = "查询引用文档", notes = "")
@@ -173,7 +149,6 @@ public class DocController {
         return referenceDocService.list(queryWrapper);
     }
 
-
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
@@ -183,7 +158,6 @@ public class DocController {
         return referenceDocService.remove(queryWrapper);
     }
 
-
     @PostMapping("/addReviseRecord")
     @ApiOperation(value = "添加修订记录", notes = "")
     @PreAuthorize("hasAuthority('/projectDoc/addReviseRecord')")
@@ -191,14 +165,12 @@ public class DocController {
         return reviseRecordService.save(reviseRecord);
     }
 
-
     @PostMapping("/editReviseRecord")
     @ApiOperation(value = "修改修订记录", notes = "")
     @PreAuthorize("hasAuthority('/projectDoc/editReviseRecord')")
     public boolean editReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
         return reviseRecordService.updateById(reviseRecord);
     }
-
 
     @PostMapping("/ReviseRecordList")
     @ApiOperation(value = "查询修订记录", notes = "")
@@ -208,7 +180,6 @@ public class DocController {
         queryWrapper.eq("template_id", templateId);
         return reviseRecordService.list(queryWrapper);
     }
-
 
     @PostMapping("/deleteReviseRecord")
     @ApiOperation(value = "删除修订记录", notes = "只要idList里id存在的删，不存在的不删，全部不存在返回false")
@@ -220,9 +191,9 @@ public class DocController {
     }
 
     @PostMapping("/deleteTemplate")
-    @ApiOperation(value = "删除模板", notes = "")
+    @ApiOperation(value = "删除文档模板", notes = "")
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
-    public boolean deleteTemp(@NotNull(message = "模板id不能为空") @RequestParam List<Integer> idList) {
+    public boolean deleteTemplate(@NotNull(message = "模板id不能为空") @RequestParam List<Integer> idList) {
         QueryWrapper<ReviseRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id", idList);
         return reviseRecordService.remove(queryWrapper);

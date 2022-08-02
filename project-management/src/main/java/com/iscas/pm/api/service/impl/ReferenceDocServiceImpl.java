@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2022-07-28 17:26:03
 */
 @Service
-public class ReferenceDocServiceImpl extends ServiceImpl<ReferenceDocMapper, ReferenceDoc>
-    implements ReferenceDocService {
+public class ReferenceDocServiceImpl extends ServiceImpl<ReferenceDocMapper, ReferenceDoc> implements ReferenceDocService {
 
 }
 

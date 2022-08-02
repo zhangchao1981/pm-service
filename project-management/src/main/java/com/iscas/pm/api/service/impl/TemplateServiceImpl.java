@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2022-07-28 18:18:33
 */
 @Service
-public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template>
-    implements TemplateService {
+public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> implements TemplateService {
 
 }
 

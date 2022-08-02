@@ -13,7 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ProjectPlanMapper extends BaseMapper<PlanTask> {
 
-    void updatePosition(Integer parentId, Integer position);
 }
 
 
