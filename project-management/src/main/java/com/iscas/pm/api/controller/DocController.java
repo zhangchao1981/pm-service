@@ -56,7 +56,7 @@ public class DocController {
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查找目录", notes = "根据目录id查询父节点列表")
     @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
-    public Directory getAll(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
+    public List<Directory> getAll(@RequestParam Integer id) {
         return directoryService.getDirectoryTree(id, null);
     }
 
@@ -198,5 +198,7 @@ public class DocController {
         queryWrapper.in("id", idList);
         return reviseRecordService.remove(queryWrapper);
     }
+
+
 
 }
