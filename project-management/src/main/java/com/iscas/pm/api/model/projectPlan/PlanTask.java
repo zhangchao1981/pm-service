@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -89,6 +91,10 @@ public class PlanTask implements Serializable {
 
     @ApiModelProperty(value = "任务排序编号")
     private Integer position;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "子任务")
+    private List<PlanTask> children;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
