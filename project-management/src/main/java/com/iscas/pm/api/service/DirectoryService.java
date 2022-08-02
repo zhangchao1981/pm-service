@@ -3,6 +3,8 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.doc.Directory;
 
+import java.util.List;
+
 /**
 * @author 66410
 * @description 针对表【doc_directory】的数据库操作Service
@@ -10,7 +12,7 @@ import com.iscas.pm.api.model.doc.Directory;
 */
 public interface DirectoryService extends IService<Directory> {
 
-    Directory getDirectoryTree(Integer id, String name);
+    List<Directory> getDirectoryTree(Integer id, String name);
 
     Directory addDirectory(Directory directory);
 

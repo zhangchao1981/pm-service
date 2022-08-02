@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.doc.DirectoryMapper;
 import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.api.service.DirectoryService;
-import com.iscas.pm.common.core.util.ListTreeConvertUtil;
+import com.iscas.pm.common.core.util.validation.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -25,16 +23,18 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
     DirectoryMapper directoryMapper;
 
     @Override
-    public Directory getDirectoryTree(Integer id, String name) {
+    public List<Directory> getDirectoryTree(Integer id, String name) {
         //查找id为 id或者parentid=id的所有目录
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(null != id, "id", id).or()
-                .eq(null != id, "parent_id", id);
+//        queryWrapper.eq(null != id, "id", id).or()
+//                    .eq(null != id, "parent_id", id);
         List<Directory> directoryList = directoryMapper.selectList(queryWrapper);
-        Directory topElement = ListTreeConvertUtil.getTopElement(directoryList, "parentId", "id");
-        ListTreeConvertUtil.listToTree(directoryList, topElement, "parentId", "id", "children");
-
-      return topElement;
+        List<Directory> treeOut = TreeUtil.treeOut(directoryList, Directory::getId, Directory::getParentId, Directory::getChildren);
+//
+//        Directory topElement = ListTreeConvertUtil.getTopElement(directoryList, "parentId", "id");
+//
+//        ListTreeConvertUtil.listToTree(directoryList, topElement, "parentId", "id", "children");
+      return treeOut;
     }
 
     @Override
@@ -101,34 +101,34 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         return directory;
     }
 
-    //sourceList 平铺的原始数据集合
-    public List<Directory> list2Tree(List<Directory> sourceList) {
-        if (CollectionUtils.isEmpty(sourceList)) {
-            return Collections.emptyList();
-        }
-        List<Directory> resultList = new ArrayList<>();
-        //将数据封装成树形结构
-        Map<Integer, Directory> map = new HashMap<>(4);
-        for (Directory data : sourceList) {
-            map.put(data.getId(), data);
-        }
-        for (Directory data : sourceList) {
-            Directory obj = map.get(data.getParentId());
-            if (obj != null) {
-                List<Directory> children = obj.getChildren();
-                if (children == null || children.isEmpty()) {
-                    children = new ArrayList<>();
-                }
-                children.add(data);
-                obj.setChildren(children);
-
-            } else {
-                resultList.add(data);
-            }
-
-        }
-        return resultList;
-    }
+//    //sourceList 平铺的原始数据集合
+//    public <T>List<T> list2Tree(List<T> sourceList) {
+//        if (CollectionUtils.isEmpty(sourceList)) {
+//            return Collections.emptyList();
+//        }
+//        List<T> resultList = new ArrayList<>();
+//        //将数据封装成树形结构
+//        Map<Integer, T> map = new HashMap<>(4);
+//        for (T data : sourceList) {
+//            map.put(data.getId(), data);
+//        }
+//        for (T data : sourceList) {
+//            T obj = map.get(data.getParentId());
+//            if (obj != null) {
+//                List<T> children = obj.getChildren();
+//                if (children == null || children.isEmpty()) {
+//                    children = new ArrayList<>();
+//                }
+//                children.add(data);
+//                obj.setChildren(children);
+//
+//            } else {
+//                resultList.add(data);
+//            }
+//
+//        }
+//        return resultList;
+//    }
 
 
 }
