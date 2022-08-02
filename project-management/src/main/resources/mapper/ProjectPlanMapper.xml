@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.iscas.pm.api.mapper.ProjectPlanMapper">
+<mapper namespace="com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper">
 
     <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.planTask.PlanTask">
             <id property="id" column="id" jdbcType="INTEGER"/>

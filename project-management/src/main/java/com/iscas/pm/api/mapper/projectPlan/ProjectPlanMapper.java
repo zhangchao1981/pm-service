@@ -1,4 +1,4 @@
-package com.iscas.pm.api.mapper;
+package com.iscas.pm.api.mapper.projectPlan;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
