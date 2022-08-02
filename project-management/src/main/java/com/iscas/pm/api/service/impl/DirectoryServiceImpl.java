@@ -17,8 +17,7 @@ import java.util.*;
  * @createDate 2022-07-28 18:21:01
  */
 @Service
-public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory>
-        implements DirectoryService {
+public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory> implements DirectoryService {
     @Autowired
     DirectoryMapper directoryMapper;
 
