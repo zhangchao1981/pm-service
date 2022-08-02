@@ -1,6 +1,5 @@
 package com.iscas.pm.api.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.doc.DirectoryMapper;
@@ -26,16 +25,16 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
     DirectoryMapper directoryMapper;
 
     @Override
-    public String getDirectoryTree(Integer id, String name) {
+    public Directory getDirectoryTree(Integer id, String name) {
         //查找id为 id或者parentid=id的所有目录
         QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(null != id, "id", id).or()
                 .eq(null != id, "parent_id", id);
-        queryWrapper.like(!StringUtils.isEmpty(name), "name", name);
         List<Directory> directoryList = directoryMapper.selectList(queryWrapper);
         Directory topElement = ListTreeConvertUtil.getTopElement(directoryList, "parentId", "id");
-        ListTreeConvertUtil.listToTree(directoryList, topElement, "parentId", "id", "childs");
-        return JSON.toJSONString(topElement);
+        ListTreeConvertUtil.listToTree(directoryList, topElement, "parentId", "id", "children");
+
+      return topElement;
     }
 
     @Override

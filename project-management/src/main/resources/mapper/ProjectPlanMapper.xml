@@ -3,15 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper">
-
-    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.planTask.PlanTask">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.projectPlan.PlanTask">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="wbs" column="wbs" jdbcType="VARCHAR"/>
             <result property="docPath" column="doc_path" jdbcType="VARCHAR"/>
-            <result property="isMilestone" column="is_milestone" jdbcType="TINYINT"/>
-            <result property="isBaseline" column="is_baseline" jdbcType="TINYINT"/>
+            <result property="milestone" column="is_milestone" jdbcType="TINYINT"/>
+            <result property="baseline" column="is_baseline" jdbcType="TINYINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="woker" column="woker" jdbcType="VARCHAR"/>
+            <result property="worker" column="worker" jdbcType="VARCHAR"/>
             <result property="personCount" column="person_count" jdbcType="TINYINT"/>
             <result property="workingDays" column="working_days" jdbcType="TINYINT"/>
             <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
@@ -26,7 +25,7 @@
     <sql id="Base_Column_List">
         id,wbs,doc_path,
         is_milestone,is_baseline,name,
-        woker,person_count,working_days,
+        worker,person_count,working_days,
         start_date,end_date,schedule_hour,
         status,progress_rate,actual_start_date,
         actual_end_date
