@@ -2,8 +2,8 @@ package com.iscas.pm.api.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.api.mapper.environment.EnvHardwareMapper;
-import com.iscas.pm.api.model.environment.EnvHardware;
+import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
+import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.service.EnvHardwareService;
 import org.springframework.stereotype.Service;
 

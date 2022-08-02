@@ -1,7 +1,7 @@
-package com.iscas.pm.api.mapper.environment;
+package com.iscas.pm.api.mapper.env;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.iscas.pm.api.model.environment.EnvHardware;
+import com.iscas.pm.api.model.env.EnvHardware;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

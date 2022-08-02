@@ -2,7 +2,7 @@ package com.iscas.pm.api.service
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.iscas.pm.api.model.environment.EnvInformation;
+import com.iscas.pm.api.model.env.EnvInformation;
 
 /**
 * @author 66410

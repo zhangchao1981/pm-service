@@ -6,10 +6,9 @@ import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.api.model.doc.Document;
 import com.iscas.pm.api.model.doc.ReferenceDoc;
 import com.iscas.pm.api.model.doc.ReviseRecord;
-import com.iscas.pm.api.service.DirectoryService;
-import com.iscas.pm.api.service.DocumentService;
-import com.iscas.pm.api.service.ReferenceDocService;
-import com.iscas.pm.api.service.ReviseRecordService;
+import com.iscas.pm.api.model.env.EnvInformation;
+import com.iscas.pm.api.model.env.EnvSoftware;
+import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +43,10 @@ public class DocController {
     ReferenceDocService referenceDocService;
     @Autowired
     ReviseRecordService reviseRecordService;
+    @Autowired
+    EnvInformationService envInformationService;
+    @Autowired
+    EnvSoftwareService envSoftwareService;
 
     @PostMapping("/addDirectory")
     @ApiOperation(value = "添加目录", notes = "")
@@ -135,8 +138,8 @@ public class DocController {
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档")
     @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
-    public boolean editReferenceDoc( @Valid @RequestBody ReferenceDoc referenceDoc) {
-       return referenceDocService.updateById(referenceDoc);
+    public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
+        return referenceDocService.updateById(referenceDoc);
 
     }
 
@@ -200,9 +203,68 @@ public class DocController {
     }
 
 
+    @PostMapping("/addEnvInformation")
+    @ApiOperation(value = "添加环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/addEnvInformation')")
+    public Boolean addEnvInformation(@Valid @RequestBody EnvInformation envInformation) {
+        return envInformationService.save(envInformation);
+    }
 
 
+    @PostMapping("/editEnvInformation")
+    @ApiOperation(value = "修改环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/editEnvInformation')")
+    public boolean editEnvInformation(@Valid @RequestBody EnvInformation envInformation) {
+        return envInformationService.updateById(envInformation);
+    }
 
+    @PostMapping("/EnvInformationList")
+    @ApiOperation(value = "查询环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/EnvInformationList')")
+    public List<EnvInformation> envInformationList() {
+        return envInformationService.list();
+    }
+
+    @PostMapping("/deleteEnvInformation")
+    @ApiOperation(value = "删除环境说明", notes = "只要idList里id存在的删，不存在的不删，全部不存在返回false")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvInformation')")
+    public boolean deleteEnvInformation(@NotNull(message = "idList不能为空") @RequestParam List<Integer> idList) {
+        QueryWrapper<EnvInformation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", idList);
+        return envInformationService.remove(queryWrapper);
+    }
+
+
+    @PostMapping("/addEnvSoftware")
+    @ApiOperation(value = "添加软件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/addEnvSoftware')")
+    public Boolean addEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {
+        return envSoftwareService.save(envSoftware);
+    }
+
+
+    @PostMapping("/editEnvSoftware")
+    @ApiOperation(value = "修改软件环境需求", notes = "")
+        @PreAuthorize("hasAuthority('/projectDoc/editEnvSoftware')")
+    public boolean editEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {
+        return envSoftwareService.updateById(envSoftware);
+    }
+
+    @PostMapping("/EnvSoftwareList")
+    @ApiOperation(value = "查询软件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/EnvSoftwareList')")
+    public List<EnvSoftware> envSoftwareList() {
+        return envSoftwareService.list();
+    }
+
+    @PostMapping("/deleteEnvSoftware")
+    @ApiOperation(value = "删除软件环境需求", notes = "只要idList里id存在的删，不存在的不删，全部不存在返回false")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvSoftware')")
+    public boolean deleteEnvSoftware(@NotNull(message = "idList不能为空") @RequestParam List<Integer> idList) {
+        QueryWrapper<EnvSoftware> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", idList);
+        return envSoftwareService.remove(queryWrapper);
+    }
 
 
 }
