@@ -3,7 +3,6 @@ package com.iscas.pm.api.controller;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.ProjectPlanService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +31,7 @@ public class ProjectPlanController {
 
     @PostMapping("/addTask")
     @ApiOperation(value = "添加计划任务", notes = "添加计划任务")
-    @PreAuthorize("hasAuthority('/projectPlan/taskManage')")
+    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
     public PlanTask addTask(@Valid @RequestBody PlanTask planTask){
         projectPlanService.addTask(planTask);
         return planTask;
@@ -40,23 +39,23 @@ public class ProjectPlanController {
 
     @PostMapping("/editTask")
     @ApiOperation(value = "修改计划任务", notes = "修改指定计划任务")
-    @PreAuthorize("hasAuthority('/projectPlan/taskManage')")
+    @PreAuthorize("hasAuthority('/projectPlan/editTask')")
     public Boolean editTask(@Valid @RequestBody PlanTask planTask){
         projectPlanService.editTask(planTask);
         return  true;
     }
 
     @GetMapping("/deleteTask")
-    @ApiOperation(value = "删除任务", notes = "删除指定任务，若任务已经填写了反馈，不允许删除")
-    @PreAuthorize("hasAuthority('/projectPlan/taskManage')")
+    @ApiOperation(value = "删除计划任务", notes = "删除指定任务，若任务已经填写了反馈，不允许删除")
+    @PreAuthorize("hasAuthority('/projectPlan/deleteTask')")
     public Boolean deleteTask(String id){
         projectPlanService.deleteTask(id);
         return  true;
     }
 
     @PostMapping("/importTemplate")
-    @ApiOperation(value = "模板导入", notes = "选择模板，将模板内容导入计划表")
-    @PreAuthorize("hasAuthority('/projectPlan/taskManage')")
+    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
+    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
     public Boolean importTemplate(Integer planTemplateId){
 
         return  null;

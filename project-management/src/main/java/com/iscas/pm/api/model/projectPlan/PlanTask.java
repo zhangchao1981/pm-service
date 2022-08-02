@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.iscas.pm.api.model.doc.Directory;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,8 +16,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotNull;
-
+import javax.validation.constraints.NotBlank;
 
 @Accessors(chain = true)
 @ApiModel(value = "项目计划", description = "项目计划管理，对应project_plan表")
@@ -31,7 +29,7 @@ public class PlanTask implements Serializable {
     @ApiModelProperty(value = "任务id")
     private Integer id;
 
-    @ApiModelProperty(value = "WBS编号")
+    @ApiModelProperty(value = "WBS编号,前端无需传参，后端自动生成")
     private String wbs;
 
     @ApiModelProperty(value = "父任务id，根节点的父任务id为0")
@@ -49,15 +47,16 @@ public class PlanTask implements Serializable {
     private Boolean baseline;
 
     @ApiModelProperty(value = "任务名称")
+    @NotBlank(message = "任务名称不能为空")
     private String name;
 
    @ApiModelProperty(value = "责任人")
     private String worker;
 
-    @ApiModelProperty(value = "人数")
+    @ApiModelProperty(value = "人数,前端无需传参，后端自动根据责任人计算")
     private Integer personCount;
 
-    @ApiModelProperty(value = "工期(天)")
+    @ApiModelProperty(value = "工期(天),前端无需传参，后端自动根据开始日期和结束日期计算")
     private Integer workingDays;
 
     @ApiModelProperty(value = "开始日期")
@@ -73,10 +72,10 @@ public class PlanTask implements Serializable {
     @ApiModelProperty(value = "计划工时")
     private Float scheduleHour;
 
-    @ApiModelProperty(value = "任务状态")
+    @ApiModelProperty(value = "任务状态，前端无需传参")
     private TaskStatusEnum status;
 
-    @ApiModelProperty(value = "项目完成进度")
+    @ApiModelProperty(value = "项目完成进度，前端无需传参")
     private Double progressRate;
 
     @ApiModelProperty(value = "实际开始日期")
@@ -89,7 +88,7 @@ public class PlanTask implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date actualEndDate;
 
-    @ApiModelProperty(value = "任务排序编号")
+    @ApiModelProperty(value = "任务排序编号，同级任务的排序，从1开始")
     private Integer position;
 
     @TableField(exist = false)
