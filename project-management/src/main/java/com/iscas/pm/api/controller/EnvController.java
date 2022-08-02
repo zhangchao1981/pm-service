@@ -1,0 +1,126 @@
+package com.iscas.pm.api.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.iscas.pm.api.model.env.EnvHardware;
+import com.iscas.pm.api.model.env.EnvInformation;
+import com.iscas.pm.api.model.env.EnvSoftware;
+import com.iscas.pm.api.service.EnvHardwareService;
+import com.iscas.pm.api.service.EnvInformationService;
+import com.iscas.pm.api.service.EnvSoftwareService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+ * @author by  lichang
+ * @date 2022/8/2.
+ */
+@RestController
+@Api(tags = {"项目环境"})
+@RequestMapping("/projectEnv")
+public class EnvController {
+    @Autowired
+    EnvInformationService envInformationService;
+    @Autowired
+    EnvSoftwareService envSoftwareService;
+    @Autowired
+    EnvHardwareService envHardwareService;
+
+
+    @PostMapping("/addEnvInformation")
+    @ApiOperation(value = "添加环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/addEnvInformation')")
+    public Boolean addEnvInformation(@Valid @RequestBody EnvInformation envInformation) {
+        return envInformationService.save(envInformation);
+    }
+
+
+    @PostMapping("/editEnvInformation")
+    @ApiOperation(value = "修改环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/editEnvInformation')")
+    public boolean editEnvInformation(@Valid @RequestBody EnvInformation envInformation) {
+        return envInformationService.updateById(envInformation);
+    }
+
+    @PostMapping("/EnvInformationList")
+    @ApiOperation(value = "查询环境说明", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/EnvInformationList')")
+    public List<EnvInformation> envInformationList() {
+        return envInformationService.list();
+    }
+
+    @PostMapping("/deleteEnvInformation")
+    @ApiOperation(value = "删除环境说明", notes = "只要idList里id存在的删，不存在的不删，全部不存在返回false")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvInformation')")
+    public boolean deleteEnvInformation(@NotNull(message = "idList不能为空") @RequestParam  Integer id) {
+        return envInformationService.removeById(id);
+    }
+
+
+    @PostMapping("/addEnvSoftware")
+    @ApiOperation(value = "添加软件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/addEnvSoftware')")
+    public Boolean addEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {
+        return envSoftwareService.save(envSoftware);
+    }
+
+
+    @PostMapping("/editEnvSoftware")
+    @ApiOperation(value = "修改软件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/editEnvSoftware')")
+    public boolean editEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {
+        return envSoftwareService.updateById(envSoftware);
+    }
+
+    @PostMapping("/envSoftwareList")
+    @ApiOperation(value = "查询软件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/EnvSoftwareList')")
+    public List<EnvSoftware> envSoftwareList() {
+        return envSoftwareService.list();
+    }
+
+
+    @PostMapping("/deleteEnvSoftware")
+    @ApiOperation(value = "删除软件环境需求", notes = "删除id对应信息")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvHardware')")
+    public boolean deleteEnvSoftware(@NotNull(message = "id不能为空") @RequestParam Integer id) {
+        return   envSoftwareService.removeById(id);
+    }
+
+
+
+    @PostMapping("/addEnvHardware")
+    @ApiOperation(value = "添加硬件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/addEnvHardware')")
+    public Boolean addEnvHardware(@Valid @RequestBody EnvHardware envHardware) {
+        return envHardwareService.save(envHardware);
+    }
+
+
+    @PostMapping("/editEnvHardware")
+    @ApiOperation(value = "修改硬件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/editEnvHardware')")
+    public boolean editEnvHardware(@Valid @RequestBody EnvHardware envHardware) {
+        return envHardwareService.updateById(envHardware);
+    }
+
+    @PostMapping("/envHardwareList")
+    @ApiOperation(value = "查询硬件环境需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDoc/EnvHardwareList')")
+    public List<EnvHardware> envHardwareList() {
+        return envHardwareService.list();
+    }
+
+    @PostMapping("/deleteEnvHardware")
+    @ApiOperation(value = "删除硬件环境需求", notes = "删除id对应信息")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvHardware')")
+    public boolean deleteEnvHardware(@NotNull(message = "idList不能为空") @RequestParam Integer id) {
+        return    envHardwareService.removeById(id);
+    }
+}

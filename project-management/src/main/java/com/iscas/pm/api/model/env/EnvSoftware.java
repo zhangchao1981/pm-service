@@ -19,7 +19,7 @@ import java.io.Serializable;
 @TableName(value = "env_software")
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "软件资源表", description = "软件环境需求表，对应项目资源页面子表")
+@ApiModel(value = "软件资源表", description = "软件环境需求表，对应项目环境页面子表")
 public class EnvSoftware implements Serializable {
 
 

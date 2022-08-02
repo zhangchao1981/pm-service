@@ -59,7 +59,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         Integer userId = RequestHolder.getUserInfo().getUserId();
         QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<>();
-//两种方案  1. 在这里截断 project_项目名   2.在放的地方
         queryWrapper.eq("project_id", projectId);
         queryWrapper.eq("user_id", userId);
         if (projectUserRoleMapper.selectOne(queryWrapper) == null) {
