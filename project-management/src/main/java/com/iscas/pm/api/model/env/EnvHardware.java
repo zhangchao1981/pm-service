@@ -22,7 +22,7 @@ import java.io.Serializable;
 @TableName(value ="env_hardware")
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "硬件环境需求表", description = "硬件环境需求表，对应项目资源页面子表")
+@ApiModel(value = "硬件环境需求表", description = "硬件环境需求表，对应项目环境页面子表")
 public class EnvHardware implements Serializable {
     @ApiModelProperty(value = "硬件表id")
     @TableId(type = IdType.AUTO)

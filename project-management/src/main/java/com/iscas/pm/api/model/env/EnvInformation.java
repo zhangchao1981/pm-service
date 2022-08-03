@@ -24,7 +24,7 @@ import javax.validation.constraints.NotBlank;
 @TableName(value = "env_information")
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "环境说明表", description = "环境说明表，对应项目资源页面子表")
+@ApiModel(value = "环境说明表", description = "环境说明表，对应项目环境页面子表")
 public class EnvInformation implements Serializable {
 
     @ApiModelProperty(value = " 主键id")
@@ -47,7 +47,9 @@ public class EnvInformation implements Serializable {
     private String password;
 
     @ApiModelProperty(value = "说明")
-    private String explain;
+    private String description;
+
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

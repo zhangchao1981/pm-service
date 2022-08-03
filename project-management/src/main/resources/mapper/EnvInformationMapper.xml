@@ -10,11 +10,11 @@
             <result property="serverAddress" column="server_address" jdbcType="VARCHAR"/>
             <result property="username" column="username" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
-            <result property="explain" column="explain" jdbcType="VARCHAR"/>
+            <result property="description" column="explain" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,category,server_address,
-        username,password,explain,
+        username,password,description
     </sql>
 </mapper>
