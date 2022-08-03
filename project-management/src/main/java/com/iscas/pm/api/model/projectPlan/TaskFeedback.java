@@ -29,6 +29,9 @@ public class TaskFeedback implements Serializable {
     @ApiModelProperty(value = "反馈人姓名，前端无需填写，后端自动生成")
     private String personName;
 
+    @ApiModelProperty("用户id，前端无需填写，后端自动生成")
+    private Integer userId;
+
     @ApiModelProperty("反馈日期")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

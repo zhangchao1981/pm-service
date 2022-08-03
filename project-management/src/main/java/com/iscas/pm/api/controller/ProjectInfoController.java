@@ -1,10 +1,12 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = {"项目列表"})
+@ApiSort(1)
 @RequestMapping("/projectInfo")
 public class ProjectInfoController {
     @Autowired

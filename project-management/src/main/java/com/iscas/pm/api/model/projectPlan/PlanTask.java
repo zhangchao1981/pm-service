@@ -70,13 +70,16 @@ public class PlanTask implements Serializable {
     private Date endDate;
 
     @ApiModelProperty(value = "计划工时")
-    private Float scheduleHour;
+    private Double scheduleHour;
+
+    @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生成")
+    private Double happenedHour;
 
     @ApiModelProperty(value = "任务状态，前端无需传参")
     private TaskStatusEnum status;
 
     @ApiModelProperty(value = "项目完成进度，前端无需传参")
-    private Double progressRate;
+    private Integer progressRate;
 
     @ApiModelProperty(value = "实际开始日期")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

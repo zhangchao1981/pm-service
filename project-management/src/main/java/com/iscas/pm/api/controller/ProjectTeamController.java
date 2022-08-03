@@ -5,6 +5,7 @@ import com.iscas.pm.api.service.ProjectTeamService;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @Api(tags = {"项目团队"})
 @RestController
+@ApiSort(3)
 @RequestMapping("/projectTeam")
 public class ProjectTeamController {
     @Autowired

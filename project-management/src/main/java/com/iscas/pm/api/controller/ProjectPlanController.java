@@ -1,9 +1,12 @@
 package com.iscas.pm.api.controller;
 
 import com.iscas.pm.api.model.projectPlan.PlanTask;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.service.ProjectPlanService;
+import com.iscas.pm.api.service.TaskFeedbackService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +20,14 @@ import java.util.List;
  * @Description： 项目计划管理
  */
 @Api(tags = {"项目计划"})
+@ApiSort(2)
 @RestController
 @RequestMapping("/projectPlan")
 public class ProjectPlanController {
     @Autowired
     ProjectPlanService projectPlanService;
+    @Autowired
+    TaskFeedbackService taskFeedbackService;
 
     @GetMapping("/taskList")
     @ApiOperation(value = "查询任务列表", notes = "查询任务列表")
@@ -61,9 +67,19 @@ public class ProjectPlanController {
         return  null;
     }
 
+    @PostMapping("/addTaskFeedback")
+    @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改任务完成情况的反馈信息")
+    @PreAuthorize("hasAuthority('/projectPlan/saveTaskFeedback')")
+    public TaskFeedback saveTaskFeedback(TaskFeedback taskFeedback){
+        taskFeedbackService.saveTaskFeedback(taskFeedback);
+        return  taskFeedback;
+    }
 
-
-
-
+    @PostMapping("/getTaskFeedbacks")
+    @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
+    @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
+    public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
+        return taskFeedbackService.selectListByPlanTaskId(taskId);
+    }
 
 }

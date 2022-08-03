@@ -13,4 +13,5 @@ import java.util.List;
 public interface TaskFeedbackService extends IService<TaskFeedback> {
     List<TaskFeedback> selectListByPlanTaskId(Integer planTaskId);
 
+    void saveTaskFeedback(TaskFeedback taskFeedback);
 }
