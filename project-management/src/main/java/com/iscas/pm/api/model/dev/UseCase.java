@@ -10,9 +10,27 @@ import java.util.List;
  */
 @Data
 public class UseCase {
-    String  role;
-    String  precondition;
-    String successScene;
-    List<String>  branchScene;
-    List<String>  Constraint;
+
+    private String role;
+
+
+    private List<String> precondition;
+
+    private List<String> successScene;
+
+    private List<String> branchScene;
+
+    private List<String> constraint;
+
+    public UseCase() {
+    }
+
+    public UseCase(DevRequirement devRequirement) {
+        this.role = devRequirement.getRole();
+        this.precondition = devRequirement.getPrecondition();
+        this.successScene = devRequirement.getSuccessScene();
+        this.branchScene = devRequirement.getBranchScene();
+        this.constraint = devRequirement.getConstraint();
+    }
+
 }
