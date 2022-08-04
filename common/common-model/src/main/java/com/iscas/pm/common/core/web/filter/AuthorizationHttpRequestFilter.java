@@ -47,7 +47,7 @@ public class AuthorizationHttpRequestFilter implements Filter {
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
 
         //放行部分请求
-        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
+        if (!StringUtils.isBlank(token)  && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
             //从redis里查询是否有相应的token，如果没有就拦截
             Object obj = redisUtil.get(StringUtils.substring(token, 7, token.length()));
             if (ObjectUtils.isEmpty(obj)) {

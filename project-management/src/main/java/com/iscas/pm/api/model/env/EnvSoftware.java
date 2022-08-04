@@ -3,12 +3,14 @@ package com.iscas.pm.api.model.env;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.iscas.pm.api.model.project.SecretLevelEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -51,8 +53,8 @@ public class EnvSoftware implements Serializable {
     private String medium;
 
     @ApiModelProperty(value = "安全保密")
-    @NotBlank(message = "安全保密不能为空")
-    private String security;
+    @NotEmpty(message = "安全保密不能为空")
+    private SecretLevelEnum security;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

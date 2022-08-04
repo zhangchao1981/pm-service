@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iscas.pm.api.mapper.dev.DevRequirementMapper">
+
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.dev.DevRequirement">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="worker" column="worker" jdbcType="VARCHAR"/>
+            <result property="priority" column="priority" jdbcType="VARCHAR"/>
+            <result property="requirementType" column="requirement_type" jdbcType="VARCHAR"/>
+            <result property="change" column="is_change" jdbcType="TINYINT"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="devProgress" column="dev_progress" jdbcType="FLOAT"/>
+            <result property="scheduleHour" column="schedule_hour" jdbcType="FLOAT"/>
+            <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+            <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+            <result property="happendHour" column="happend_hour" jdbcType="DOUBLE"/>
+            <result property="source" column="source" jdbcType="VARCHAR"/>
+            <result property="useCase" column="use_case" jdbcType="OTHER"/>
+            <result property="modularId" column="modular_id" jdbcType="INTEGER"/>
+            <result property="prototype" column="prototype" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,worker,
+        priority,requirement_type,is_change,
+        status,dev_progress,schedule_hour,
+        start_date,end_date,happend_hour,
+        source,use_case,modular_id,
+        prototype,update_time,create_time
+    </sql>
+</mapper>
