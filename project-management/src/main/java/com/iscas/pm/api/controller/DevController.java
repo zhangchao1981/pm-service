@@ -31,7 +31,7 @@ import java.util.Map;
 @RestController
 @Api(tags = {"开发需求"})
 @RequestMapping("/projectDev")
-@ApiSort(1)
+@ApiSort(6)
 public class DevController {
     @Autowired
     DevRequirementService devRequirementService;

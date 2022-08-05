@@ -2,7 +2,6 @@ package com.iscas.pm.auth.config;
 
 import com.iscas.pm.auth.feign.UserDetailInfo;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +20,13 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
      * 自定义要存到token里的信息
      * @param authentication 默认的认证信息
      * @return 自定义添加到token中的信息
+     * 注意：如果使用自定义token，要单独设置authorities，权限列表才生效
      */
     @Override
     public Map<String, ?> convertUserAuthentication(Authentication authentication) {
         HashMap response = new HashMap();
         UserDetailInfo userDetailInfo=(UserDetailInfo)authentication.getPrincipal();
-        response.put("userName",userDetailInfo.getUsername());
         response.put("userId", userDetailInfo.getUserId());
-        response.put("projectPermissions",userDetailInfo.getProjectPermissions());
-        response.put("systemPermissions",userDetailInfo.getSystemPermissions());
 
         return response;
     }

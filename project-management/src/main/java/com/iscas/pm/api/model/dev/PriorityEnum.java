@@ -9,7 +9,6 @@ import lombok.Getter;
  * @author by  lichang
  * @date 2022/8/4.
  */
-@Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PriorityEnum {
 
@@ -24,4 +23,14 @@ public enum PriorityEnum {
         this.code = code;
         this.value = value;
     }
+
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
 }

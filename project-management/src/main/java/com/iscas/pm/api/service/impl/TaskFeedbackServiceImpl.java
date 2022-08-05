@@ -39,7 +39,7 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
             throw new IllegalArgumentException("反馈的任务不存在");
 
         //补全信息后，存入反馈表
-        taskFeedback.setUserId(RequestHolder.getUserInfo().getUserId());
+        taskFeedback.setUserId(RequestHolder.getUserInfo().getId());
         taskFeedback.setPersonName(RequestHolder.getUserInfo().getEmployeeName());
         taskFeedback.setCreateTime(new Date());
         super.saveOrUpdate(taskFeedback);

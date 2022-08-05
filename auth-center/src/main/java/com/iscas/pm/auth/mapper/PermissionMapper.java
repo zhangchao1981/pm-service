@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.mapper;
 
-import com.iscas.pm.auth.domain.Permission;
+import com.iscas.pm.auth.model.Permission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.iscas.pm.auth.domain.ProjectPermission;
+import com.iscas.pm.auth.model.ProjectPermission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -10,10 +10,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【auth_permission】的数据库操作Mapper
  * @createDate 2022-07-18 18:47:01
- * @Entity generator.domain.AuthPermission
  */
 @Mapper
 public interface PermissionMapper extends BaseMapper<Permission> {

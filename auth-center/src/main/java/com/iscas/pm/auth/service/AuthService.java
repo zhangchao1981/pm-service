@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.service;
 
-import com.iscas.pm.auth.domain.AuthToken;
+import com.iscas.pm.auth.model.AuthToken;
 
 /**
  * @author 李昶
@@ -9,9 +9,6 @@ import com.iscas.pm.auth.domain.AuthToken;
  */
 public interface AuthService {
 
-    /***
-     * 授权认证方法
-     */
     AuthToken login(String username, String password);
 
     boolean logout(String token);

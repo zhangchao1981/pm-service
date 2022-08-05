@@ -9,6 +9,7 @@ import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.mapper.project.ProjectMapper;
 import com.iscas.pm.api.service.InitSchemaService;
 import com.iscas.pm.api.service.ProjectInfoService;
+import com.iscas.pm.common.core.model.UserInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.exception.AuthorizeException;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
@@ -35,9 +36,9 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private InitSchemaService initSchemaService;
 
     @Override
-    public IPage<Project> projectList(ProjectQueryParam param) {
+    public IPage<Project> projectPageList(ProjectQueryParam param) {
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
-        param.setUserId(RequestHolder.getUserInfo().getUserId());
+        param.setUserId(RequestHolder.getUserInfo().getId());
         IPage projectIPage = projectMapper.getProjectList(page, param);
 
         return projectIPage;
@@ -45,9 +46,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
     @Override
     public List<String> projectPermissions(String projectId) {
-        Object permissionsJSONString = RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
-        List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
-        return permissionsList;
+        return RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
     }
 
     @Override
@@ -59,13 +58,15 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         }
 
         //redis中更新当前项目
-        redisUtil.set(StringUtils.substring(token, 7, token.length()), projectId);
+        UserInfo userInfo = RequestHolder.getUserInfo();
+        userInfo.setCurrentProjectId(projectId);
+        redisUtil.hset(RequestHolder.getUserInfo().getId().toString(), StringUtils.substring(token, 7, token.length()), userInfo);
         return true;
     }
 
     @Override
     public Project addProject(Project project) {
-        project.setCreateUser(RequestHolder.getUserInfo().getUsername());
+        project.setCreateUser(RequestHolder.getUserInfo().getUserName());
         project.setStatus(ProjectStatusEnum.CHECK);
         project.setCreateTime(new Date());
         project.setUpdateTime(new Date());

@@ -34,7 +34,7 @@
     </sql>
 
     <select id="getProjectList" resultType="com.iscas.pm.api.model.project.Project">
-        SELECT
+        SELECT DISTINCT
         <include refid="Base_Column_List" />
         FROM pm_project_user_role ,pm_project
         WHERE pm_project_user_role.project_id=pm_project.id and pm_project_user_role.user_id=#{param.userId}

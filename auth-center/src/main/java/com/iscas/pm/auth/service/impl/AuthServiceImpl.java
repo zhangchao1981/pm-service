@@ -3,9 +3,10 @@ package com.iscas.pm.auth.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.iscas.pm.auth.service.AuthService;
-import com.iscas.pm.auth.domain.AuthToken;
+import com.iscas.pm.auth.model.AuthToken;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +61,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean logout(String token) {
         //如果token是以bear 开头的，去掉开头
-        if (token.startsWith("bearer")){
-            token=StringUtils.substring(token,7,token.length());
+        if (token.startsWith("bearer")) {
+            token = StringUtils.substring(token, 7, token.length());
         }
-            redisUtil.del(token);
-            return true;
+        redisUtil.hdel(RequestHolder.getUserInfo().getId().toString(), token);
+        return true;
     }
 
     /****
@@ -121,8 +122,8 @@ public class AuthServiceImpl implements AuthService {
 
         //获取响应数据
         AuthToken authToken = mapResponseEntity.getBody();
-        if (authToken == null || StringUtils.isBlank(authToken.getAccess_token())  || StringUtils.isBlank(authToken.getRefresh_token()) || StringUtils.isBlank(authToken.getJti())) {
-            log.error("创建令牌失败！错误原因："+ JSON.toJSONString(mapResponseEntity.getBody()));
+        if (authToken == null || StringUtils.isBlank(authToken.getAccess_token()) || StringUtils.isBlank(authToken.getRefresh_token()) || StringUtils.isBlank(authToken.getJti())) {
+            log.error("创建令牌失败！错误原因：" + JSON.toJSONString(mapResponseEntity.getBody()));
             throw new RuntimeException("创建令牌失败！");
         }
 

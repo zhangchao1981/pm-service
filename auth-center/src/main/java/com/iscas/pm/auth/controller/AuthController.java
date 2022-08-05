@@ -1,10 +1,10 @@
 package com.iscas.pm.auth.controller;
 
-import com.iscas.pm.auth.domain.UserLoginParam;
-import com.iscas.pm.auth.domain.UserInfo;
+import com.iscas.pm.auth.model.UserLoginParam;
+import com.iscas.pm.common.core.model.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.auth.domain.AuthToken;
+import com.iscas.pm.auth.model.AuthToken;
 
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
@@ -32,14 +32,11 @@ public class AuthController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @ApiOperation(value = "用户登录",notes = "用户名密码登录，登录后需将token放到header里，key为:Authorization，value为:bearer +token(注意bearer后面有个空格) ")
+    @ApiOperation(value = "用户登录", notes = "用户名密码登录，登录后需将token放到header里，key为:Authorization，value为:bearer +token(注意bearer后面有个空格) ")
     @PostMapping(value = "/login")
     public UserInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
-
-        //存入redis   key=token  value="default"
-       redisUtil.set(authToken.getAccess_token(),"default");
 
         //获取用户详细信息，包括权限列表
         UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName());
@@ -52,10 +49,15 @@ public class AuthController {
         userInfo.setAccessToken(authToken.getAccess_token());
         userInfo.setSystemPermissions(userDetailInfo.getSystemPermissions());
         userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
+        userInfo.setCurrentProjectId("default");
+
+        //存入redis   key=userId  hashKey=token  value="default"
+        redisUtil.hset(userInfo.getId().toString(), authToken.getAccess_token(), userInfo);
+
         return userInfo;
     }
 
-    @ApiOperation(value = "用户登出",notes = "退出系统，token失效")
+    @ApiOperation(value = "用户登出", notes = "退出系统，token失效")
     @GetMapping(value = "/logout")
     public void logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);

@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = {"项目环境"})
-@ApiSort(1)
+@ApiSort(4)
 @RequestMapping("/projectEnv")
 public class EnvController {
     @Autowired

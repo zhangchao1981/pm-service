@@ -1,11 +1,15 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.common.core.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +23,19 @@ import java.util.Map;
 @ApiModel("用户登录返回信息")
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserInfo extends User implements Serializable {
+public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = -8242940190960961504L;
+
+    @ApiModelProperty(value = "用户id")
+    private Integer id;
+
+    @ApiModelProperty(value = "用户名,根据人员姓名自动生成，前端无需传值，默认为姓名全拼，重复时后面加数字区分")
+    private String userName;
+
+    @ApiModelProperty(value = "人员姓名")
+    @NotBlank(message = "人员姓名不能为空")
+    private String employeeName;
 
     @ApiModelProperty("token令牌")
     private String accessToken;
@@ -31,5 +45,8 @@ public class UserInfo extends User implements Serializable {
 
     @ApiModelProperty("项目角色对应的权限列表")
     private Map<String,List<String> >projectPermissions;
+
+    @ApiModelProperty("当前项目id,前端忽略")
+    private String currentProjectId;
 
 }

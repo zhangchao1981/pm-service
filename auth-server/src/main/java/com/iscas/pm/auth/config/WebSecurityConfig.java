@@ -22,10 +22,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/auth/login",
-                "/v2/api-docs",
-                "/v2/api-docs-ext",
-                "doc.html");
+        web.ignoring().antMatchers("/auth/login");
     }
 
     /**
@@ -37,7 +34,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         AuthenticationManager manager = super.authenticationManagerBean();
         return manager;
     }
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -53,7 +49,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     *
+     * http请求安全配置
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {

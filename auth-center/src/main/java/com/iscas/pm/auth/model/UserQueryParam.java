@@ -1,10 +1,9 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.auth.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
