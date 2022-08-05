@@ -50,6 +50,6 @@ public class User implements Serializable {
     @ApiModelProperty(value = "最后更新时间")
     private Date updateTime;
 
-    @ApiModelProperty(value = "账号状态")
+    @ApiModelProperty(value = "账号状态,添加时为启用状态")
     private UserStatusEnum status;
 }

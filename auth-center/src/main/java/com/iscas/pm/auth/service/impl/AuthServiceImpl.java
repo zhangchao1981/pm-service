@@ -47,8 +47,6 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RedisUtil redisUtil;
 
-
-
     @Override
     public AuthToken login(String username, String password) {
         //申请令牌

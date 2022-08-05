@@ -5,6 +5,7 @@ import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.util.TokenDecodeUtil;
 import com.iscas.pm.common.core.web.exception.AuthenticateException;
+import com.iscas.pm.common.core.web.exception.SimpleBaseException;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -47,19 +48,19 @@ public class AuthorizationHttpRequestFilter implements Filter {
         String token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
 
         //放行部分请求
-        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())){
+        if (!StringUtils.isBlank(token) && !"/oauth/token".equals(request.getRequestURI()) && !"/user/getUserDetails".equals(request.getRequestURI())) {
             //从redis里查询是否有相应的token，如果没有就拦截
             Object obj = redisUtil.get(StringUtils.substring(token, 7, token.length()));
             if (ObjectUtils.isEmpty(obj)) {
-                throw new AuthenticateException("redis中的token已被清除");
+                throw new SimpleBaseException(401, "认证失败，请重新登录");
             }
 
-            String currentProjectId =obj.toString();
+            String currentProjectId = obj.toString();
 
             //切换数据源
             if (request.getRequestURI().startsWith("/projectInfo") || request.getRequestURI().startsWith("/auth")) {
                 DataSourceHolder.setDB("default");
-            }else{
+            } else {
                 DataSourceHolder.setDB(currentProjectId);
             }
 
@@ -85,6 +86,7 @@ public class AuthorizationHttpRequestFilter implements Filter {
                 setUserDetailsToSession(userDetailInfo, request);
             }
         }
+        Object attribute = request.getSession().getAttribute(SECURITY_CONTEXT);
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
