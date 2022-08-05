@@ -18,7 +18,7 @@
             <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
             <result property="happendHour" column="happend_hour" jdbcType="DOUBLE"/>
             <result property="source" column="source" jdbcType="VARCHAR"/>
-            <result property="useCase" column="use_case" jdbcType="OTHER"/>
+            <result property="useCase" column="use_case" jdbcType="OTHER" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
             <result property="modularId" column="modular_id" jdbcType="INTEGER"/>
             <result property="prototype" column="prototype" jdbcType="VARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>

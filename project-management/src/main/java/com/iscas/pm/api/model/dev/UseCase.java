@@ -1,6 +1,9 @@
 package com.iscas.pm.api.model.dev;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.List;
 
@@ -10,27 +13,29 @@ import java.util.List;
  */
 @Data
 public class UseCase {
+    @JsonIgnore
+    @ApiModelProperty(value = "需求角色")
+    private String  role;
 
-    private String role;
 
+    @JsonIgnore
+    @ApiModelProperty(value = "前置条件")
+    private List<String>  precondition;
 
-    private List<String> precondition;
-
+    @JsonIgnore
+    @ApiModelProperty(value = "成功场景")
     private List<String> successScene;
 
+    @JsonIgnore
+    @ApiModelProperty(value = "分支场景")
     private List<String> branchScene;
 
+    @JsonIgnore
+    @ApiModelProperty(value = "业务规则设计约束")
     private List<String> constraint;
 
-    public UseCase() {
-    }
 
-    public UseCase(DevRequirement devRequirement) {
-        this.role = devRequirement.getRole();
-        this.precondition = devRequirement.getPrecondition();
-        this.successScene = devRequirement.getSuccessScene();
-        this.branchScene = devRequirement.getBranchScene();
-        this.constraint = devRequirement.getConstraint();
-    }
+
+
 
 }

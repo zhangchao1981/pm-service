@@ -96,9 +96,7 @@ public class DevController {
         if (devModularService.list(devModularQueryWrapper).size()<1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        UseCase useCase = new UseCase(devRequirement);
         //是否加入重名校验
-        devRequirement.setUseCase(JSON.toJSONString(useCase));
         devRequirementService.save(devRequirement);
         return devRequirement;
     }
@@ -114,8 +112,6 @@ public class DevController {
         if (devModularService.list(devModularQueryWrapper).size()<1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        UseCase useCase = new UseCase(devRequirement);
-        devRequirement.setUseCase(JSON.toJSONString(useCase));
         devRequirementService.updateById(devRequirement);
         return devRequirement;
     }

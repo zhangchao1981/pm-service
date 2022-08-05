@@ -12,7 +12,7 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PriorityEnum {
 
-    MAX("MAXL", "高"),
+    MAX("MAX", "高"),
     MID("MID", "中"),
     MIN("MIN", "低");
 
@@ -24,13 +24,5 @@ public enum PriorityEnum {
     PriorityEnum(String code, String value) {
         this.code = code;
         this.value = value;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getValue() {
-        return value;
     }
 }
