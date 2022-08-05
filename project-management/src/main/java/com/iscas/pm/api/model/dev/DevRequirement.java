@@ -84,7 +84,8 @@ public class DevRequirement implements Serializable {
 
     @JsonIgnore
     @ApiModelProperty(value = "用例说明")
-    private String useCase;
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+    private UseCase useCase;
 
     @JsonIgnore
     @ApiModelProperty(value = "模块id")
@@ -108,31 +109,6 @@ public class DevRequirement implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
-    @JsonIgnore
-    @TableField(exist = false)
-    @ApiModelProperty(value = "需求角色")
-    private String  role;
-
-
-    @JsonIgnore
-    @TableField(exist = false)
-    @ApiModelProperty(value = "前置条件")
-    private List<String>  precondition;
-
-    @JsonIgnore
-    @TableField(exist = false)
-    @ApiModelProperty(value = "成功场景")
-    private List<String> successScene;
-
-    @JsonIgnore
-    @TableField(exist = false)
-    @ApiModelProperty(value = "分支场景")
-    private List<String> branchScene;
-
-    @JsonIgnore
-    @TableField(exist = false)
-    @ApiModelProperty(value = "业务规则设计约束")
-    private List<String> constraint;
 
 
     @TableField(exist = false)
