@@ -62,7 +62,7 @@ public class EnvController {
     @PostMapping("/deleteEnvInformation")
     @ApiOperation(value = "删除环境说明", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectEnv/deleteEnvInformation')")
-    public boolean deleteEnvInformation(@NotNull(message = "id不能为空") @RequestParam  Integer id) {
+    public boolean deleteEnvInformation(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         return envInformationService.removeById(id);
     }
 
@@ -95,7 +95,7 @@ public class EnvController {
     @ApiOperation(value = "删除软件环境需求", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectEnv/deleteEnvHardware')")
     public boolean deleteEnvSoftware(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        return   envSoftwareService.removeById(id);
+        return envSoftwareService.removeById(id);
     }
 
 
@@ -128,6 +128,6 @@ public class EnvController {
     @ApiOperation(value = "删除硬件环境需求", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectEnv/deleteEnvHardware')")
     public boolean deleteEnvHardware(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        return    envHardwareService.removeById(id);
+        return envHardwareService.removeById(id);
     }
 }

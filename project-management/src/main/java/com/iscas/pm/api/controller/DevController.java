@@ -123,7 +123,7 @@ public class DevController {
     @PostMapping("/devRequirementList")
     @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息")
     @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
-    public List<DevRequirement> devRequirementList(@RequestParam Integer modularId) {
+    public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         QueryWrapper<DevRequirement> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("modular_id", modularId);
         return devRequirementService.list(queryWrapper);
@@ -133,7 +133,7 @@ public class DevController {
     @PostMapping("/devRequirement")
     @ApiOperation(value = "查询开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
-    public HashMap devRequirement(@RequestParam Integer requirementId) {
+    public HashMap devRequirement(@RequestParam  @NotNull(message = "requirementId不能为空") Integer requirementId) {
         HashMap<String, Object> map = new HashMap<>();
         DevRequirement devRequirement = devRequirementService.getById(requirementId);
         QueryWrapper<DevTask> queryWrapper = new QueryWrapper<>();
