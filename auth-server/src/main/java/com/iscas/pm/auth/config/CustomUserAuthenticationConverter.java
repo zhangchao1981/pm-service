@@ -31,6 +31,10 @@ public class CustomUserAuthenticationConverter extends DefaultUserAuthentication
         response.put("projectPermissions",userDetailInfo.getProjectPermissions());
         response.put("systemPermissions",userDetailInfo.getSystemPermissions());
 
+        if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            response.put("authorities", AuthorityUtils.authorityListToSet(authentication.getAuthorities()));
+        }
+
         return response;
     }
 }
