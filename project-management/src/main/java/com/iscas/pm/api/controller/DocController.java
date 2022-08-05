@@ -151,9 +151,7 @@ public class DocController {
     @ApiOperationSupport(order = 23)
     @PreAuthorize("hasAuthority('/projectDoc/referenceDocList')")
     public List<ReferenceDoc> referenceDocList(@NotNull(message = "引用文档Id不能为空") @RequestParam Integer templateId) {
-        QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("template_id", templateId);
-        return referenceDocService.list(queryWrapper);
+        return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
     }
 
     @PostMapping("/deleteReferenceDoc")
@@ -161,9 +159,7 @@ public class DocController {
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
     public boolean deleteReferenceDoc(@NotEmpty(message = "idList不能为空") @RequestParam List<Integer> idList) {
-        QueryWrapper<ReferenceDoc> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("id", idList);
-        return referenceDocService.remove(queryWrapper);
+        return referenceDocService.remove(new QueryWrapper<ReferenceDoc>().in("id", idList));
     }
 
     @PostMapping("/addReviseRecord")
@@ -187,9 +183,7 @@ public class DocController {
     @ApiOperationSupport(order = 33)
     @PreAuthorize("hasAuthority('/projectDoc/ReviseRecordList')")
     public List<ReviseRecord> reviseRecordList(@NotNull(message = "templateId不能为空") @RequestParam Integer templateId) {
-        QueryWrapper<ReviseRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("template_id", templateId);
-        return reviseRecordService.list(queryWrapper);
+        return reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
     }
 
     @PostMapping("/deleteReviseRecord")
@@ -197,13 +191,11 @@ public class DocController {
     @ApiOperationSupport(order = 34)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
     public boolean deleteReviseRecord(@NotEmpty(message = "idList不能为空") @RequestParam List<Integer> idList) {
-        QueryWrapper<ReviseRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("id", idList);
-        return reviseRecordService.remove(queryWrapper);
+        return reviseRecordService.remove( new QueryWrapper<ReviseRecord>().in("id", idList));
     }
 
     @PostMapping("/deleteTemplate")
-    @ApiOperation(value = "删除文档模板", notes = "")
+    @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 41)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
     public boolean deleteTemplate(@NotNull(message = "模板id不能为空") @RequestParam List<Integer> idList) {
