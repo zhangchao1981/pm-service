@@ -1,10 +1,10 @@
 package com.iscas.pm.auth.controller;
 
-import com.iscas.pm.auth.domain.UserLoginParam;
+import com.iscas.pm.auth.model.UserLoginParam;
 import com.iscas.pm.common.core.model.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
-import com.iscas.pm.auth.domain.AuthToken;
+import com.iscas.pm.auth.model.AuthToken;
 
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.util.RedisUtil;

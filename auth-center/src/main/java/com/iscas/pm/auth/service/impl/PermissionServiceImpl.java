@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.domain.Permission;
-import com.iscas.pm.auth.domain.ProjectPermission;
+import com.iscas.pm.auth.model.Permission;
+import com.iscas.pm.auth.model.ProjectPermission;
 import com.iscas.pm.auth.service.PermissionService;
 import com.iscas.pm.auth.mapper.PermissionMapper;
 import org.springframework.stereotype.Service;

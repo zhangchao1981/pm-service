@@ -1,6 +1,5 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.auth.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**

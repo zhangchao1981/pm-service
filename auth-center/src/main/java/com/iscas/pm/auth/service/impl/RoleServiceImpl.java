@@ -2,9 +2,9 @@ package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.domain.Permission;
-import com.iscas.pm.auth.domain.Role;
-import com.iscas.pm.auth.domain.RolePermission;
+import com.iscas.pm.auth.model.Permission;
+import com.iscas.pm.auth.model.Role;
+import com.iscas.pm.auth.model.RolePermission;
 import com.iscas.pm.auth.mapper.RoleMapper;
 import com.iscas.pm.auth.service.RolePermissionService;
 import com.iscas.pm.auth.service.RoleService;

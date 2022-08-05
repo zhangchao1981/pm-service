@@ -1,7 +1,7 @@
 package com.iscas.pm.auth.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.iscas.pm.auth.domain.AuthUserRole;
+import com.iscas.pm.auth.model.AuthUserRole;
 import com.iscas.pm.auth.mapper.AuthUserRoleMapper;
 import com.iscas.pm.auth.service.AuthUserRoleService;
 import org.springframework.stereotype.Service;

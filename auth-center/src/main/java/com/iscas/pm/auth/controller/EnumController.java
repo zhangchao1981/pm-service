@@ -1,6 +1,6 @@
 package com.iscas.pm.auth.controller;
 
-import com.iscas.pm.auth.domain.RoleTypeEnum;
+import com.iscas.pm.auth.model.RoleTypeEnum;
 import com.iscas.pm.common.core.model.UserStatusEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

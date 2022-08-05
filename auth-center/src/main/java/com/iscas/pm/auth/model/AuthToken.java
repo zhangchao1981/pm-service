@@ -1,4 +1,4 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.auth.model;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.auth.domain.ModifyPwdParam;
-import com.iscas.pm.auth.domain.UserQueryParam;
+import com.iscas.pm.auth.model.ModifyPwdParam;
+import com.iscas.pm.auth.model.UserQueryParam;
 import com.iscas.pm.common.core.model.User;
 import com.iscas.pm.common.core.model.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;

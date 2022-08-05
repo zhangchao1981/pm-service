@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.service;
 
-import com.iscas.pm.auth.domain.Permission;
+import com.iscas.pm.auth.model.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.iscas.pm.auth.domain.ProjectPermission;
+import com.iscas.pm.auth.model.ProjectPermission;
 
 import java.util.List;
 
