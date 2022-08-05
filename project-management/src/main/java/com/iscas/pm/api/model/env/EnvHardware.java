@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.iscas.pm.api.model.project.SecretLevelEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -49,8 +51,8 @@ public class EnvHardware implements Serializable {
     private String usePeriod;
 
     @ApiModelProperty(value = "保密范围")
-    @NotBlank(message = "安全保密不能为空")
-    private String security;
+    @NotEmpty(message = "安全保密不能为空")
+    private SecretLevelEnum security;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

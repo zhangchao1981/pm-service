@@ -33,7 +33,6 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         Integer parentId = directory.getParentId();
         Integer id = directory.getId();
         String name = directory.getName();
-
         //名字、id重复的校验
         QueryWrapper<Directory> wrapper = new QueryWrapper<>();
         wrapper.eq("name", name).or().eq("id", id);
