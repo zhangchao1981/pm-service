@@ -46,13 +46,11 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public boolean deleteDirectory(Integer id) {
-        QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", id).or().eq("parent_id", id);
-        if (directoryMapper.selectList(queryWrapper).size() > 1) {
+        if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("parent_id", id)).size() > 1) {
             //有子节点，不能删
             throw new IllegalArgumentException("有子节点存在，拒绝删除");
         }
-        if (directoryMapper.delete(queryWrapper) == 0) {
+        if (directoryMapper.deleteById(id)<1){
             throw new IllegalArgumentException("该目录已被删除");
         }
         return true;
@@ -60,20 +58,13 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public Directory editDirectory(Directory directory) {
-
         Integer parentId = directory.getParentId();
         //验证是否有效：  判断父id是否存在
-        if (parentId == null) {
-            directory.setParentId(0);
-        } else if (parentId != 0) {
-            String name = directory.getName();
-            QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("id", parentId);
-            if (1 > directoryMapper.selectList(queryWrapper).size()) {
-                throw new IllegalArgumentException("父id不存在");
+        if (parentId != 0) {
+            if (1 > directoryMapper.selectList( new QueryWrapper<Directory>().eq("id", parentId)).size()) {
+                throw new IllegalArgumentException("父id对应目录不存在");
             }
         }
-
         //进行更新，更新失败(id不存在)抛出异常
         if (1 > directoryMapper.updateById(directory)) {
             throw new IllegalArgumentException("要修改目录id不存在");

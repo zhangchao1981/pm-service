@@ -67,7 +67,7 @@ public class DocController {
     }
 
     @PostMapping("/editDirectory")
-    @ApiOperation(value = "修改目录", notes = "不允许改id, 要求前端传过来的是要修改的值 ")
+    @ApiOperation(value = "修改目录", notes = "要求前端传过来的是要修改成的值 ")
     @ApiOperationSupport(order = 4)
     @PreAuthorize("hasAuthority('/projectDoc/editDirectory')")
     public Directory editDirectory(@Valid @RequestBody Directory directory) {
@@ -105,21 +105,27 @@ public class DocController {
         return document;
     }
 
+
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
-    public Document deleteDocument(@Valid @RequestBody Document document) {
-        documentService.removeById(document.getId());
-        return document;
+    public boolean deleteDocument(@NotNull Integer documentId) {
+        if (!documentService.removeById(documentId)){
+         throw new IllegalArgumentException("删除失败，文档不存在");
+        }
+        return true;
     }
 
     @PostMapping("/deleteDocumentBatch")
     @ApiOperation(value = "批量删除文档", notes = "参数不可为空")
     @ApiOperationSupport(order = 14)
-    @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
     public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") List<Integer> docIdList) {
-        return documentService.remove(new QueryWrapper<Document>().in("id", docIdList));
+        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))){
+            throw new IllegalArgumentException("删除失败，文档不存在");
+        }
+        return true;
     }
 
     @GetMapping("/downloadDocument")
@@ -194,7 +200,7 @@ public class DocController {
         return reviseRecordService.remove(new QueryWrapper<ReviseRecord>().in("id", idList));
     }
 
-    @PostMapping("/deleteTemplate")
+    @PostMapping("/deleteTemplate")//没添加权限
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 41)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
