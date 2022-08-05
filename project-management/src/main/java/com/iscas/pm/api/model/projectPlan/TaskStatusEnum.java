@@ -2,6 +2,7 @@ package com.iscas.pm.api.model.projectPlan;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @Author： zhangchao
@@ -16,9 +17,11 @@ public enum TaskStatusEnum {
     DELAYED_FINISH("DELAYED_FINISH","延迟完成"),
     DELAYED("DELAYED","已延迟");
 
-    @EnumValue
+
+
     private final String code;
     private final String value;
+
 
     TaskStatusEnum(String code, String value) {
         this.code = code;

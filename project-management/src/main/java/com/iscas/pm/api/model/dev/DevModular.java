@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.iscas.pm.api.model.doc.Directory;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 项目模块表
- * @TableName dev_modular
- */
-@TableName(value ="dev_modular")
+
+@ApiModel(value = "项目模块", description = "项目模块表，对应project_demo库dev_modular表")
+@TableName(value = "dev_modular")
 @Data
 public class DevModular implements Serializable {
 

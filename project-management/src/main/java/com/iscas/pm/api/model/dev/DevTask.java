@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -14,11 +15,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-/**
- * 开发任务表
- * @TableName dev_task
- */
-@TableName(value ="dev_task")
+
+@ApiModel(value = "开发任务", description = "开发任务表，对应project_demo库dev_requirement表")
+@TableName(value = "dev_task")
 @Data
 public class DevTask implements Serializable {
 
@@ -47,15 +46,15 @@ public class DevTask implements Serializable {
     @ApiModelProperty(value = "发生工时")
     private Double happendHour;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "开始时间")
     private Date startDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "结束时间")
-    private Date  endDate;
+    private Date endDate;
 
     @JsonIgnore
     @ApiModelProperty(value = "开发需求id")

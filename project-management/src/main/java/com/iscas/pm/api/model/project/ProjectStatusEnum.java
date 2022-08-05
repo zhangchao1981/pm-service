@@ -16,10 +16,10 @@ public enum ProjectStatusEnum {
     UN_PASS("UN_PASS", "未通过"),
     CLOSED("CLOSED", "已关闭");
 
-    @EnumValue
-    private final String code;
 
+    private final String code;
     private final String value;
+
 
     ProjectStatusEnum(String code, String value) {
         this.code = code;

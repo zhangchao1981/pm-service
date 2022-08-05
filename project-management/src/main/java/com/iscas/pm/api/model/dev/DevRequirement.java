@@ -22,10 +22,10 @@ import java.util.List;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 
-@TableName(value = "dev_requirement",autoResultMap = true)
+@TableName(value = "dev_requirement", autoResultMap = true)
 @Accessors(chain = true)
 @ApiModel(value = "开发需求表", description = "开发需求表板，对应project_demo库dev_requirement表")
-@CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "项目开始日期不能大于项目结束日期")
+@CheckTimeInterval(beginTime = {"startDate"}, endTime = {"endDate"}, message = "项目开始日期不能大于项目结束日期")
 @Data
 public class DevRequirement implements Serializable {
 
@@ -64,12 +64,12 @@ public class DevRequirement implements Serializable {
     @ApiModelProperty(value = "计划工时")
     private Double scheduleHour;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "开始时间")
     private Date startDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "结束时间")
     private Date endDate;
@@ -94,21 +94,20 @@ public class DevRequirement implements Serializable {
     @JsonIgnore
     @ApiModelProperty(value = "原型设计图路径，多个用逗号隔开")
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-    private List<String>  prototype;
+    private List<String> prototype;
 
 
     @JsonIgnore
     @ApiModelProperty(value = "更新时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updateTime;
 
     @JsonIgnore
     @ApiModelProperty(value = "生成时间")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
-
 
 
     @TableField(exist = false)

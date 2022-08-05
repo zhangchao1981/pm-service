@@ -2,6 +2,7 @@ package com.iscas.pm.api.model.dev;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -16,9 +17,7 @@ public enum PriorityEnum {
     MID("MID", "中"),
     MIN("MIN", "低");
 
-    @EnumValue
     private final String code;
-
     private final String value;
 
     PriorityEnum(String code, String value) {

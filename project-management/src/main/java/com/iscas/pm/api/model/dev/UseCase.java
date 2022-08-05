@@ -11,6 +11,7 @@ import java.util.List;
  * @author by  lichang
  * @date 2022/8/4.
  */
+
 @Data
 public class UseCase {
     @JsonIgnore
@@ -33,9 +34,5 @@ public class UseCase {
     @JsonIgnore
     @ApiModelProperty(value = "业务规则设计约束")
     private List<String> constraint;
-
-
-
-
 
 }

@@ -1,6 +1,7 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.Permission;
+import com.iscas.pm.auth.domain.RolePermission;
 import com.iscas.pm.auth.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,10 @@ public class PermissionController {
 
     @Autowired
     PermissionService permissionService;
+    @Autowired
+    RolePermissionService rolePermissionService;
+
+
 
     @ApiOperation(value = "权限列表",notes = "返回权限列表")
     @GetMapping("/permissionList")
@@ -67,6 +72,28 @@ public class PermissionController {
         }
 
         permissionService.removeById(permissionId);
+        return true;
+    }
+    @ApiOperation(value = "添加权限并给某角色赋予对应新权限",notes = "添加新权限")
+    @PostMapping("/addPermission/{roleId}")
+//    @PreAuthorize("hasAuthority('/permission/addPermissionRole')")
+    public  boolean addPermissionRole(@RequestBody @Valid Permission permission ,@PathVariable Integer roleId) {
+        if (permissionService.getById(permission.getId()) != null) {
+            throw new IllegalArgumentException("权限标识已经存在，不能重复添加");
+        }
+        permission.setCreateTime(new Date());
+        permission.setUpdateTime(new Date());
+        if (!permissionService.save(permission)){
+            throw new IllegalArgumentException("权限保存失败");
+        };
+
+        RolePermission rolePermission = new RolePermission();
+        rolePermission.setRoleId(roleId);
+        rolePermission.setPermissionId(permission.getId());
+
+        if (!rolePermissionService.save(rolePermission)){
+            throw new IllegalArgumentException("角色权限保存失败");
+        };
         return true;
     }
 

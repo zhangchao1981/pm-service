@@ -15,11 +15,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author by  lichang
@@ -40,7 +43,7 @@ public class DevController {
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
     @ApiOperation(value = "添加项目模块", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/addDevModular')")
+    @PreAuthorize("hasAuthority('/projectDev/addDevModular')")
     public DevModular addDevModular(@Valid @RequestBody DevModular devModular) {
         devModularService.save(devModularService.modularValidCheck(devModular));
         return devModular;
@@ -49,7 +52,7 @@ public class DevController {
     @ApiOperationSupport(order = 2)
     @PostMapping("/editDevModular")
     @ApiOperation(value = "修改项目模块", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/editDevModular')")
+    @PreAuthorize("hasAuthority('/projectDev/editDevModular')")
     public DevModular editDevModular(@Valid @RequestBody DevModular devModular) {
         if (!devModularService.updateById(devModularService.modularValidCheck(devModular))){
             throw new IllegalArgumentException("修改失败，目标id不存在");
@@ -61,15 +64,15 @@ public class DevController {
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
     @ApiOperation(value = "查询项目模块列表", notes = "返回全部项目模块(树型)")
-//    @PreAuthorize("hasAuthority('/projectDoc/DevModularList')")
+    @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
     }
 
     @ApiOperationSupport(order = 4)
     @PostMapping("/deleteDevModular")
-    @ApiOperation(value = "删除项目模块", notes = "")  //待校验
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDevModular')")
+    @ApiOperation(value = "删除项目模块", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         //如果当前模块下有需求，则不许删除
         QueryWrapper<DevRequirement> devRequireWrapper = new QueryWrapper<>();
@@ -86,10 +89,10 @@ public class DevController {
 
     @ApiOperationSupport(order = 5)
     @PostMapping("/addEnvInformation")
-    @ApiOperation(value = "添加开发需求", notes = "请求参数:DevRequirement  UseCase ")
-//    @PreAuthorize("hasAuthority('/projectDoc/addDevRequirement')")
+    @ApiOperation(value = "添加开发需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")
     public DevRequirement addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
-        //需测试：  boolearn转tinyint映射   JSON字符串存储格式
+        //需测试：  boolean转tinyint映射   JSON字符串存储格式
         //进行父模块Id不存在校验  (有外键了，是否还需要校验[控制返回的异常])
         QueryWrapper<DevModular> devModularQueryWrapper = new QueryWrapper<>();
         devModularQueryWrapper.eq("id",devRequirement.getModularId());
@@ -104,7 +107,7 @@ public class DevController {
     @ApiOperationSupport(order = 6)
     @PostMapping("/editDevRequirement")
     @ApiOperation(value = "修改开发需求", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/editDevRequirement')")
+    @PreAuthorize("hasAuthority('/projectDev/editDevRequirement')")
     public DevRequirement editDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
         //进行父模块Id不存在校验  (有外键了，是否还需要校验[控制返回的异常])
         QueryWrapper<DevModular> devModularQueryWrapper = new QueryWrapper<>();
@@ -118,8 +121,8 @@ public class DevController {
 
     @ApiOperationSupport(order = 7)
     @PostMapping("/devRequirementList")
-    @ApiOperation(value = "查询开发需求", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/devRequirementList')")
+    @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息")
+    @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
     public List<DevRequirement> devRequirementList(@RequestParam Integer modularId) {
         QueryWrapper<DevRequirement> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("modular_id", modularId);
@@ -127,9 +130,26 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 8)
+    @PostMapping("/devRequirement")
+    @ApiOperation(value = "查询开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
+    @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
+    public HashMap devRequirement(@RequestParam Integer requirementId) {
+        HashMap<String, Object> map = new HashMap<>();
+        DevRequirement devRequirement = devRequirementService.getById(requirementId);
+        QueryWrapper<DevTask> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("require_id",requirementId);
+        map.put("devRequirement",devRequirement);
+        map.put("devtask", devTaskService.list(queryWrapper));
+        //关联接口及关联用例及变更记录待开发
+        return map;
+    }
+
+
+
+    @ApiOperationSupport(order = 9)
     @PostMapping("/deleteDevRequirement")
     @ApiOperation(value = "删除开发需求", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteDevRequirement')")
+    @PreAuthorize("hasAuthority('/projectDev/deleteDevRequirement')")
     public boolean deleteDevRequirement(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         //如果当前开发需求下有任务，则不许删除
         QueryWrapper<DevTask> queryWrapper = new QueryWrapper<>();
@@ -140,10 +160,10 @@ public class DevController {
         return devRequirementService.removeById(id);
     }
 
-    @ApiOperationSupport(order = 9)
+    @ApiOperationSupport(order = 10)
     @PostMapping("/addDevTask")
     @ApiOperation(value = "添加开发任务", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/addDevTask')")
+    @PreAuthorize("hasAuthority('/projectDev/addDevTask')")
     public  DevTask addDevTask(@Valid @RequestBody DevTask devTask) {
         QueryWrapper<DevRequirement> wrapper = new QueryWrapper<>();
         wrapper.eq("id",devTask.getRequireId());
@@ -154,29 +174,29 @@ public class DevController {
         return devTask;
     }
 
-    @ApiOperationSupport(order = 10)
+    @ApiOperationSupport(order = 11)
     @PostMapping("/editDevTask")
-    @ApiOperation(value = "修改开发任务", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/editDevTask')")
+    @ApiOperation(value = "修改开发任务")
+    @PreAuthorize("hasAuthority('/projectDev/editDevTask')")
     public DevTask editDevTask(@Valid @RequestBody DevTask devTask) {
         devTaskService.updateById(devTask);
         return devTask;
     }
 
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 12)
     @PostMapping("/devTaskList")
-    @ApiOperation(value = "查询开发任务", notes = "")
-//    @PreAuthorize("hasAuthority('/projectDoc/devTaskList')")
+    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务")
+    @PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
         QueryWrapper<DevTask> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("require_id", requireId);
         return devTaskService.list(queryWrapper);
     }
 
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 13)
     @PostMapping("/deleteDevTask")
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
-//    @PreAuthorize("hasAuthority('/projectDoc/deleteEnvHardware')")
+    @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         return devTaskService.removeById(id);
     }
