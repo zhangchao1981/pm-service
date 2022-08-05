@@ -30,27 +30,16 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public Directory addDirectory(Directory directory) {
-        Integer parentId = directory.getParentId();
-        Integer id = directory.getId();
-        String name = directory.getName();
-        //名字、id重复的校验
-        QueryWrapper<Directory> wrapper = new QueryWrapper<>();
-        wrapper.eq("name", name).or().eq("id", id);
-        if (directoryMapper.selectList(wrapper).size() > 0) {
-            throw new IllegalArgumentException("名称或id重复");
+
+        if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("name", directory.getName())).size() > 0) {
+            throw new IllegalArgumentException("目录名称已存在");
         }
 
-        //判断parentId不存在的情况
-        if (null != parentId && 0 != parentId) {
-            QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("id", parentId);
-            if (1 > directoryMapper.selectList(queryWrapper).size()) {
-                throw new IllegalArgumentException("父节点id不存在");
-            }
-        } else {
-            //父节点默认置0
-            parentId = 0;
+        Integer parentId = directory.getParentId();
+        if (0 != parentId && 1 > directoryMapper.selectList(new QueryWrapper<Directory>().eq("id", parentId)).size()) {
+            throw new IllegalArgumentException("父节点id不存在");
         }
+
         directoryMapper.insert(directory);
         return directory;
     }
