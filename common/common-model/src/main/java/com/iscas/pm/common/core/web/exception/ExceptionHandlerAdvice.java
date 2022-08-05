@@ -6,11 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ValidationException;
@@ -24,10 +26,9 @@ import java.util.Objects;
  */
 @Slf4j
 @RestControllerAdvice
-//@ConditionalOnClass({AccessDeniedException.class})
 public class ExceptionHandlerAdvice {
     /**
-     * 使用校验bean的方式校验RequestParam,需要声明该类 todo
+     * 使用校验bean的方式校验RequestParam,需要声明该类
      */
     @Bean
     public MethodValidationPostProcessor myMethodValidationPostProcessor() {
@@ -49,14 +50,14 @@ public class ExceptionHandlerAdvice {
     /**
      * spring security禁止访问异常处理
      */
-//    @ExceptionHandler(value = {AccessDeniedException.class})
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public BaseResponse handleAccessDeniedException(AccessDeniedException ex) {
-//        BaseResponse response = new BaseResponse();
-//        response.setCode(HttpStatus.FORBIDDEN.value());
-//        response.setMessage(ex.getMessage());
-//        return response;
-//    }
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public BaseResponse handleAccessDeniedException(AccessDeniedException ex) {
+        BaseResponse response = new BaseResponse();
+        response.setCode(HttpStatus.FORBIDDEN.value());
+        response.setMessage(ex.getMessage());
+        return response;
+    }
 
     /**
      * SpringMvc校验bean失败
@@ -91,6 +92,7 @@ public class ExceptionHandlerAdvice {
      * 用户认证异常处理
      */
     @ExceptionHandler(value = {AuthenticateException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse handleAuthenticateException(AuthenticateException ex) {
         BaseResponse response = new BaseResponse();
         response.setCode(ex.getCode());

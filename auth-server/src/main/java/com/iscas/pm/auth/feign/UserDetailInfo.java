@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @Author： zhangchao
  * @Date： 2022/7/19
@@ -40,7 +41,7 @@ public class UserDetailInfo implements UserDetails, Serializable {
     private boolean enabled;
 
     @ApiModelProperty("系统角色对应的权限列表")
-    private List<String> SystemPermissions;
+    private List<String> systemPermissions;
 
     @ApiModelProperty("项目角色对应的权限列表,key为项目id，value为项目下的权限列表")
     private Map<String, List<String>> projectPermissions;
@@ -54,7 +55,7 @@ public class UserDetailInfo implements UserDetails, Serializable {
         this.password = password;
         this.employeeName = employeeName;
         this.enabled = enabled;
-        this.SystemPermissions = SystemPermissions;
+        this.systemPermissions = SystemPermissions;
         this.projectPermissions = projectPermissions;
     }
 

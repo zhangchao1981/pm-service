@@ -3,19 +3,13 @@ package com.iscas.pm.auth;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * created By lichang on
- */
-//@EnableAsync
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableTransactionManagement //开启事务支持
+@EnableTransactionManagement
 public class AuthCenterApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthCenterApplication.class, args);

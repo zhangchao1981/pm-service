@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -129,6 +130,7 @@ public class UserController {
 
     @ApiOperation(value = "获取用户信息", notes = "获取当前登录用户信息")
     @GetMapping("/getUserDetails")
+    @ApiIgnore
     public UserDetailInfo getUserDetails(@RequestParam String userName) {
         return userService.getUserDetails(userName);
     }
