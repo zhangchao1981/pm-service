@@ -43,7 +43,7 @@ public class DocController {
 
 
     @GetMapping("/findDirectory")
-    @ApiOperation(value = "查找目录", notes = "查询目录列表数")
+    @ApiOperation(value = "查询目录树", notes = "查询整棵目录树")
     @ApiOperationSupport(order = 1)
     @PreAuthorize("hasAuthority('/projectDoc/findDirectory')")
     public List<Directory> getAll() {

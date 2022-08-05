@@ -32,6 +32,7 @@ public class Directory implements Serializable {
 
     @NotNull(message = "父节点id不能为空")
     @ApiModelProperty(value = "父节点id")
+    @NotNull
     private Integer parentId;
 
 
