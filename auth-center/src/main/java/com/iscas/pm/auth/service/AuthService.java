@@ -9,9 +9,6 @@ import com.iscas.pm.auth.model.AuthToken;
  */
 public interface AuthService {
 
-    /***
-     * 授权认证方法
-     */
     AuthToken login(String username, String password);
 
     boolean logout(String token);

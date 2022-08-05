@@ -7,7 +7,7 @@ import com.iscas.pm.auth.service.RolePermissionService;
 import org.springframework.stereotype.Service;
 
 /**
- * @author 66410
+ * @author zhangchao
  * @description 针对表【auth_role_permission】的数据库操作Service实现
  * @createDate 2022-07-18 20:53:25
  */

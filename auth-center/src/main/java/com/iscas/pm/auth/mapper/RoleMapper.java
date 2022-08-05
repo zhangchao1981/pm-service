@@ -10,10 +10,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【auth_role】的数据库操作Mapper
  * @createDate 2022-07-18 20:45:28
- * @Entity auth.domain.AuthRole
  */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {

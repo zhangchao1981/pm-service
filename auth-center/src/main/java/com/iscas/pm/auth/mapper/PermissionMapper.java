@@ -10,10 +10,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【auth_permission】的数据库操作Mapper
  * @createDate 2022-07-18 18:47:01
- * @Entity generator.domain.AuthPermission
  */
 @Mapper
 public interface PermissionMapper extends BaseMapper<Permission> {

@@ -36,7 +36,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private InitSchemaService initSchemaService;
 
     @Override
-    public IPage<Project> projectList(ProjectQueryParam param) {
+    public IPage<Project> projectPageList(ProjectQueryParam param) {
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
         param.setUserId(RequestHolder.getUserInfo().getId());
         IPage projectIPage = projectMapper.getProjectList(page, param);
@@ -46,9 +46,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
     @Override
     public List<String> projectPermissions(String projectId) {
-        Object permissionsJSONString = RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
-        List<String> permissionsList = JSONObject.parseObject(JSON.toJSONString(permissionsJSONString), List.class);
-        return permissionsList;
+        return RequestHolder.getUserInfo().getProjectPermissions().get(projectId);
     }
 
     @Override

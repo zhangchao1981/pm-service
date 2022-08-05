@@ -53,6 +53,7 @@ public class AuthController {
 
         //存入redis   key=userId  hashKey=token  value="default"
         redisUtil.hset(userInfo.getId().toString(), authToken.getAccess_token(), userInfo);
+
         return userInfo;
     }
 

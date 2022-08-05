@@ -7,10 +7,6 @@ spring:
     username: root
     password: iscas654321
 
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
-
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
   # 控制台输出sql语句
@@ -21,8 +17,6 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #开启下划线转驼峰
     map-underscore-to-camel-case: true
-#    #开启返回map结果集的下划线转驼峰
-#    object-wrapper-factory: com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory
 server:
   port: 5005
 
@@ -36,6 +30,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
 logging:
   level:
     root: info

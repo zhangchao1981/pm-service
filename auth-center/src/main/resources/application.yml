@@ -1,3 +1,6 @@
+server:
+  port: 5004
+
 spring:
   application:
     name: auth-center
@@ -6,23 +9,18 @@ spring:
     url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: iscas654321
-  redis:
-    host: localhost
-    port: 6379
-    password:
-    jedis:
-      pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
-#  mvc:
-#    pathmatch:
-#      matching-strategy: ANT_PATH_MATCHER
 
-mybatis:
+mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
-server:
-  port: 5004
+  # 控制台输出sql语句
+  type-enums-package: com.iscas.pm.api.model.project
+  configuration:
+    # 枚举类型处理器
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    # 输出sql语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启下划线转驼峰
+    map-underscore-to-camel-case: true
 
 eureka:
   client:
@@ -35,18 +33,14 @@ eureka:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
 
-auth:   #本地token
-  ttl: 3600  #token存储到redis的过期时间
+auth:
+  # token存储到redis的过期时间
+  ttl: 3600
   clientId: pmservice
-  clientSecret: pmservice   #秘钥
+  clientSecret: pmservice
   cookieDomain: localhost
   cookieMaxAge: -1
-encrypt:
-  key-store:
-    location: classpath:/pmservice.jks   #证书认证位置
-    secret: pmservice
-    alias: pmservice
-    password: pmservice
+
 logging:
   level:
     root: info

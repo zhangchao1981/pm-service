@@ -1,9 +1,9 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiSort;
@@ -62,10 +62,21 @@ public class ProjectInfoController {
         return project;
     }
 
-    @PostMapping("/projectList")
-    @ApiOperation(value = "项目列表", notes = "返回符合查询条件且权限范围内的项目列表信息")
-    public IPage<Project> projectList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
-        return projectInfoService.projectList(projectQueryParam);
+    @PostMapping("/projectPageList")
+    @ApiOperation(value = "项目列表（分页）", notes = "返回符合查询条件且权限范围内的项目列表信息")
+    public IPage<Project> projectPageList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
+        return projectInfoService.projectPageList(projectQueryParam);
+    }
+
+    @GetMapping("/projectList")
+    @ApiOperation(value = "项目列表", notes = "返回所有权限范围内的项目列表信息")
+    public List<Project> projectList() {
+        ProjectQueryParam param = new ProjectQueryParam();
+        param.setUserId(RequestHolder.getUserInfo().getId());
+        param.setPageNum(1);
+        param.setPageSize(Integer.MAX_VALUE);
+
+        return projectInfoService.projectPageList(param).getRecords();
     }
 
     @PostMapping("/approveProject")
@@ -97,14 +108,18 @@ public class ProjectInfoController {
             throw new IllegalArgumentException("该项目不存在");
 
         //然后判断是否有权限
-        if (projectInfoService.projectPermissions(project.getId()).contains("/projectInfo/editProject")) {
-            return projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
+        List<String> permissions = projectInfoService.projectPermissions(project.getId());
+        if (permissions == null || !permissions.contains("/projectInfo/closeProject")){
+            throw new IllegalArgumentException("您无权限删除该项目");
         }
-        return false;
+
+        projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
+
+        return true;
     }
 
     @GetMapping("/projectDetailInfo/{id}")
-    @ApiOperation(value = "查询项目详情", notes = "查询指定项目的详细信息，支持前端查询接口")
+    @ApiOperation(value = "查询项目详情（暂未实现）", notes = "查询指定项目的详细信息，支持前端查询接口")
     @PreAuthorize("hasAuthority('/projectInfo/projectDetailInfo')")
     public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank(message ="项目Id不能为空") String id) {
         Project project = projectInfoService.getById(id);
