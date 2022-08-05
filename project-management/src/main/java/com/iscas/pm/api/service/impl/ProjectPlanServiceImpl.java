@@ -27,9 +27,8 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
     @Override
     public List<PlanTask> getTaskList() {
-
+        //拿到数据库查询结果，将其转成树结构
         List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<PlanTask>().orderByAsc("parent_id", "position"));
-        //转成树结构
         List<PlanTask> planTaskTree = TreeUtil.treeOut(planTasks, PlanTask::getId, PlanTask::getParentId, PlanTask::getChildren);
         return planTaskTree;
     }

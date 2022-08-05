@@ -51,7 +51,7 @@ public class DocController {
     }
 
     @PostMapping("/addDirectory")
-    @ApiOperation(value = "添加目录")
+    @ApiOperation(value = "添加目录",notes = "不允许重名")
     @ApiOperationSupport(order = 2)
     @PreAuthorize("hasAuthority('/projectDoc/addDirectory')")
     public Directory addDirectory(@Valid @RequestBody Directory directory) {
@@ -191,7 +191,7 @@ public class DocController {
     @ApiOperationSupport(order = 34)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
     public boolean deleteReviseRecord(@NotEmpty(message = "idList不能为空") @RequestParam List<Integer> idList) {
-        return reviseRecordService.remove( new QueryWrapper<ReviseRecord>().in("id", idList));
+        return reviseRecordService.remove(new QueryWrapper<ReviseRecord>().in("id", idList));
     }
 
     @PostMapping("/deleteTemplate")

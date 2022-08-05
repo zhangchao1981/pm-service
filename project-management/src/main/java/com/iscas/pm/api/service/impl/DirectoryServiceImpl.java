@@ -33,7 +33,7 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         Integer parentId = directory.getParentId();
         Integer id = directory.getId();
         String name = directory.getName();
-        //名字、id重复的校验
+        //重名校验
         QueryWrapper<Directory> wrapper = new QueryWrapper<>();
         wrapper.eq("name", name).or().eq("id", id);
         if (directoryMapper.selectList(wrapper).size() > 0) {
@@ -71,20 +71,12 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public Directory editDirectory(Directory directory) {
-
         Integer parentId = directory.getParentId();
-        //验证是否有效：  判断父id是否存在
-        if (parentId == null) {
-            directory.setParentId(0);
-        } else if (parentId != 0) {
-            String name = directory.getName();
-            QueryWrapper<Directory> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("id", parentId);
-            if (1 > directoryMapper.selectList(queryWrapper).size()) {
+        if (parentId != 0) {
+            if (1 > directoryMapper.selectList(new QueryWrapper<Directory>().eq("id", parentId)).size()) {
                 throw new IllegalArgumentException("父id不存在");
             }
         }
-
         //进行更新，更新失败(id不存在)抛出异常
         if (1 > directoryMapper.updateById(directory)) {
             throw new IllegalArgumentException("要修改目录id不存在");

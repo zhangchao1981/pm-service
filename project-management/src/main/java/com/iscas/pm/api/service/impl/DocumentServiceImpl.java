@@ -104,9 +104,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
      * 校验目录是否存在
      */
     private List<Document> getDocumentByDirectoryId(Integer directoryId) {
-        QueryWrapper<Document> documentQueryWrapper = new QueryWrapper<>();
-        documentQueryWrapper.eq(null != directoryId, "directory_id", directoryId);
-        return documentMapper.selectList(documentQueryWrapper);
+        return documentMapper.selectList(new QueryWrapper<Document>().eq(null != directoryId, "directory_id", directoryId));
     }
 
     /**

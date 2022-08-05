@@ -90,12 +90,10 @@ public class DevController {
     @ApiOperation(value = "添加开发需求", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")
     public DevRequirement addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
-        //需测试：  boolean转tinyint映射   JSON字符串存储格式
         //进行父模块Id不存在校验  (有外键了，是否还需要校验[控制返回的异常])
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        //是否加入重名校验
         devRequirementService.save(devRequirement);
         return devRequirement;
     }
@@ -182,6 +180,4 @@ public class DevController {
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         return devTaskService.removeById(id);
     }
-
-
 }
