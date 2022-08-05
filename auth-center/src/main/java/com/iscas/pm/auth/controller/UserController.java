@@ -3,8 +3,8 @@ package com.iscas.pm.auth.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.domain.ModifyPwdParam;
 import com.iscas.pm.auth.domain.UserQueryParam;
-import com.iscas.pm.auth.domain.User;
-import com.iscas.pm.auth.domain.UserStatusEnum;
+import com.iscas.pm.common.core.model.User;
+import com.iscas.pm.common.core.model.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
 import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
@@ -111,7 +111,7 @@ public class UserController {
     @ApiOperation(value = "修改用户密码")
     @PostMapping(value = "/changePassword")
     public Boolean change(@Valid @RequestBody ModifyPwdParam modifyPwdParam) {
-        return userService.changePassword(RequestHolder.getUserInfo().getUsername(),modifyPwdParam.getOldPassword(), modifyPwdParam.getNewPassword());
+        return userService.changePassword(RequestHolder.getUserInfo().getUserName(),modifyPwdParam.getOldPassword(), modifyPwdParam.getNewPassword());
     }
 
     @ApiOperation(value = "重置密码")

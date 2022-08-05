@@ -1,5 +1,6 @@
-package com.iscas.pm.auth.domain;
+package com.iscas.pm.common.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,5 +32,8 @@ public class UserInfo extends User implements Serializable {
 
     @ApiModelProperty("项目角色对应的权限列表")
     private Map<String,List<String> >projectPermissions;
+
+    @ApiModelProperty("当前项目id")
+    private String currentProjectId;
 
 }

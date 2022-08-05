@@ -52,9 +52,6 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     TokenStore tokenStore;
 
-    @Autowired
-    private CustomUserAuthenticationConverter customUserAuthenticationConverter;
-
     /***
      * 客户端信息配置
      */

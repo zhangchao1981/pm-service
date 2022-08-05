@@ -1,7 +1,7 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.domain.RoleTypeEnum;
-import com.iscas.pm.auth.domain.UserStatusEnum;
+import com.iscas.pm.common.core.model.UserStatusEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

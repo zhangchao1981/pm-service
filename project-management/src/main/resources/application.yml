@@ -16,7 +16,7 @@ mybatis-plus:
   # 控制台输出sql语句
   type-enums-package: com.iscas.pm.api.model.project
   configuration:
-    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
 
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #开启下划线转驼峰

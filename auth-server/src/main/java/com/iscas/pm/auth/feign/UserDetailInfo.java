@@ -49,16 +49,6 @@ public class UserDetailInfo implements UserDetails, Serializable {
     @ApiModelProperty("权限例表")
     private Collection<GrantedAuthority> authorities;
 
-    public UserDetailInfo(Integer userId, String username, String password, String employeeName, boolean enabled, List<String> SystemPermissions, Map<String, List<String>> projectPermissions) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.employeeName = employeeName;
-        this.enabled = enabled;
-        this.systemPermissions = SystemPermissions;
-        this.projectPermissions = projectPermissions;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
