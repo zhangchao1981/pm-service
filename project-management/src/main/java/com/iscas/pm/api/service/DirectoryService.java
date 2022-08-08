@@ -19,5 +19,4 @@ public interface DirectoryService extends IService<Directory> {
 
     Directory editDirectory(Directory directory);
 
-    boolean deleteDirectory(Integer id);
 }

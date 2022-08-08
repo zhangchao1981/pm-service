@@ -1,5 +1,6 @@
 package com.iscas.pm.api.model.env;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -26,7 +27,7 @@ public class EnvSoftware implements Serializable {
 
 
     @ApiModelProperty(value = "id")
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "分类")
