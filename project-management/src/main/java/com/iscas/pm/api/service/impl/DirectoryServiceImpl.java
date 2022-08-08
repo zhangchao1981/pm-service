@@ -31,8 +31,8 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
     @Override
     public Directory addDirectory(Directory directory) {
 
-        if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("name", directory.getName())).size() > 0) {
-            throw new IllegalArgumentException("目录名称已存在");
+        if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("name", directory.getName()).eq("parent_id",directory.getParentId())).size() > 0) {
+            throw new IllegalArgumentException("同级目录下，目录名称不能重复");
         }
 
         Integer parentId = directory.getParentId();
@@ -46,13 +46,14 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public boolean deleteDirectory(Integer id) {
+        if (directoryMapper.deleteById(id)<1){
+            throw new IllegalArgumentException("待删除目录不存在");
+        }
+
         if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("parent_id", id)).size() > 1) {
-            //有子节点，不能删
             throw new IllegalArgumentException("有子节点存在，拒绝删除");
         }
-        if (directoryMapper.deleteById(id)<1){
-            throw new IllegalArgumentException("该目录已被删除");
-        }
+
         return true;
     }
 

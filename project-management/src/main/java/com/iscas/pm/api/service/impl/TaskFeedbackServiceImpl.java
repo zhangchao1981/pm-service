@@ -33,13 +33,19 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
 
     @Override
     public void saveTaskFeedback(TaskFeedback taskFeedback) {
+        Integer userId = RequestHolder.getUserInfo().getId();
+
         //查询计划任务
         PlanTask planTask = projectPlanMapper.selectById(taskFeedback.getPlanTaskId());
         if (planTask == null)
             throw new IllegalArgumentException("反馈的任务不存在");
 
+        TaskFeedback feedback = taskFeedbackMapper.selectOne(new QueryWrapper<TaskFeedback>().eq("user_id", userId).eq("date", taskFeedback.getDate()));
+        if (feedback != null)
+            taskFeedback.setId(feedback.getId());
+
         //补全信息后，存入反馈表
-        taskFeedback.setUserId(RequestHolder.getUserInfo().getId());
+        taskFeedback.setUserId(userId);
         taskFeedback.setPersonName(RequestHolder.getUserInfo().getEmployeeName());
         taskFeedback.setCreateTime(new Date());
         super.saveOrUpdate(taskFeedback);
@@ -68,12 +74,12 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
         if (planTask.getProgressRate() == 100) {
             //计算实际结束时间=最晚反馈日期
             if (statistics.getMax() != 0) {
-                planTask.setActualStartDate(new Date(statistics.getMax()));
+                planTask.setActualEndDate(new Date(statistics.getMax()));
             }
 
             //计算状态:计划结束日期>=实际结束时间 已完成；否则延迟完成
             if (planTask.getStartDate().after(new Date(statistics.getMax()))) {
-                planTask.setStatus(TaskStatusEnum.RUNNING);
+                planTask.setStatus(TaskStatusEnum.FINISHED);
             } else {
                 planTask.setStatus(TaskStatusEnum.DELAYED_FINISH);
             }

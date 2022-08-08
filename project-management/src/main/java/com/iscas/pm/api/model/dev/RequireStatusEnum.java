@@ -1,8 +1,6 @@
 package com.iscas.pm.api.model.dev;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -17,7 +15,6 @@ public enum RequireStatusEnum {
 
     private final String code;
     private final String value;
-
 
     RequireStatusEnum(String code, String value) {
         this.code = code;
