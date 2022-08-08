@@ -236,7 +236,6 @@ public class DocController {
            if ( !reviseRecordService.remove(new QueryWrapper<ReviseRecord>().eq("id", reviseRecordId))){
                throw new IllegalArgumentException("要删除的修订记录不存在");
            }   return true;
-
     }
 
     @PostMapping("/deleteTemplate")//没添加权限
