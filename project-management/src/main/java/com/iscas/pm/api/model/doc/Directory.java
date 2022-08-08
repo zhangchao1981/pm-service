@@ -26,11 +26,11 @@ public class Directory implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @NotBlank
+    @NotBlank(message = "目录名称不能为空")
     @ApiModelProperty(value = "目录名称")
     private String name;
 
-
+    @NotNull(message = "父节点id不能为空")
     @ApiModelProperty(value = "父节点id")
     @NotNull
     private Integer parentId;

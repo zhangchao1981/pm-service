@@ -21,8 +21,7 @@ import java.util.Map;
 @Service
 public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper, DevRequirement>
     implements DevRequirementService {
-    @Autowired
-    DevRequirementMapper devRequirementMapper;
+
 
 }
 

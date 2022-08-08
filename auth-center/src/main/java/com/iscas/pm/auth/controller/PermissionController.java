@@ -1,7 +1,8 @@
 package com.iscas.pm.auth.controller;
 
-import com.iscas.pm.auth.domain.Permission;
-import com.iscas.pm.auth.domain.RolePermission;
+
+import com.iscas.pm.auth.model.Permission;
+import com.iscas.pm.auth.model.RolePermission;
 import com.iscas.pm.auth.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
