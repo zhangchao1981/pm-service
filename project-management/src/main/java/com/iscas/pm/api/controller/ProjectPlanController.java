@@ -6,6 +6,7 @@ import com.iscas.pm.api.service.ProjectPlanService;
 import com.iscas.pm.api.service.TaskFeedbackService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,21 +31,33 @@ public class ProjectPlanController {
     TaskFeedbackService taskFeedbackService;
 
     @GetMapping("/taskList")
-    @ApiOperation(value = "查询任务列表", notes = "查询任务列表")
+    @ApiOperationSupport(order = 1)
+    @ApiOperation(value = "查询任务列表", notes = "以树形结构返回整棵计划树")
     public List<PlanTask> taskList(){
         return  projectPlanService.getTaskList();
     }
 
     @PostMapping("/addTask")
-    @ApiOperation(value = "添加计划任务", notes = "添加计划任务")
+    @ApiOperation(value = "添加计划任务", notes = "在指定任务下添加计划任务，根任务的parentId为0")
+    @ApiOperationSupport(order = 2)
     @PreAuthorize("hasAuthority('/projectPlan/addTask')")
     public PlanTask addTask(@Valid @RequestBody PlanTask planTask){
         projectPlanService.addTask(planTask);
         return planTask;
     }
 
+    @PostMapping("/importTemplate")
+    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
+    @ApiOperationSupport(order = 3)
+    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
+    public Boolean importTemplate(Integer planTemplateId){
+
+        return  null;
+    }
+
     @PostMapping("/editTask")
     @ApiOperation(value = "修改计划任务", notes = "修改指定计划任务")
+    @ApiOperationSupport(order = 4)
     @PreAuthorize("hasAuthority('/projectPlan/editTask')")
     public Boolean editTask(@Valid @RequestBody PlanTask planTask){
         projectPlanService.editTask(planTask);
@@ -53,22 +66,16 @@ public class ProjectPlanController {
 
     @GetMapping("/deleteTask")
     @ApiOperation(value = "删除计划任务", notes = "删除指定任务，若任务已经填写了反馈，不允许删除")
+    @ApiOperationSupport(order = 5)
     @PreAuthorize("hasAuthority('/projectPlan/deleteTask')")
     public Boolean deleteTask(String id){
         projectPlanService.deleteTask(id);
         return  true;
     }
 
-    @PostMapping("/importTemplate")
-    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
-    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
-    public Boolean importTemplate(Integer planTemplateId){
-
-        return  null;
-    }
-
     @PostMapping("/addTaskFeedback")
     @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改任务完成情况的反馈信息")
+    @ApiOperationSupport(order = 6)
     @PreAuthorize("hasAuthority('/projectPlan/saveTaskFeedback')")
     public TaskFeedback saveTaskFeedback(TaskFeedback taskFeedback){
         taskFeedbackService.saveTaskFeedback(taskFeedback);
@@ -77,6 +84,7 @@ public class ProjectPlanController {
 
     @PostMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
+    @ApiOperationSupport(order = 7)
     @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
     public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
         return taskFeedbackService.selectListByPlanTaskId(taskId);
