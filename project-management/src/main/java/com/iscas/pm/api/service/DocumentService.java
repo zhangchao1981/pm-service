@@ -15,7 +15,6 @@ import java.util.List;
 */
 public interface DocumentService extends IService<Document> {
 
-    List<Document> getDocuments(Integer directoryId, String documentName);
 
     Document addLocalDocument(MultipartFile file, Document document) throws IOException;
 

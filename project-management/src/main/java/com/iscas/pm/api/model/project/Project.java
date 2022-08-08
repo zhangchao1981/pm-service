@@ -29,7 +29,7 @@ import java.util.Date;
 @TableName("pm_project")
 public class Project implements Serializable {
 
-    @ApiModelProperty(value = "项目编号")
+    @ApiModelProperty(value = "项目编号",notes="对应数据库名，小写英文")
     @NotBlank(message = "项目编号不能为空")
     @Size(max = 10)
     private String id;

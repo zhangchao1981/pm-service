@@ -13,6 +13,8 @@
             <result property="type" column="type" jdbcType="VARCHAR"/>
             <result property="directoryId" column="directory_id" jdbcType="INTEGER"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="DATE"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">

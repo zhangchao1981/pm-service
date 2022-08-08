@@ -16,7 +16,6 @@ public enum DocumentTypeEnum {
     GENERATE("GENERATE", "系统生成"),
     LINK("LINK", "链接");
 
-    @EnumValue
     private final String code;
 
     private final String value;
