@@ -63,14 +63,25 @@ public class DocController {
     @ApiOperationSupport(order = 3)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
     public boolean deleteDirectory(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
+        //首先判断是否有子目录
+        if(directoryService.list(new QueryWrapper<com.iscas.pm.api.model.doc.Directory>().eq(id!=0,"parent_id",id)).size()>0){
+            throw new IllegalArgumentException("该目录仍有子目录存在，不允许删除");
+        }
+        //没有子目录，直接判断有无文档
+        if (documentService.list(new QueryWrapper<Document>().eq("directory_id",id)).size()>0){
+            throw new IllegalArgumentException("该目录下有文档存在，不允许删除");
+        }
         return directoryService.deleteDirectory(id);
     }
 
     @PostMapping("/editDirectory")
-    @ApiOperation(value = "修改目录", notes = "要求前端传过来的是要修改成的值 ")
+    @ApiOperation(value = "修改目录", notes = "只修改目录名称，不更改其id及父id")
     @ApiOperationSupport(order = 4)
     @PreAuthorize("hasAuthority('/projectDoc/editDirectory')")
     public Directory editDirectory(@Valid @RequestBody Directory directory) {
+        /**
+         * 待修改 ： 不更改其id及父id
+         */
         return directoryService.editDirectory(directory);
     }
 
