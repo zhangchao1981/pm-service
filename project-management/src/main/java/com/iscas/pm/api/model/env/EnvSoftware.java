@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -54,7 +55,7 @@ public class EnvSoftware implements Serializable {
     private String medium;
 
     @ApiModelProperty(value = "安全保密")
-    @NotEmpty(message = "安全保密不能为空")
+    @NotNull(message = "安全保密不能为空")
     private SecretLevelEnum security;
 
     @TableField(exist = false)

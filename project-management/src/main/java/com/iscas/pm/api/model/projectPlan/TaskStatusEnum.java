@@ -1,8 +1,7 @@
 package com.iscas.pm.api.model.projectPlan;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 
 /**
  * @Author： zhangchao
@@ -10,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @Description： 计划任务枚举类
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
 public enum TaskStatusEnum {
     UN_START("UN_START","未开始"),
     RUNNING("RUNNING","进行中"),
@@ -17,21 +17,11 @@ public enum TaskStatusEnum {
     DELAYED_FINISH("DELAYED_FINISH","延迟完成"),
     DELAYED("DELAYED","已延迟");
 
-
-
     private final String code;
     private final String value;
-
 
     TaskStatusEnum(String code, String value) {
         this.code = code;
         this.value = value;
-    }
-    public String getCode() {
-        return code;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

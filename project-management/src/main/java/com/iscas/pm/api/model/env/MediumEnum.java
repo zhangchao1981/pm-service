@@ -14,10 +14,8 @@ import lombok.Getter;
 public enum MediumEnum {
     Disk("Disk", "光盘");
 
-
     @EnumValue
     private final String code;
-
     private final String value;
 
     MediumEnum(String code, String value) {

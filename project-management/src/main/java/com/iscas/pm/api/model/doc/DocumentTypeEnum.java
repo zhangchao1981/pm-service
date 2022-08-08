@@ -2,6 +2,7 @@ package com.iscas.pm.api.model.doc;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 
 /**
  * @Author： zhangchao
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @Description： 文档类型枚举类
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
 public enum DocumentTypeEnum {
     LOCAL("LOCAL", "本地上传"),
     GENERATE("GENERATE", "系统生成"),
@@ -21,13 +23,5 @@ public enum DocumentTypeEnum {
     DocumentTypeEnum(String code, String value) {
         this.code = code;
         this.value = value;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

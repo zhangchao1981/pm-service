@@ -1,8 +1,6 @@
 package com.iscas.pm.api.model.dev;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -10,6 +8,7 @@ import lombok.Getter;
  * @date 2022/8/4.
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
 public enum PriorityEnum {
 
     MAX("MAX", "高"),
@@ -22,15 +21,6 @@ public enum PriorityEnum {
     PriorityEnum(String code, String value) {
         this.code = code;
         this.value = value;
-    }
-
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getValue() {
-        return value;
     }
 
 }
