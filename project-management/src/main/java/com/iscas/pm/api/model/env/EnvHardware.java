@@ -51,7 +51,7 @@ public class EnvHardware implements Serializable {
     private String usePeriod;
 
     @ApiModelProperty(value = "保密范围")
-    @NotEmpty(message = "安全保密不能为空")
+    @NotNull(message = "安全保密不能为空")
     private SecretLevelEnum security;
 
     @TableField(exist = false)

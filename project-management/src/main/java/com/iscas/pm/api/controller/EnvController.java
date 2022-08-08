@@ -74,13 +74,10 @@ public class EnvController {
 
     @ApiOperationSupport(order = 5)
     @PostMapping("/addEnvSoftware")
-    @ApiOperation(value = "添加软件环境需求", notes = "")
+    @ApiOperation(value = "添加软件环境需求", notes = "主键id是自增的,输入多少无所谓")
     @PreAuthorize("hasAuthority('/projectEnv/addEnvSoftware')")
-    public Boolean addEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {//有问题
-        if (!envSoftwareService.save(envSoftware)) {
-            throw new IllegalArgumentException("要添加的软件环境需求id重复");
-        }
-        return true;
+    public Boolean addEnvSoftware(@Valid @RequestBody EnvSoftware envSoftware) {
+        return envSoftwareService.save(envSoftware);
     }
 
     @ApiOperationSupport(order = 6)
@@ -130,7 +127,10 @@ public class EnvController {
     @ApiOperation(value = "修改硬件环境需求", notes = "")
     @PreAuthorize("hasAuthority('/projectEnv/editEnvHardware')")
     public boolean editEnvHardware(@Valid @RequestBody EnvHardware envHardware) {
-        return envHardwareService.updateById(envHardware);
+        if (!envHardwareService.updateById(envHardware)) {
+            throw new IllegalArgumentException("要修改的硬件环境需求id不存在");
+        }
+        return true;
     }
 
     @ApiOperationSupport(order = 11)
@@ -145,7 +145,10 @@ public class EnvController {
     @PostMapping("/deleteEnvHardware")
     @ApiOperation(value = "删除硬件环境需求", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectEnv/deleteEnvHardware')")
-    public boolean deleteEnvHardware(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        return envHardwareService.removeById(id);
+    public boolean deleteEnvHardware(@NotNull(message = "id不能为空") @RequestParam Integer envHardwareId) {
+        if (!envHardwareService.removeById(envHardwareId)){
+         throw new IllegalArgumentException("要删除的硬件环境需求id不存在");
+        }
+        return true;
     }
 }

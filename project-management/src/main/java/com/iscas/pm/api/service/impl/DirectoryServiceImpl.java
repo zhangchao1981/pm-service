@@ -44,17 +44,7 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         return directory;
     }
 
-    @Override
-    public boolean deleteDirectory(Integer id) {
-        if (directoryMapper.selectList(new QueryWrapper<Directory>().eq("parent_id", id)).size() > 1) {
-            //有子节点，不能删
-            throw new IllegalArgumentException("有子节点存在，拒绝删除");
-        }
-        if (directoryMapper.deleteById(id)<1){
-            throw new IllegalArgumentException("该目录已被删除");
-        }
-        return true;
-    }
+
 
     @Override
     public Directory editDirectory(Directory directory) {
