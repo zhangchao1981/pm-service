@@ -29,13 +29,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     @Autowired
     FastDFSUtil fastDFSUtil;
 
-    @Override
-    public List<Document> getDocuments(Integer directoryId, String documentName) {
-        QueryWrapper<Document> documentQueryWrapper = new QueryWrapper<>();
-        documentQueryWrapper.eq(null != directoryId, "directory_id", directoryId);
-        documentQueryWrapper.like(!StringUtils.isEmpty(documentName), "name", documentName);
-        return documentMapper.selectList(documentQueryWrapper);
-    }
+
 
     @Override
     public Document addLocalDocument(MultipartFile file, Document document) throws IOException {

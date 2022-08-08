@@ -32,9 +32,9 @@ public class ProjectInfoController {
     @ApiOperation(value = "添加项目", notes = "添加一个新的项目")
     @PreAuthorize("hasAuthority('/projectInfo/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
-        if (projectInfoService.findProjectByIdAndName(project.getId(), project.getName()))
+        if (projectInfoService.findProjectByIdAndName(project.getId(), project.getName())){
             throw new IllegalArgumentException("项目id或项目名称已经存在！");
-
+        }
         projectInfoService.addProject(project);
         return project;
     }

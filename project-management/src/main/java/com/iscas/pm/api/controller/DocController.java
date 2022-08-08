@@ -40,6 +40,8 @@ public class DocController {
     ReferenceDocService referenceDocService;
     @Autowired
     ReviseRecordService reviseRecordService;
+    @Autowired
+    DocTemplateService docTemplateService;
 
 
     @GetMapping("/findDirectory")
@@ -51,7 +53,7 @@ public class DocController {
     }
 
     @PostMapping("/addDirectory")
-    @ApiOperation(value = "添加目录",notes = "不允许重名")
+    @ApiOperation(value = "添加目录", notes = "不允许重名")
     @ApiOperationSupport(order = 2)
     @PreAuthorize("hasAuthority('/projectDoc/addDirectory')")
     public Directory addDirectory(@Valid @RequestBody Directory directory) {
@@ -64,24 +66,25 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
     public boolean deleteDirectory(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
         //首先判断是否有子目录
-        if(directoryService.list(new QueryWrapper<com.iscas.pm.api.model.doc.Directory>().eq(id!=0,"parent_id",id)).size()>0){
+        if (directoryService.list(new QueryWrapper<com.iscas.pm.api.model.doc.Directory>().eq(id != 0, "parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("该目录仍有子目录存在，不允许删除");
         }
         //没有子目录，直接判断有无文档
-        if (documentService.list(new QueryWrapper<Document>().eq("directory_id",id)).size()>0){
+        if (documentService.list(new QueryWrapper<Document>().eq("directory_id", id)).size() > 0) {
             throw new IllegalArgumentException("该目录下有文档存在，不允许删除");
         }
         return directoryService.deleteDirectory(id);
     }
 
+
+    /**
+     * 待测试 ： 不更改其id及父id
+     */
     @PostMapping("/editDirectory")
-    @ApiOperation(value = "修改目录", notes = "只修改目录名称，不更改其id及父id")
+    @ApiOperation(value = "修改目录", notes = "修改目录名称(或父id)")
     @ApiOperationSupport(order = 4)
     @PreAuthorize("hasAuthority('/projectDoc/editDirectory')")
     public Directory editDirectory(@Valid @RequestBody Directory directory) {
-        /**
-         * 待修改 ： 不更改其id及父id
-         */
         return directoryService.editDirectory(directory);
     }
 
@@ -92,12 +95,10 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(MultipartFile file, String documentJson) throws IOException {
         @Valid Document document = JSONObject.parseObject(documentJson, Document.class);
-
         document.setCreateTime(new Date());
         document.setUpdateTime(new Date());
         document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
         documentService.addLocalDocument(file, document);
-
         return document;
     }
 
@@ -121,30 +122,35 @@ public class DocController {
     @ApiOperation(value = "删除文档")
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
-    public boolean deleteDocument(@NotNull Integer documentId) {
-        if (!documentService.removeById(documentId)){
-         throw new IllegalArgumentException("删除失败，文档不存在");
-        }
-        return true;
-    }
-
-    @PostMapping("/deleteDocumentBatch")
-    @ApiOperation(value = "批量删除文档", notes = "参数不可为空")
-    @ApiOperationSupport(order = 14)
-    @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
-    public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") List<Integer> docIdList) {
-        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))){
+    public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
+        if (!documentService.removeById(documentId)) {
             throw new IllegalArgumentException("删除失败，文档不存在");
         }
         return true;
     }
 
+    @PostMapping("/deleteDocumentBatch")
+    @ApiOperation(value = "批量删除文档", notes = "参数不可为空,删除参数list中所有id对应的文档")
+    @ApiOperationSupport(order = 14)
+    @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
+    public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") @RequestParam List<Integer> docIdList) {
+        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))) {
+            throw new IllegalArgumentException("删除失败，文档不存在");
+        }
+        return true;
+    }
+
+
     @GetMapping("/downloadDocument")
     @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
-    public List<Document> downloadDocument(Integer directoryId, String documentName) {
-        return documentService.getDocuments(directoryId, documentName);
+    public Document downloadDocument(Integer directoryId) {
+        Document document = documentService.getById(directoryId);
+        if (document == null) {
+            throw new IllegalArgumentException("要下载的文件ID不存在");
+        }
+        return document;
     }
 
     @PostMapping("/addReferenceDoc")
@@ -152,6 +158,9 @@ public class DocController {
     @ApiOperationSupport(order = 21)
     @PreAuthorize("hasAuthority('/projectDoc/addReferenceDoc')")
     public Boolean addReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
+        if (documentService.getById(referenceDoc.getTemplateId()) == null) {
+            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
+        }
         return referenceDocService.save(referenceDoc);
     }
 
@@ -160,6 +169,9 @@ public class DocController {
     @ApiOperationSupport(order = 22)
     @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
+        if (documentService.getById(referenceDoc.getTemplateId()) == null) {
+            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
+        }
         return referenceDocService.updateById(referenceDoc);
     }
 
@@ -171,12 +183,16 @@ public class DocController {
         return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
     }
 
+
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
-    public boolean deleteReferenceDoc(@NotEmpty(message = "idList不能为空") @RequestParam List<Integer> idList) {
-        return referenceDocService.remove(new QueryWrapper<ReferenceDoc>().in("id", idList));
+    public boolean deleteReferenceDoc(@NotEmpty(message = "id不能为空") @RequestParam Integer referenceId) {
+       if (!referenceDocService.remove(new QueryWrapper<ReferenceDoc>().eq("id", referenceId))){
+           throw new IllegalArgumentException("要删除的引用文档不存在");
+       }
+        return true;
     }
 
     @PostMapping("/addReviseRecord")
@@ -184,6 +200,9 @@ public class DocController {
     @ApiOperationSupport(order = 31)
     @PreAuthorize("hasAuthority('/projectDoc/addReviseRecord')")
     public Boolean addReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
+        if (documentService.getById(reviseRecord.getTemplateId()) == null) {
+            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
+        }
         return reviseRecordService.save(reviseRecord);
     }
 
@@ -192,7 +211,13 @@ public class DocController {
     @ApiOperationSupport(order = 32)
     @PreAuthorize("hasAuthority('/projectDoc/editReviseRecord')")
     public boolean editReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
-        return reviseRecordService.updateById(reviseRecord);
+        if (documentService.getById(reviseRecord.getTemplateId()) == null) {
+            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
+        }
+        if (!reviseRecordService.updateById(reviseRecord)) {
+            throw new IllegalArgumentException("要修改的修订记录id不存在");
+        }
+        return true;
     }
 
     @PostMapping("/ReviseRecordList")
@@ -204,11 +229,14 @@ public class DocController {
     }
 
     @PostMapping("/deleteReviseRecord")
-    @ApiOperation(value = "删除修订记录", notes = "只要idList里id存在的删，不存在的不删，全部不存在返回false")
+    @ApiOperation(value = "删除修订记录")
     @ApiOperationSupport(order = 34)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
-    public boolean deleteReviseRecord(@NotEmpty(message = "idList不能为空") @RequestParam List<Integer> idList) {
-        return reviseRecordService.remove(new QueryWrapper<ReviseRecord>().in("id", idList));
+    public boolean deleteReviseRecord(@NotEmpty(message = "id不能为空") @RequestParam Integer reviseRecordId) {
+           if ( !reviseRecordService.remove(new QueryWrapper<ReviseRecord>().eq("id", reviseRecordId))){
+               throw new IllegalArgumentException("要删除的修订记录不存在");
+           }   return true;
+
     }
 
     @PostMapping("/deleteTemplate")//没添加权限
