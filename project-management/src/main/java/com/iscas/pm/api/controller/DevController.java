@@ -71,11 +71,12 @@ public class DevController {
     @ApiOperation(value = "删除项目模块", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        //如果当前模块下有需求，则不许删除
-        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 1){
+        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0){
             throw new IllegalArgumentException("当前模块下有子模块，不许删除");
         }
-        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", id)).size() > 1) {
+        //如果当前模块下有需求，则不许删除
+
+        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前模块下有需求，不许删除");
         }
         if (!devModularService.removeById(id)) {
@@ -89,26 +90,27 @@ public class DevController {
     @PostMapping("/addEnvInformation")
     @ApiOperation(value = "添加开发需求", notes = "开发需求允许重名")
     @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")
-    public DevRequirement addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
+    public Boolean addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
         //进行父模块Id有效校验
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        devRequirementService.save(devRequirement);
-        return devRequirement;
+        return true;
     }
 
     @ApiOperationSupport(order = 6)
     @PostMapping("/editDevRequirement")
     @ApiOperation(value = "修改开发需求", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/editDevRequirement')")
-    public DevRequirement editDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
+    public Boolean editDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
         //进行父模块Id有效校验
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        devRequirementService.updateById(devRequirement);
-        return devRequirement;
+        if (!devRequirementService.updateById(devRequirement)){
+            throw new IllegalArgumentException("要修改的开发需求id不存在");
+        }
+        return true;
     }
 
     @ApiOperationSupport(order = 7)
@@ -121,17 +123,10 @@ public class DevController {
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/devRequirement")
-    @ApiOperation(value = "查询开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
+    @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
-    public HashMap devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("devRequirement", devRequirementService.getById(requirementId));
-        map.put("devtask", devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", requirementId)));
-        //关联接口及关联用例及变更记录待开发
-        if (map.isEmpty()) {
-            throw new IllegalArgumentException("查询的需求id不存在");
-        }
-        return map;
+    public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
+        return  devRequirementService.getById(requirementId);
     }
 
 
@@ -154,21 +149,22 @@ public class DevController {
     @PostMapping("/addDevTask")
     @ApiOperation(value = "添加开发任务", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevTask')")
-    public DevTask addDevTask(@Valid @RequestBody DevTask devTask) {
+    public Boolean addDevTask(@Valid @RequestBody DevTask devTask) {
         if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devTask.getRequireId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        devTaskService.save(devTask);
-        return devTask;
+        return true;
     }
 
     @ApiOperationSupport(order = 11)
     @PostMapping("/editDevTask")
     @ApiOperation(value = "修改开发任务")
     @PreAuthorize("hasAuthority('/projectDev/editDevTask')")
-    public DevTask editDevTask(@Valid @RequestBody DevTask devTask) {
-        devTaskService.updateById(devTask);
-        return devTask;
+    public Boolean editDevTask(@Valid @RequestBody DevTask devTask) {
+        if (!devTaskService.updateById(devTask)){
+            throw new IllegalArgumentException("要修改的开发任务id不存在");
+        }
+        return true;
     }
 
     @ApiOperationSupport(order = 12)
