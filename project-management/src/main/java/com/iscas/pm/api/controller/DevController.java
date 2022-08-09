@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
 import com.iscas.pm.api.model.dev.DevTask;
+import com.iscas.pm.api.model.dev.RequireStatusEnum;
+import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.DevModularService;
 import com.iscas.pm.api.service.DevRequirementService;
 import com.iscas.pm.api.service.DevTaskService;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -91,6 +94,10 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+
+        devRequirement.setCreateTime(new Date());
+        devRequirement.setUpdateTime(new Date());
+        devRequirement.setStatus(getStatus(devRequirement.getStartDate(),devRequirement.getEndDate()));
         devRequirementService.save(devRequirement);
         return devRequirement;
     }
@@ -184,5 +191,14 @@ public class DevController {
         if (!devTaskService.removeById(id)){
             throw new IllegalArgumentException("要删除的开发任务id不存在");
         }return true;
+    }
+
+    private RequireStatusEnum getStatus(Date start, Date end) {
+        if (new Date().before(start))
+            return RequireStatusEnum.DESIGN;
+        else if (start.before(new Date()) && new Date().before(end))
+            return RequireStatusEnum.DEVELOPING;
+        else
+            return RequireStatusEnum.DELAYED;
     }
 }

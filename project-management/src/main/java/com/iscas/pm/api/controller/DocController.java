@@ -73,9 +73,11 @@ public class DocController {
         if (documentService.list(new QueryWrapper<Document>().eq("directory_id", id)).size() > 0) {
             throw new IllegalArgumentException("该目录下有文档存在，不允许删除");
         }
-        return directoryService.deleteDirectory(id);
+        if (!directoryService.removeById(id)) {
+            throw new IllegalArgumentException("id对应目录不存在");
+        }
+        return true;
     }
-
 
     /**
      * 待测试 ： 不更改其id及父id
