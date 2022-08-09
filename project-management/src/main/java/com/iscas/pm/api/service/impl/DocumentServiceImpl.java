@@ -36,7 +36,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
             throw new IllegalArgumentException("所属目录不存在");
 
-        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add") != null)
+        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
             throw new IllegalArgumentException("该目录下已存在同名文档");
 
         //文件存入FastDFs
@@ -53,7 +53,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
             throw new IllegalArgumentException("所属目录不存在");
 
-        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add") != null)
+        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
             throw new IllegalArgumentException("该目录下已存在同名文档");
 
         documentMapper.insert(document);
@@ -104,7 +104,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     /**
      * 校验同一目录下是否有同名文档
      */
-    private List<Document> existSameNameDoc(Integer directoryId, String name, String ops) {
+    private Boolean existSameNameDoc(Integer directoryId, String name, String ops) {
         QueryWrapper<Document> documentQueryWrapper = new QueryWrapper<>();
         if ("add".equals(ops)) {
             documentQueryWrapper.eq(null != directoryId, "directory_id", directoryId);
@@ -112,7 +112,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             documentQueryWrapper.ne(null != directoryId, "directory_id", directoryId);
         }
         documentQueryWrapper.eq(null != name, "name", name);
-        return documentMapper.selectList(documentQueryWrapper);
+
+        List<Document> documents = documentMapper.selectList(documentQueryWrapper);
+        if (documents == null || documents.size() == 0)
+            return false;
+        return true;
     }
 }
 

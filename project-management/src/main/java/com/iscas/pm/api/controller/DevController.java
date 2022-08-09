@@ -60,7 +60,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
-    @ApiOperation(value = "查询项目模块列表", notes = "返回全部项目模块(树型)")
+    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型)")
     @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
@@ -118,7 +118,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/devRequirement")
-    @ApiOperation(value = "查询开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
+    @ApiOperation(value = "开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public HashMap devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         HashMap<String, Object> map = new HashMap<>();

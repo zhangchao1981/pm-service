@@ -66,7 +66,7 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
     public boolean deleteDirectory(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
         //首先判断是否有子目录
-        if (directoryService.list(new QueryWrapper<com.iscas.pm.api.model.doc.Directory>().eq(id != 0, "parent_id", id)).size() > 0) {
+        if (directoryService.list(new QueryWrapper<Directory>().eq(id != 0, "parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("该目录仍有子目录存在，不允许删除");
         }
         //没有子目录，直接判断有无文档
@@ -188,8 +188,8 @@ public class DocController {
     @ApiOperation(value = "删除引用文档", notes = "")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
-    public boolean deleteReferenceDoc(@NotEmpty(message = "id不能为空") @RequestParam Integer referenceId) {
-       if (!referenceDocService.remove(new QueryWrapper<ReferenceDoc>().eq("id", referenceId))){
+    public boolean deleteReferenceDoc(@NotEmpty(message = "id不能为空") @RequestParam Integer id) {
+       if (!referenceDocService.remove(new QueryWrapper<ReferenceDoc>().eq("id", id))){
            throw new IllegalArgumentException("要删除的引用文档不存在");
        }
         return true;

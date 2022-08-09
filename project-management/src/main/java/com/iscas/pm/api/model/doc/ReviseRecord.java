@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 
@@ -41,6 +42,8 @@ public class ReviseRecord implements Serializable {
     private String notes;
 
     @ApiModelProperty(value = "修订日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date date;
 
     @NotBlank(message = "修改人不能为空")
