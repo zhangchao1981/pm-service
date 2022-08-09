@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +13,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -31,20 +31,22 @@ public class DevTask implements Serializable {
     private String name;
 
 
-    @ApiModelProperty(value = "责任人")
+    @ApiModelProperty(value = "责任人,传参是人员姓名")
     private String worker;
 
 
-    @ApiModelProperty(value = "任务状态")
-    private String status;
+    @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")
+    private TaskStatusEnum status;
 
+    @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
+    private float devProgress;
 
     @ApiModelProperty(value = "计划工时")
-    private Double scheduleHour;
+    private float scheduleHour;
 
 
-    @ApiModelProperty(value = "发生工时")
-    private Double happendHour;
+    @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生成")
+    private float happenedHour;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

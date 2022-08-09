@@ -74,11 +74,10 @@ public class DevController {
     @ApiOperation(value = "删除项目模块", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        //如果当前模块下有需求，则不许删除
-        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 1){
+        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前模块下有子模块，不许删除");
         }
-        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", id)).size() > 1) {
+        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前模块下有需求，不许删除");
         }
         if (!devModularService.removeById(id)) {
@@ -100,7 +99,7 @@ public class DevController {
 
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());
-        devRequirement.setStatus(getStatus(devRequirement.getStartDate(),devRequirement.getEndDate()));
+        devRequirement.setStatus(getStatus(devRequirement.getStartDate(), devRequirement.getEndDate()));
         devRequirementService.save(devRequirement);
         return devRequirement;
     }
@@ -165,6 +164,10 @@ public class DevController {
         if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devTask.getRequireId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+
+        devTask.setHappenedHour(0);
+        devTask.setDevProgress(0);
+        devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), devTask.getDevProgress()));
         devTaskService.save(devTask);
         return devTask;
     }
@@ -174,6 +177,11 @@ public class DevController {
     @ApiOperation(value = "修改开发任务")
     @PreAuthorize("hasAuthority('/projectDev/editDevTask')")
     public DevTask editDevTask(@Valid @RequestBody DevTask devTask) {
+        DevTask db_task = devTaskService.getById(devTask.getId());
+        if (db_task == null)
+            throw new IllegalArgumentException("修改的任务不存在！");
+
+        devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), db_task.getDevProgress()));
         devTaskService.updateById(devTask);
         return devTask;
     }
@@ -191,9 +199,10 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (!devTaskService.removeById(id)){
+        if (!devTaskService.removeById(id)) {
             throw new IllegalArgumentException("要删除的开发任务id不存在");
-        }return true;
+        }
+        return true;
     }
 
     private RequireStatusEnum getStatus(Date start, Date end) {
@@ -203,5 +212,35 @@ public class DevController {
             return RequireStatusEnum.DEVELOPING;
         else
             return RequireStatusEnum.DELAYED;
+    }
+
+    private TaskStatusEnum getTaskStatus(Date start, Date end, float progress) {
+        //开始时间晚于当前时间
+        if (new Date().before(start)) {
+            if (progress == 0)
+                return TaskStatusEnum.UN_START;
+            if (progress > 0 && progress < 100)
+                return TaskStatusEnum.RUNNING;
+            else
+                return TaskStatusEnum.FINISHED;
+        }
+
+        //当前时间介于开始时间和结束时间
+        else if (start.before(new Date()) && new Date().before(end)) {
+            if (progress < 100)
+                return TaskStatusEnum.RUNNING;
+            else
+                return TaskStatusEnum.FINISHED;
+        }
+
+        //当前时间晚于结束时间
+        else {
+            if (progress < 100) {
+                return TaskStatusEnum.DELAYED;
+            } else {
+                return TaskStatusEnum.DELAYED_FINISH;
+            }
+        }
+
     }
 }
