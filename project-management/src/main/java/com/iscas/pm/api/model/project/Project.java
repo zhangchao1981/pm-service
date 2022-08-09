@@ -29,7 +29,7 @@ import java.util.Date;
 @TableName("pm_project")
 public class Project implements Serializable {
 
-    @ApiModelProperty(value = "项目编号",notes="对应数据库名，小写英文")
+    @ApiModelProperty(value = "项目编号",notes="对应数据库名，小写英文，")
     @NotBlank(message = "项目编号不能为空")
     @Size(max = 10)
     private String id;
@@ -83,7 +83,6 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "合同金额")
     private BigDecimal contractAmount;
 
-    @JsonIgnore
     @ApiModelProperty(value = "创建人的用户名")
     private String createUser;
 
@@ -95,7 +94,6 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "最后修改时间")
     private Date updateTime;
 
-    @JsonIgnore
     @ApiModelProperty(value = "审核意见")
     private String approveComments;
 }

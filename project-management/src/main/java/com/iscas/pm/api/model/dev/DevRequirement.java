@@ -29,7 +29,7 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 @Data
 public class DevRequirement implements Serializable {
 
-    @ApiModelProperty(value = "需求编号  6位数")
+    @ApiModelProperty(value = "需求编号",notes = "不需前端输入")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
@@ -47,7 +47,7 @@ public class DevRequirement implements Serializable {
 
 
     @ApiModelProperty(value = "需求类型")
-    private String requirementType;
+    private RequirementTypeEnum requirementType;
 
     @TableField("is_change")
     @ApiModelProperty(value = "变更需求  0: 无变更 1:有变更")

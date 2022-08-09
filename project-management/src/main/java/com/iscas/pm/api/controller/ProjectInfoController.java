@@ -1,6 +1,5 @@
 package com.iscas.pm.api.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
@@ -10,7 +9,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiSort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,8 +32,8 @@ public class ProjectInfoController {
     @ApiOperation(value = "添加项目", notes = "添加一个新的项目")
     @PreAuthorize("hasAuthority('/projectInfo/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
-        if (ObjectUtils.isEmpty(projectInfoService.getOne(new QueryWrapper<Project>().eq("name", project.getName())))){
-            throw new IllegalArgumentException("项目名称已经存在！");
+        if (!projectInfoService.findProjectByIdAndName(project.getId(), project.getName())){
+            throw new IllegalArgumentException("项目编号或项目名称已经存在！");
         }
         projectInfoService.addProject(project);
         return project;
@@ -138,4 +136,9 @@ public class ProjectInfoController {
     public Boolean switchProject(@RequestHeader("Authorization") String token, @NotBlank(message = "projectId不能为空") @RequestParam String projectId) {
         return projectInfoService.switchProject(token,projectId);
     }
+
+
+
+
+
 }

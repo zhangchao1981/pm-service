@@ -19,7 +19,7 @@ import java.util.List;
 @Data
 public class DevModular implements Serializable {
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "id",notes = "不需前端传入")
     @TableId(type = IdType.AUTO)
     private Integer id;
 

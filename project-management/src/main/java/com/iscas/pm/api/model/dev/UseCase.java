@@ -14,24 +14,18 @@ import java.util.List;
 
 @Data
 public class UseCase {
-    @JsonIgnore
     @ApiModelProperty(value = "需求角色")
     private String  role;
 
-
-    @JsonIgnore
     @ApiModelProperty(value = "前置条件")
     private List<String>  precondition;
 
-    @JsonIgnore
     @ApiModelProperty(value = "成功场景")
     private List<String> successScene;
 
-    @JsonIgnore
     @ApiModelProperty(value = "分支场景")
     private List<String> branchScene;
 
-    @JsonIgnore
     @ApiModelProperty(value = "业务规则设计约束")
     private List<String> constraint;
 
