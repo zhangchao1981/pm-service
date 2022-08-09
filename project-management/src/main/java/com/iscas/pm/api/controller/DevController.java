@@ -75,6 +75,9 @@ public class DevController {
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         //如果当前模块下有需求，则不许删除
+        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 1){
+            throw new IllegalArgumentException("当前模块下有子模块，不许删除");
+        }
         if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", id)).size() > 1) {
             throw new IllegalArgumentException("当前模块下有需求，不许删除");
         }
@@ -125,7 +128,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/devRequirement")
-    @ApiOperation(value = "开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
+    @ApiOperation(value = "查询开发需求详情", notes = "返回开发需求页面的略缩信息，用map封装，表格顶栏信息在devRequirement里, 基本信息在devRequirement里面的useCase里，开发任务在devtask里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public HashMap devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         HashMap<String, Object> map = new HashMap<>();

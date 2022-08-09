@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum RequirementTypeEnum {
     FUNCTION("FUNCTION", "功能需求"),
     PERFORMANCE("PERFORMANCE", "性能需求"),
-    DEPLOY("DEPLOY", "部署需求");
+    DEPLOY("DEPLOY", "部署需求"),
+    SECURITY("SECURITY", "安全需求");
 
     private final String code;
     private final String value;

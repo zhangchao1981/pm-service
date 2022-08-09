@@ -23,7 +23,6 @@ import java.util.List;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
-
 @TableName(value = "dev_requirement", autoResultMap = true)
 @Accessors(chain = true)
 @ApiModel(value = "开发需求表", description = "开发需求表板，对应项目库dev_requirement表")
