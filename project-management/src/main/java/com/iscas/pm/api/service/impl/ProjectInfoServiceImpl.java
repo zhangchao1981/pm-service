@@ -1,7 +1,6 @@
 package com.iscas.pm.api.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -38,10 +37,19 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
-        param.setUserId(RequestHolder.getUserInfo().getId());
-        IPage projectIPage = projectMapper.getProjectList(page, param);
 
-        return projectIPage;
+        List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
+        if (systemPermissions != null)
+            if (systemPermissions.contains("/projectInfo/addProject") || systemPermissions.contains("/projectInfo/approveProject")) {
+                QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>()
+                        .eq(StringUtils.isNotBlank(param.getStatus()), "status", param.getStatus())
+                        .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
+                return  projectMapper.selectPage(page, queryWrapper);
+            }
+
+        //否则返回有权限的项目
+        param.setUserId(RequestHolder.getUserInfo().getId());
+        return  projectMapper.getProjectList(page, param);
     }
 
     @Override
