@@ -95,6 +95,7 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+        devRequirementService.save(devRequirement);
         return true;
     }
 
@@ -153,6 +154,7 @@ public class DevController {
         if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devTask.getRequireId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+        devTaskService.save(devTask);
         return true;
     }
 

@@ -78,20 +78,16 @@ public class DevRequirement implements Serializable {
     @ApiModelProperty(value = "发生工时")
     private Double happendHour;
 
-    @JsonIgnore
     @ApiModelProperty(value = "需求来源")
     private String source;
 
-    @JsonIgnore
     @ApiModelProperty(value = "用例说明")
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private UseCase useCase;
 
-    @JsonIgnore
     @ApiModelProperty(value = "模块id")
     private Integer modularId;
 
-    @JsonIgnore
     @ApiModelProperty(value = "原型设计图路径，多个用逗号隔开")
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private List<String> prototype;
