@@ -5,10 +5,13 @@ import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
 import com.iscas.pm.api.model.dev.DevTask;
 import com.iscas.pm.api.model.dev.RequireStatusEnum;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.DevModularService;
 import com.iscas.pm.api.service.DevRequirementService;
 import com.iscas.pm.api.service.DevTaskService;
+import com.iscas.pm.api.service.TaskFeedbackService;
+import com.iscas.pm.api.service.impl.TaskFeedbackServiceImpl;
 import com.iscas.pm.common.core.util.TreeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +42,8 @@ public class DevController {
     DevModularService devModularService;
     @Autowired
     DevTaskService devTaskService;
+    @Autowired
+    TaskFeedbackService taskFeedbackService;
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
@@ -74,7 +79,7 @@ public class DevController {
     @ApiOperation(value = "删除项目模块", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0){
+        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前模块下有子模块，不许删除");
         }
         //如果当前模块下有需求，则不许删除
@@ -101,7 +106,7 @@ public class DevController {
 
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());
-        devRequirement.setStatus(getStatus(devRequirement.getStartDate(),devRequirement.getEndDate()));
+        devRequirement.setStatus(getStatus(devRequirement.getStartDate(), devRequirement.getEndDate()));
         devRequirementService.save(devRequirement);
         return true;
     }
@@ -115,7 +120,7 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        if (!devRequirementService.updateById(devRequirement)){
+        if (!devRequirementService.updateById(devRequirement)) {
             throw new IllegalArgumentException("要修改的开发需求id不存在");
         }
         return true;
@@ -134,7 +139,7 @@ public class DevController {
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
-        return  devRequirementService.getById(requirementId);
+        return devRequirementService.getById(requirementId);
     }
 
 
@@ -170,7 +175,7 @@ public class DevController {
     @ApiOperation(value = "修改开发任务")
     @PreAuthorize("hasAuthority('/projectDev/editDevTask')")
     public Boolean editDevTask(@Valid @RequestBody DevTask devTask) {
-        if (!devTaskService.updateById(devTask)){
+        if (!devTaskService.updateById(devTask)) {
             throw new IllegalArgumentException("要修改的开发任务id不存在");
         }
         return true;
@@ -189,9 +194,15 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (!devTaskService.removeById(id)){
+        //校验开发任务下有没有反馈
+        if (!devTaskService.removeById(id)) {
             throw new IllegalArgumentException("要删除的开发任务id不存在");
-        }return true;
+        }
+
+        if (taskFeedbackService.getOne(new QueryWrapper<TaskFeedback>().eq("dev_task_id",id))!=null){
+            throw new IllegalArgumentException("要删除的开发任务存有反馈");
+        }
+        return true;
     }
 
     private RequireStatusEnum getStatus(Date start, Date end) {
