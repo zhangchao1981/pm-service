@@ -22,14 +22,14 @@ public class Permission implements Serializable {
     @ApiModelProperty(value = "权限id")
     private String id;
 
-    @ApiModelProperty(value = "权限名称")
+    @ApiModelProperty(value = "权限名称",required = true)
     @NotBlank(message = "权限名称不能为空")
     private String name;
 
     @ApiModelProperty(value = "权限描述")
     private String description;
 
-    @ApiModelProperty(value = "权限所属模块")
+    @ApiModelProperty(value = "权限所属模块",required = true)
     @NotBlank(message = "权限所属模块不能为空")
     private String module;
 

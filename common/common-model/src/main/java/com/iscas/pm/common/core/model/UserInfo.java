@@ -30,7 +30,7 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value = "用户id")
     private Integer id;
 
-    @ApiModelProperty(value = "用户名,根据人员姓名自动生成，前端无需传值，默认为姓名全拼，重复时后面加数字区分")
+    @ApiModelProperty(value = "用户名")
     private String userName;
 
     @ApiModelProperty(value = "人员姓名")

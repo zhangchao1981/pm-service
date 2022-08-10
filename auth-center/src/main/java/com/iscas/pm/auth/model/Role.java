@@ -19,13 +19,13 @@ public class Role implements Serializable {
     @TableId(value="id", type= IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "角色名称")
+    @ApiModelProperty(value = "角色名称",required = true)
     private String name;
 
     @ApiModelProperty(value = "角色描述")
     private String description;
 
-    @ApiModelProperty(value = "角色类型")
+    @ApiModelProperty(value = "角色类型",required = true)
     private RoleTypeEnum type;
 
     @JsonIgnore

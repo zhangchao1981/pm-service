@@ -36,8 +36,8 @@ public class RoleController {
     @GetMapping("/roleList")
     @PreAuthorize("hasAuthority('/role/roleList')")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "角色名称", required = false, dataType = "String"),
-            @ApiImplicitParam(name = "type", value = "角色类型，取值：project或system", required = false, dataType = "String")})
+            @ApiImplicitParam(name = "name", value = "角色名称", dataType = "String"),
+            @ApiImplicitParam(name = "type", value = "角色类型，取值：project或system", dataType = "String")})
     public List<Role> roleList(@RequestParam String name, @RequestParam String type) {
         return roleService.selectRoleList(name, type);
     }

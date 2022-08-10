@@ -18,7 +18,7 @@ import java.util.Date;
 @ApiModel(value = "人员信息", description = "用户信息、人员信息都存储在一张表中了")
 @Accessors(chain = true)
 public class User implements Serializable {
-    @ApiModelProperty(value = "用户id")
+    @ApiModelProperty(value = "用户id，添加时无需传参，修改传参")
     @TableId(value="id", type= IdType.AUTO)
     private Integer id;
 
@@ -28,11 +28,11 @@ public class User implements Serializable {
     @ApiModelProperty(value = "密码，系统自动生成初始密码，前端无需传值")
     private String password;
 
-    @ApiModelProperty(value = "人员姓名")
+    @ApiModelProperty(value = "人员姓名，不允许修改",required = true)
     @NotBlank(message = "人员姓名不能为空")
     private String employeeName;
 
-    @ApiModelProperty(value = "人员所在部门id")
+    @ApiModelProperty(value = "人员所在部门id",required = true)
     private String departmentId;
 
     @ApiModelProperty(value = "手机号")
@@ -49,6 +49,6 @@ public class User implements Serializable {
     @ApiModelProperty(value = "最后更新时间")
     private Date updateTime;
 
-    @ApiModelProperty(value = "账号状态,添加时为启用状态")
+    @ApiModelProperty(value = "账号状态,添加修改时无需传参")
     private UserStatusEnum status;
 }

@@ -15,11 +15,11 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("修改密码请求参数")
 public class ModifyPwdParam {
 
-    @ApiModelProperty(value = "旧密码")
+    @ApiModelProperty(value = "旧密码", required = true)
     @NotBlank(message = "旧密码不能为空")
     private String oldPassword;
 
-    @ApiModelProperty(value = "新密码")
+    @ApiModelProperty(value = "新密码", required = true)
     @NotBlank(message = "新密码不能为空")
     private String newPassword;
 }
