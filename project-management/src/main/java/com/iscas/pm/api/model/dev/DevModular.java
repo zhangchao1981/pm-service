@@ -24,11 +24,11 @@ public class DevModular implements Serializable {
     private Integer id;
 
 
-    @ApiModelProperty(value = "模块名称")
+    @ApiModelProperty(value = "模块名称",required = true)
     private String name;
 
     @NotNull(message = "父节点id不能为空")
-    @ApiModelProperty(value = "父节点id")
+    @ApiModelProperty(value = "父节点id",required = true)
     private Integer parentId;
 
     @TableField(exist = false)

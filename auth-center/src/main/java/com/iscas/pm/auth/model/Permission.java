@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 @Accessors(chain = true)
 public class Permission implements Serializable {
     
-    @ApiModelProperty(value = "权限id")
+    @ApiModelProperty(value = "权限标识",required = true)
     private String id;
 
     @ApiModelProperty(value = "权限名称",required = true)

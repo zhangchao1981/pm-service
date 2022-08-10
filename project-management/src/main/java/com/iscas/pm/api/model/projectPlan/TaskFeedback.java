@@ -32,18 +32,18 @@ public class TaskFeedback implements Serializable {
     @ApiModelProperty("用户id，前端无需填写，后端自动生成")
     private Integer userId;
 
-    @ApiModelProperty("反馈日期")
+    @ApiModelProperty(value = "反馈日期",required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @ApiModelProperty("当日进度（0-100）")
+    @ApiModelProperty(value = "当日进度（0-100）",required = true)
     @NotNull
     @Min(0)
     @Max(100)
     private Integer progress;
 
-    @ApiModelProperty("当日花费工时")
+    @ApiModelProperty(value = "当日花费工时",required = true)
     @NotNull
     @Min(0)
     @Max(8)

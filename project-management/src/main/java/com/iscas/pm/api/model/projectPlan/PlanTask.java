@@ -32,25 +32,25 @@ public class PlanTask implements Serializable {
     @ApiModelProperty(value = "WBS编号,前端无需传参，后端自动生成")
     private String wbs;
 
-    @ApiModelProperty(value = "父任务id，根节点的父任务id为0")
+    @ApiModelProperty(value = "父任务id，根节点的父任务id为0",required = true)
     private Integer parentId;
 
     @ApiModelProperty(value = "关联文档路径")
     private String docPath;
 
-    @ApiModelProperty(value = "是否为里程碑节点")
+    @ApiModelProperty(value = "是否为里程碑节点",required = true)
     @TableField("is_milestone")
     private Boolean milestone;
 
-    @ApiModelProperty(value = "是否为基线节点")
+    @ApiModelProperty(value = "是否为基线节点",required = true)
     @TableField("is_baseline")
     private Boolean baseline;
 
-    @ApiModelProperty(value = "任务名称")
+    @ApiModelProperty(value = "任务名称",required = true)
     @NotBlank(message = "任务名称不能为空")
     private String name;
 
-   @ApiModelProperty(value = "责任人")
+   @ApiModelProperty(value = "责任人，人员姓名，多个人用逗号隔开")
     private String worker;
 
     @ApiModelProperty(value = "人数,前端无需传参，后端自动根据责任人计算")
@@ -91,7 +91,7 @@ public class PlanTask implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date actualEndDate;
 
-    @ApiModelProperty(value = "任务排序编号，同级任务的排序，从1开始")
+    @ApiModelProperty(value = "任务排序编号，同级任务的排序，从1开始",required = true)
     private Integer position;
 
     @TableField(exist = false)

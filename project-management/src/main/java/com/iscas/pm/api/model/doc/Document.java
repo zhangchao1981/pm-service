@@ -28,7 +28,7 @@ public class Document implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "文档名称")
+    @ApiModelProperty(value = "文档名称",required = true)
     @NotBlank(message = "文档名称不能为空")
     private String name;
 
@@ -38,11 +38,11 @@ public class Document implements Serializable {
     @ApiModelProperty(value = "版本号")
     private String version;
 
-    @ApiModelProperty(value = "文档类型")
+    @ApiModelProperty(value = "文档类型",required = true)
     @NotNull(message = "文档类型不能为空")
     private DocumentTypeEnum type;
 
-    @ApiModelProperty(value = "所属的目录id")
+    @ApiModelProperty(value = "所属的目录id",required = true)
     @NotNull(message = "文档目录id不能为空")
     private Integer directoryId;
 

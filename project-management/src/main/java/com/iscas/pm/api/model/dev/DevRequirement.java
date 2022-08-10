@@ -34,23 +34,23 @@ public class DevRequirement implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "需求用例名称")
+    @ApiModelProperty(value = "需求用例名称",required = true)
     @NotBlank
     private String name;
 
-    @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName")
+    @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName",required = true)
     private String worker;
 
-    @ApiModelProperty(value = "优先级")
+    @ApiModelProperty(value = "优先级",required = true)
     @NotNull
     private PriorityEnum priority;
 
-    @ApiModelProperty(value = "需求类型")
+    @ApiModelProperty(value = "需求类型",required = true)
     @NotNull
     private RequirementTypeEnum requirementType;
 
     @TableField("is_change")
-    @ApiModelProperty(value = "是否是变更需求")
+    @ApiModelProperty(value = "是否是变更需求",required = true)
     private Boolean changed;
 
     @ApiModelProperty(value = "开发状态，前端无需传参，后端自动生成")
@@ -59,30 +59,30 @@ public class DevRequirement implements Serializable {
     @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
     private Double devProgress;
 
-    @ApiModelProperty(value = "计划工时")
+    @ApiModelProperty(value = "计划工时",required = true)
     private Double scheduleHour;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty(value = "开始时间")
+    @ApiModelProperty(value = "开始时间",required = true)
     private Date startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty(value = "结束时间")
+    @ApiModelProperty(value = "结束时间",required = true)
     private Date endDate;
 
     @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生")
     private Double happenedHour;
 
-    @ApiModelProperty(value = "需求来源")
+    @ApiModelProperty(value = "需求来源",required = true)
     private RequirementSourceEnum source;
 
-    @ApiModelProperty(value = "用例说明")
+    @ApiModelProperty(value = "用例说明",required = true)
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private UseCase useCase;
 
-    @ApiModelProperty(value = "模块id")
+    @ApiModelProperty(value = "模块id",required = true)
     @NotNull
     private Integer modularId;
 

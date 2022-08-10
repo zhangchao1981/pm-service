@@ -31,30 +31,30 @@ public class EnvSoftware implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "分类")
+    @ApiModelProperty(value = "分类",required = true)
     @NotBlank(message = "分类不能为空")
     private String category;
 
-    @ApiModelProperty(value = "软件名称")
+    @ApiModelProperty(value = "软件名称",required = true)
     @NotBlank(message = "软件名称不能为空")
     private String softName;
 
     @ApiModelProperty(value = "版本标识")
     private String versionId;
 
-    @ApiModelProperty(value = "来源")
+    @ApiModelProperty(value = "来源",required = true)
     @NotBlank(message = "来源不能为空")
     private String source;
 
-    @ApiModelProperty(value = "用途")
+    @ApiModelProperty(value = "用途",required = true)
     @NotBlank(message = "用途不能为空")
     private String application;
 
-    @ApiModelProperty(value = "介质")
+    @ApiModelProperty(value = "介质",required = true)
     @NotBlank(message = "介质不能为空")
     private String medium;
 
-    @ApiModelProperty(value = "安全保密")
+    @ApiModelProperty(value = "安全保密",required = true)
     @NotNull(message = "安全保密不能为空")
     private SecretLevelEnum security;
 

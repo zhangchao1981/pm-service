@@ -30,24 +30,24 @@ public class ReviseRecord implements Serializable {
     private Integer id;
 
 
-    @ApiModelProperty(value = "外键：模板id")
+    @ApiModelProperty(value = "外键：模板id",required = true)
     private Integer templateId;
 
 
-    @ApiModelProperty(value = "修订记录版本编号")
+    @ApiModelProperty(value = "修订记录版本编号",required = true)
     private String version;
 
 
     @ApiModelProperty(value = "简要说明(变更内容和范围)")
     private String notes;
 
-    @ApiModelProperty(value = "修订日期")
+    @ApiModelProperty(value = "修订日期",required = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date date;
 
     @NotBlank(message = "修改人不能为空")
-    @ApiModelProperty(value = "修改人")
+    @ApiModelProperty(value = "修改人",required = true)
     private String mender;
 
 

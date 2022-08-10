@@ -31,11 +31,11 @@ public class EnvInformation implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "分类")
+    @ApiModelProperty(value = "分类",required = true)
     @NotBlank(message = "分类不能为空")
     private String category;
 
-    @ApiModelProperty(value = "服务器或系统地址")
+    @ApiModelProperty(value = "服务器或系统地址",required = true)
     @NotBlank(message = "服务器或系统地址不能为空")
     private String serverAddress;
 

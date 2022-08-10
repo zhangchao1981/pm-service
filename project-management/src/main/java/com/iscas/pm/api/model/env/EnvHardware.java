@@ -30,27 +30,26 @@ public class EnvHardware implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "硬件名称")
+    @ApiModelProperty(value = "硬件名称",required = true)
     @NotBlank(message = "硬件名称不能为空")
     private String hardwareName;
 
-    @ApiModelProperty(value = "最低配置")
+    @ApiModelProperty(value = "最低配置",required = true)
     @NotBlank(message = "最低配置不能为空")
     private String minConfig;
 
-    @ApiModelProperty(value = "数量")
+    @ApiModelProperty(value = "数量",required = true)
     @NotNull(message = "数量不能为空")
     private Integer amount;
 
-    @ApiModelProperty(value = "用途")
+    @ApiModelProperty(value = "用途",required = true)
     @NotBlank(message = "用途不能为空")
     private String application;
 
     @ApiModelProperty(value = "使用时间")
-    @NotBlank(message = "使用时间不能为空")
     private String usePeriod;
 
-    @ApiModelProperty(value = "保密范围")
+    @ApiModelProperty(value = "保密范围",required = true)
     @NotNull(message = "安全保密不能为空")
     private SecretLevelEnum security;
 

@@ -26,11 +26,11 @@ public class ReferenceDoc implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "外键：模板id")
+    @ApiModelProperty(value = "外键：模板id",required = true)
     private Integer templateId;
 
     @NotBlank(message = "引用文档名称不能为空")
-    @ApiModelProperty(value = "文档名称")
+    @ApiModelProperty(value = "文档名称",required = true)
     private String name;
 
     @ApiModelProperty(value = "标识")

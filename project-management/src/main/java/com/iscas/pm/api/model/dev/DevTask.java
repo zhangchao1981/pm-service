@@ -27,11 +27,11 @@ public class DevTask implements Serializable {
     private Integer id;
 
 
-    @ApiModelProperty(value = "任务名称")
+    @ApiModelProperty(value = "任务名称",required = true)
     private String name;
 
 
-    @ApiModelProperty(value = "责任人,传参是人员姓名")
+    @ApiModelProperty(value = "责任人,传参是人员姓名",required = true)
     private String worker;
 
 
@@ -41,7 +41,7 @@ public class DevTask implements Serializable {
     @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
     private float devProgress;
 
-    @ApiModelProperty(value = "计划工时")
+    @ApiModelProperty(value = "计划工时",required = true)
     private float scheduleHour;
 
 
@@ -50,16 +50,16 @@ public class DevTask implements Serializable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty(value = "开始时间")
+    @ApiModelProperty(value = "开始时间",required = true)
     private Date startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @ApiModelProperty(value = "结束时间")
+    @ApiModelProperty(value = "结束时间",required = true)
     private Date endDate;
 
     @JsonIgnore
-    @ApiModelProperty(value = "开发需求id")
+    @ApiModelProperty(value = "开发需求id",required = true)
     private Integer requireId;
 
     @TableField(exist = false)

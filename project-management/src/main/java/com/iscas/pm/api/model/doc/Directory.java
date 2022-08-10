@@ -27,11 +27,11 @@ public class Directory implements Serializable {
     private Integer id;
 
     @NotBlank(message = "目录名称不能为空")
-    @ApiModelProperty(value = "目录名称")
+    @ApiModelProperty(value = "目录名称",required = true)
     private String name;
 
     @NotNull(message = "父节点id不能为空")
-    @ApiModelProperty(value = "父节点id")
+    @ApiModelProperty(value = "父节点id",required = true)
     @NotNull
     private Integer parentId;
 

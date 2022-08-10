@@ -13,12 +13,12 @@ import javax.validation.constraints.Size;
  */
 @Data
 public class Approve {
-    @ApiModelProperty(value = "项目编号")
+    @ApiModelProperty(value = "项目编号", required = true)
     @NotBlank(message = "项目编号不能为空")
     @Size(max = 10)
     private String id;
 
-    @ApiModelProperty(value = "审核通过结果")
+    @ApiModelProperty(value = "审核通过结果", required = true)
     @NotNull(message = "审核结果不能为空")
     private Boolean pass;
 

@@ -25,25 +25,25 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "项目信息", description = "项目基本信息，对应主库project表")
-@CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "项目开始日期不能大于项目结束日期")
+@CheckTimeInterval(beginTime = {"startDate"}, endTime = {"endDate"}, message = "项目开始日期不能大于项目结束日期")
 @TableName("pm_project")
 public class Project implements Serializable {
 
-    @ApiModelProperty(value = "项目编号",notes="对应数据库名，小写英文，")
+    @ApiModelProperty(value = "项目编号,不允许修改", notes = "对应数据库名，小写英文.", required = true)
     @NotBlank(message = "项目编号不能为空")
     @Size(max = 10)
     private String id;
 
-    @ApiModelProperty(value = "项目名称")
+    @ApiModelProperty(value = "项目名称", required = true)
     @NotBlank(message = "项目名称不能为空")
     @Size(max = 25)
     private String name;
 
-    @ApiModelProperty(value = "项目密级")
+    @ApiModelProperty(value = "项目密级", required = true)
     @NotNull(message = "项目密级不能为空")
     private SecretLevelEnum secretLevel;
 
-    @ApiModelProperty(value = "项目类型")
+    @ApiModelProperty(value = "项目类型", required = true)
     @NotNull(message = "项目类型不能为空")
     private ProjectTypeEnum projectType;
 
@@ -51,16 +51,16 @@ public class Project implements Serializable {
     private ProjectStatusEnum status;
 
     @ApiModelProperty(value = "项目开始日期")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
     @ApiModelProperty(value = "项目结束日期")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
-    @ApiModelProperty(value = "项目负责人")
+    @ApiModelProperty(value = "项目负责人", required = true)
     @NotBlank(message = "项目负责人不能为空")
     @Size(max = 25)
     private String managerName;
