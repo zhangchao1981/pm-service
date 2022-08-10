@@ -5,10 +5,12 @@ import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
 import com.iscas.pm.api.model.dev.DevTask;
 import com.iscas.pm.api.model.dev.RequireStatusEnum;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.DevModularService;
 import com.iscas.pm.api.service.DevRequirementService;
 import com.iscas.pm.api.service.DevTaskService;
+import com.iscas.pm.api.service.TaskFeedbackService;
 import com.iscas.pm.common.core.util.TreeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +40,8 @@ public class DevController {
     DevModularService devModularService;
     @Autowired
     DevTaskService devTaskService;
+    @Autowired
+    TaskFeedbackService taskFeedbackService;
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
@@ -194,9 +198,14 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
+        if (taskFeedbackService.getOne(new QueryWrapper<TaskFeedback>().eq("dev_task_id",id))!=null){
+            throw new IllegalArgumentException("要删除的开发任务存有反馈");
+        }
+
         if (!devTaskService.removeById(id)) {
             throw new IllegalArgumentException("要删除的开发任务id不存在");
         }
+
         return true;
     }
 
