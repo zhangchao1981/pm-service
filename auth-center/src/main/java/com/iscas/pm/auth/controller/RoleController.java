@@ -97,7 +97,6 @@ public class RoleController {
         if (role == null) {
             throw new IllegalArgumentException("角色不存在");
         }
-
         return roleService.addRolePermissions(roleId, permissionIds);
     }
 

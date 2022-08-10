@@ -6,28 +6,36 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
-/**
-* 测试计划表
-* @TableName test_plan
-*/
+
+@Accessors(chain = true)
+@ApiModel(value = "测试计划", description = " 测试计划，对应test_plan表")
+@TableName(value = "test_plan")
 @Data
 public class TestPlan implements Serializable {
-
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty("id")
     private Integer id;
 
-    @NotBlank(message="[测试计划名称]不能为空")
-    @ApiModelProperty("测试计划名称")
+    @NotBlank(message = "[测试计划名称]不能为空")
+    @ApiModelProperty(value = "测试计划名称", required = true)
     private String name;
 
-    @NotNull(message="[测试类型]不能为空")
-    @ApiModelProperty("测试类型")
+    @NotBlank(message = "[测试类型]不能为空")
+    @ApiModelProperty(value = "测试类型", required = true)
     private String testType;
 
-    @ApiModelProperty("负责人")
+    @ApiModelProperty(value = "负责人", required = true)
     private String worker;
 
     @ApiModelProperty("缺陷统计")
@@ -42,18 +50,26 @@ public class TestPlan implements Serializable {
     @ApiModelProperty("执行进度")
     private Double executeProgress;
 
-    @NotNull(message="[开始时间]不能为空")
-    @ApiModelProperty("开始时间")
+    @NotNull(message = "[开始时间]不能为空")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @ApiModelProperty(value = "开始时间", required = true)
     private Date startTime;
 
-    @NotNull(message="[结束时间]不能为空")
-    @ApiModelProperty("结束时间")
+    @NotNull(message = "[结束时间]不能为空")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @ApiModelProperty(value = "结束时间", required = true)
     private Date endTime;
 
-    @NotNull(message="[创建时间]不能为空")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("创建时间")
     private Date createTime;
 
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("最后更新时间")
     private Date updateTime;
 
