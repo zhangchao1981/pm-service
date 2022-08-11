@@ -7,9 +7,9 @@ package com.iscas.pm.api.model.test;
  */
 public enum UseCaseTypeEnum {
 
-    FUNCTION_TEST("FUNCTION", "功能测试"),
-    PERFORMANCE_TEST("PERFORMANCE", "性能测试"),
-    INSTALL_DEPLOYMENT("INSTALL_DEPLOYMENT", "安装部署");
+    FUNCTION("FUNCTION", "功能测试"),
+    PERFORMANCE("PERFORMANCE", "性能测试"),
+    DEPLOYMENT("DEPLOYMENT", "安装部署");
 
     private final String code;
     private final String value;
