@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -29,9 +30,12 @@ public class TestExecuteLog implements Serializable {
     @TableId(type = IdType.AUTO)
     private String id;
 
+    @ApiModelProperty(value = "导入的测试用例id", required = true)
+    private Integer useCaseId;
+
     @NotNull(message = "[是否通过]不能为空")
-    @ApiModelProperty(value = "是否通过", required = true)
-    private Integer pass;
+    @ApiModelProperty(value = "是否通过" )
+    private Boolean pass;
 
     @ApiModelProperty(value = "测试计划id", required = true)
     private Integer planId;
@@ -45,21 +49,33 @@ public class TestExecuteLog implements Serializable {
     private String title;
 
     @Size(max = 15, message = "编码长度不能超过15")
-    @ApiModelProperty("用例等级")
-    private String level;
+    @ApiModelProperty(value = "用例等级", required = true)
+    private UseCaseLevelEnum level;
 
-    @ApiModelProperty("用例关联的需求id")
+    @ApiModelProperty(value = "用例关联的需求id", required = true)
     private Integer requirementId;
 
     @Size(max = 20, message = "编码长度不能超过20")
-    @ApiModelProperty("用例类型")
-    @Length(max = 20, message = "编码长度不能超过20")
-    private String type;
+    @ApiModelProperty(value = "用例类型", required = true)
+    private UseCaseTypeEnum type;
 
-    @ApiModelProperty("用例执行步骤")
-    private Object processStep;
+    @ApiModelProperty(value = "用例执行步骤",required = true)
+    private List<ProgressStep> processStep;
 
-    @ApiModelProperty("用例所属模块id")
+    @ApiModelProperty(value = "用例所属模块id",required = true)
     private Integer modularId;
+
+    public TestExecuteLog() {
+    }
+    public TestExecuteLog(TestUseCase useCase ,Integer planId) {
+        this.setType(useCase.getType());
+        this.setProcessStep(useCase.getProcessStep());
+        this.setLevel(useCase.getLevel());
+        this.setRequirementId(useCase.getRequirementId());
+        this.setTitle(useCase.getTitle());
+        this.setPlanId(planId);
+        this.setUseCaseId(useCase.getId());
+        this.setModularId(useCase.getModularId());
+    }
 
 }

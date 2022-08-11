@@ -15,12 +15,11 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
-* 
-* @TableName test_bug_process_log
-*/
+ * @TableName test_bug_process_log
+ */
 @Accessors(chain = true)
 @ApiModel(value = "测试缺陷处理记录", description = "测试缺陷处理记录，对应test_bug_process_log表")
-@TableName(value ="test_bug_process_log")
+@TableName(value = "test_bug_process_log")
 @Data
 public class TestBugProcessLog implements Serializable {
     @TableId(type = IdType.AUTO)
@@ -36,7 +35,7 @@ public class TestBugProcessLog implements Serializable {
     @ApiModelProperty("处理动作")
     private String action;
 
-    @Size(max= 20,message="处理人长度不能超过20")
+    @Size(max = 20, message = "处理人长度不能超过20")
     @ApiModelProperty("处理人")
     private String processor;
 

@@ -60,7 +60,7 @@ public class TestUseCase implements Serializable {
     @ApiModelProperty(value = "处理步骤(记录)", required = true)
     private List<ProgressStep> processStep;
 
-    @ApiModelProperty(value = "所属模块id" )
+    @ApiModelProperty(value = "所属模块id")
     private Integer modularId;
 
 }
