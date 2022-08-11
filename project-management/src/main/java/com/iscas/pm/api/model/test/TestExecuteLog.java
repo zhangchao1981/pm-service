@@ -7,13 +7,18 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.type.JdbcType;
 import org.hibernate.validator.constraints.Length;
+
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 /**
  * 测试用例执行记录表
@@ -22,13 +27,13 @@ import org.hibernate.validator.constraints.Length;
  */
 @Accessors(chain = true)
 @ApiModel(value = "测试用例执行记录", description = "测试用例执行记录表，对应test_execute_log表")
-@TableName(value = "test_execute_log")
+@TableName(value = "test_execute_log", autoResultMap = true)
 @Data
 public class TestExecuteLog implements Serializable {
 
     @ApiModelProperty("id")
     @TableId(type = IdType.AUTO)
-    private String id;
+    private Integer id;
 
     @ApiModelProperty(value = "导入的测试用例id", required = true)
     private Integer useCaseId;
@@ -59,7 +64,9 @@ public class TestExecuteLog implements Serializable {
     @ApiModelProperty(value = "用例类型", required = true)
     private UseCaseTypeEnum type;
 
+
     @ApiModelProperty(value = "用例执行步骤",required = true)
+    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private List<ProgressStep> processStep;
 
     @ApiModelProperty(value = "用例所属模块id",required = true)

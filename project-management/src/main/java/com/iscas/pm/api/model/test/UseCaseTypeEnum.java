@@ -5,6 +5,7 @@ package com.iscas.pm.api.model.test;
  * @author by  lichang
  * @date 2022/8/10.
  */
+
 public enum UseCaseTypeEnum {
 
     FUNCTION("FUNCTION", "功能测试"),

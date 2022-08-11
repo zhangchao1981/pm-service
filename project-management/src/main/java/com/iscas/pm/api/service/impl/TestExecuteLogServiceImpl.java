@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestExecuteLogMapper;
+import com.iscas.pm.api.mapper.test.TestPlanMapper;
 import com.iscas.pm.api.mapper.test.TestUseCaseMapper;
 import com.iscas.pm.api.model.test.*;
 import com.iscas.pm.api.service.TestExecuteLogService;
@@ -38,16 +39,27 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
     TestUseCaseMapper testUseCaseMapper;
     @Autowired
     TestExecuteLogMapper testExecuteLogMapper;
+    @Autowired
+    TestPlanMapper testPlanMapper;
 
     @Override
     public List<TestExecuteLog> addTestExecuteLog(List<Integer> idList, Integer planId) {
         //前端维护一个测试人员表，内容调接口查询user-role表，查到角色是测试员的就加到这个表里，然后导入用例时选中表中的人员name 传过来
-        //查询useCaseList
+        //是否需要校验 planId+测试用例id对应的执行记录重复？
+
+        //校验planId是否有效
+        if (testPlanMapper.selectById(planId)==null){
+                throw new IllegalArgumentException("planId不存在");
+        }
+        //去重，查询useCaseList
+        List<Integer> caseIdList = idList.stream().distinct().collect(Collectors.toList());
         List<TestUseCase> useCaseList = testUseCaseMapper.selectBatchIds(idList);
         if (useCaseList.size() < 1) {
             throw new IllegalArgumentException("未查询到指定测试用例");
         }
-        return useCaseList.stream().map(e -> new TestExecuteLog(e, planId)).collect(Collectors.toList());
+        List<TestExecuteLog> executeLogList = useCaseList.stream().map(e -> new TestExecuteLog(e, planId)).collect(Collectors.toList());
+        executeLogList.forEach(e -> testExecuteLogMapper.insert(e));
+        return executeLogList;
     }
 
     @Override

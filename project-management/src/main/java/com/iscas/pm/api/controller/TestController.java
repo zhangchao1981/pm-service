@@ -174,6 +174,7 @@ public class TestController {
     }
 
 
+
     /**
      * 计划的执行记录
      */
@@ -218,7 +219,6 @@ public class TestController {
     public Boolean editBatchTestExecuteLog(@RequestBody EditBatchExecuteLogParam editBatchExecuteLogParam) {
         return testExecuteLogService.updateBatchTestExecute(editBatchExecuteLogParam);
     }
-
 
     //有问题,已该，未测
     @ApiOperationSupport(order = 13)

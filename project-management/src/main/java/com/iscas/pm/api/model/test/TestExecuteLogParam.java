@@ -24,5 +24,6 @@ public class TestExecuteLogParam {
     private Integer pageSize;
 
     @ApiModelProperty(value = "测试计划id", required = true)
+    @NotNull(message = "测试计划id不能为空")
     private Integer planId;
 }

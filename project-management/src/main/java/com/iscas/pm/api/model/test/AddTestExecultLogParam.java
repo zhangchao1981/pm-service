@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -17,8 +19,10 @@ import java.util.List;
 public class AddTestExecultLogParam {
 
         @ApiModelProperty(value = "导入测试用例idList", required = true)
+        @NotEmpty(message = "要导入的测试用例id为空")
         List<Integer> idList;
 
         @ApiModelProperty(value = "当前测试计划id" ,required = true)
+        @NotNull(message = "当前测试计划id为空")
         Integer planId;
     }
