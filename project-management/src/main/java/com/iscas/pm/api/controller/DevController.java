@@ -77,7 +77,7 @@ public class DevController {
     @ApiOperation(value = "删除项目模块", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
     public boolean deleteDevModular(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0){
+        if (devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前模块下有子模块，不许删除");
         }
 
@@ -117,7 +117,7 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-        if (!devRequirementService.updateById(devRequirement)){
+        if (!devRequirementService.updateById(devRequirement)) {
             throw new IllegalArgumentException("要修改的开发需求id不存在");
         }
         return true;
@@ -136,7 +136,7 @@ public class DevController {
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
-        return  devRequirementService.getById(requirementId);
+        return devRequirementService.getById(requirementId);
     }
 
 
@@ -198,15 +198,31 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (taskFeedbackService.getOne(new QueryWrapper<TaskFeedback>().eq("dev_task_id",id))!=null){
-            throw new IllegalArgumentException("要删除的开发任务存有反馈");
-        }
+        if (getTaskFeedbacks(id).size() > 0)
+            throw new IllegalArgumentException("该开发任务已填写反馈，不允许删除");
 
         if (!devTaskService.removeById(id)) {
             throw new IllegalArgumentException("要删除的开发任务id不存在");
         }
 
         return true;
+    }
+
+    @PostMapping("/addTaskFeedback")
+    @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改开发任务完成情况的反馈信息")
+    @ApiOperationSupport(order = 6)
+    @PreAuthorize("hasAuthority('/projectDev/saveTaskFeedback')")
+    public TaskFeedback saveTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback) {
+        taskFeedbackService.saveTaskFeedback(taskFeedback);
+        return taskFeedback;
+    }
+
+    @GetMapping("/getTaskFeedbacks")
+    @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
+    @ApiOperationSupport(order = 7)
+    @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
+    public List<TaskFeedback> getTaskFeedbacks(Integer taskId) {
+        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(taskId));
     }
 
     private RequireStatusEnum getStatus(Date start, Date end) {

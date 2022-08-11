@@ -18,5 +18,5 @@ public interface ProjectPlanService extends IService<PlanTask> {
 
     Boolean editTask(PlanTask planTask);
 
-    Boolean deleteTask(String id);
+    Boolean deleteTask(Integer id);
 }

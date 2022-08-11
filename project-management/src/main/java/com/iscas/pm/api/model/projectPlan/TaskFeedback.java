@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Max;
@@ -21,6 +22,7 @@ import java.util.Date;
 @TableName(value ="task_feedback")
 @ApiModel("任务反馈")
 @Data
+@Accessors(chain = true)
 public class TaskFeedback implements Serializable {
     @ApiModelProperty("任务反馈id")
     @TableId(type = IdType.AUTO)
@@ -54,6 +56,9 @@ public class TaskFeedback implements Serializable {
 
     @ApiModelProperty("关联的计划任务id")
     private Integer planTaskId;
+
+    @ApiModelProperty("关联的开发任务id")
+    private Integer devTaskId;
 
     @JsonIgnore
     @ApiModelProperty("填写反馈时间")

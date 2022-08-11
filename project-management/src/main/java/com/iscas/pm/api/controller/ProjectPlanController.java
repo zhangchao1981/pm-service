@@ -68,7 +68,10 @@ public class ProjectPlanController {
     @ApiOperation(value = "删除计划任务", notes = "删除指定任务，若任务已经填写了反馈，不允许删除")
     @ApiOperationSupport(order = 5)
     @PreAuthorize("hasAuthority('/projectPlan/deleteTask')")
-    public Boolean deleteTask(String id){
+    public Boolean deleteTask(Integer id){
+        if (getTaskFeedbacks(id).size() > 0)
+            throw new IllegalArgumentException("该任务已填写反馈，不允许删除");
+
         projectPlanService.deleteTask(id);
         return  true;
     }
@@ -87,7 +90,7 @@ public class ProjectPlanController {
     @ApiOperationSupport(order = 7)
     @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
     public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
-        return taskFeedbackService.selectListByPlanTaskId(taskId);
+        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskId));
     }
 
 }

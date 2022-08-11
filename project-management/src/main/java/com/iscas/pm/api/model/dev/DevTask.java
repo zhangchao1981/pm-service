@@ -21,32 +21,27 @@ import java.util.Date;
 @Data
 public class DevTask implements Serializable {
 
-
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
     @ApiModelProperty(value = "任务名称",required = true)
     private String name;
 
-
     @ApiModelProperty(value = "责任人,传参是人员姓名",required = true)
     private String worker;
-
 
     @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")
     private TaskStatusEnum status;
 
     @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
-    private float devProgress;
+    private Integer devProgress;
 
     @ApiModelProperty(value = "计划工时",required = true)
-    private float scheduleHour;
-
+    private Double scheduleHour;
 
     @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生成")
-    private float happenedHour;
+    private Double happenedHour;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

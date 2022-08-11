@@ -98,7 +98,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     }
 
     @Override
-    public Boolean deleteTask(String id) {
+    public Boolean deleteTask(Integer id) {
         PlanTask task = projectPlanMapper.selectById(id);
         if (task == null)
             throw new IllegalArgumentException("待删除任务不存在");
@@ -109,8 +109,6 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         List<PlanTask> subTasks = projectPlanMapper.selectList(queryWrapper);
         if (subTasks.size() > 0)
             throw new IllegalArgumentException("该任务下存在子任务，请先删除子任务");
-
-        //任务有关联的反馈记录，不允许删除
 
         //待删除任务以后的任务前移
         movePosition(task.getParentId(), task.getPosition(), null, true);
