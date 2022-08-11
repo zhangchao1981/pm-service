@@ -54,6 +54,9 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         //去重，查询useCaseList
         List<Integer> caseIdList = idList.stream().distinct().collect(Collectors.toList());
         List<TestUseCase> useCaseList = testUseCaseMapper.selectBatchIds(idList);
+
+
+        //若传入的id部分有效  是否需要返回异常？
         if (useCaseList.size() < 1) {
             throw new IllegalArgumentException("未查询到指定测试用例");
         }
@@ -67,6 +70,9 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         Boolean pass = editBatchExecuteLogParam.getPass();
         String testPerson = editBatchExecuteLogParam.getTestPerson();
         List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
+        if(localList.size()<1){
+            throw new IllegalArgumentException("要修改的执行记录id不存在");
+        }
         if (pass == null && StringUtils.isEmpty(testPerson)) {
             throw new IllegalArgumentException("无需要修改为的目标值，请求无效");
         }

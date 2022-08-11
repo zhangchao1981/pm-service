@@ -18,11 +18,11 @@ public class EditBatchExecuteLogParam {
     @NotEmpty(message = "idList不能为空")
     private List<Integer> idList;
 
-    @ApiModelProperty(value = "执行记录是否通过", required = true)
+    @ApiModelProperty(value = "执行记录是否通过(更改通过状态接口需要)", required = true)
     private Boolean pass;
 
 
-    @ApiModelProperty(value = "测试人员", required = true)
+    @ApiModelProperty(value = "测试人员(指定测试人员接口需要)", required = true)
     private String  testPerson;
 
 }

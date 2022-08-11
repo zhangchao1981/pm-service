@@ -1,5 +1,6 @@
 package com.iscas.pm.api.model.test;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
@@ -35,13 +36,14 @@ public class TestExecuteLog implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    @NotNull(message = "导入的测试用例id不能为空")
     @ApiModelProperty(value = "导入的测试用例id", required = true)
     private Integer useCaseId;
 
-    @NotNull(message = "[是否通过]不能为空")
     @ApiModelProperty(value = "是否通过" )
     private Boolean pass;
 
+    @NotNull(message = "测试计划id不能为空")
     @ApiModelProperty(value = "测试计划id", required = true)
     private Integer planId;
 
@@ -50,18 +52,20 @@ public class TestExecuteLog implements Serializable {
     private String testPerson;
 
     @Size(max = 100, message = "编码长度不能超过100")
+    @NotBlank(message = "用例标题不能为空")
     @ApiModelProperty(value = "用例标题", required = true)
     private String title;
 
-    @Size(max = 15, message = "编码长度不能超过15")
     @ApiModelProperty(value = "用例等级", required = true)
+    @NotNull(message = "用例等级不能为空")
     private UseCaseLevelEnum level;
 
     @ApiModelProperty(value = "用例关联的需求id", required = true)
+    @NotNull(message = "用例关联的需求id不能为空")
     private Integer requirementId;
 
-    @Size(max = 20, message = "编码长度不能超过20")
     @ApiModelProperty(value = "用例类型", required = true)
+    @NotNull(message = "用例类型不能为空")
     private UseCaseTypeEnum type;
 
 
@@ -69,11 +73,14 @@ public class TestExecuteLog implements Serializable {
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private List<ProgressStep> processStep;
 
+
     @ApiModelProperty(value = "用例所属模块id",required = true)
+    @NotNull(message = "用例所属模块id不能为空")
     private Integer modularId;
 
     public TestExecuteLog() {
     }
+
     public TestExecuteLog(TestUseCase useCase ,Integer planId) {
         this.setType(useCase.getType());
         this.setProcessStep(useCase.getProcessStep());

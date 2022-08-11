@@ -15,6 +15,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import java.util.Collection;
 import java.util.Date;
@@ -159,14 +160,15 @@ public class TestController {
     @ApiOperation(value = "删除测试计划", notes = "删除指定测试计划")
     @PreAuthorize("hasAuthority('/test/deletetTestPlan')")
     public Boolean deleteTestPlan(Integer planId) {
-
+//有问题
         QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
                 .eq("plan_id", planId)
                 .ne("pass",null);
-        if (testExecuteLogService.list(wrapper).size() > 0) {
-            throw new IllegalArgumentException("该计划下已存在测试执行记录，不允许删除");
-        }
+        //有问题  boolearn校验  不能校验null  只要加判断条件是null就查不出来结果
 
+        if (testExecuteLogService.list(wrapper).size() > 0) {
+            throw new IllegalArgumentException("该计划下已存在有效测试执行记录，不允许删除");
+        }
         if (!testPlanService.removeById(planId)) {
             throw new IllegalArgumentException("要删除的测试计划id不存在");
         }
@@ -211,21 +213,22 @@ public class TestController {
         return true;
     }
 
-
     @ApiOperationSupport(order = 13)
     @PostMapping("/editBatchTestExecuteLog")
-    @ApiOperation(value = "批量修改执行记录", notes = "批量修改用例执行记录")
+    @ApiOperation(value = "批量更改执行记录状态", notes = "批量完善执行记录是否通过及指定测试人员信息")
     @PreAuthorize("hasAuthority('/test/editBatchTestExecuteLog')")
-    public Boolean editBatchTestExecuteLog(@RequestBody EditBatchExecuteLogParam editBatchExecuteLogParam) {
+    public Boolean editBatchTestExecuteLog(@Valid  @RequestBody EditBatchExecuteLogParam editBatchExecuteLogParam) {
         return testExecuteLogService.updateBatchTestExecute(editBatchExecuteLogParam);
     }
 
-    //有问题,已该，未测
-    @ApiOperationSupport(order = 13)
-    @GetMapping("/deleteBatchTestExecuteLog")
+    @ApiOperationSupport(order = 14)
+    @PostMapping("/deleteBatchTestExecuteLog")
     @ApiOperation(value = "批量删除用例执行记录", notes = "批量删除指定用例执行记录")
     @PreAuthorize("hasAuthority('/test/deleteBatchTestExecuteLog')")
-    public Boolean deleteTestExecuteLog(@RequestBody List<Integer> ids) { //requestParam 不能传list?
+    public Boolean deleteTestExecuteLog(@RequestBody List<Integer> ids) {
+        if (ids.size()<1){
+            throw new IllegalArgumentException("要删除的执行记录id不能为空");
+        }
         if (!testExecuteLogService.removeByIds(ids)) {
             throw new IllegalArgumentException("要删除的用例执行记录id不存在");
         }
