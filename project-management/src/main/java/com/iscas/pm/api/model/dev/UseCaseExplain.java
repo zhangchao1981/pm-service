@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2022/8/4.
  */
 @Data
-public class UseCase {
+public class UseCaseExplain {
     @ApiModelProperty(value = "需求角色",required = true)
     private String  role;
 

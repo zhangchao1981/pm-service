@@ -80,7 +80,7 @@ public class DevRequirement implements Serializable {
 
     @ApiModelProperty(value = "用例说明",required = true)
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-    private UseCase useCase;
+    private UseCaseExplain useCaseExplain;
 
     @ApiModelProperty(value = "模块id",required = true)
     @NotNull

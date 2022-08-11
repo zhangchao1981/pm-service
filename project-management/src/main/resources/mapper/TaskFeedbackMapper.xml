@@ -10,13 +10,14 @@
             <result property="date" column="date" jdbcType="TIMESTAMP"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="progress" column="progress" jdbcType="TINYINT"/>
-            <result property="workingHour" column="working_hour" jdbcType="TINYINT"/>
+            <result property="workingHour" column="working_hour" jdbcType="FLOAT"/>
             <result property="workingContent" column="working_content" jdbcType="VARCHAR"/>
+            <result property="planTaskId" column="plan_task_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,person_name,date,
         create_time,progress,working_hour,
-        working_content
+        working_content,plan_task_id
     </sql>
 </mapper>
