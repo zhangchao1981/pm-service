@@ -8,6 +8,7 @@ import com.iscas.pm.api.service.*;
 
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
@@ -46,26 +47,26 @@ public class TestController {
     @PostMapping("/testUseCaseList")
     @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表")
     @PreAuthorize("hasAuthority('/test/testUseCaseList')")
-    public IPage<TestUseCase> testUseCaseList(@RequestBody UseCaseQueryParam useCaseQueryParam) {
+    public IPage<TestUseCase> testUseCaseList(@Valid @RequestBody UseCaseQueryParam useCaseQueryParam) {
         Integer modularId = useCaseQueryParam.getModularId();
         String useCaseId = useCaseQueryParam.getId();
         String useCaseTitle = useCaseQueryParam.getTitle();
-        //有一个问题：modularId查询不到
-        return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()),
-                new QueryWrapper<TestUseCase>().eq(modularId != null, "modular_id", modularId)
-                        .eq(useCaseId != null, "id", useCaseId)
-                        .like(useCaseTitle != null, "title", useCaseTitle));
-    }
 
+        QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
+                .eq(modularId != null, "modular_id", modularId)
+                .like(StringUtils.isNotBlank(useCaseId), "id", useCaseId)
+                .like(StringUtils.isNotBlank(useCaseTitle), "title", useCaseTitle);
+
+        return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
+    }
 
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
     @ApiOperation(value = "添加测试用例", notes = "添加测试用例")
     @PreAuthorize("hasAuthority('/test/addTestUseCase')")
     public TestUseCase addTestUseCase(@Valid @RequestBody TestUseCase testUseCase) {
-        testUseCase.setCreator(RequestHolder.getUserInfo().getUserName());
+        testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
         testUseCase.setCreateTime(new Date());
-        testUseCase.setModularId(requirementService.getById(testUseCase.getRequirementId()).getModularId());
         testUseCaseService.save(testUseCase);
         return testUseCase;
     }
@@ -81,13 +82,11 @@ public class TestController {
         return true;
     }
 
-
-    //有问题,已该，未测
     @ApiOperationSupport(order = 4)
-    @GetMapping("/deleteBatchUseCase")
+    @PostMapping("/deleteBatchUseCase")
     @ApiOperation(value = "批量删除测试用例", notes = "批量删除指定测试用例")
     @PreAuthorize("hasAuthority('/test/deleteBatchTestUseCase')")
-    public Boolean deleteTestUseCase(@RequestParam List<Integer> ids) {
+    public Boolean deleteTestUseCase(@RequestBody List<Integer> ids) {
         if (!testUseCaseService.removeByIds(ids)) {
             throw new IllegalArgumentException("要删除的测试用例id不存在");
         }
@@ -102,21 +101,22 @@ public class TestController {
         return true;
     }
 
-
-
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
-    @ApiOperation(value = "查询测试计划列表", notes = "查询符合条件的测试计划列表")
+    @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表")
     @PreAuthorize("hasAuthority('/test/testPlanList')")
-    public IPage<TestPlan> testPlanList(@RequestBody TestPlanQueryParam planQueryParam) {
+    public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
-        return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()),
-                new QueryWrapper<TestPlan>().like(titleOrWorker != null, "name", titleOrWorker).or().like(titleOrWorker != null,"worker",titleOrWorker));
+
+        QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
+                .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
+                .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
+        return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
     }
 
     @ApiOperationSupport(order = 6) //未测，等执行记录开发
     @PostMapping("/testPlan")
-    @ApiOperation(value = "查看测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
+    @ApiOperation(value = "测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
     @PreAuthorize("hasAuthority('/test/testPlan')")
     public IPage<TestExecuteLog> testPlan(@RequestBody TestExecuteQueryParam executeQueryParam) {
         return testExecuteLogService.page(new Page<>(executeQueryParam.getPageNum(), executeQueryParam.getPageSize()),
@@ -129,17 +129,13 @@ public class TestController {
     @ApiOperation(value = "添加测试计划", notes = "添加测试计划")
     @PreAuthorize("hasAuthority('/test/addTestPlan')")
     public TestPlan addTestPlan(@Valid @RequestBody TestPlan testPlan) {
-        testPlan.setId(1);
-        testPlan.setPassRate(0.0);
-        testPlan.setExecuteProgress(0.0);
-        testPlan.setPassRate(0.0);
-        testPlan.setCreateTime(new Date());
-        testPlan.setUpdateTime(new Date());
-        testPlan.setBugStatistic(null);
-        testPlan.setTestedCase(null);
         if (!ObjectUtils.isEmpty(testPlanService.getOne(new QueryWrapper<TestPlan>().eq("name", testPlan.getName())))) {
             throw new IllegalArgumentException("计划名重复，请重新命名");
         }
+
+        testPlan.setCreateTime(new Date());
+        testPlan.setUpdateTime(new Date());
+
         testPlanService.save(testPlan);
         return testPlan;
     }
@@ -156,14 +152,18 @@ public class TestController {
     }
 
     @ApiOperationSupport(order = 9)
-    @GetMapping("/deleteTestPlan")     //测一半,另一半要等执行记录开发
+    @GetMapping("/deleteTestPlan")
     @ApiOperation(value = "删除测试计划", notes = "删除指定测试计划")
     @PreAuthorize("hasAuthority('/test/deletetTestPlan')")
     public Boolean deleteTestPlan(Integer planId) {
-        //若该计划下有执行记录，拒绝删除
-        if (testExecuteLogService.list(new QueryWrapper<TestExecuteLog>().eq("plan_id",planId)).size()>0){
-            throw new IllegalArgumentException("该计划下仍存有执行记录，拒绝删除");
+
+        QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
+                .eq("plan_id", planId)
+                .ne("pass",null);
+        if (testExecuteLogService.list(wrapper).size() > 0) {
+            throw new IllegalArgumentException("该计划下已存在测试执行记录，不允许删除");
         }
+
         if (!testPlanService.removeById(planId)) {
             throw new IllegalArgumentException("要删除的测试计划id不存在");
         }

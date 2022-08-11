@@ -164,8 +164,8 @@ public class DevController {
             throw new IllegalArgumentException("父模块Id不存在");
         }
 
-        devTask.setHappenedHour(0);
-        devTask.setDevProgress(0);
+//        devTask.setHappenedHour(0.0);
+//        devTask.setDevProgress(0);
         devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), devTask.getDevProgress()));
         devTaskService.save(devTask);
         return true;
