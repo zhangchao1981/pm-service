@@ -71,4 +71,11 @@ public class TestPlan implements Serializable {
     @ApiModelProperty("最后更新时间")
     private Date updateTime;
 
+    public void inputstatisticData(TestPlanStatisticData statisticData) {
+        this.setPassRate(statisticData.getPassRate());
+        this.setTestedCase(statisticData.getTestedCase());
+        this.setBugStatistic(statisticData.getBugStatistic());
+        this.setExecuteProgress(statisticData.getExecuteProgress());
+    }
+
 }

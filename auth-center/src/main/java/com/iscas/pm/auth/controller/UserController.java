@@ -1,9 +1,9 @@
 package com.iscas.pm.auth.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.auth.model.ModifyPwdParam;
-import com.iscas.pm.auth.model.SettingSystemRoleQueryParam;
-import com.iscas.pm.auth.model.UserQueryParam;
+import com.iscas.pm.auth.model.*;
+import com.iscas.pm.auth.service.AuthUserRoleService;
 import com.iscas.pm.common.core.model.User;
 import com.iscas.pm.common.core.model.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
@@ -11,6 +11,7 @@ import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -35,6 +37,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    AuthUserRoleService authUserRoleService;
 
     @ApiOperation(value = "人员列表", notes = "分页返回符合条件的人员列表")
     @PostMapping("/userList")
@@ -55,14 +59,14 @@ public class UserController {
     @PostMapping("editUser")
     @PreAuthorize("hasAuthority('/user/editUser')")
     public Boolean editUser(@Valid @RequestBody User user) {
-        User db_user = userService.getById(user.getId());
-        if (db_user == null)
+        User dbUser = userService.getById(user.getId());
+        if (dbUser == null)
             throw new IllegalArgumentException("用户不存在");
 
         //用户名、姓名、密码都不允许修改
-        user.setUserName(db_user.getUserName());
-        user.setEmployeeName(db_user.getEmployeeName());
-        user.setPassword(db_user.getPassword());
+        user.setUserName(dbUser.getUserName());
+        user.setEmployeeName(dbUser.getEmployeeName());
+        user.setPassword(dbUser.getPassword());
 
         userService.saveOrUpdate(user);
         return true;
@@ -135,4 +139,15 @@ public class UserController {
         return userService.getUserDetails(userName);
     }
 
+
+    @ApiOperation(value = "获取用户已分配的系统角色", notes = "根据userId查询对应的系统角色")
+    @PostMapping("systemRolesByUserId")
+    @PreAuthorize("hasAuthority('/role/systemRolesByUserId')")
+    public List<Integer> systemRolesByUserId(@NotNull @RequestParam Integer userId) {
+        List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
+        if (roleList.size()<1) {
+            throw new IllegalArgumentException("该人员未分配系统角色");
+        }
+        return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());
+    }
 }

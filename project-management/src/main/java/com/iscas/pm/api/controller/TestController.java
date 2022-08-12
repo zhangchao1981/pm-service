@@ -69,8 +69,7 @@ public class TestController {
     public TestUseCase addTestUseCase(@Valid @RequestBody TestUseCase testUseCase) {
         testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
         testUseCase.setCreateTime(new Date());
-        //不需要setModularId
-         testUseCaseService.save(testUseCase);
+        testUseCaseService.save(testUseCase);
         return testUseCase;
     }
 
@@ -114,10 +113,13 @@ public class TestController {
         QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
-        return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
+        List<TestPlan> list = testPlanService.list(wrapper);
+        list.stream().forEach(e -> {
+            e.inputstatisticData(testPlanService.statisticData(e.getId()));   });
+        return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize())).setRecords(list);
     }
 
-    @ApiOperationSupport(order = 6) //未测，等执行记录开发
+    @ApiOperationSupport(order = 6) 
     @PostMapping("/testPlan")
     @ApiOperation(value = "测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
     @PreAuthorize("hasAuthority('/test/testPlan')")
@@ -159,12 +161,10 @@ public class TestController {
     @ApiOperation(value = "删除测试计划", notes = "删除指定测试计划")
     @PreAuthorize("hasAuthority('/test/deletetTestPlan')")
     public Boolean deleteTestPlan(Integer planId) {
-//有问题
+
         QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
                 .eq("plan_id", planId)
                 .ne("pass",null);
-        //有问题  boolearn校验  不能校验null  只要加判断条件是null就查不出来结果
-
         if (testExecuteLogService.list(wrapper).size() > 0) {
             throw new IllegalArgumentException("该计划下已存在有效测试执行记录，不允许删除");
         }
@@ -266,6 +266,7 @@ public class TestController {
 
 
 
+
     /**
      * 计划的执行记录
      */
@@ -295,8 +296,8 @@ public class TestController {
     @PostMapping("/editTestExecuteLog")
     @ApiOperation(value = "修改用例执行记录", notes = "修改用例执行记录")
     @PreAuthorize("hasAuthority('/test/editTestExecuteLog')")
-    public Boolean editTestExecuteLog(@Valid @RequestBody TestExecuteLog TestExecuteLog) {
-        if (!testExecuteLogService.updateById(TestExecuteLog)) {
+    public Boolean editTestExecuteLog(@Valid @RequestBody TestExecuteLog testExecuteLog) {
+        if (!testExecuteLogService.updateById(testExecuteLog)) {
             throw new IllegalArgumentException("要修改的用例执行记录id不存在");
         }
         return true;
@@ -306,7 +307,7 @@ public class TestController {
     @PostMapping("/editBatchTestExecuteLog")
     @ApiOperation(value = "批量更改执行记录状态", notes = "批量完善执行记录是否通过及指定测试人员信息")
     @PreAuthorize("hasAuthority('/test/editBatchTestExecuteLog')")
-    public Boolean editBatchTestExecuteLog(@Valid  @RequestBody EditBatchExecuteLogParam editBatchExecuteLogParam) {
+    public Boolean editBatchTestExecuteLog(@Valid @RequestBody EditBatchExecuteLogParam editBatchExecuteLogParam) {
         return testExecuteLogService.updateBatchTestExecute(editBatchExecuteLogParam);
     }
 
@@ -315,7 +316,7 @@ public class TestController {
     @ApiOperation(value = "批量删除用例执行记录", notes = "批量删除指定用例执行记录")
     @PreAuthorize("hasAuthority('/test/deleteBatchTestExecuteLog')")
     public Boolean deleteTestExecuteLog(@RequestBody List<Integer> ids) {
-        if (ids.size()<1){
+        if (ids.size() < 1) {
             throw new IllegalArgumentException("要删除的执行记录id不能为空");
         }
         if (!testExecuteLogService.removeByIds(ids)) {
@@ -323,4 +324,20 @@ public class TestController {
         }
         return true;
     }
+
+
+    /**
+     * 执行计划统计信息
+     *
+     * @return
+     */
+
+    @ApiOperationSupport(order = 6)
+    @PostMapping("/testPlanStatistic")
+    @ApiOperation(value = "测试计划统计数", notes = "查看测试计划对应统计数据")
+    @PreAuthorize("hasAuthority('/test/useCaseAmountInPlan')")
+    public TestPlanStatisticData useCaseAmountInPlan(@RequestParam Integer testPlanId) {
+        return testPlanService.statisticData(testPlanId);
+    }
+
 }
