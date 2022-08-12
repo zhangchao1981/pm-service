@@ -12,13 +12,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.iscas.pm.api.model.test.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.JdbcType;
-import org.hibernate.validator.constraints.Length;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 

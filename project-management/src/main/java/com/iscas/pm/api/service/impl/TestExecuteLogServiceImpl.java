@@ -1,30 +1,19 @@
 package com.iscas.pm.api.service.impl;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestExecuteLogMapper;
 import com.iscas.pm.api.mapper.test.TestPlanMapper;
 import com.iscas.pm.api.mapper.test.TestUseCaseMapper;
 import com.iscas.pm.api.model.test.*;
+import com.iscas.pm.api.model.test.param.EditBatchExecuteLogParam;
 import com.iscas.pm.api.service.TestExecuteLogService;
-import io.swagger.annotations.ApiModelProperty;
-import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 
 /**

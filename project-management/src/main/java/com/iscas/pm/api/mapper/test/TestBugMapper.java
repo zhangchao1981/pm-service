@@ -3,10 +3,8 @@ package com.iscas.pm.api.mapper.test;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.iscas.pm.api.model.project.Project;
-import com.iscas.pm.api.model.project.ProjectQueryParam;
 import com.iscas.pm.api.model.test.TestBug;
-import com.iscas.pm.api.model.test.TestBugQueryParam;
+import com.iscas.pm.api.model.test.param.TestBugQueryParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

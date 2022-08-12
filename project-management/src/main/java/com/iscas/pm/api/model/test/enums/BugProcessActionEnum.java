@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.test;
+package com.iscas.pm.api.model.test.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -12,15 +12,15 @@ import lombok.Getter;
 @Getter
 public enum BugProcessActionEnum {
 
-    NEW("NEW", "新建"),
-    EDIT("EDIT", "便捷"),
-    START("START", "开始解决"),
-    SOLVED("SOLVED", "已解决"),
-    TRANSFER("TRANSFER", "转办"),
-    FEEDBACK("FEEDBACK", "反馈"),
-    DELAYED_SOLVED("DELAYED_SOLVED", "延时解决"),
-    CLOSE("CLOSE", "关闭"),
-    REOPEN("REOPEN", "重新打开");
+    NEW("NEW", "新建缺陷"),
+    EDIT("EDIT", "编辑缺陷"),
+    START("START", "开始解决缺陷"),
+    SOLVED("SOLVED", "解决缺陷"),
+    TRANSFER("TRANSFER", "转办缺陷"),
+    FEEDBACK("FEEDBACK", "填写反馈"),
+    DELAYED_SOLVED("DELAYED_SOLVED", "延时解决缺陷"),
+    CLOSE("CLOSE", "关闭缺陷"),
+    REOPEN("REOPEN", "重新打开缺陷");
 
     private final String code;
     private final String value;

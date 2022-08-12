@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.test;
+package com.iscas.pm.api.model.test.param;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

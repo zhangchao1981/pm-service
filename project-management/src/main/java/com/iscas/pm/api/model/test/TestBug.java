@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iscas.pm.api.model.test.enums.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -101,17 +102,19 @@ public class TestBug implements Serializable {
     @ApiModelProperty(value = "缺陷解决人")
     private String solver;
 
-    @ApiModelProperty(value = "缺陷解决时间")
-    private String solveTime;
+    @ApiModelProperty(value = "缺陷解决时间，无需传参")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date solveTime;
 
     @ApiModelProperty(value = "缺陷解决结果")
     private BugSolveResultEnum solveResult;
 
     @ApiModelProperty(value = "解决时长，小时，后端计算，前端无需传参")
-    private Integer solveHours;
+    private Long solveHours;
 
     @ApiModelProperty(value = "回归时长，小时，后端计算，前端无需传参")
-    private Integer regressionHours;
+    private Long regressionHours;
 
 
 

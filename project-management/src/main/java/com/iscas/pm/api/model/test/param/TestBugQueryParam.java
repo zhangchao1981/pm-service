@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.test;
+package com.iscas.pm.api.model.test.param;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;

@@ -9,6 +9,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.iscas.pm.api.model.test.enums.BugProcessActionEnum;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +24,14 @@ import lombok.experimental.Accessors;
 @TableName(value = "test_bug_process_log")
 @Data
 public class TestBugProcessLog implements Serializable {
+    public TestBugProcessLog(Integer bugId, BugProcessActionEnum action, String description){
+        this.action = action;
+        this.description = description;
+        this.bugId = bugId;
+        this.time = new Date();
+        this.processor = RequestHolder.getUserInfo().getEmployeeName();
+    }
+
     @TableId(type = IdType.AUTO)
     @ApiModelProperty("id")
     private Integer id;
