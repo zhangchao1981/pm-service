@@ -100,13 +100,13 @@ public class RoleController {
         return roleService.addRolePermissions(roleId, permissionIds);
     }
 
-
-    @ApiOperation(value = "查询系统角色列表", notes = "返回所有系统角色列表,给用户分配系统角色时使用")
-    @GetMapping("/systemRoleList")
-    @PreAuthorize("hasAuthority('/user/settingRoles')")
-    public List<Role> systemRoleList() {
-        return roleService.selectRoleList(null, RoleTypeEnum.system.name());
-    }
+//
+//    @ApiOperation(value = "查询系统角色列表", notes = "返回所有系统角色列表,给用户分配系统角色时使用")
+//    @GetMapping("/systemRoleList")
+//    @PreAuthorize("hasAuthority('/user/settingRoles')")
+//    public List<Role> systemRoleList() {
+//        return roleService.selectRoleList(null, RoleTypeEnum.system.name());
+//    }
 
     @ApiOperation(value = "查询角色已分配的权限列表", notes = "查询指定角色已分配的权限列表，给角色分配权限的时候使用")
     @PostMapping("getRolePermissions")

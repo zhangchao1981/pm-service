@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
-    @Select("SELECT * " +
+    @Select("SELECT auth_permission.id as id, name, description, module " +
             "FROM auth_role_permission,auth_permission " +
             "WHERE auth_role_permission.permission_id = auth_permission.id AND role_id = #{roleId}")
     List<Permission> getRolePermissions(@Param("roleId") Integer roleId);

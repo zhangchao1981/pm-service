@@ -10,6 +10,7 @@ import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -159,7 +160,7 @@ public class TestController {
 
         QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
                 .eq("plan_id", planId)
-                .ne("pass",null);
+                .eq("pass",null);
         if (testExecuteLogService.list(wrapper).size() > 0) {
             throw new IllegalArgumentException("该计划下已存在测试执行记录，不允许删除");
         }
@@ -169,5 +170,88 @@ public class TestController {
         }
         return true;
     }
+
+
+
+    @ApiOperationSupport(order = 21)
+    @PostMapping("/bugList")
+    @ApiOperation(value = "缺陷列表", notes = "返回符合条件的缺陷列表")
+    public IPage<TestBug> bugList(@Valid @RequestBody TestBugQueryParam param) {
+        return testBugService.bugList(param);
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/addBug")
+    @ApiOperation(value = "新建缺陷", notes = "添加新缺陷")
+    @PreAuthorize("hasAuthority('/test/addBug')")
+    public TestBug addBug(@Valid @RequestBody TestBug testBug) {
+        testBugService.addBug(testBug);
+        return testBug;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/editBug")
+    @ApiOperation(value = "修改缺陷", notes = "修改缺陷")
+    @PreAuthorize("hasAuthority('/test/editBug')")
+    public Boolean editBug(@Valid @RequestBody TestBug testBug) {
+        testBugService.editBug(testBug);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/transferBug")
+    @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理")
+    @PreAuthorize("hasAuthority('/test/transferBug')")
+    public Boolean transferBug(@Valid @RequestBody TestBug testBug) {
+
+        return null;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @GetMapping("/startProcessBug")
+    @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷")
+    @PreAuthorize("hasAuthority('/test/startProcessBug')")
+    public Boolean startProcessBug(Integer bugId) {
+
+        return null;
+    }
+
+
+    @ApiOperationSupport(order = 22)
+    @GetMapping("/solveBug")
+    @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
+    @PreAuthorize("hasAuthority('/test/solveBug')")
+    public Boolean solveBug(@Valid @RequestBody TestBug testBug) {
+
+        return null;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @GetMapping("/delayedSolveBug")
+    @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
+    @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
+    public Boolean delayedSolveBug(@Valid @RequestBody TestBug testBug) {
+
+        return null;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @GetMapping("/closeBug")
+    @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
+    @PreAuthorize("hasAuthority('/test/closeBug')")
+    public Boolean closeBug(String bugId) {
+
+        return true;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @GetMapping("/bugProgressLog")
+    @ApiOperation(value = "缺陷处理日志", notes = "查询指定缺陷的处理日志")
+    public List<TestBugProcessLog> bugProgressLog(String bugId) {
+        return testBugProcessLogService.list(new QueryWrapper<TestBugProcessLog>().eq("bug_id", bugId));
+    }
+
+
+
 
 }

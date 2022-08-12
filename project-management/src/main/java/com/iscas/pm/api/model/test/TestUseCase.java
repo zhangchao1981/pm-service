@@ -39,7 +39,7 @@ public class TestUseCase implements Serializable {
 
     @ApiModelProperty(value = "用例等级", required = true)
     @NotNull(message = "用例等级不能为空")
-    private UseCaseLevelEnum level;
+    private PriorityEnum level;
 
     @ApiModelProperty(value = "创建人,后端自动生成，前端无需传参")
     private String creator;
