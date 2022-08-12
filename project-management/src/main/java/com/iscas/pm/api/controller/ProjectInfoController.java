@@ -75,7 +75,6 @@ public class ProjectInfoController {
         param.setUserId(RequestHolder.getUserInfo().getId());
         param.setPageNum(1);
         param.setPageSize(Integer.MAX_VALUE);
-
         return projectInfoService.projectPageList(param).getRecords();
     }
 
