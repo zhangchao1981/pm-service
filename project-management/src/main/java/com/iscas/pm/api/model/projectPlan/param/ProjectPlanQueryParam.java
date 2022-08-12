@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.projectPlan;
+package com.iscas.pm.api.model.projectPlan.param;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
