@@ -144,7 +144,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
-
+        if(roles==null||roles.size()<1){
+            return true;
+        }
         //批量插入
         List<AuthUserRole> userRoles = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {
@@ -153,7 +155,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             authUserRole.setRoleId(roles.get(i));
             userRoles.add(authUserRole);
         }
-
         return authUserRoleService.saveBatch(userRoles);
     }
 }

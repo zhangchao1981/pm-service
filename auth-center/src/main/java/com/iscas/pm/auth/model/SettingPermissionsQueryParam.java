@@ -22,7 +22,6 @@ public class SettingPermissionsQueryParam {
     @ApiModelProperty(value = "目标角色id", required = true)
     private Integer roleId;
 
-    @NotEmpty(message = "要分配的权限列表不能为空")
     @ApiModelProperty(value = "要分配的权限列表", required = true)
     private List<String> permissionIds;
 

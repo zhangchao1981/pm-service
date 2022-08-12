@@ -102,7 +102,7 @@ public class UserController {
         return true;
     }
 
-    @ApiOperation(value = "分配角色", notes = "为指定用户分配系统角色")
+    @ApiOperation(value = "分配角色", notes = "为指定用户分配系统角色:(删除用户的角色：传空参)")
     @PostMapping("settingSystemRole")
     @PreAuthorize("hasAuthority('/user/settingSystemRole')")
     public Boolean settingSystemRole(@Valid @RequestBody SettingSystemRoleQueryParam queryParam) {
@@ -145,9 +145,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('/role/systemRolesByUserId')")
     public List<Integer> systemRolesByUserId(@NotNull @RequestParam Integer userId) {
         List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
-        if (roleList.size()<1) {
-            throw new IllegalArgumentException("该人员未分配系统角色");
-        }
         return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());
     }
 }

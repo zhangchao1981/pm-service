@@ -23,6 +23,5 @@ public class SettingSystemRoleQueryParam {
     private Integer userId;
 
     @ApiModelProperty(value = "要分配的角色列表", required = true)
-    @NotEmpty(message = "roles不能为空")
     private List<Integer> roles;
 }
