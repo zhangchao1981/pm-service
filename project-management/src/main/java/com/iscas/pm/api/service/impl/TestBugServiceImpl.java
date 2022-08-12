@@ -1,17 +1,23 @@
 package com.iscas.pm.api.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestBugMapper;
 import com.iscas.pm.api.mapper.test.TestBugProcessLogMapper;
 import com.iscas.pm.api.model.test.*;
-import com.iscas.pm.api.service.TestBugProcessLogService;
+import com.iscas.pm.api.model.test.enums.BugProcessActionEnum;
+import com.iscas.pm.api.model.test.enums.BugStatusEnum;
+import com.iscas.pm.api.model.test.param.SolveBugParam;
+import com.iscas.pm.api.model.test.param.TestBugQueryParam;
+import com.iscas.pm.api.model.test.param.TransferBugParam;
 import com.iscas.pm.api.service.TestBugService;
+import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 
@@ -30,20 +36,16 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void addBug(TestBug testBug) {
-        //添加缺陷
+        //补全信息，添加缺陷
         testBug.setCreator(RequestHolder.getUserInfo().getEmployeeName());
+        testBug.setCreatorUserName(RequestHolder.getUserInfo().getUserName());
         testBug.setCreateTime(new Date());
         testBug.setOwner(testBug.getCurrentProcessor());
         testBug.setStatus(BugStatusEnum.NEW);
         testBugMapper.insert(testBug);
 
         //添加缺陷处理日志
-        TestBugProcessLog processLog = new TestBugProcessLog()
-                .setBugId(testBug.getId())
-                .setAction(BugProcessActionEnum.EDIT)
-                .setDescription(getDescription(BugProcessActionEnum.EDIT, testBug))
-                .setProcessor(RequestHolder.getUserInfo().getEmployeeName())
-                .setTime(new Date());
+        TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, "");
         testBugProcessLogMapper.insert(processLog);
     }
 
@@ -58,39 +60,91 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         testBugMapper.updateById(testBug);
 
         //添加缺陷处理日志
-        TestBugProcessLog processLog = new TestBugProcessLog()
-                .setBugId(testBug.getId())
-                .setAction(BugProcessActionEnum.NEW)
-                .setDescription(getDescription(BugProcessActionEnum.NEW, testBug))
-                .setProcessor(RequestHolder.getUserInfo().getEmployeeName())
-                .setTime(new Date());
+        TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, "");
         testBugProcessLogMapper.insert(processLog);
     }
 
-    private String getDescription(BugProcessActionEnum action, TestBug testBug) {
-        switch (action) {
-            case NEW:
-                return "新建缺陷";
-            case EDIT:
-                return "修改缺陷";
-            case TRANSFER:
-                return "转办给" + testBug.getCurrentProcessor();
-            case SOLVED:
-                return "解决缺陷,反馈内容：";
-            case START:
-                return "开始处理缺陷";
-            case DELAYED_SOLVED:
-                return "延时解决该缺陷，延时原因：";
-            case REOPEN:
-                return "重新打开该缺陷";
-            case FEEDBACK:
-                return "填写反馈：";
-            case CLOSE:
-                return "关闭该缺陷";
-            default:
-                return "";
-        }
+    @Override
+    public void startProcessBug(Integer bugId) {
+        //更新缺陷信息
+        UpdateWrapper<TestBug> wrapper = Wrappers.update();
+        wrapper.lambda()
+                .set(TestBug::getStatus, BugStatusEnum.RUNNING)
+                .eq(TestBug::getId, bugId);
+        if (!super.update(wrapper))
+            throw new IllegalArgumentException("缺陷id不存在");
+
+        //添加缺陷处理日志
+        TestBugProcessLog processLog = new TestBugProcessLog(bugId, BugProcessActionEnum.START, "");
+        testBugProcessLogMapper.insert(processLog);
     }
+
+    @Override
+    public void transferBug(TransferBugParam param) {
+        //更新缺陷信息
+        UpdateWrapper<TestBug> wrapper = Wrappers.update();
+        wrapper.lambda()
+                .set(TestBug::getOwner, param.getTransferName())
+                .set(TestBug::getCurrentProcessor, param.getTransferName())
+                .set(TestBug::getCurrentProcessorUserName, param.getTransferUserName())
+                .eq(TestBug::getId, param.getBugId());
+        if (!super.update(wrapper))
+            throw new IllegalArgumentException("缺陷id不存在");
+
+        //添加缺陷处理日志
+        String description = "给" + param.getTransferName() + ",转办说明：" + param.getExplain();
+        TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.TRANSFER, description);
+        testBugProcessLogMapper.insert(processLog);
+    }
+
+    @Override
+    public void solveBug(SolveBugParam param) {
+        TestBug testBug = super.getById(param.getBugId());
+        if (testBug == null)
+            throw new IllegalArgumentException("缺陷id不存在");
+
+        //补全信息，更新缺陷信息
+        testBug.setSolver(RequestHolder.getUserInfo().getEmployeeName());
+        testBug.setSolveTime(new Date());
+        testBug.setSolveResult(param.getSolveResult());
+        testBug.setSolveHours(DateUtil.getWorkHours(testBug.getCreateTime(),new Date()));
+        testBug.setInjectStage(param.getInjectStage());
+        testBug.setType(param.getType());
+
+        super.updateById(testBug);
+
+        //添加缺陷处理日志
+        String description = "解决结果：" + param.getSolveResult() + ",解决说明：" + param.getExplain();
+        TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.SOLVED, description);
+        testBugProcessLogMapper.insert(processLog);
+    }
+
+    @Override
+    public void delayedSolveBug(Integer bugId, String explain) {
+        //更新缺陷信息
+        UpdateWrapper<TestBug> wrapper = Wrappers.update();
+        wrapper.lambda()
+                .set(TestBug::getStatus, BugStatusEnum.DELAYED_SOLVED)
+                .eq(TestBug::getId, bugId);
+        if (!super.update(wrapper))
+            throw new IllegalArgumentException("缺陷id不存在");
+
+        //添加缺陷处理日志
+        String description = "延时原因：" + explain;
+        TestBugProcessLog processLog = new TestBugProcessLog(bugId, BugProcessActionEnum.DELAYED_SOLVED, description);
+        testBugProcessLogMapper.insert(processLog);
+    }
+
+    @Override
+    public void reopenBug(Integer bugId, String explain) {
+
+    }
+
+    @Override
+    public void closeBug(SolveBugParam param) {
+
+    }
+
 }
 
 

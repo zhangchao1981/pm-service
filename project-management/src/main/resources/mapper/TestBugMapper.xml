@@ -5,10 +5,7 @@
 <mapper namespace="com.iscas.pm.api.mapper.test.TestBugMapper">
 
     <sql id="Base_Column_List">
-        test_bug.id as id,title,current_processor,status,creator,priority,type,
-        files,detail,plan_id,test_plan.name as planName,execute_log_id,
-        module_id,dev_modular.name as moduleName,requirement_id,test_bug.create_time as create_time,
-        creator_user_name,current_processor_user_name
+        test_bug.*,test_plan.name as planName,dev_modular.name as moduleName,test_bug.create_time as create_time
     </sql>
 
     <select id="getTestBugList" resultType="com.iscas.pm.api.model.test.TestBug">

@@ -4,21 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.test.*;
+import com.iscas.pm.api.model.test.param.*;
 import com.iscas.pm.api.service.*;
 
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -205,20 +203,20 @@ public class TestController {
 
     @ApiOperationSupport(order = 22)
     @PostMapping("/transferBug")
-    @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理")
-    @PreAuthorize("hasAuthority('/test/transferBug')")
-    public Boolean transferBug(@Valid @RequestBody TestBug testBug) {
-
-        return null;
+    @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理,缺陷归属人也一并转移")
+//    @PreAuthorize("hasAuthority('/test/transferBug')")
+    public Boolean transferBug(TransferBugParam param) {
+        testBugService.transferBug(param);
+        return true;
     }
 
     @ApiOperationSupport(order = 22)
     @GetMapping("/startProcessBug")
-    @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷")
-    @PreAuthorize("hasAuthority('/test/startProcessBug')")
+    @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷，更改缺陷状态为进行中")
+//    @PreAuthorize("hasAuthority('/test/startProcessBug')")
     public Boolean startProcessBug(Integer bugId) {
-
-        return null;
+        testBugService.startProcessBug(bugId);
+        return true;
     }
 
 
@@ -226,26 +224,35 @@ public class TestController {
     @GetMapping("/solveBug")
     @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
     @PreAuthorize("hasAuthority('/test/solveBug')")
-    public Boolean solveBug(@Valid @RequestBody TestBug testBug) {
-
-        return null;
+    public Boolean solveBug(@Valid @RequestBody SolveBugParam param) {
+        testBugService.solveBug(param);
+        return true;
     }
 
     @ApiOperationSupport(order = 22)
     @GetMapping("/delayedSolveBug")
     @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
     @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
-    public Boolean delayedSolveBug(@Valid @RequestBody TestBug testBug) {
-
-        return null;
+    public Boolean delayedSolveBug(Integer bugId,String explain) {
+        testBugService.delayedSolveBug(bugId,explain);
+        return true;
     }
 
     @ApiOperationSupport(order = 22)
-    @GetMapping("/closeBug")
+    @PostMapping("/reopenBug")
+    @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
+    @PreAuthorize("hasAuthority('/test/reopenBug')")
+    public Boolean reopenBug(Integer bugId,String explain) {
+        testBugService.reopenBug(bugId,explain);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/closeBug")
     @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
     @PreAuthorize("hasAuthority('/test/closeBug')")
-    public Boolean closeBug(String bugId) {
-
+    public Boolean closeBug(@Valid @RequestBody SolveBugParam param) {
+        testBugService.closeBug(param);
         return true;
     }
 

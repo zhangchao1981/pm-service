@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.test;
+package com.iscas.pm.api.model.test.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

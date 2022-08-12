@@ -3,7 +3,9 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.test.TestBug;
-import com.iscas.pm.api.model.test.TestBugQueryParam;
+import com.iscas.pm.api.model.test.param.SolveBugParam;
+import com.iscas.pm.api.model.test.param.TestBugQueryParam;
+import com.iscas.pm.api.model.test.param.TransferBugParam;
 
 /**
 * @author 66410
@@ -17,4 +19,16 @@ public interface TestBugService extends IService<TestBug> {
     IPage<TestBug> bugList(TestBugQueryParam testBug);
 
     void editBug(TestBug testBug);
+
+    void startProcessBug(Integer bugId);
+
+    void transferBug(TransferBugParam param);
+
+    void solveBug(SolveBugParam param);
+
+    void delayedSolveBug(Integer bugId, String explain);
+
+    void reopenBug(Integer bugId, String explain);
+
+    void closeBug(SolveBugParam param);
 }
