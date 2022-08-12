@@ -1,7 +1,9 @@
 package com.iscas.pm.api.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.test.TestBug;
+import com.iscas.pm.api.model.test.TestBugQueryParam;
 
 /**
 * @author 66410
@@ -10,4 +12,9 @@ import com.iscas.pm.api.model.test.TestBug;
 */
 public interface TestBugService extends IService<TestBug> {
 
+    void addBug(TestBug testBug);
+
+    IPage<TestBug> bugList(TestBugQueryParam testBug);
+
+    void editBug(TestBug testBug);
 }

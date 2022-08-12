@@ -1,6 +1,5 @@
 package com.iscas.pm.api.controller;
 
-import com.iscas.pm.api.model.dev.PriorityEnum;
 import com.iscas.pm.api.model.dev.RequireStatusEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
@@ -8,7 +7,7 @@ import com.iscas.pm.api.model.project.ProjectStatusEnum;
 import com.iscas.pm.api.model.project.ProjectTypeEnum;
 import com.iscas.pm.api.model.project.SecretLevelEnum;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
-import com.iscas.pm.api.model.test.UseCaseLevelEnum;
+import com.iscas.pm.api.model.test.PriorityEnum;
 import com.iscas.pm.api.model.test.UseCaseTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,8 +27,8 @@ public class EnumController {
 
     @ApiOperation(value = "需求优先级", notes = "获取需求优先级枚举项列表")
     @PostMapping(value = "/requirementPriority")
-    public PriorityEnum[] requirementPriorityEnums() {
-        return PriorityEnum.values();
+    public com.iscas.pm.api.model.dev.PriorityEnum[] requirementPriorityEnums() {
+        return com.iscas.pm.api.model.dev.PriorityEnum.values();
     }
 
     @ApiOperation(value = "需求状态", notes = "获取需求状态枚举项列表")
@@ -76,8 +75,8 @@ public class EnumController {
 
     @ApiOperation(value = "测试用例等级", notes = "获取测试用例等级列表")
     @PostMapping(value = "/useCaseLevel")
-    public UseCaseLevelEnum[] useCaseLevelEnums() {
-        return UseCaseLevelEnum.values();
+    public PriorityEnum[] useCaseLevelEnums() {
+        return PriorityEnum.values();
     }
 
     @ApiOperation(value = "测试用例类型", notes = "获取测试用例类型列表")

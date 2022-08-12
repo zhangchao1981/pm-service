@@ -32,8 +32,8 @@ public class TestBugProcessLog implements Serializable {
     @ApiModelProperty("处理时间")
     private Date time;
 
-    @ApiModelProperty("处理动作")
-    private String action;
+    @ApiModelProperty("缺陷状态")
+    private BugProcessActionEnum action;
 
     @Size(max = 20, message = "处理人长度不能超过20")
     @ApiModelProperty("处理人")

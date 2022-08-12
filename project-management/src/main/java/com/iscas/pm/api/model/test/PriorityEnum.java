@@ -1,21 +1,20 @@
-package com.iscas.pm.api.model.dev;
+package com.iscas.pm.api.model.test;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 
 /**
+ * 测试用例等级
  * @author by  lichang
- * @date 2022/8/4.
+ * @date 2022/8/10.
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter
-@ApiModel("需求优先级")
 public enum PriorityEnum {
-
-    MAX("MAX", "高"),
-    MID("MID", "中"),
-    MIN("MIN", "低");
+    FIRST("FIRST", "一级"),
+    SECOND("SECOND", "二级"),
+    THIRD("THIRD", "三级"),
+    FOURTH("FOURTH", "四级");
 
     private final String code;
     private final String value;
@@ -24,5 +23,4 @@ public enum PriorityEnum {
         this.code = code;
         this.value = value;
     }
-
 }

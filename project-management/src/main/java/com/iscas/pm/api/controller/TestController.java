@@ -15,11 +15,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -70,7 +70,6 @@ public class TestController {
     public TestUseCase addTestUseCase(@Valid @RequestBody TestUseCase testUseCase) {
         testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
         testUseCase.setCreateTime(new Date());
-        //不需要setModularId
         testUseCaseService.save(testUseCase);
         return testUseCase;
     }
@@ -111,6 +110,7 @@ public class TestController {
     @PreAuthorize("hasAuthority('/test/testPlanList')")
     public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
+
         QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
@@ -120,16 +120,13 @@ public class TestController {
         return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize())).setRecords(list);
     }
 
-
-    //未测，等执行记录开发
-    @ApiOperationSupport(order = 6)
+    @ApiOperationSupport(order = 6) 
     @PostMapping("/testPlan")
     @ApiOperation(value = "测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
     @PreAuthorize("hasAuthority('/test/testPlan')")
     public IPage<TestExecuteLog> testPlan(@RequestBody TestExecuteQueryParam executeQueryParam) {
         return testExecuteLogService.page(new Page<>(executeQueryParam.getPageNum(), executeQueryParam.getPageSize()),
                 new QueryWrapper<TestExecuteLog>().eq("plan_id", executeQueryParam.getPlanId()));
-
     }
 
 
@@ -141,6 +138,7 @@ public class TestController {
         if (!ObjectUtils.isEmpty(testPlanService.getOne(new QueryWrapper<TestPlan>().eq("name", testPlan.getName())))) {
             throw new IllegalArgumentException("计划名重复，请重新命名");
         }
+
         testPlan.setCreateTime(new Date());
         testPlan.setUpdateTime(new Date());
 
@@ -164,12 +162,10 @@ public class TestController {
     @ApiOperation(value = "删除测试计划", notes = "删除指定测试计划")
     @PreAuthorize("hasAuthority('/test/deletetTestPlan')")
     public Boolean deleteTestPlan(Integer planId) {
-        //有问题
+
         QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
                 .eq("plan_id", planId)
-                .isNotNull("pass");
-        //有问题  boolean校验  不能校验null  只要加判断条件是null就查不出来结果
-
+                .ne("pass",null);
         if (testExecuteLogService.list(wrapper).size() > 0) {
             throw new IllegalArgumentException("该计划下已存在有效测试执行记录，不允许删除");
         }
@@ -178,6 +174,12 @@ public class TestController {
         }
         return true;
     }
+
+
+
+    /**
+     * 计划的执行记录
+     */
 
 
     @ApiOperationSupport(order = 10)

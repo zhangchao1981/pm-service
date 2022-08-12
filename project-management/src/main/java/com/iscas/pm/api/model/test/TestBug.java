@@ -5,16 +5,19 @@ import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 测试缺陷表
@@ -23,7 +26,7 @@ import org.hibernate.validator.constraints.Length;
  */
 
 @Accessors(chain = true)
-@ApiModel(value = "缺陷管理", description = "测试缺陷，对应test_bug表")
+@ApiModel(value = "缺陷管理")
 @TableName(value = "test_bug")
 @Data
 public class TestBug implements Serializable {
@@ -32,66 +35,108 @@ public class TestBug implements Serializable {
     private Integer id;
 
     @NotBlank(message = "[缺陷标题]不能为空")
-    @Size(max = 50, message = "编码长度不能超过50")
-    @ApiModelProperty("缺陷标题")
-    @Length(max = 50, message = "编码长度不能超过50")
+    @Size(max = 50, message = "缺陷标题长度不能超过50")
+    @ApiModelProperty(value = "缺陷标题",required = true)
     private String title;
 
-    @Size(max = 20, message = "编码长度不能超过20")
-    @ApiModelProperty("当前处理人")
-    @Length(max = 20, message = "编码长度不能超过20")
-    private String currentProcessor;
+    @ApiModelProperty(value = "缺陷状态，前端无需传参")
+    private BugStatusEnum status;
 
-    @NotBlank(message = "[缺陷状态]不能为空")
-    @Size(max = 20, message = "编码长度不能超过20")
-    @ApiModelProperty("缺陷状态")
-    @Length(max = 20, message = "编码长度不能超过20")
-    private String status;
+    @NotNull(message = "[缺陷严重程度]不能为空")
+    @ApiModelProperty(value = "缺陷严重程度",required = true)
+    private BugSeverityEnum severity;
 
-    @NotBlank(message = "[提出人]不能为空")
-    @Size(max = 20, message = "编码长度不能超过20")
-    @ApiModelProperty("提出人")
-    @Length(max = 20, message = "编码长度不能超过20")
-    private String creator;
+    @NotNull(message = "[优先级]不能为空")
+    @ApiModelProperty(value = "优先级",required = true)
+    private PriorityEnum priority;
 
-    @NotBlank(message = "[优先级]不能为空")
-    @Size(max = 32, message = "编码长度不能超过32")
-    @ApiModelProperty("优先级")
-    @Length(max = 32, message = "编码长度不能超过32")
-    private String priority;
+    @NotNull(message = "[缺陷类型]不能为空")
+    @ApiModelProperty(value = "缺陷类型",required = true)
+    private BugTypeEnum type;
 
-    @NotBlank(message = "[缺陷类型]不能为空")
-    @Size(max = 32, message = "编码长度不能超过32")
-    @ApiModelProperty("缺陷类型")
-    @Length(max = 32, message = "编码长度不能超过32")
-    private String type;
+    @NotNull(message = "[缺陷来源]不能为空")
+    @ApiModelProperty(value = "缺陷来源",required = true)
+    private BugSourceEnum source;
 
-    @Size(max = 255, message = "编码长度不能超过255")
-    @ApiModelProperty("附件文件路径，多个用逗号隔开")
-    @Length(max = 255, message = "编码长度不能超过255")
+    @NotNull(message = "[缺陷注入阶段]不能为空")
+    @ApiModelProperty(value = "缺陷注入阶段",required = true)
+    private BugInjectStageEnum injectStage;
+
+    @NotNull(message = "[缺陷出现概率]不能为空")
+    @ApiModelProperty(value = "缺陷出现概率",required = true)
+    private BugProbabilityEnum probability;
+
+    @ApiModelProperty(value = "附件文件路径，多个用逗号隔开")
     private String files;
 
-    @Size(max = 255, message = "编码长度不能超过255")
-    @ApiModelProperty("缺陷详细说明")
-    @Length(max = 255, message = "编码长度不能超过255")
+    @NotBlank(message = "[缺陷详细说明]不能为空")
+    @ApiModelProperty(value = "缺陷详细说明",required = true)
     private String detail;
 
+
+
+    @ApiModelProperty("提出人姓名，前端无需传参")
+    private String creator;
+
+    @ApiModelProperty("提出人用户名")
+    @JsonIgnore
+    private String creatorUserName;
+
+    @ApiModelProperty(value = "提出时间，前端无需传参")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
+
+    @ApiModelProperty(value = "当前处理人姓名",required = true)
+    @NotBlank(message = "[当前处理人姓名]不能为空")
+    private String currentProcessor;
+
+    @ApiModelProperty(value = "当前处理人用户名",required = true)
+    @NotBlank(message = "[当前处理人用户名]不能为空")
+    private String currentProcessorUserName;
+
+    @ApiModelProperty(value = "缺陷归属人")
+    private String owner;
+
+    @ApiModelProperty(value = "缺陷解决人")
+    private String solver;
+
+    @ApiModelProperty(value = "缺陷解决时间")
+    private String solveTime;
+
+    @ApiModelProperty(value = "缺陷解决结果")
+    private BugSolveResultEnum solveResult;
+
+    @ApiModelProperty(value = "解决时长，小时，后端计算，前端无需传参")
+    private Integer solveHours;
+
+    @ApiModelProperty(value = "回归时长，小时，后端计算，前端无需传参")
+    private Integer regressionHours;
+
+
+
     @NotNull(message = "[关联计划id]不能为空")
-    @ApiModelProperty("关联计划id")
+    @ApiModelProperty(value = "关联计划id",required = true)
     private Integer planId;
 
-    @NotNull(message = "[关联用例id]不能为空")
-    @ApiModelProperty("关联用例id")
+    @ApiModelProperty(value = "关联计划名称，无需传参，显示用")
+    @TableField(exist = false)
+    private String planName;
+
+    @NotNull(message = "[关联执行记录id]不能为空")
+    @ApiModelProperty( value = "关联执行记录id",required = true)
     private Integer executeLogId;
 
-    @NotBlank(message = "[所属模块id]不能为空")
-    @Size(max = 10, message = "编码长度不能超过10")
-    @ApiModelProperty("所属模块id")
-    @Length(max = 10, message = "编码长度不能超过10")
-    private String moduleId;
+    @NotNull(message = "[所属模块id]不能为空")
+    @ApiModelProperty(value = "所属模块id",required = true)
+    private Integer moduleId;
+
+    @ApiModelProperty(value = "模块名称，无需传参，显示用")
+    @TableField(exist = false)
+    private String moduleName;
 
     @NotNull(message = "[关联需求id]不能为空")
-    @ApiModelProperty("关联需求id")
+    @ApiModelProperty(value = "关联需求id",required = true)
     private Integer requirementId;
 
 }
