@@ -11,7 +11,8 @@ import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
+import io.swagger.annotations.ApiSort;
+import lombok.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,17 +35,29 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 @Api(tags = {"人员管理"})
+@ApiSort(2)
 public class UserController {
     @Autowired
     UserService userService;
     @Autowired
     AuthUserRoleService authUserRoleService;
 
-    @ApiOperation(value = "人员列表", notes = "分页返回符合条件的人员列表")
-    @PostMapping("/userList")
+    @ApiOperation(value = "人员列表（分页）", notes = "分页返回符合条件的人员列表")
+    @PostMapping("/userPageList")
     @PreAuthorize("hasAuthority('/user/userList')")
-    public IPage<User> listAll(@RequestBody @Valid UserQueryParam queryParam) {
+    public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
         return userService.selectUserList(queryParam);
+    }
+
+    @ApiOperation(value = "人员列表(废弃)", notes = "分页返回符合条件的人员列表")
+    @GetMapping("/userList")
+    @PreAuthorize("hasAuthority('/user/userList')")
+    @Deprecated
+    public List<User> listAll() {
+        UserQueryParam param = new UserQueryParam();
+        param.setPageNum(1);
+        param.setPageSize(Integer.MAX_VALUE);
+        return userService.selectUserList(param).getRecords();
     }
 
     @ApiOperation(value = "添加人员")

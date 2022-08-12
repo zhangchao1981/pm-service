@@ -4,6 +4,7 @@ import com.iscas.pm.auth.model.RoleTypeEnum;
 import com.iscas.pm.common.core.model.UserStatusEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiSort;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/enum")
 @Api(tags = {"枚举项列表"})
+@ApiSort(5)
 public class EnumController {
 
     @ApiOperation(value = "用户状态",notes = "获取用户状态枚举项列表")

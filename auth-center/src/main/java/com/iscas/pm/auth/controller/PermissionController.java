@@ -6,6 +6,7 @@ import com.iscas.pm.auth.model.RolePermission;
 import com.iscas.pm.auth.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiSort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "permission")
 @Api(tags = {"权限管理"})
+@ApiSort(4)
 public class PermissionController {
 
     @Autowired

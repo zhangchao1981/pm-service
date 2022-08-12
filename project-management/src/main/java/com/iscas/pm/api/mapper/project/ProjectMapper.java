@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.model.project.ProjectQueryParam;
+import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @Author： zhangchao
@@ -19,8 +22,8 @@ public interface ProjectMapper extends BaseMapper<Project> {
     Page<Project> getProjectList(Page<Project> page, @Param("param") ProjectQueryParam param);
 
     @Select("SELECT name FROM pm_project WHERE id=#{id} or name=#{name}")
-    Project findProjectByIdAndName(String id, String name);
+    List<Project> findProjectByIdAndName(String id, String name);
 
     @Select("SELECT name FROM pm_project WHERE id!=#{id} and name=#{name}")
-    Project findProjectByNotIdAndName(String id, String name);
+    List<Project> findProjectByNotIdAndName(String id, String name);
 }

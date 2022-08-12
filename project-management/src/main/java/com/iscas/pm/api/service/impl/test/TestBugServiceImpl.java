@@ -1,5 +1,6 @@
-package com.iscas.pm.api.service.impl;
+package com.iscas.pm.api.service.impl.test;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -16,6 +17,7 @@ import com.iscas.pm.api.model.test.param.TransferBugParam;
 import com.iscas.pm.api.service.TestBugService;
 import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ import java.util.Date;
 
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【test_bug(测试缺陷表)】的数据库操作Service实现
  * @createDate 2022-08-10 10:25:53
  */
@@ -45,7 +47,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         testBugMapper.insert(testBug);
 
         //添加缺陷处理日志
-        TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, "");
+        TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, JSON.toJSONString(testBug));
         testBugProcessLogMapper.insert(processLog);
     }
 
@@ -56,12 +58,19 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void editBug(TestBug testBug) {
-        ///修改缺陷
-        testBugMapper.updateById(testBug);
+        TestBug db_testBug = super.getById(testBug.getId());
+        if (db_testBug == null)
+            throw new IllegalArgumentException("缺陷id不存在");
+        //获取变化字段
+        TestBug bug = getChangeInfo(testBug, db_testBug);
 
-        //添加缺陷处理日志
-        TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, "");
-        testBugProcessLogMapper.insert(processLog);
+        if (bug != null) {
+            super.updateById(bug);
+
+            //添加缺陷处理日志
+            TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.EDIT, JSON.toJSONString(bug));
+            testBugProcessLogMapper.insert(processLog);
+        }
     }
 
     @Override
@@ -107,14 +116,15 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         testBug.setSolver(RequestHolder.getUserInfo().getEmployeeName());
         testBug.setSolveTime(new Date());
         testBug.setSolveResult(param.getSolveResult());
-        testBug.setSolveHours(DateUtil.getWorkHours(testBug.getCreateTime(),new Date()));
+        testBug.setSolveHours(DateUtil.getWorkHours(testBug.getCreateTime(), new Date()));
         testBug.setInjectStage(param.getInjectStage());
         testBug.setType(param.getType());
+        testBug.setStatus(BugStatusEnum.SOLVED);
 
         super.updateById(testBug);
 
         //添加缺陷处理日志
-        String description = "解决结果：" + param.getSolveResult() + ",解决说明：" + param.getExplain();
+        String description = "解决结果：" + param.getSolveResult().getValue() + ",解决说明：" + param.getExplain();
         TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.SOLVED, description);
         testBugProcessLogMapper.insert(processLog);
     }
@@ -137,12 +147,103 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void reopenBug(Integer bugId, String explain) {
+        //更新缺陷信息
+        UpdateWrapper<TestBug> wrapper = Wrappers.update();
+        wrapper.lambda()
+                .set(TestBug::getStatus, BugStatusEnum.REOPEN)
+                .eq(TestBug::getId, bugId);
+        if (!super.update(wrapper))
+            throw new IllegalArgumentException("缺陷id不存在");
 
+        //添加缺陷处理日志
+        String description = StringUtils.isBlank(explain) ? "" : "说明：" + explain;
+        TestBugProcessLog processLog = new TestBugProcessLog(bugId, BugProcessActionEnum.REOPEN, description);
+        testBugProcessLogMapper.insert(processLog);
     }
 
     @Override
     public void closeBug(SolveBugParam param) {
+        TestBug testBug = super.getById(param.getBugId());
+        if (testBug == null)
+            throw new IllegalArgumentException("缺陷id不存在");
 
+        //补全信息，更新缺陷信息
+        testBug.setSolveResult(param.getSolveResult());
+        testBug.setRegressionHours(DateUtil.getWorkHours(testBug.getSolveTime(), new Date()));
+        testBug.setInjectStage(param.getInjectStage());
+        testBug.setType(param.getType());
+        testBug.setStatus(BugStatusEnum.CLOSE);
+
+        super.updateById(testBug);
+
+        //添加缺陷处理日志
+        String description = StringUtils.isBlank(param.getExplain()) ? "" : "说明：" + param.getExplain();
+        TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.CLOSE, description);
+        testBugProcessLogMapper.insert(processLog);
+    }
+
+    private TestBug getChangeInfo(TestBug testBug, TestBug db_testBug) {
+        boolean flag = false;
+
+        //设置允许修改的信息
+        TestBug bug = new TestBug();
+        if (!db_testBug.getTitle().equals(testBug.getTitle())) {
+            flag = true;
+            bug.setTitle(testBug.getTitle());
+        }
+        if (db_testBug.getInjectStage() != testBug.getInjectStage()) {
+            flag = true;
+            bug.setInjectStage(testBug.getInjectStage());
+        }
+        if (!db_testBug.getDetail().equals(testBug.getDetail())) {
+            flag = true;
+            bug.setDetail(testBug.getDetail());
+        }
+        if (!db_testBug.getExecuteLogId().equals(testBug.getExecuteLogId())) {
+            flag = true;
+            bug.setExecuteLogId(testBug.getExecuteLogId());
+        }
+        if (!db_testBug.getFiles().equals(testBug.getFiles())) {
+            flag = true;
+            bug.setFiles(testBug.getFiles());
+        }
+        if (!db_testBug.getModuleId().equals(testBug.getModuleId())) {
+            flag = true;
+            bug.setModuleId(testBug.getModuleId());
+        }
+        if (!db_testBug.getPlanId().equals(testBug.getPlanId())) {
+            flag = true;
+            bug.setPlanId(testBug.getPlanId());
+        }
+        if (db_testBug.getPriority() != testBug.getPriority()) {
+            flag = true;
+            bug.setPriority(testBug.getPriority());
+        }
+        if (db_testBug.getProbability() != testBug.getProbability()) {
+            flag = true;
+            bug.setProbability(testBug.getProbability());
+        }
+        if (!db_testBug.getRequirementId().equals(testBug.getRequirementId())) {
+            flag = true;
+            bug.setRequirementId(testBug.getRequirementId());
+        }
+        if (db_testBug.getSeverity() != testBug.getSeverity()) {
+            flag = true;
+            bug.setSeverity(testBug.getSeverity());
+        }
+        if (db_testBug.getSource() != testBug.getSource()) {
+            flag = true;
+            bug.setSource(testBug.getSource());
+        }
+        if (db_testBug.getType() != testBug.getType()) {
+            flag = true;
+            bug.setType(testBug.getType());
+        }
+        if (!flag) {
+            return null;
+        }
+        bug.setId(testBug.getId());
+        return bug;
     }
 
 }

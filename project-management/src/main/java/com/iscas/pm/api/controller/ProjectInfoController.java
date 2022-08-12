@@ -32,7 +32,7 @@ public class ProjectInfoController {
     @ApiOperation(value = "添加项目", notes = "添加一个新的项目")
     @PreAuthorize("hasAuthority('/projectInfo/addProject')")
     public Project addProject(@Valid @RequestBody Project project) {
-        if (!projectInfoService.findProjectByIdAndName(project.getId(), project.getName())){
+        if (projectInfoService.findProjectByIdAndName(project.getId(), project.getName())) {
             throw new IllegalArgumentException("项目编号或项目名称已经存在！");
         }
         projectInfoService.addProject(project);
@@ -54,7 +54,8 @@ public class ProjectInfoController {
             throw new IllegalArgumentException("项目名称已经存在！");
 
         List<String> permissions = projectInfoService.projectPermissions(project.getId());
-        if (permissions == null || !permissions.contains("/projectInfo/editProject"))
+        //不是本人且没有项目权限，不允许修改
+        if (!dbProject.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject")))
             throw new IllegalArgumentException("您无权限修改该项目");
 
         projectInfoService.saveOrUpdate(project);
@@ -106,10 +107,10 @@ public class ProjectInfoController {
         if (project == null)
             throw new IllegalArgumentException("该项目不存在");
 
-        //然后判断是否有权限
         List<String> permissions = projectInfoService.projectPermissions(project.getId());
-        if (permissions == null || !permissions.contains("/projectInfo/closeProject")){
-            throw new IllegalArgumentException("您无权限删除该项目");
+        //不是本人且没有项目权限，不允许关闭
+        if (!project.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject"))) {
+            throw new IllegalArgumentException("您无权限关闭该项目");
         }
 
         projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
@@ -120,7 +121,7 @@ public class ProjectInfoController {
     @GetMapping("/projectDetailInfo/{id}")
     @ApiOperation(value = "查询项目详情（暂未实现）", notes = "查询指定项目的详细信息，支持前端查询接口")
     @PreAuthorize("hasAuthority('/projectInfo/projectDetailInfo')")
-    public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank(message ="项目Id不能为空") String id) {
+    public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank(message = "项目Id不能为空") String id) {
         Project project = projectInfoService.getById(id);
         if (project == null)
             throw new IllegalArgumentException("该项目不存在");
@@ -133,11 +134,8 @@ public class ProjectInfoController {
     @GetMapping("/switchProject")
     @ApiOperation(value = "切换项目", notes = "根据projectId切换项目")
     public Boolean switchProject(@RequestHeader("Authorization") String token, @NotBlank(message = "projectId不能为空") @RequestParam String projectId) {
-        return projectInfoService.switchProject(token,projectId);
+        return projectInfoService.switchProject(token, projectId);
     }
-
-
-
 
 
 }
