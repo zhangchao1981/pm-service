@@ -2,6 +2,7 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iscas.pm.auth.model.ModifyPwdParam;
+import com.iscas.pm.auth.model.SettingSystemRoleQueryParam;
 import com.iscas.pm.auth.model.UserQueryParam;
 import com.iscas.pm.common.core.model.User;
 import com.iscas.pm.common.core.model.UserStatusEnum;
@@ -100,12 +101,11 @@ public class UserController {
     @ApiOperation(value = "分配角色", notes = "为指定用户分配系统角色")
     @PostMapping("settingSystemRole")
     @PreAuthorize("hasAuthority('/user/settingSystemRole')")
-    public Boolean settingSystemRole(@NotNull @RequestParam Integer userId, @RequestBody List<Integer> roles) {
-        if (userService.getById(userId) == null) {
+    public Boolean settingSystemRole(@Valid @RequestBody SettingSystemRoleQueryParam queryParam) {
+        if (userService.getById(queryParam.getUserId()) == null) {
             throw new IllegalArgumentException("用户不存在");
         }
-
-        return userService.addUserRoles(userId, roles);
+        return userService.addUserRoles(queryParam.getUserId(),queryParam.getRoles());
     }
 
     @ApiOperation(value = "修改用户密码")

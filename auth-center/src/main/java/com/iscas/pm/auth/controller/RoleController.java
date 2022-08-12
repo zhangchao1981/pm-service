@@ -3,6 +3,7 @@ package com.iscas.pm.auth.controller;
 import com.iscas.pm.auth.model.Permission;
 import com.iscas.pm.auth.model.Role;
 import com.iscas.pm.auth.model.RoleTypeEnum;
+import com.iscas.pm.auth.model.SettingPermissionsQueryParam;
 import com.iscas.pm.auth.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -92,12 +93,13 @@ public class RoleController {
     @ApiOperation(value = "分配权限", notes = "为指定角色分配权限")
     @PostMapping("settingPermissions")
     @PreAuthorize("hasAuthority('/role/settingPermissions')")
-    public Boolean settingPermissions(@NotNull @RequestParam Integer roleId, @RequestBody List<String> permissionIds) {
+    public Boolean settingPermissions(@RequestBody @Valid SettingPermissionsQueryParam settingPermissionsQueryParam) {
+        Integer roleId = settingPermissionsQueryParam.getRoleId();
         Role role = roleService.getById(roleId);
         if (role == null) {
             throw new IllegalArgumentException("角色不存在");
         }
-        return roleService.addRolePermissions(roleId, permissionIds);
+        return roleService.addRolePermissions(roleId, settingPermissionsQueryParam.getPermissionIds());
     }
 
 //

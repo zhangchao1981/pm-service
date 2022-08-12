@@ -1,7 +1,10 @@
 package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.iscas.pm.api.model.test.EditBatchExecuteLogParam;
 import com.iscas.pm.api.model.test.TestExecuteLog;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -10,4 +13,7 @@ import com.iscas.pm.api.model.test.TestExecuteLog;
 */
 public interface TestExecuteLogService extends IService<TestExecuteLog> {
 
+    List<TestExecuteLog> addTestExecuteLog(List<Integer> idList, Integer planId);
+
+    Boolean updateBatchTestExecute(EditBatchExecuteLogParam editBatchExecuteLogParam);
 }
