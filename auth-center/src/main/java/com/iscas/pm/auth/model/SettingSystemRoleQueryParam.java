@@ -15,15 +15,14 @@ import java.util.List;
  * @date 2022/8/12.
  */
 @Data
-@ApiModel("分配权限参数")
-public class SettingPermissionsQueryParam {
+@ApiModel("分配角色参数")
+public class SettingSystemRoleQueryParam {
 
-    @NotNull(message = "目标角色id不能为空")
-    @ApiModelProperty(value = "目标角色id", required = true)
-    private Integer roleId;
+    @ApiModelProperty(value = "目标用户id", required = true)
+    @NotNull(message = "userId不能为空")
+    private Integer userId;
 
-    @NotEmpty(message = "要分配的权限列表不能为空")
-    @ApiModelProperty(value = "要分配的权限列表", required = true)
-    private List<String> permissionIds;
-
+    @ApiModelProperty(value = "要分配的角色列表", required = true)
+    @NotEmpty(message = "roles不能为空")
+    private List<Integer> roles;
 }
