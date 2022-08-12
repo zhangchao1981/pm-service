@@ -1,4 +1,4 @@
-package com.iscas.pm.api.service.impl;
+package com.iscas.pm.api.service.impl.test;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestUseCaseMapper;

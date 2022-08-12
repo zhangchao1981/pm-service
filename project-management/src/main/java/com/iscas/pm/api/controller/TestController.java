@@ -118,7 +118,7 @@ public class TestController {
         return   planIPage;
     }
 
-    @ApiOperationSupport(order = 6) 
+    @ApiOperationSupport(order = 7)
     @PostMapping("/testPlan")
     @ApiOperation(value = "测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
     @PreAuthorize("hasAuthority('/test/testPlan')")
@@ -127,8 +127,7 @@ public class TestController {
                 new QueryWrapper<TestExecuteLog>().eq("plan_id", executeQueryParam.getPlanId()));
     }
 
-
-    @ApiOperationSupport(order = 7)
+    @ApiOperationSupport(order = 8)
     @PostMapping("/addTestPlan")
     @ApiOperation(value = "添加测试计划", notes = "添加测试计划")
     @PreAuthorize("hasAuthority('/test/addTestPlan')")
@@ -144,7 +143,7 @@ public class TestController {
         return testPlan;
     }
 
-    @ApiOperationSupport(order = 8)
+    @ApiOperationSupport(order = 9)
     @PostMapping("/editTestPlan")
     @ApiOperation(value = "修改测试计划", notes = "修改测试计划")
     @PreAuthorize("hasAuthority('/test/editTestPlan')")
@@ -155,7 +154,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 9)
+    @ApiOperationSupport(order = 10)
     @GetMapping("/deleteTestPlan")
     @ApiOperation(value = "删除测试计划", notes = "删除指定测试计划")
     @PreAuthorize("hasAuthority('/test/deletetTestPlan')")
@@ -173,115 +172,6 @@ public class TestController {
         return true;
     }
 
-
-
-    @ApiOperationSupport(order = 21)
-    @PostMapping("/bugList")
-    @ApiOperation(value = "缺陷列表", notes = "返回符合条件的缺陷列表")
-    public IPage<TestBug> bugList(@Valid @RequestBody TestBugQueryParam param) {
-        return testBugService.bugList(param);
-    }
-
-    @ApiOperationSupport(order = 22)
-    @PostMapping("/addBug")
-    @ApiOperation(value = "新建缺陷", notes = "添加新缺陷")
-    @PreAuthorize("hasAuthority('/test/addBug')")
-    public TestBug addBug(@Valid @RequestBody TestBug testBug) {
-        testBugService.addBug(testBug);
-        return testBug;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @PostMapping("/editBug")
-    @ApiOperation(value = "修改缺陷", notes = "修改缺陷")
-    @PreAuthorize("hasAuthority('/test/editBug')")
-    public Boolean editBug(@Valid @RequestBody TestBug testBug) {
-        testBugService.editBug(testBug);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @PostMapping("/transferBug")
-    @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理,缺陷归属人也一并转移")
-//    @PreAuthorize("hasAuthority('/test/transferBug')")
-    public Boolean transferBug(TransferBugParam param) {
-        testBugService.transferBug(param);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @GetMapping("/startProcessBug")
-    @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷，更改缺陷状态为进行中")
-//    @PreAuthorize("hasAuthority('/test/startProcessBug')")
-    public Boolean startProcessBug(Integer bugId) {
-        testBugService.startProcessBug(bugId);
-        return true;
-    }
-
-
-    @ApiOperationSupport(order = 22)
-    @GetMapping("/solveBug")
-    @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
-    @PreAuthorize("hasAuthority('/test/solveBug')")
-    public Boolean solveBug(@Valid @RequestBody SolveBugParam param) {
-        testBugService.solveBug(param);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @GetMapping("/delayedSolveBug")
-    @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
-    @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
-    public Boolean delayedSolveBug(Integer bugId,String explain) {
-        testBugService.delayedSolveBug(bugId,explain);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @PostMapping("/reopenBug")
-    @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
-    @PreAuthorize("hasAuthority('/test/reopenBug')")
-    public Boolean reopenBug(Integer bugId,String explain) {
-        testBugService.reopenBug(bugId,explain);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @PostMapping("/closeBug")
-    @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
-    @PreAuthorize("hasAuthority('/test/closeBug')")
-    public Boolean closeBug(@Valid @RequestBody SolveBugParam param) {
-        testBugService.closeBug(param);
-        return true;
-    }
-
-    @ApiOperationSupport(order = 22)
-    @GetMapping("/bugProgressLog")
-    @ApiOperation(value = "缺陷处理日志", notes = "查询指定缺陷的处理日志")
-    public List<TestBugProcessLog> bugProgressLog(String bugId) {
-        return testBugProcessLogService.list(new QueryWrapper<TestBugProcessLog>().eq("bug_id", bugId));
-    }
-
-
-
-
-
-    /**
-     * 计划的执行记录
-     */
-
-
-    @ApiOperationSupport(order = 10)
-    @PostMapping("/testExecuteLogList")
-    @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表")
-    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
-    public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
-        Integer planId = testExecuteLogParam.getPlanId();
-        return testExecuteLogService.page(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()),
-                new QueryWrapper<TestExecuteLog>().eq(planId != null, "plan_id", planId));
-    }
-
-
     @ApiOperationSupport(order = 11)
     @PostMapping("/addTestExecuteLog")
     @ApiOperation(value = "导入用例", notes = "批量导入测试用例到目标测试计划的用例执行记录表里")
@@ -290,16 +180,14 @@ public class TestController {
         return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
     }
 
-    //是否需要
     @ApiOperationSupport(order = 12)
-    @PostMapping("/editTestExecuteLog")
-    @ApiOperation(value = "修改用例执行记录", notes = "修改用例执行记录")
-    @PreAuthorize("hasAuthority('/test/editTestExecuteLog')")
-    public Boolean editTestExecuteLog(@Valid @RequestBody TestExecuteLog testExecuteLog) {
-        if (!testExecuteLogService.updateById(testExecuteLog)) {
-            throw new IllegalArgumentException("要修改的用例执行记录id不存在");
-        }
-        return true;
+    @PostMapping("/testExecuteLogList")
+    @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表")
+    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
+    public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
+        Integer planId = testExecuteLogParam.getPlanId();
+        return testExecuteLogService.page(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()),
+                new QueryWrapper<TestExecuteLog>().eq(planId != null, "plan_id", planId));
     }
 
     @ApiOperationSupport(order = 13)
@@ -324,19 +212,102 @@ public class TestController {
         return true;
     }
 
-
-    /**
-     * 执行计划统计信息
-     *
-     * @return
-     */
-
-    @ApiOperationSupport(order = 6)
+    @ApiOperationSupport(order = 15)
     @PostMapping("/testPlanStatistic")
     @ApiOperation(value = "测试计划统计数", notes = "查看测试计划对应统计数据")
     @PreAuthorize("hasAuthority('/test/useCaseAmountInPlan')")
     public TestPlanStatisticData useCaseAmountInPlan(@RequestParam Integer testPlanId) {
         return testPlanService.statisticData(testPlanId);
     }
+
+
+    @ApiOperationSupport(order = 21)
+    @PostMapping("/bugList")
+    @ApiOperation(value = "缺陷列表", notes = "返回符合条件的缺陷列表")
+    public IPage<TestBug> bugList(@Valid @RequestBody TestBugQueryParam param) {
+        return testBugService.bugList(param);
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/addBug")
+    @ApiOperation(value = "新建缺陷", notes = "添加新缺陷")
+    @PreAuthorize("hasAuthority('/test/addBug')")
+    public TestBug addBug(@Valid @RequestBody TestBug testBug) {
+        testBugService.addBug(testBug);
+        return testBug;
+    }
+
+    @ApiOperationSupport(order = 22)
+    @PostMapping("/editBug")
+    @ApiOperation(value = "编辑缺陷", notes = "编辑缺陷，只能编辑部分信息")
+    @PreAuthorize("hasAuthority('/test/editBug')")
+    public Boolean editBug(@Valid @RequestBody TestBug testBug) {
+        testBugService.editBug(testBug);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 23)
+    @PostMapping("/transferBug")
+    @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理,缺陷归属人也一并转移")
+    @PreAuthorize("hasAuthority('/test/transferBug')")
+    public Boolean transferBug(@Valid @RequestBody TransferBugParam param) {
+        testBugService.transferBug(param);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 24)
+    @GetMapping("/startProcessBug")
+    @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷，更改缺陷状态为进行中")
+    @PreAuthorize("hasAuthority('/test/startProcessBug')")
+    public Boolean startProcessBug(Integer bugId) {
+        testBugService.startProcessBug(bugId);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 25)
+    @PostMapping("/solveBug")
+    @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
+    @PreAuthorize("hasAuthority('/test/solveBug')")
+    public Boolean solveBug(@Valid @RequestBody SolveBugParam param) {
+        testBugService.solveBug(param);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 26)
+    @GetMapping("/delayedSolveBug")
+    @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
+    @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
+    public Boolean delayedSolveBug(Integer bugId,String explain) {
+        testBugService.delayedSolveBug(bugId,explain);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 27)
+    @GetMapping("/reopenBug")
+    @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
+    @PreAuthorize("hasAuthority('/test/reopenBug')")
+    public Boolean reopenBug(Integer bugId,String explain) {
+        testBugService.reopenBug(bugId,explain);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 28)
+    @PostMapping("/closeBug")
+    @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
+    @PreAuthorize("hasAuthority('/test/closeBug')")
+    public Boolean closeBug(@Valid @RequestBody SolveBugParam param) {
+        testBugService.closeBug(param);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 29)
+    @GetMapping("/bugProgressLog")
+    @ApiOperation(value = "缺陷处理日志", notes = "查询指定缺陷的处理日志")
+    public List<TestBugProcessLog> bugProgressLog(Integer bugId) {
+        return testBugProcessLogService.list(new QueryWrapper<TestBugProcessLog>().eq("bug_id", bugId));
+    }
+
+
+
 
 }

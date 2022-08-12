@@ -85,16 +85,16 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
     @Override
     public Boolean findProjectByIdAndName(String id, String name) {
-        Project project = projectMapper.findProjectByIdAndName(id, name);
-        if (project == null)
+        List<Project> project = projectMapper.findProjectByIdAndName(id, name);
+        if (project == null || project.size() == 0)
             return false;
         return true;
     }
 
     @Override
     public Boolean findProjectByNotIdAndName(String id, String name) {
-        Project project = projectMapper.findProjectByNotIdAndName(id, name);
-        if (project == null)
+        List<Project> project = projectMapper.findProjectByNotIdAndName(id, name);
+        if (project == null || project.size() == 0)
             return false;
         return true;
     }

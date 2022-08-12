@@ -5,10 +5,7 @@ import com.iscas.pm.auth.model.Role;
 import com.iscas.pm.auth.model.RoleTypeEnum;
 import com.iscas.pm.auth.model.SettingPermissionsQueryParam;
 import com.iscas.pm.auth.service.RoleService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/role")
 @Api(tags = {"角色管理"})
+@ApiSort(3)
 public class RoleController {
     @Autowired
     RoleService roleService;

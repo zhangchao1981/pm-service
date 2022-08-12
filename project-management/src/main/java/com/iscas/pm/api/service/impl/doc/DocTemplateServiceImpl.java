@@ -1,4 +1,4 @@
-package com.iscas.pm.api.service.impl;
+package com.iscas.pm.api.service.impl.doc;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
