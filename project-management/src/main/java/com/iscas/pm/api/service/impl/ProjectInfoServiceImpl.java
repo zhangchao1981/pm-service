@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.iscas.pm.api.mapper.project.ProjectUserRoleMapper;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.mapper.project.ProjectMapper;
 import com.iscas.pm.api.service.InitSchemaService;
@@ -33,6 +34,8 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private RedisUtil redisUtil;
     @Autowired
     private InitSchemaService initSchemaService;
+    @Autowired
+    private ProjectUserRoleMapper projectUserRoleMapper;
 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
@@ -40,7 +43,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         if (systemPermissions != null)
-            if (systemPermissions.contains("/projectInfo/addProject") || systemPermissions.contains("/projectInfo/approveProject")) {
+            if (systemPermissions.contains("/projectInfo/approveProject")) {
                 QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>()
                         .eq(StringUtils.isNotBlank(param.getStatus()), "status", param.getStatus())
                         .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
@@ -80,6 +83,13 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         project.setUpdateTime(new Date());
 
         projectMapper.insert(project);
+
+        //为创建者添加项目经理角色
+        ProjectUserRole member = new ProjectUserRole();
+        member.setProjectId(project.getId());
+        member.setUserId(RequestHolder.getUserInfo().getId());
+        member.setRoleId(6);
+        projectUserRoleMapper.insert(member);
         return project;
     }
 
