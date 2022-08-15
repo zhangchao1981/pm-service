@@ -40,7 +40,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
-
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         if (systemPermissions != null)
             if (systemPermissions.contains("/projectInfo/approveProject")) {
@@ -49,7 +48,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
                         .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
                 return  projectMapper.selectPage(page, queryWrapper);
             }
-
         //否则返回有权限的项目
         param.setUserId(RequestHolder.getUserInfo().getId());
         return  projectMapper.getProjectList(page, param);
@@ -67,7 +65,6 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         if (projectPermissions == null || projectPermissions.get(projectId) == null || projectPermissions.get(projectId).size() == 0) {
             throw new AuthorizeException("当前用户无权限访问目标项目");
         }
-
         //redis中更新当前项目
         UserInfo userInfo = RequestHolder.getUserInfo();
         userInfo.setCurrentProjectId(projectId);

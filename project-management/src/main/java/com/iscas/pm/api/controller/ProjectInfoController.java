@@ -58,9 +58,7 @@ public class ProjectInfoController {
         //不是本人且没有项目权限，不允许修改
         if (!dbProject.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject")))
             throw new IllegalArgumentException("您无权限修改该项目");
-
         projectInfoService.saveOrUpdate(project);
-
         return project;
     }
 
@@ -87,7 +85,6 @@ public class ProjectInfoController {
         Project project = projectInfoService.getById(approve.getId());
         if (project == null)
             throw new IllegalArgumentException("审核的项目不存在");
-
         if (project.getStatus() != ProjectStatusEnum.CHECK)
             throw new IllegalArgumentException("审核的项目已通过审批，无需审批");
 
@@ -96,7 +93,6 @@ public class ProjectInfoController {
         else
             project.setStatus(ProjectStatusEnum.UN_PASS);
         project.setApproveComments(approve.getApproveComments());
-
         return projectInfoService.approveProject(project);
     }
 
@@ -107,7 +103,6 @@ public class ProjectInfoController {
         Project project = projectInfoService.getById(id);
         if (project == null)
             throw new IllegalArgumentException("该项目不存在");
-
         List<String> permissions = projectInfoService.projectPermissions(project.getId());
         //不是本人且没有项目权限，不允许关闭
         if (!project.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject"))) {
@@ -137,6 +132,4 @@ public class ProjectInfoController {
     public Boolean switchProject(@RequestHeader("Authorization") String token, @NotBlank(message = "projectId不能为空") @RequestParam String projectId) {
         return projectInfoService.switchProject(token, projectId);
     }
-
-
 }

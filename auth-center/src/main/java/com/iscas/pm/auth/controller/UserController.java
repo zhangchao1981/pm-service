@@ -164,4 +164,54 @@ public class UserController {
         List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
         return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());
     }
+
+
+    /**
+     * 部门树
+     */
+
+
+    @GetMapping("/findDepartment")
+    @ApiOperation(value = "查询部门树", notes = "查询整棵部门树")
+    @ApiOperationSupport(order = 1)
+    @PreAuthorize("hasAuthority('/user/findDepartment')")
+    public List<Department> getAll() {
+        return departmentService.getDepartmentTree();
+    }
+
+
+    @PostMapping("/addDepartment")
+    @ApiOperation(value = "添加部门", notes = "id自动生成，前端不用传,children属性是查询显示的，添加不传该值")
+    @ApiOperationSupport(order = 2)
+    @PreAuthorize("hasAuthority('/user/addDepartment')")
+    public Department addDepartment(@Valid @RequestBody Department Department) {
+        return departmentService.addDepartment(Department);
+    }
+
+
+    @PostMapping("/deleteDepartment")
+    @ApiOperation(value = "删除部门", notes = "根据部门id删除")
+    @ApiOperationSupport(order = 3)
+    @PreAuthorize("hasAuthority('/user/deleteDepartment')")
+    public boolean deleteDepartment(@NotNull(message = "部门Id不能为空") @RequestParam Integer id) {
+        if (!departmentService.removeById(id)) {
+            throw new IllegalArgumentException("id对应部门不存在");
+        }
+        return true;
+    }
+
+
+    @PostMapping("/editDepartment")
+    @ApiOperation(value = "修改部门", notes = "修改部门名称(或父id)， children属性是查询显示的，修改不传该值")
+    @ApiOperationSupport(order = 4)
+    @PreAuthorize("hasAuthority('/user/editDepartment')")
+    public Department editDepartment(@Valid @RequestBody Department Department) {
+        return departmentService.editDepartment(Department);
+    }
+
+
+
+
+
+
 }

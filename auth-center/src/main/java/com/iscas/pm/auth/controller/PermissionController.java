@@ -73,10 +73,11 @@ public class PermissionController {
         if (permissionService.getById(permissionId) == null) {
             throw new IllegalArgumentException("权限不存在");
         }
-
         permissionService.removeById(permissionId);
         return true;
     }
+
+
     @ApiOperation(value = "添加权限并给某角色赋予对应新权限",notes = "添加新权限")
     @PostMapping("/addPermission/{roleId}")
 //    @PreAuthorize("hasAuthority('/permission/addPermissionRole')")

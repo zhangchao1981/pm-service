@@ -80,9 +80,7 @@ public class DocController {
         return true;
     }
 
-    /**
-     * 待测试 ： 不更改其id及父id
-     */
+
     @PostMapping("/editDirectory")
     @ApiOperation(value = "修改目录", notes = "修改目录名称(或父id)， children属性是查询显示的，修改不传该值")
     @ApiOperationSupport(order = 4)
