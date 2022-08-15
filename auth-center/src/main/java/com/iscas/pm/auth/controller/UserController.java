@@ -194,6 +194,14 @@ public class UserController {
     @ApiOperationSupport(order = 3)
     @PreAuthorize("hasAuthority('/user/deleteDepartment')")
     public boolean deleteDepartment(@NotNull(message = "部门Id不能为空") @RequestParam Integer id) {
+        //有人员或子部门时，不允许删除
+        if (departmentService.list(new QueryWrapper<Department>().eq("parent_id",id)).size()>0){
+            throw new IllegalArgumentException("有子部门存在，拒绝删除");
+        }
+        if (userService.list(new QueryWrapper<User>().eq("department_id",id)).size()>0){
+            throw new IllegalArgumentException("该部门有员工存在，拒绝删除");
+        }
+
         if (!departmentService.removeById(id)) {
             throw new IllegalArgumentException("id对应部门不存在");
         }
@@ -208,8 +216,6 @@ public class UserController {
     public Department editDepartment(@Valid @RequestBody Department Department) {
         return departmentService.editDepartment(Department);
     }
-
-
 
 
 

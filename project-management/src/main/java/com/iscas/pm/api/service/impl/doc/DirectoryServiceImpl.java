@@ -55,6 +55,13 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
                 throw new IllegalArgumentException("父id对应目录不存在");
             }
         }
+        //判断父id是否和自身id相同
+        if (parentId.equals(directory.getParentId())){
+            throw new IllegalArgumentException("父id与自身id相同，死循环");
+        }
+
+
+
         //进行更新，更新失败(id不存在)抛出异常
         if (1 > directoryMapper.updateById(directory)) {
             throw new IllegalArgumentException("要修改目录id不存在");

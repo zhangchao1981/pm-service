@@ -37,7 +37,7 @@ public class Directory implements Serializable {
 
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "子节点", notes = "")
+    @ApiModelProperty(value = "子节点", notes = "前端不需要")
     private List<Directory>   children;
 
     @TableField(exist = false)
