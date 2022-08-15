@@ -2,8 +2,10 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.iscas.pm.auth.mapper.DepartmentMapper;
 import com.iscas.pm.auth.model.*;
 import com.iscas.pm.auth.service.AuthUserRoleService;
+import com.iscas.pm.auth.service.DepartmentService;
 import com.iscas.pm.common.core.model.User;
 import com.iscas.pm.common.core.model.UserStatusEnum;
 import com.iscas.pm.auth.service.UserService;
@@ -11,9 +13,10 @@ import com.iscas.pm.common.core.model.UserDetailInfo;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
-import lombok.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Directory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +44,8 @@ public class UserController {
     UserService userService;
     @Autowired
     AuthUserRoleService authUserRoleService;
+    @Autowired
+    DepartmentService departmentService;
 
     @ApiOperation(value = "人员列表（分页）", notes = "分页返回符合条件的人员列表")
     @PostMapping("/userPageList")
@@ -139,7 +144,6 @@ public class UserController {
         if (user == null) {
             throw new IllegalArgumentException("用户不存在");
         }
-
         user.setPassword(new BCryptPasswordEncoder().encode("123456"));
         userService.saveOrUpdate(user);
         return true;
@@ -155,7 +159,7 @@ public class UserController {
 
     @ApiOperation(value = "获取用户已分配的系统角色", notes = "根据userId查询对应的系统角色")
     @PostMapping("systemRolesByUserId")
-    @PreAuthorize("hasAuthority('/role/systemRolesByUserId')")
+    @PreAuthorize("hasAuthority('/user/systemRolesByUserId')")
     public List<Integer> systemRolesByUserId(@NotNull @RequestParam Integer userId) {
         List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
         return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());
