@@ -2,6 +2,10 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.doc.DocTemplate;
+import com.iscas.pm.api.model.doc.param.AddTemplateParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
 * @author 66410
@@ -10,4 +14,8 @@ import com.iscas.pm.api.model.doc.DocTemplate;
 */
 public interface DocTemplateService extends IService<DocTemplate> {
 
+
+    DocTemplate addLocalDocument(AddTemplateParam addTemplateParam) throws IOException;
+
+    String uploadTemplate(MultipartFile file) throws IOException;
 }

@@ -2,10 +2,8 @@ package com.iscas.pm.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.iscas.pm.api.model.doc.Directory;
-import com.iscas.pm.api.model.doc.Document;
-import com.iscas.pm.api.model.doc.ReferenceDoc;
-import com.iscas.pm.api.model.doc.ReviseRecord;
+import com.iscas.pm.api.model.doc.*;
+import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -92,6 +91,7 @@ public class DocController {
         return directoryService.editDirectory(directory);
     }
 
+
     @PostMapping("/addLocalDocument")
     @ApiOperation(value = "添加本地文档", notes = "上传本地文档到服务器")
     @ApiImplicitParam(name = "documentJson", value = "前端封装成json字符串，参见Model对象Document")
@@ -121,13 +121,11 @@ public class DocController {
         return document;
     }
 
-
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
-
         if (!documentService.removeById(documentId)) {
             throw new IllegalArgumentException("删除失败，文档不存在");
         }
@@ -160,7 +158,7 @@ public class DocController {
 
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
-    @ApiOperationSupport(order = 21)
+    @ApiOperationSupport(order = 16)
     @PreAuthorize("hasAuthority('/projectDoc/addReferenceDoc')")
     public Boolean addReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         if (documentService.getById(referenceDoc.getTemplateId()) == null) {
@@ -171,7 +169,7 @@ public class DocController {
 
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档")
-    @ApiOperationSupport(order = 22)
+    @ApiOperationSupport(order = 17)
     @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         if (documentService.getById(referenceDoc.getTemplateId()) == null) {
@@ -182,7 +180,7 @@ public class DocController {
 
     @PostMapping("/referenceDocList")
     @ApiOperation(value = "查询引用文档", notes = "")
-    @ApiOperationSupport(order = 23)
+    @ApiOperationSupport(order = 18)
     @PreAuthorize("hasAuthority('/projectDoc/referenceDocList')")
     public List<ReferenceDoc> referenceDocList(@NotNull(message = "引用文档Id不能为空") @RequestParam Integer templateId) {
         return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
@@ -191,7 +189,7 @@ public class DocController {
 
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
-    @ApiOperationSupport(order = 24)
+    @ApiOperationSupport(order = 19)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
     public boolean deleteReferenceDoc(@NotEmpty(message = "id不能为空") @RequestParam Integer referenceId) {
         if (!referenceDocService.remove(new QueryWrapper<ReferenceDoc>().eq("id", referenceId))) {
@@ -202,7 +200,7 @@ public class DocController {
 
     @PostMapping("/addReviseRecord")
     @ApiOperation(value = "添加修订记录", notes = "")
-    @ApiOperationSupport(order = 31)
+    @ApiOperationSupport(order = 20)
     @PreAuthorize("hasAuthority('/projectDoc/addReviseRecord')")
     public Boolean addReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
         if (documentService.getById(reviseRecord.getTemplateId()) == null) {
@@ -213,7 +211,7 @@ public class DocController {
 
     @PostMapping("/editReviseRecord")
     @ApiOperation(value = "修改修订记录", notes = "")
-    @ApiOperationSupport(order = 32)
+    @ApiOperationSupport(order = 21)
     @PreAuthorize("hasAuthority('/projectDoc/editReviseRecord')")
     public boolean editReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
         if (documentService.getById(reviseRecord.getTemplateId()) == null) {
@@ -227,7 +225,7 @@ public class DocController {
 
     @PostMapping("/ReviseRecordList")
     @ApiOperation(value = "查询修订记录", notes = "")
-    @ApiOperationSupport(order = 33)
+    @ApiOperationSupport(order = 22)
     @PreAuthorize("hasAuthority('/projectDoc/ReviseRecordList')")
     public List<ReviseRecord> reviseRecordList(@NotNull(message = "templateId不能为空") @RequestParam Integer templateId) {
         return reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
@@ -235,7 +233,7 @@ public class DocController {
 
     @PostMapping("/deleteReviseRecord")
     @ApiOperation(value = "删除修订记录")
-    @ApiOperationSupport(order = 34)
+    @ApiOperationSupport(order = 23)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
     public boolean deleteReviseRecord(@NotEmpty(message = "id不能为空") @RequestParam Integer reviseRecordId) {
         if (!reviseRecordService.remove(new QueryWrapper<ReviseRecord>().eq("id", reviseRecordId))) {
@@ -244,12 +242,63 @@ public class DocController {
         return true;
     }
 
-    @PostMapping("/deleteTemplate")//没添加权限
+    //是否要校验   revice_recode/ reference有记录   (目前是外键级联删)
+    @PostMapping("/deleteTemplate")
     @ApiOperation(value = "删除文档模板", notes = "待开发")
-    @ApiOperationSupport(order = 41)
+    @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
-    public boolean deleteTemplate(@NotNull(message = "模板id不能为空") @RequestParam List<Integer> idList) {
+    public boolean deleteTemplate(@NotEmpty(message = "模板id不能为空") @RequestParam List<Integer> idList) {
+        if (!docTemplateService.removeByIds(idList)) {
+            throw new IllegalArgumentException("要删除的模板id不存在");
+        }
         return true;
     }
+
+
+    @PostMapping("/addTemplate")
+    @ApiOperation(value = "添加文档模板", notes = "上传本地文档模板到数据库")
+    @ApiOperationSupport(order = 25)
+    @PreAuthorize("hasAuthority('/projectDoc/addTemplate')")
+    public DocTemplate addTemplate(@Valid @RequestBody AddTemplateParam addTemplateParam) throws IOException {
+        return docTemplateService.addLocalDocument(addTemplateParam);
+    }
+
+
+    //下载模板接口 待实现
+    @PostMapping("/uploadTemplate")
+    @ApiOperation(value = "上传文档模板", notes = "上传本地文档模板到服务器")
+    @ApiOperationSupport(order = 26)
+    @PreAuthorize("hasAuthority('/projectDoc/uploadTemplate')")
+    public String uploadTemplate(MultipartFile file) throws IOException {
+        return docTemplateService.uploadTemplate(file);
+    }
+
+    @GetMapping("/downloadTemplate")
+    @ApiOperation(value = "下载文档模板", notes = "本地上传模板和系统生成模板支持下载，链接类型模板不支持下载")
+    @ApiOperationSupport(order = 27)
+    @PreAuthorize("hasAuthority('/projectDoc/downloadTemplate')")
+    public DocTemplate downloadTemplate(String filePath) {
+        return null;
+    }
+
+    @PostMapping("/editTemplate")
+    @ApiOperation(value = "修改文档模板", notes = "")
+    @ApiOperationSupport(order = 28)
+    @PreAuthorize("hasAuthority('/projectDoc/editTemplate')")
+    public boolean editTemplate(@Valid @RequestBody DocTemplate template) {
+        if (!docTemplateService.save(template)) {
+            throw new IllegalArgumentException("要修改的template不存在");
+        }
+        return true;
+    }
+
+    @PostMapping("/TemplateList")
+    @ApiOperation(value = "查询文档模板", notes = "")
+    @ApiOperationSupport(order = 29)
+    @PreAuthorize("hasAuthority('/projectDoc/templateList')")
+    public List<DocTemplate> templateList(@NotBlank(message = "templateId不能为空") @RequestParam String nameOrMaintainer) {
+        return docTemplateService.list(new QueryWrapper<DocTemplate>().like("name", nameOrMaintainer).or().like("maintainer", nameOrMaintainer));
+    }
+
 
 }

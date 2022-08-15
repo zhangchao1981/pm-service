@@ -40,6 +40,8 @@ public class TestController {
     TestBugProcessLogService testBugProcessLogService;
     @Autowired
     TestExecuteLogService testExecuteLogService;
+    @Autowired
+    DevRequirementService requirementService;
 
 
     @ApiOperationSupport(order = 1)
@@ -58,6 +60,7 @@ public class TestController {
 
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
+
 
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
@@ -106,14 +109,13 @@ public class TestController {
     @PreAuthorize("hasAuthority('/test/testPlanList')")
     public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
-
         QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
-        List<TestPlan> list = testPlanService.list(wrapper);
-        list.stream().forEach(plan -> {
-            plan.inputstatisticData(testPlanService.statisticData(plan.getId()));   });
-        return testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize())).setRecords(list);
+        IPage<TestPlan> planIPage = testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
+        planIPage.getRecords().stream().forEach(plan -> {
+            plan.inputstatisticData(testPlanService.statisticData(plan.getId())); });
+        return   planIPage;
     }
 
     @ApiOperationSupport(order = 7)
@@ -136,6 +138,7 @@ public class TestController {
 
         testPlan.setCreateTime(new Date());
         testPlan.setUpdateTime(new Date());
+
         testPlanService.save(testPlan);
         return testPlan;
     }
@@ -303,6 +306,8 @@ public class TestController {
     public List<TestBugProcessLog> bugProgressLog(Integer bugId) {
         return testBugProcessLogService.list(new QueryWrapper<TestBugProcessLog>().eq("bug_id", bugId));
     }
+
+
 
 
 }
