@@ -1,6 +1,7 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.iscas.pm.api.model.doc.ProjectDetailInfo;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.common.core.web.filter.RequestHolder;

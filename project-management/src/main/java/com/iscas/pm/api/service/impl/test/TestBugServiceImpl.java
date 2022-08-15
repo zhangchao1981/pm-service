@@ -61,6 +61,9 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug db_testBug = super.getById(testBug.getId());
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+        if (db_testBug.getStatus() == BugStatusEnum.CLOSE)
+            throw new IllegalArgumentException("缺陷已经关闭，不能修改");
+
         //获取变化字段
         TestBug bug = getChangeInfo(testBug, db_testBug);
 
@@ -75,13 +78,17 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void startProcessBug(Integer bugId) {
-        //更新缺陷信息
-        UpdateWrapper<TestBug> wrapper = Wrappers.update();
-        wrapper.lambda()
-                .set(TestBug::getStatus, BugStatusEnum.RUNNING)
-                .eq(TestBug::getId, bugId);
-        if (!super.update(wrapper))
+        TestBug db_testBug = super.getById(bugId);
+        if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.REOPEN)
+            throw new IllegalArgumentException("缺陷状态为新建或重新打开时，才可执行【开始】操作");
+
+        if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
+            throw new IllegalArgumentException("您没有处理该缺陷的权限");
+
+       super.updateById(db_testBug);
 
         //添加缺陷处理日志
         TestBugProcessLog processLog = new TestBugProcessLog(bugId, BugProcessActionEnum.START, "");
@@ -90,6 +97,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void transferBug(TransferBugParam param) {
+        //当前处理人或技术经理可以转办缺陷
+
         //更新缺陷信息
         UpdateWrapper<TestBug> wrapper = Wrappers.update();
         wrapper.lambda()
@@ -111,15 +120,23 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug testBug = super.getById(param.getBugId());
         if (testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+        if (testBug.getStatus()!=BugStatusEnum.RUNNING)
+            throw new IllegalArgumentException("【进行中】状态的缺陷才能执行【已解决】操作");
+        if (!testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
+            throw new IllegalArgumentException("您没有处理该缺陷的权限");
 
         //补全信息，更新缺陷信息
         testBug.setSolver(RequestHolder.getUserInfo().getEmployeeName());
         testBug.setSolveTime(new Date());
         testBug.setSolveResult(param.getSolveResult());
         testBug.setSolveHours(DateUtil.getWorkHours(testBug.getCreateTime(), new Date()));
+
         testBug.setInjectStage(param.getInjectStage());
         testBug.setType(param.getType());
         testBug.setStatus(BugStatusEnum.SOLVED);
+
+        testBug.setCurrentProcessor(testBug.getCreator());
+        testBug.setCurrentProcessorUserName(testBug.getCreatorUserName());
 
         super.updateById(testBug);
 
@@ -131,13 +148,18 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void delayedSolveBug(Integer bugId, String explain) {
-        //更新缺陷信息
-        UpdateWrapper<TestBug> wrapper = Wrappers.update();
-        wrapper.lambda()
-                .set(TestBug::getStatus, BugStatusEnum.DELAYED_SOLVED)
-                .eq(TestBug::getId, bugId);
-        if (!super.update(wrapper))
+        TestBug db_testBug = super.getById(bugId);
+        if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.RUNNING)
+            throw new IllegalArgumentException("缺陷状态为新建或运行中时，才可执行【延迟解决】操作");
+        if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
+            throw new IllegalArgumentException("您没有处理该缺陷的权限");
+
+        db_testBug.setStatus(BugStatusEnum.DELAYED_SOLVED);
+
+        //更新缺陷信息
+        super.updateById(db_testBug);
 
         //添加缺陷处理日志
         String description = "延时原因：" + explain;
@@ -147,13 +169,16 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void reopenBug(Integer bugId, String explain) {
-        //更新缺陷信息
-        UpdateWrapper<TestBug> wrapper = Wrappers.update();
-        wrapper.lambda()
-                .set(TestBug::getStatus, BugStatusEnum.REOPEN)
-                .eq(TestBug::getId, bugId);
-        if (!super.update(wrapper))
+        TestBug db_testBug = super.getById(bugId);
+        if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+        if (db_testBug.getStatus() != BugStatusEnum.SOLVED)
+            throw new IllegalArgumentException("缺陷状态为已解决时，才可执行【重新打开】操作");
+
+        db_testBug.setStatus(BugStatusEnum.REOPEN);
+
+        //更新缺陷信息
+        super.updateById(db_testBug);
 
         //添加缺陷处理日志
         String description = StringUtils.isBlank(explain) ? "" : "说明：" + explain;
@@ -166,6 +191,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug testBug = super.getById(param.getBugId());
         if (testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+        if (testBug.getStatus() != BugStatusEnum.SOLVED)
+            throw new IllegalArgumentException("缺陷状态为已解决时，才可执行【关闭】操作");
 
         //补全信息，更新缺陷信息
         testBug.setSolveResult(param.getSolveResult());
