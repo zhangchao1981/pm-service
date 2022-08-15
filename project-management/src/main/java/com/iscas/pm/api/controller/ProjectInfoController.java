@@ -88,7 +88,7 @@ public class ProjectInfoController {
             throw new IllegalArgumentException("审核的项目不存在");
 
         if (project.getStatus() != ProjectStatusEnum.CHECK)
-            throw new IllegalArgumentException("审核的项目以通过审批，无需审批");
+            throw new IllegalArgumentException("审核的项目已通过审批，无需审批");
 
         if (approve.getPass())
             project.setStatus(ProjectStatusEnum.RUNNING);

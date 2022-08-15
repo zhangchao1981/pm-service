@@ -235,7 +235,7 @@ public class DocController {
     @ApiOperation(value = "删除修订记录")
     @ApiOperationSupport(order = 23)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
-    public boolean deleteReviseRecord(@NotEmpty(message = "id不能为空") @RequestParam Integer reviseRecordId) {
+    public boolean deleteReviseRecord(@NotNull(message = "id不能为空") @RequestParam Integer reviseRecordId) {
         if (!reviseRecordService.remove(new QueryWrapper<ReviseRecord>().eq("id", reviseRecordId))) {
             throw new IllegalArgumentException("要删除的修订记录不存在");
         }

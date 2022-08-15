@@ -11,6 +11,8 @@ import com.iscas.pm.api.service.TestPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 
 /**
  * @author 66410
@@ -37,11 +39,15 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
         //待测，判断条件用布尔还是int
         Integer passUseCase = testExecuteLogMapper.selectCount(new QueryWrapper<TestExecuteLog>().select("DISTINCT use_case_id").eq("plan_id", testPlanId).eq("pass", true));
         data.setTestedCase(testedUseCase.toString()+"/"+totalUseCase.toString());
-        data.setPassRate((double) passUseCase/totalUseCase);
-        //缺陷情况待完成
-//        data.setBugStatistic()
+        BigDecimal passRate = new BigDecimal((double) passUseCase/totalUseCase);
+        // 保留两位小数，不四舍五入(可选舍入模式)
+        data.setPassRate(passRate.setScale(2, BigDecimal.ROUND_HALF_DOWN).doubleValue());
         //执行进度待完成
-        data.setExecuteProgress( (double) testedUseCase/totalUseCase);
+        BigDecimal executeProgress = new BigDecimal((double) testedUseCase/totalUseCase);
+        // 保留两位小数，不四舍五入(可选舍入模式)
+        data.setExecuteProgress(executeProgress.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
+        //缺陷情况待完成
+        //data.setBugStatistic()
         return data;
     }
 }
