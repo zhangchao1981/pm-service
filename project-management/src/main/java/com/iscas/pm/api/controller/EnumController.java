@@ -1,5 +1,6 @@
 package com.iscas.pm.api.controller;
 
+import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
 import com.iscas.pm.api.model.dev.RequireStatusEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
@@ -82,6 +83,13 @@ public class EnumController {
     @ApiOperation(value = "测试用例类型", notes = "获取测试用例类型列表")
     @PostMapping(value = "/useCaseType")
     public UseCaseTypeEnum[] useCaseTypeEnum() {  return UseCaseTypeEnum.values(); }
+
+
+    @ApiOperation(value = "关联接口类型", notes = "获取关联接口类型列表")
+    @PostMapping(value = "/interfaceType")
+    public InterfaceTypeEnum[] interfaceTypeEnum() {  return InterfaceTypeEnum.values(); }
+
+
 
 
 }

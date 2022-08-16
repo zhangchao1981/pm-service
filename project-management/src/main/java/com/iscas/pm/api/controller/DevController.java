@@ -1,17 +1,12 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.iscas.pm.api.model.dev.DevModular;
-import com.iscas.pm.api.model.dev.DevRequirement;
-import com.iscas.pm.api.model.dev.DevTask;
-import com.iscas.pm.api.model.dev.RequireStatusEnum;
+import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
-import com.iscas.pm.api.service.DevModularService;
-import com.iscas.pm.api.service.DevRequirementService;
-import com.iscas.pm.api.service.DevTaskService;
-import com.iscas.pm.api.service.TaskFeedbackService;
+import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.util.TreeUtil;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiOperationSupport;
@@ -42,6 +37,8 @@ public class DevController {
     DevTaskService devTaskService;
     @Autowired
     TaskFeedbackService taskFeedbackService;
+    @Autowired
+    DevInterfaceService devInterfaceService;
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
@@ -185,10 +182,10 @@ public class DevController {
 
     @ApiOperationSupport(order = 12)
     @PostMapping("/devTaskList")
-    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务")
+    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务,需求id为null返回所有任务")
     @PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
-        return devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", requireId));
+        return devTaskService.list(new QueryWrapper<DevTask>().eq(requireId != null, "require_id", requireId));
     }
 
     @ApiOperationSupport(order = 13)
@@ -208,7 +205,7 @@ public class DevController {
 
     @PostMapping("/addTaskFeedback")
     @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改开发任务完成情况的反馈信息")
-    @ApiOperationSupport(order = 6)
+    @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDev/saveTaskFeedback')")
     public TaskFeedback saveTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback) {
         taskFeedbackService.saveTaskFeedback(taskFeedback);
@@ -217,9 +214,9 @@ public class DevController {
 
     @GetMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
-    @ApiOperationSupport(order = 7)
+    @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(Integer taskId) {
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull Integer taskId) {
         return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(taskId));
     }
 
@@ -261,4 +258,61 @@ public class DevController {
         }
 
     }
+
+
+    /**
+     * 关联接口
+     */
+
+
+    @ApiOperationSupport(order = 16)
+    @PostMapping("/addDevInterface")
+    @ApiOperation(value = "添加关联接口", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/addDevInterface')")
+    public Boolean addDevInterface(@Valid @RequestBody DevInterface devInterface) {
+        //重名校验  同一个需求下的关联接口不允许同名
+        if (devInterfaceService.list(
+                new QueryWrapper<DevInterface>().eq("name", devInterface.getName()).eq("require_id", devInterface.getRequireId())).size() > 0) {
+            throw new IllegalArgumentException("该需求下已有同名接口存在");
+        }
+
+        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devInterface.getRequireId())).size() < 1) {
+            throw new IllegalArgumentException("需求Id对应需求不存在");
+        }
+        devInterface.setMaintainer(RequestHolder.getUserInfo().getUserName());
+        devInterfaceService.save(devInterface);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 11)
+    @PostMapping("/editDevInterface")
+    @ApiOperation(value = "修改关联接口")
+    @PreAuthorize("hasAuthority('/projectDev/editDevInterface')")
+    public DevInterface editDevInterface(@Valid @RequestBody DevInterface devInterface) {
+        if (!devInterfaceService.updateById(devInterface)) {
+            throw new IllegalArgumentException("要修改的关联接口不存在！");
+        }
+        return devInterface;
+    }
+
+    @ApiOperationSupport(order = 12)
+    @PostMapping("/DevInterfaceList")
+    @ApiOperation(value = "查询关联接口", notes = "返回需求id对应的关联接口,参数为空则查询全部关联接口")
+    @PreAuthorize("hasAuthority('/projectDev/DevInterfaceList')")
+    public List<DevInterface> DevInterfaceList(@RequestParam Integer requireId) {
+        return devInterfaceService.list(new QueryWrapper<DevInterface>().eq(requireId != null, "require_id", requireId));
+    }
+
+    @ApiOperationSupport(order = 13)
+    @PostMapping("/deleteDevInterface")
+    @ApiOperation(value = "删除关联接口", notes = "删除id对应信息")
+    @PreAuthorize("hasAuthority('/projectDev/deleteDevInterface')")
+    public boolean deleteDevInterface(@NotNull(message = "id不能为空") @RequestParam Integer id) {
+        if (!devInterfaceService.removeById(id)) {
+            throw new IllegalArgumentException("要删除的关联接口id不存在");
+        }
+        return true;
+    }
+
+
 }

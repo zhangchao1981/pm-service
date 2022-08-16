@@ -12,6 +12,8 @@ import lombok.Data;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,9 +27,11 @@ public class DevTask implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    @NotBlank(message = "任务名称不能为空")
     @ApiModelProperty(value = "任务名称",required = true)
     private String name;
 
+    @NotBlank(message = "责任人不能为空")
     @ApiModelProperty(value = "责任人,传参是人员姓名",required = true)
     private String worker;
 
@@ -36,6 +40,7 @@ public class DevTask implements Serializable {
 
     @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
     private Integer devProgress;
+
 
     @ApiModelProperty(value = "计划工时",required = true)
     private Double scheduleHour;
@@ -55,6 +60,7 @@ public class DevTask implements Serializable {
 
     @JsonIgnore
     @ApiModelProperty(value = "开发需求id",required = true)
+    @NotNull(message = "开发需求id不能为空")
     private Integer requireId;
 
     @TableField(exist = false)

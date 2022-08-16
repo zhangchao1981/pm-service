@@ -15,11 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 部门表
- *
- * @TableName auth_department
- */
+
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "人员部门", description = "部门信息，对应主库auth_department表")
