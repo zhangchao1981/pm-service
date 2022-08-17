@@ -46,7 +46,7 @@ public class Document implements Serializable {
     @NotNull(message = "文档目录id不能为空")
     private Integer directoryId;
 
-    @ApiModelProperty(value = "文档路径，链接类型的文档需要传参，其他类型不需要")
+    @ApiModelProperty(value = "文档路径",required = true)
     private String path;
 
     @ApiModelProperty(value = "生成时间，后端自动生成，前端无需传参")
@@ -55,7 +55,7 @@ public class Document implements Serializable {
     private Date createTime;
 
     @JsonIgnore
-    @ApiModelProperty(value = "最后更新时间")
+    @ApiModelProperty(value = "最后更新时间,后端自动生成，前端无需传参")
     private Date updateTime;
 
     @TableField(exist = false)

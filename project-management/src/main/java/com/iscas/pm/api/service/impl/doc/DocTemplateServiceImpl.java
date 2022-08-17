@@ -9,10 +9,12 @@ import com.iscas.pm.api.model.doc.DocTemplate;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.service.DocTemplateService;
 import com.iscas.pm.api.util.FastDFSUtil;
+import com.iscas.pm.common.core.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
@@ -25,6 +27,8 @@ import java.util.Date;
 public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTemplate> implements DocTemplateService {
     @Autowired
     FastDFSUtil fastDFSUtil;
+    @Autowired
+    RedisUtil redisUtil;
     @Autowired
     DocTemplateMapper docTemplateMapper;
 
@@ -46,7 +50,16 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     public String uploadTemplate(MultipartFile file) throws IOException {
         //文件存入FastDFs
         StorePath path = fastDFSUtil.upload(file);
+        redisUtil.set(path.getFullPath(),null);
+        //设置失效时间  (数值待定)
+        redisUtil.expire(path.getFullPath(),1000);
         return  path.getFullPath();
+    }
+
+    @Override
+    public Object downLoadTemplate(String path, String name, HttpServletResponse response) throws IOException {
+       fastDFSUtil.download(path,name,response);
+        return null;
     }
 }
 

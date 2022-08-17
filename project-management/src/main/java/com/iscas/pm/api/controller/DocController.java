@@ -1,6 +1,5 @@
 package com.iscas.pm.api.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
@@ -13,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -41,6 +41,8 @@ public class DocController {
     ReviseRecordService reviseRecordService;
     @Autowired
     DocTemplateService docTemplateService;
+    @Autowired
+    HttpServletResponse response;
 
 
     @GetMapping("/findDirectory")
@@ -90,34 +92,46 @@ public class DocController {
     }
 
 
-    @PostMapping("/addLocalDocument")
-    @ApiOperation(value = "添加本地文档", notes = "上传本地文档到服务器")
-    @ApiImplicitParam(name = "documentJson", value = "前端封装成json字符串，参见Model对象Document")
+    @PostMapping("/uploadDocument")
+    @ApiOperation(value = "上传本地文档", notes = "上传本地文档到服务器")
     @ApiOperationSupport(order = 11)
-    @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
-    public Document addLocalDocument(MultipartFile file, String documentJson) throws IOException {
-        @Valid Document document = JSONObject.parseObject(documentJson, Document.class);
-        document.setCreateTime(new Date());
-        document.setUpdateTime(new Date());
-        document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
-        documentService.addLocalDocument(file, document);
-        return document;
+    @PreAuthorize("hasAuthority('/projectDoc/uploadDocument')")
+    public String uploadDocument(MultipartFile file) throws IOException {
+        return documentService.uploadDocument(file);
     }
 
-    @PostMapping("/addLinkDocument")
-    @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
-    @ApiOperationSupport(order = 12)
-    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
-    public Document addLinkDocument(@Valid @RequestBody Document document) {
+
+    @PostMapping("/addLocalDocument")
+    @ApiOperation(value = "添加本地文档", notes = "将文档信息存储到mysql(包括文档在服务器上的存储路径)")
+    @ApiOperationSupport(order = 11)
+    @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
+    public Document addLocalDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath())) {
             throw new IllegalArgumentException("文档路径不能为空");
         }
         document.setCreateTime(new Date());
         document.setUpdateTime(new Date());
         document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
-        documentService.addLinkDocument(document);
+        documentService.addLocalDocument(document);
         return document;
     }
+
+
+//    @PostMapping("/addLinkDocument")
+//    @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
+//    @ApiOperationSupport(order = 12)
+//    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
+//    public Document addLinkDocument(@Valid @RequestBody Document document) {
+//        if (StringUtils.isBlank(document.getPath())) {
+//            throw new IllegalArgumentException("文档路径不能为空");
+//        }
+//        document.setCreateTime(new Date());
+//        document.setUpdateTime(new Date());
+//        document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
+//        documentService.addLinkDocument(document);
+//        return document;
+//    }
+//
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
@@ -146,13 +160,10 @@ public class DocController {
     @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
-    public Document downloadDocument(Integer directoryId) {
-        Document document = documentService.getById(directoryId);
-        if (document == null) {
-            throw new IllegalArgumentException("要下载的文件ID不存在");
-        }
-        return document;
+    public void downloadDocument(Integer directoryId) {
+        documentService.downloadDocument(directoryId, response);
     }
+
 
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
@@ -240,7 +251,7 @@ public class DocController {
         return true;
     }
 
-    //是否要校验   revice_recode/ reference有记录   (目前是外键级联删)
+    //是否要校验   receive_recode/ reference有记录   (目前是外键级联删)
     @PostMapping("/deleteTemplate")
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 24)
@@ -262,7 +273,6 @@ public class DocController {
     }
 
 
-    //下载模板接口 待实现
     @PostMapping("/uploadTemplate")
     @ApiOperation(value = "上传文档模板", notes = "上传本地文档模板到服务器")
     @ApiOperationSupport(order = 26)
@@ -275,8 +285,14 @@ public class DocController {
     @ApiOperation(value = "下载文档模板", notes = "本地上传模板和系统生成模板支持下载，链接类型模板不支持下载")
     @ApiOperationSupport(order = 27)
     @PreAuthorize("hasAuthority('/projectDoc/downloadTemplate')")
-    public DocTemplate downloadTemplate(String filePath) {
-        return null;
+    public void downloadTemplate(@RequestParam @NotNull(message = "文档模板id不能为空") Integer templateId) throws IOException {
+        //mysql查询文档模板的服务器存储路径
+        DocTemplate localTemplate = docTemplateService.getById(templateId);
+        if (localTemplate == null) {
+            throw new IllegalArgumentException("文档不存在");
+        }
+        //返回值待  进一步处理
+        docTemplateService.downLoadTemplate(localTemplate.getPath(), localTemplate.getName(), response);
     }
 
     @PostMapping("/editTemplate")

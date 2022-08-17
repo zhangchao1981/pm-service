@@ -16,7 +16,7 @@ import java.util.List;
 public interface DocumentService extends IService<Document> {
 
 
-    Document addLocalDocument(MultipartFile file, Document document) throws IOException;
+    Document addLocalDocument(Document document) ;
 
     Document addLinkDocument(Document document);
 
@@ -25,4 +25,6 @@ public interface DocumentService extends IService<Document> {
     Boolean deleteDocumentBatch(List<Integer> ids);
 
     void downloadDocument(Integer id, HttpServletResponse response);
+
+    String uploadDocument(MultipartFile file) throws IOException;
 }

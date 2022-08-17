@@ -121,7 +121,7 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 7)
-    @PostMapping("/devRequirementList")
+    @GetMapping("/devRequirementList")
     @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息")
     @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
     public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
@@ -129,7 +129,7 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 8)
-    @PostMapping("/devRequirement")
+    @GetMapping("/devRequirement")
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里")
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
@@ -146,6 +146,11 @@ public class DevController {
         if (devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", id)).size() > 0) {
             throw new IllegalArgumentException("当前开发需求下有任务，不许删除");
         }
+        //如果当前开发需求下有关联接口  ，则不许删除
+        if (devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", id)).size() > 0) {
+            throw new IllegalArgumentException("当前开发需求下有任务，不许删除");
+        }
+
         if (!devRequirementService.removeById(id)) {
             throw new IllegalArgumentException("要删除的开发需求id不存在");
         }
@@ -181,7 +186,7 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 12)
-    @PostMapping("/devTaskList")
+    @GetMapping("/devTaskList")
     @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务,需求id为null返回所有任务")
     @PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
@@ -260,9 +265,6 @@ public class DevController {
     }
 
 
-    /**
-     * 关联接口
-     */
 
 
     @ApiOperationSupport(order = 16)
@@ -296,7 +298,7 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 12)
-    @PostMapping("/DevInterfaceList")
+    @GetMapping("/DevInterfaceList")
     @ApiOperation(value = "查询关联接口", notes = "返回需求id对应的关联接口,参数为空则查询全部关联接口")
     @PreAuthorize("hasAuthority('/projectDev/DevInterfaceList')")
     public List<DevInterface> DevInterfaceList(@RequestParam Integer requireId) {

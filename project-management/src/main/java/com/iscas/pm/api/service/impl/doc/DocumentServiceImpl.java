@@ -8,6 +8,7 @@ import com.iscas.pm.api.model.doc.Document;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.service.DocumentService;
 import com.iscas.pm.api.util.FastDFSUtil;
+import com.iscas.pm.common.core.util.RedisUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,23 +29,20 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     DocumentMapper documentMapper;
     @Autowired
     FastDFSUtil fastDFSUtil;
+    @Autowired
+    RedisUtil redisUtil;
 
 
 
     @Override
-    public Document addLocalDocument(MultipartFile file, Document document) throws IOException {
+    public Document addLocalDocument(Document document)  {
         if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
             throw new IllegalArgumentException("所属目录不存在");
 
         if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
             throw new IllegalArgumentException("该目录下已存在同名文档");
-
-        //文件存入FastDFs
-        StorePath path = fastDFSUtil.upload(file);
-
-        document.setPath(path.getFullPath());
+        document.setPath(document.getPath());
         documentMapper.insert(document);
-
         return document;
     }
 
@@ -92,6 +90,17 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public String uploadDocument(MultipartFile file) throws IOException {
+        //文件存入FastDFs
+        StorePath path = fastDFSUtil.upload(file);
+        //路径存储到redis中
+        redisUtil.set(path.getFullPath(),null);
+        //设置失效时间  (数值待定)
+        redisUtil.expire(path.getFullPath(),1000);
+        return  path.getFullPath();
     }
 
     /**

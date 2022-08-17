@@ -5,6 +5,7 @@ import com.iscas.pm.api.model.doc.DocTemplate;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -18,4 +19,6 @@ public interface DocTemplateService extends IService<DocTemplate> {
     DocTemplate addLocalDocument(AddTemplateParam addTemplateParam) throws IOException;
 
     String uploadTemplate(MultipartFile file) throws IOException;
+
+    Object downLoadTemplate(String path, String name, HttpServletResponse response) throws IOException;
 }

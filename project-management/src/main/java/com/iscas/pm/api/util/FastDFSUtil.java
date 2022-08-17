@@ -12,8 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,12 +44,16 @@ public class FastDFSUtil {
         Set<MetaData> mataData = new HashSet<>();
         mataData.add(new MetaData("author", "iscas"));
         mataData.add(new MetaData("description", file.getOriginalFilename()));
-        // 上传
-        StorePath storePath = fastFileStorageClient.uploadFile(
-                file.getInputStream(),
-                file.getSize(),
-                FilenameUtils.getExtension(file.getOriginalFilename()),
-                null);
+        StorePath storePath = null;
+        try {
+            storePath = fastFileStorageClient.uploadFile(
+                    file.getInputStream(),
+                    file.getSize(),
+                    FilenameUtils.getExtension(file.getOriginalFilename()),
+                    null);
+        }catch (IOException e) {
+            throw new IOException("上传文件异常："+e);
+        }
         return storePath;
     }
 
