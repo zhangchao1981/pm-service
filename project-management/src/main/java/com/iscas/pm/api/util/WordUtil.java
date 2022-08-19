@@ -12,7 +12,7 @@ import java.util.Map;
 public class WordUtil {
     public static void main(String[] args) throws UnsupportedEncodingException {
         DocumentHandler documentHandler = new DocumentHandler();
-        DocumentHandler.createDoc(getData(),"D:/test1.doc");//输出到F:/test.doc
+        DocumentHandler.createDoc(getData(),"D:/test001.doc");//输出到F:/test.doc
     }
 
     private static Map<String,Object> getData(){//要输入到模板上的数据

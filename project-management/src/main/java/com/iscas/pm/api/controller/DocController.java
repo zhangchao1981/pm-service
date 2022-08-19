@@ -3,6 +3,7 @@ package com.iscas.pm.api.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
+import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
@@ -93,13 +94,12 @@ public class DocController {
 
 
 
-    @PostMapping("/uploadDocument")
-    @ApiOperation(value = "生成文档", notes = "选择指定模板，自动生成对应文档并保存到指定路径下")
+    @PostMapping("/createDocument")
+    @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并保存到指定路径下")
     @ApiOperationSupport(order = 11)
-    @PreAuthorize("hasAuthority('/projectDoc/uploadDocument')")
-    public void createDocument() throws IOException {
-//        //参数
-//         documentService.createDocument(file);
+    @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
+    public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
+         documentService.createDocument(createDocumentParam);
     }
 
 

@@ -32,12 +32,11 @@ public class DocumentHandler {
         Configuration configuration = new Configuration();
         configuration.setDefaultEncoding("utf-8");
         //装载模板
-
         configuration.setClassForTemplateLoading(DocumentHandler.class, "/template");
         Template template = null;
         try {
             //test.ftl为要装载的模板   这里模板写死了，后面要写活
-            template = configuration.getTemplate("test.ftl");
+            template = configuration.getTemplate("temp2.ftl");
         } catch (IOException e) {
             e.printStackTrace();
         }

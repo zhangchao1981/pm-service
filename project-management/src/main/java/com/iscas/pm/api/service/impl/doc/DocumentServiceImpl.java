@@ -3,19 +3,30 @@ package com.iscas.pm.api.service.impl.doc;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.model.doc.Document;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
+import com.iscas.pm.api.model.doc.ReferenceDoc;
+import com.iscas.pm.api.model.doc.ReviseRecord;
+import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.service.DocumentService;
+import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,14 +42,14 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     FastDFSUtil fastDFSUtil;
     @Autowired
     RedisUtil redisUtil;
-
+    @Autowired
+    private FastFileStorageClient fastFileStorageClient;
 
 
     @Override
-    public Document addLocalDocument(Document document)  {
+    public Document addLocalDocument(Document document) {
         if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
             throw new IllegalArgumentException("所属目录不存在");
-
         if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
             throw new IllegalArgumentException("该目录下已存在同名文档");
         document.setPath(document.getPath());
@@ -85,7 +96,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
         if (StringUtils.isNotBlank(document.getPath()) && document.getType() != DocumentTypeEnum.LINK) {
             try {
-                fastDFSUtil.download(document.getPath(),document.getName(),response);
+                fastDFSUtil.download(document.getPath(), document.getName(), response);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -97,10 +108,46 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //文件存入FastDFs
         StorePath path = fastDFSUtil.upload(file);
         //路径存储到redis中
-        redisUtil.set(path.getFullPath(),null);
+        redisUtil.set(path.getFullPath(), null);
         //设置失效时间  (数值待定)
-        redisUtil.expire(path.getFullPath(),1000);
-        return  path.getFullPath();
+        redisUtil.expire(path.getFullPath(), 1000);
+        return path.getFullPath();
+    }
+
+
+    @Override
+    public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
+        //首先要将模板输出到硬盘上
+        StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
+        byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
+        if (null == sourceByte) {
+            throw new IllegalArgumentException("模板路径错误，服务器读取不到该文件");
+        }
+        String path = "D:/file/";
+        //这里模板名不能用路径
+        String fileName ="temp1"+ ".ftl";
+        try {
+            File file = new File(path + fileName);//文件路径（路径+文件名）
+            if (!file.exists()) {   //文件不存在则创建文件，先创建目录
+                File dir = new File(file.getParent());
+                dir.mkdirs();
+                file.createNewFile();
+            }
+            FileOutputStream outStream = new FileOutputStream(file); //文件输出流将数据写入文件
+            outStream.write(sourceByte);
+            outStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //模板上需要替换的数据：
+        HashMap<String, Object> map = new HashMap<>();
+        List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
+        List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
+        map.put("文档修订记录",recordList);
+        map.put("引用文档",referenceList);
+        DocumentHandler documentHandler = new DocumentHandler();
+        DocumentHandler.createDoc(map, "D:/outPutDoc.doc");//输出到F:/test.doc
     }
 
     /**
