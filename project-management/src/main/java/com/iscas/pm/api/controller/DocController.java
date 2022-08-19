@@ -92,13 +92,32 @@ public class DocController {
     }
 
 
+
     @PostMapping("/uploadDocument")
-    @ApiOperation(value = "上传本地文档", notes = "上传本地文档到服务器")
+    @ApiOperation(value = "生成文档", notes = "选择指定模板，自动生成对应文档并保存到指定路径下")
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/uploadDocument')")
-    public String uploadDocument(MultipartFile file) throws IOException {
-        return documentService.uploadDocument(file);
+    public void createDocument() throws IOException {
+//        //参数
+//         documentService.createDocument(file);
     }
+
+
+
+
+
+
+
+
+
+
+//    @PostMapping("/uploadDocument")
+//    @ApiOperation(value = "上传本地文档", notes = "上传本地文档到服务器")
+//    @ApiOperationSupport(order = 11)
+//    @PreAuthorize("hasAuthority('/projectDoc/uploadDocument')")
+//    public String uploadDocument(MultipartFile file) throws IOException {
+//        return documentService.uploadDocument(file);
+//    }
 
 
     @PostMapping("/addLocalDocument")
@@ -156,13 +175,13 @@ public class DocController {
     }
 
 
-    @GetMapping("/downloadDocument")
-    @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
-    @ApiOperationSupport(order = 15)
-    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
-    public void downloadDocument(Integer directoryId) {
-        documentService.downloadDocument(directoryId, response);
-    }
+//    @GetMapping("/downloadDocument")
+//    @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
+//    @ApiOperationSupport(order = 15)
+//    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
+//    public void downloadDocument(Integer directoryId) {
+//        documentService.downloadDocument(directoryId, response);
+//    }
 
 
     @PostMapping("/addReferenceDoc")
@@ -194,6 +213,8 @@ public class DocController {
     public List<ReferenceDoc> referenceDocList(@NotNull(message = "引用文档Id不能为空") @RequestParam Integer templateId) {
         return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
     }
+
+
 
 
     @PostMapping("/deleteReferenceDoc")
@@ -273,27 +294,27 @@ public class DocController {
     }
 
 
-    @PostMapping("/uploadTemplate")
-    @ApiOperation(value = "上传文档模板", notes = "上传本地文档模板到服务器")
-    @ApiOperationSupport(order = 26)
-    @PreAuthorize("hasAuthority('/projectDoc/uploadTemplate')")
-    public String uploadTemplate(MultipartFile file) throws IOException {
-        return docTemplateService.uploadTemplate(file);
-    }
+//    @PostMapping("/uploadTemplate")
+//    @ApiOperation(value = "上传文档模板", notes = "上传本地文档模板到服务器")
+//    @ApiOperationSupport(order = 26)
+//    @PreAuthorize("hasAuthority('/projectDoc/uploadTemplate')")
+//    public String uploadTemplate(MultipartFile file) throws IOException {
+//        return docTemplateService.uploadTemplate(file);
+//    }
 
-    @GetMapping("/downloadTemplate")
-    @ApiOperation(value = "下载文档模板", notes = "本地上传模板和系统生成模板支持下载，链接类型模板不支持下载")
-    @ApiOperationSupport(order = 27)
-    @PreAuthorize("hasAuthority('/projectDoc/downloadTemplate')")
-    public void downloadTemplate(@RequestParam @NotNull(message = "文档模板id不能为空") Integer templateId) throws IOException {
-        //mysql查询文档模板的服务器存储路径
-        DocTemplate localTemplate = docTemplateService.getById(templateId);
-        if (localTemplate == null) {
-            throw new IllegalArgumentException("文档不存在");
-        }
-        //返回值待  进一步处理
-        docTemplateService.downLoadTemplate(localTemplate.getPath(), localTemplate.getName(), response);
-    }
+//    @GetMapping("/downloadTemplate")
+//    @ApiOperation(value = "下载文档模板", notes = "本地上传模板和系统生成模板支持下载，链接类型模板不支持下载")
+//    @ApiOperationSupport(order = 27)
+//    @PreAuthorize("hasAuthority('/projectDoc/downloadTemplate')")
+//    public void downloadTemplate(@RequestParam @NotNull(message = "文档模板id不能为空") Integer templateId) throws IOException {
+//        //mysql查询文档模板的服务器存储路径
+//        DocTemplate localTemplate = docTemplateService.getById(templateId);
+//        if (localTemplate == null) {
+//            throw new IllegalArgumentException("文档不存在");
+//        }
+//        //返回值待  进一步处理
+//        docTemplateService.downLoadTemplate(localTemplate.getPath(), localTemplate.getName(), response);
+//    }
 
     @PostMapping("/editTemplate")
     @ApiOperation(value = "修改文档模板", notes = "")

@@ -11,5 +11,8 @@ import lombok.Data;
 @Data
 public class ProjectDetailInfo {
 
+
+
+
     private Project basicInfo;
 }
