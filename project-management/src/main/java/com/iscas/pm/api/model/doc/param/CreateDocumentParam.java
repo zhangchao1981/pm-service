@@ -15,6 +15,8 @@ public class CreateDocumentParam {
 
     private String templatePath;
 
+    private  String currentProjectId;
+
     private  List<ReferenceDoc>  referenceDocList;
 
     private List<ReviseRecord>  reviseRecordList;

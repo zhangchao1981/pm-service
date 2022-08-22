@@ -8,6 +8,7 @@ package com.iscas.pm.api.util;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Version;
 
 import java.io.*;
 import java.util.Map;
@@ -28,15 +29,15 @@ public class DocumentHandler {
      * @param fileName 生成文件的路径
      * @throws UnsupportedEncodingException
      */
-    public static void createDoc(Map<String, Object> dataMap, String fileName) throws UnsupportedEncodingException {
-        Configuration configuration = new Configuration();
+    public static void createDoc(Map<String, Object> dataMap, String fileName,String tempName) throws IOException {
+        Configuration configuration = new Configuration(new Version("2.3.28"));
         configuration.setDefaultEncoding("utf-8");
-        //装载模板
-        configuration.setClassForTemplateLoading(DocumentHandler.class, "/template");
+        //装载模板    设置的服务器模板存储位置为 D:/file
+        configuration.setDirectoryForTemplateLoading(new File("D:/file"));
         Template template = null;
         try {
-            //test.ftl为要装载的模板   这里模板写死了，后面要写活
-            template = configuration.getTemplate("temp2.ftl");
+            //test.ftl为要装载的模板
+            template = configuration.getTemplate(tempName,"UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -118,13 +118,7 @@ public class ProjectInfoController {
     @ApiOperation(value = "查询项目详情（暂未实现）", notes = "查询指定项目的详细信息，支持前端查询接口")
     @PreAuthorize("hasAuthority('/projectInfo/projectDetailInfo')")
     public ProjectDetailInfo getProjectDetailInfo(@PathVariable @NotBlank(message = "项目Id不能为空") String id) {
-        Project project = projectInfoService.getById(id);
-        if (project == null)
-            throw new IllegalArgumentException("该项目不存在");
-
-        ProjectDetailInfo detailInfo = new ProjectDetailInfo();
-        //填入哪些额外信息
-        return detailInfo;
+        return  projectInfoService.getProjectDetailInfo(id);
     }
 
     @GetMapping("/switchProject")

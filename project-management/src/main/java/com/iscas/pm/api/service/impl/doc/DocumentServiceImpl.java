@@ -6,15 +6,16 @@ import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
-import com.iscas.pm.api.model.doc.Document;
-import com.iscas.pm.api.model.doc.DocumentTypeEnum;
-import com.iscas.pm.api.model.doc.ReferenceDoc;
-import com.iscas.pm.api.model.doc.ReviseRecord;
+import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.service.DocumentService;
+import com.iscas.pm.api.service.ProjectInfoService;
+import com.iscas.pm.api.service.ProjectPlanService;
 import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
+import com.iscas.pm.common.db.separate.datasource.DefaultDataSource;
+import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     RedisUtil redisUtil;
     @Autowired
     private FastFileStorageClient fastFileStorageClient;
-
+    @Autowired
+    private ProjectInfoService projectInfoService;
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -117,15 +119,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
-        //首先要将模板输出到硬盘上
+        //首先要将模板输出到本地的 D:/file/
         StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
         byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         if (null == sourceByte) {
             throw new IllegalArgumentException("模板路径错误，服务器读取不到该文件");
         }
         String path = "D:/file/";
-        //这里模板名不能用路径
-        String fileName ="temp1"+ ".ftl";
+        //这里模板名不能用路径，所以先用假数据    (需要针对每一个模板生成唯一标识)
+        String fileName ="temp2"+ ".ftl";
         try {
             File file = new File(path + fileName);//文件路径（路径+文件名）
             if (!file.exists()) {   //文件不存在则创建文件，先创建目录
@@ -140,14 +142,22 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             e.printStackTrace();
         }
 
+        //读取当前项目相关信息（问题：项目相关信息存在主库上）
+        //获取当前项目id：
+        DataSourceHolder.setDB("default");
+        ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(createDocumentParam.getCurrentProjectId());
         //模板上需要替换的数据：
         HashMap<String, Object> map = new HashMap<>();
         List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
         List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
-        map.put("文档修订记录",recordList);
-        map.put("引用文档",referenceList);
+        recordList.stream().forEach(recode->{recode.getDate().toString()        });
+        map.put("项目名称",projectDetailInfo.getBasicInfo().getName());
+        map.put("项目编号",projectDetailInfo.getBasicInfo().getId());
+        map.put("项目阶段","是否要填充项目状态");
+        map.put("recordList",recordList);
+//        map.put("引用文档",referenceList);
         DocumentHandler documentHandler = new DocumentHandler();
-        DocumentHandler.createDoc(map, "D:/outPutDoc.doc");//输出到F:/test.doc
+        DocumentHandler.createDoc(map, "D:/outPutDoc.doc",fileName);//输出到D:/outPutDoc.doc
     }
 
     /**

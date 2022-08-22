@@ -1,5 +1,6 @@
 package com.iscas.pm.api.util;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +11,9 @@ import java.util.Map;
  * word文档工具类
  */
 public class WordUtil {
-    public static void main(String[] args) throws UnsupportedEncodingException {
+    public static void main(String[] args) throws IOException {
         DocumentHandler documentHandler = new DocumentHandler();
-        DocumentHandler.createDoc(getData(),"D:/test001.doc");//输出到F:/test.doc
+        DocumentHandler.createDoc(getData(),"D:/test001.doc","D:/test");//输出到F:/test.doc
     }
 
     private static Map<String,Object> getData(){//要输入到模板上的数据
