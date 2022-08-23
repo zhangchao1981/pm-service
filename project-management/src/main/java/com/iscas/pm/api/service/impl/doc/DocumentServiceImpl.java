@@ -119,6 +119,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
+        //问题1.  每个模板需要的数据内容不完全相同   解决方案：将所有数据都存到map里，需要的就用，不需要的就浪费
+
+
         //首先要将模板输出到本地的 D:/file/
         StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
         byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
@@ -150,11 +153,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = new HashMap<>();
         List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
         List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
-        recordList.stream().forEach(recode->{recode.getDate().toString()        });
         map.put("项目名称",projectDetailInfo.getBasicInfo().getName());
         map.put("项目编号",projectDetailInfo.getBasicInfo().getId());
         map.put("项目阶段","是否要填充项目状态");
         map.put("recordList",recordList);
+        map.put("referenceList",referenceList);  //模板还没加 #list
 //        map.put("引用文档",referenceList);
         DocumentHandler documentHandler = new DocumentHandler();
         DocumentHandler.createDoc(map, "D:/outPutDoc.doc",fileName);//输出到D:/outPutDoc.doc

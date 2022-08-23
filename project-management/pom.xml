@@ -64,6 +64,11 @@
             <artifactId>fastdfs-client</artifactId>
             <version>1.27.2</version>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.11</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
