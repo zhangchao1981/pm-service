@@ -153,14 +153,27 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = new HashMap<>();
         List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
         List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
+        //project获取：
         map.put("项目名称",projectDetailInfo.getBasicInfo().getName());
         map.put("项目编号",projectDetailInfo.getBasicInfo().getId());
-        map.put("项目阶段","是否要填充项目状态");
+        map.put("合同编号",projectDetailInfo.getBasicInfo().getContractId());
+        map.put("项目阶段",projectDetailInfo.getBasicInfo().getStatus());
+        map.put("需方用户",projectDetailInfo.getBasicInfo().getRequirementProvider());
+
+
+        //用户输入：
+        map.put("项目标识",createDocumentParam.getProjectMark());
+        map.put("软件负责人",createDocumentParam.getSoftwareManager());
+        map.put("本文档版本号",createDocumentParam.getVersion());
+        map.put("单位名称",createDocumentParam.getUnit());
+        map.put("软件开发组",createDocumentParam.getSoftwareDevTeam());
+
+        //前端传入：//模板需要加 #list
         map.put("recordList",recordList);
-        map.put("referenceList",referenceList);  //模板还没加 #list
+        map.put("referenceList",referenceList);
 //        map.put("引用文档",referenceList);
         DocumentHandler documentHandler = new DocumentHandler();
-        DocumentHandler.createDoc(map, "D:/outPutDoc.doc",fileName);//输出到D:/outPutDoc.doc
+        DocumentHandler.createDoc(map, "D:/file/outPutDoc.doc",fileName);//输出到D:/outPutDoc.doc
     }
 
     /**
