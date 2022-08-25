@@ -15,7 +15,6 @@ import java.util.List;
  */
 @Data
 public class ProjectDetailInfo {
-
     private Project basicInfo;
 
     private List<PlanTask> plan;
@@ -23,4 +22,6 @@ public class ProjectDetailInfo {
     private List<EnvSoftware> softwareEnvs;
 
     private List<EnvHardware> hardwareEnvs;
+
+
 }

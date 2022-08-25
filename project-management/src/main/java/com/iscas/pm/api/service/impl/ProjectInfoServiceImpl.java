@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.project.ProjectUserRoleMapper;
+import com.iscas.pm.api.model.doc.ProjectDetailInfo;
 import com.iscas.pm.api.model.project.*;
 import com.iscas.pm.api.mapper.project.ProjectMapper;
 import com.iscas.pm.api.service.InitSchemaService;
@@ -46,11 +47,11 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
                 QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>()
                         .eq(StringUtils.isNotBlank(param.getStatus()), "status", param.getStatus())
                         .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
-                return  projectMapper.selectPage(page, queryWrapper);
+                return projectMapper.selectPage(page, queryWrapper);
             }
         //否则返回有权限的项目
         param.setUserId(RequestHolder.getUserInfo().getId());
-        return  projectMapper.getProjectList(page, param);
+        return projectMapper.getProjectList(page, param);
     }
 
     @Override
@@ -116,6 +117,19 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
             initSchemaService.initSchema(project.getId());
         }
         return true;
+    }
+
+    @Override
+    public ProjectDetailInfo getProjectDetailInfo(String id) {
+        Project project = projectMapper.selectById(id);
+        if (project == null) {
+            throw new IllegalArgumentException("该项目不存在");
+        }
+        ProjectDetailInfo projectDetailInfo = new ProjectDetailInfo();
+        projectDetailInfo.setBasicInfo(project);
+        //待补充其余项目详情信息
+
+        return projectDetailInfo;
     }
 }
 

@@ -2,6 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.doc.Document;
+import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,4 +28,6 @@ public interface DocumentService extends IService<Document> {
     void downloadDocument(Integer id, HttpServletResponse response);
 
     String uploadDocument(MultipartFile file) throws IOException;
+
+    void createDocument(CreateDocumentParam createDocumentParam) throws IOException;
 }

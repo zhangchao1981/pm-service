@@ -8,24 +8,28 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.Scanner;
 
 /**
  * @Author： zhangchao
  * @Date： 2022/7/18
  * @Description：
  */
-@SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
-public class ProjectInfoServiceImplTest{
-    @Resource
-    private ProjectMapper projectMapper;
-    @Autowired
-    private InitSchemaServiceImpl initSchemaService;
 
-    @Test
-    public void testSelect(){
-
+class Solution {
+    public String testSelect(int n, String A,String B){
+        char[] chars = new char[2*n];
+        int j=0;
+        for(int i=0;i<A.length();i++,j++){
+            chars[j]=A.charAt(i);
+            chars[j+1] = B.charAt(i);
+        }
+        return new String(chars);
     }
-
-
 }
+
+
+
+
+
+
