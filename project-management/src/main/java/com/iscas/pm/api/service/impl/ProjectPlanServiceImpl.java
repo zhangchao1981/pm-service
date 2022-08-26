@@ -12,6 +12,7 @@ import com.iscas.pm.common.core.util.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -25,14 +26,48 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     @Autowired
     ProjectPlanMapper projectPlanMapper;
 
+
+    //按wps转int的编号大小顺序查询
+    @Override
+    public List<PlanTask> getTaskListByWps() {
+        //拿到数据库查询结果，将其转成树结构
+        //方案1. sort
+        //方案2.重写compare方法
+        List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<>());
+        if (planTasks.size() < 1) {
+            return null;
+        }
+        planTasks.sort((task1, task2) -> {
+            String[] split = task1.getWbs().split("\\.");
+            String[] split1 = task2.getWbs().split("\\.");
+
+            int length = split.length > split1.length ? split1.length : split.length;
+            for (int i = 0; i < length; i++) {
+                if (split[i].equals(split1[i])) {
+                    continue;
+                }
+                if ( Integer.parseInt(split[i]) < Integer.parseInt(split1[i])) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            //编码有位数的部分全部相同
+            return  split.length > split1.length ?1:-1;
+        });
+        return planTasks;
+    }
+
+
     @Override
     public List<PlanTask> getTaskList() {
         //拿到数据库查询结果，将其转成树结构
         List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<PlanTask>().orderByAsc("parent_id", "position"));
-        if (planTasks.size()<1){
-            return  null;
+        if (planTasks.size() < 1) {
+            return null;
         }
         List<PlanTask> planTaskTree = TreeUtil.treeOut(planTasks, PlanTask::getId, PlanTask::getParentId, PlanTask::getChildren);
+
         return planTaskTree;
     }
 
@@ -53,7 +88,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? position.toString() : parent.getWbs() + "." + position);
         planTask.setPersonCount(planTask.getWorker().split("，").length);
-        planTask.setStatus(getStatus(planTask.getStartDate(),planTask.getEndDate()));
+        planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         projectPlanMapper.insert(planTask);
 
         return planTask;
@@ -93,7 +128,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
         //更新任务
         planTask.setPersonCount(planTask.getWorker().split("，").length);
-        planTask.setStatus(getStatus(planTask.getStartDate(),planTask.getEndDate()));
+        planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? planTask.getPosition().toString() : parent.getWbs() + "." + planTask.getPosition());
         projectPlanMapper.updateById(planTask);

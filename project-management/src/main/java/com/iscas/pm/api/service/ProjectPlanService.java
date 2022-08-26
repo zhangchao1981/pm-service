@@ -19,4 +19,6 @@ public interface ProjectPlanService extends IService<PlanTask> {
     Boolean editTask(PlanTask planTask);
 
     Boolean deleteTask(Integer id);
+
+    List<PlanTask> getTaskListByWps();
 }

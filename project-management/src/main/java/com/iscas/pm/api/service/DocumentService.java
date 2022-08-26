@@ -19,7 +19,9 @@ public interface DocumentService extends IService<Document> {
 
     Document addLocalDocument(Document document) ;
 
-    Document addLinkDocument(Document document);
+//    Document addLinkDocument(Document document);
+
+//    String uploadDocument(MultipartFile file) throws IOException;
 
     Boolean deleteDocument(Integer id);
 
@@ -27,7 +29,6 @@ public interface DocumentService extends IService<Document> {
 
     void downloadDocument(Integer id, HttpServletResponse response);
 
-    String uploadDocument(MultipartFile file) throws IOException;
 
     void createDocument(CreateDocumentParam createDocumentParam) throws IOException;
 }

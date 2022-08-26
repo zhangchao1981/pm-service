@@ -1,5 +1,6 @@
 package com.iscas.pm.api.mapper.projectPlan;
 
+import com.baomidou.mybatisplus.annotation.SqlParser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,7 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ProjectPlanMapper extends BaseMapper<PlanTask> {
 
-
+    void getTaskListByWps();
 }
 
 

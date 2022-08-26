@@ -37,6 +37,16 @@ public class ProjectPlanController {
         return  projectPlanService.getTaskList();
     }
 
+
+    @GetMapping("/TestTaskList")
+    @ApiOperationSupport(order = 1)
+    @ApiOperation(value = "查询任务列表", notes = "以树形结构返回整棵计划树")
+    public List<PlanTask> getTaskListByWps(){
+        return  projectPlanService.getTaskListByWps();
+    }
+
+
+
     @PostMapping("/addTask")
     @ApiOperation(value = "添加计划任务", notes = "在指定任务下添加计划任务，根任务的parentId为0")
     @ApiOperationSupport(order = 2)
@@ -91,5 +101,7 @@ public class ProjectPlanController {
     public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
         return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskId));
     }
+
+
 
 }

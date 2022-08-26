@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -95,7 +94,7 @@ public class DocController {
 
 
     @PostMapping("/createDocument")
-    @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并保存到指定路径下")
+    @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并上传到服务器上,并在数据库记录文档信息")
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
@@ -150,7 +149,6 @@ public class DocController {
 //        documentService.addLinkDocument(document);
 //        return document;
 //    }
-//
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
