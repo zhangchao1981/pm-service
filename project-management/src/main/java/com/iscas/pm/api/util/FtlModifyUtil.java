@@ -8,7 +8,10 @@ import java.util.List;
 
 /**
  * 将分离的占位符去除、变量值重新拼装
- *  //待补充：表格填充需手动在</w:tr>前面加上  </#list>
+ *  //待补充：表格填充需手动在 表开始的</w:tr>前面加上    <#list recordList as reviseRecord>
+ *                                      表结束的</w:tr>前面加上  </#list>
+ *  data类型需要在模板上加 ：?string('dd.MM.yyyy HH:mm:ss')
+ * 例如：<w:t>${reviseRecord.date?string('dd.MM.yyyy HH:mm:ss')}</w:t>
  * @author luvJie-7c
  * @date 2022-7-26
  *
@@ -17,14 +20,14 @@ public class FtlModifyUtil {
     public static void main(String[] args) {
             //文件读取-FileReader
             //默认UTF-8编码，可以在构造中传入第二个参数作为编码
-        FileReader fileReader = new FileReader("E:\\中科院文档自动生成测试\\Test2XmlChange.ftl");
+        FileReader fileReader = new FileReader("E:\\中科院文档自动生成测试\\8月31日\\TestFtlChange831.ftl");
             //从文件中读取每一行数据
             List<String> strings = fileReader.readLines();
             //文件追加-FileAppender
             //destFile – 目标文件
             //capacity – 当行数积累多少条时刷入到文件
             //isNewLineMode – 追加内容是否为新行
-        FileAppender appender = new FileAppender(FileUtil.newFile("E:\\中科院文档自动生成测试\\NewTest2XmlChange.ftl"), 16, true);
+        FileAppender appender = new FileAppender(FileUtil.newFile("E:\\中科院文档自动生成测试\\8月31日\\NewTestFtlChange831.ftl"), 16, true);
             //遍历得到每一行数据
             for (String string : strings) {
                 //判断每一行数据中不包含'$'的数据先添加进新文件

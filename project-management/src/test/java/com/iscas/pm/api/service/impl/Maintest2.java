@@ -1,27 +1,24 @@
 //public class Maintest2 {
-//    public static void main(String args[]) {
-//        Scanner cin = new Scanner(System.in);
-//        while (cin.hasNext()) {
-//            int m = cin.nextInt();
-//            int n= cin.nextInt();
-//            //n行  m列
-//             String[][] strings = new String[n][m];
-//            for (int i = 0; i <n; i++) {
-//                strings[i]=cin.next();
-//            }
-//            System.out.println(testSelect(n,m,strings));
-//        }
+//
 //    }
-//    public  static int testSelect(int n,int m,String[][] strings){
-//        //首先找到所有直接传送到边上的点
-//        for (int i = 0; i < m; i++) {
-//            for (int j = 0; j < n; j++) {
+//class Solution {
+//    public LinkedList<Integer> path=new LinkedList<>();
+//    public  List<List<Integer>> result=new ArrayList<>();
 //
-//                if (strings[n][m]=='.')
-//            }
+//    public List<List<Integer>> combine(int n, int k) {
+//        backing(n,k,1);
+//        return  result;
+//    }
+//
+//    public void  backing(int n, int k,int startIndex){
+//        if(path.size()==k){
+//            result.add(new ArrayList<>(path));
+//            return;
 //        }
-//
-//
-//     return 0;
+//        for (int i=startIndex;i<= n - (k - path.size())+1;i++){
+//            path.add(i);
+//            backing(n,k,i+1);
+//            path.removeLast();
+//        }
 //    }
 //}
