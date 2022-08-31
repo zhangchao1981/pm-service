@@ -225,48 +225,6 @@ public class DevController {
         return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(taskId));
     }
 
-    private RequireStatusEnum getStatus(Date start, Date end) {
-        if (new Date().before(start))
-            return RequireStatusEnum.DESIGN;
-        else if (start.before(new Date()) && new Date().before(end))
-            return RequireStatusEnum.DEVELOPING;
-        else
-            return RequireStatusEnum.DELAYED;
-    }
-
-    private TaskStatusEnum getTaskStatus(Date start, Date end, float progress) {
-        //开始时间晚于当前时间
-        if (new Date().before(start)) {
-            if (progress == 0)
-                return TaskStatusEnum.UN_START;
-            if (progress > 0 && progress < 100)
-                return TaskStatusEnum.RUNNING;
-            else
-                return TaskStatusEnum.FINISHED;
-        }
-
-        //当前时间介于开始时间和结束时间
-        else if (start.before(new Date()) && new Date().before(end)) {
-            if (progress < 100)
-                return TaskStatusEnum.RUNNING;
-            else
-                return TaskStatusEnum.FINISHED;
-        }
-
-        //当前时间晚于结束时间
-        else {
-            if (progress < 100) {
-                return TaskStatusEnum.DELAYED;
-            } else {
-                return TaskStatusEnum.DELAYED_FINISH;
-            }
-        }
-
-    }
-
-
-
-
     @ApiOperationSupport(order = 16)
     @PostMapping("/addDevInterface")
     @ApiOperation(value = "添加关联接口", notes = "")
@@ -314,6 +272,45 @@ public class DevController {
             throw new IllegalArgumentException("要删除的关联接口id不存在");
         }
         return true;
+    }
+
+    private RequireStatusEnum getStatus(Date start, Date end) {
+        if (new Date().before(start))
+            return RequireStatusEnum.DESIGN;
+        else if (start.before(new Date()) && new Date().before(end))
+            return RequireStatusEnum.DEVELOPING;
+        else
+            return RequireStatusEnum.DELAYED;
+    }
+
+    private TaskStatusEnum getTaskStatus(Date start, Date end, float progress) {
+        //开始时间晚于当前时间
+        if (new Date().before(start)) {
+            if (progress == 0)
+                return TaskStatusEnum.UN_START;
+            if (progress > 0 && progress < 100)
+                return TaskStatusEnum.RUNNING;
+            else
+                return TaskStatusEnum.FINISHED;
+        }
+
+        //当前时间介于开始时间和结束时间
+        else if (start.before(new Date()) && new Date().before(end)) {
+            if (progress < 100)
+                return TaskStatusEnum.RUNNING;
+            else
+                return TaskStatusEnum.FINISHED;
+        }
+
+        //当前时间晚于结束时间
+        else {
+            if (progress < 100) {
+                return TaskStatusEnum.DELAYED;
+            } else {
+                return TaskStatusEnum.DELAYED_FINISH;
+            }
+        }
+
     }
 
 
