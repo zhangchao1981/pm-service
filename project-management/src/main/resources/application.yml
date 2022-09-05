@@ -13,6 +13,9 @@ spring:
     url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: iscas654321
+      #允许freeMark传入参数为空，为空时，使用空串替换
+  freemarker:classic_compatible: true
+
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml

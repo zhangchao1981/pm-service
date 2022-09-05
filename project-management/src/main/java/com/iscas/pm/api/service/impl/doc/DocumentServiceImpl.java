@@ -6,8 +6,12 @@ import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
+import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
+import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.env.EnvHardware;
+import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.DocumentService;
 import com.iscas.pm.api.service.ProjectInfoService;
 import com.iscas.pm.api.service.ProjectPlanService;
@@ -32,6 +36,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 66410
@@ -52,6 +57,12 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     private ProjectInfoService projectInfoService;
     @Autowired
     DocumentHandler documentHandler;
+    @Autowired
+    EnvHardwareMapper hardwareMapper;
+    @Autowired
+    ProjectPlanMapper projectPlanMapper;
+    @Autowired
+    ProjectPlanService projectPlanService;
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -133,7 +144,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         if (null == sourceByte) {
             throw new IllegalArgumentException("模板路径错误，服务器读取不到该文件");
         }
-        String path = "D:/file/";
+        String path = "F:/file/";   //暂时改为F盘
         String tempName = createDocumentParam.getDocumentName() + ".ftl";
         try {
             File file = new File(path + tempName);//文件路径（路径+文件名）
@@ -156,10 +167,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //模板上需要替换的数据：
         HashMap<String, Object> map = new HashMap<>();
         //替换数据为空时 需要设置默认参数(暂定为)   否则会报错
-//填充通用内容：
+        //填充通用内容：
 
 
-//根据模板id填充特定内容:
+        //根据模板id填充特定内容:
         if (createDocumentParam.getTemplateId() == 1) {
             List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
             List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
@@ -170,6 +181,36 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
             map.put("需方用户", projectDetailInfo.getBasicInfo().getRequirementProvider());
 
+            DataSourceHolder.setDB(createDocumentParam.getCurrentProjectId());
+            //Hardware项目硬件环境信息获取
+            //  <#list hardwareList as hardware>
+            List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+            List<PlanTask> allPlanList = projectPlanMapper.selectList(new QueryWrapper<>());
+
+            // 总体进度计划   planTask  wbs编号为一级的： <#list planTaskList as planTask>   结束用  </#list>
+//            List<PlanTask> planTaskList = allPlanList.stream().filter(plan -> plan.getWbs().split("\\.").length < 2).collect(Collectors.toList());
+
+       //修改：     //模板尚待修改，需要把剩下的去掉，全部planTask信息放到一个表里
+            List<PlanTask> planTaskList=projectPlanService.getTaskListByWps();
+
+
+
+
+            // planTask  wbs编号为二级的：
+                //系统分析与设计阶段任务计划列表：  wbs 1.x  <#list planTaskList1 as planTask1>
+            //需要添加非空校验(目前  如果没有二级编号就会报错)
+            List<PlanTask> planTaskList1 = allPlanList.stream().filter(plan -> {
+                    String[] split = plan.getWbs().split("\\.");
+                    return  (split.length>1&&split[0].equals("1"));}).collect(Collectors.toList());
+            //需求分析阶段任务计划（WBS：2）：  wbs 2.x  <#list planTaskList2 as planTask2>
+            List<PlanTask> planTaskList2 = allPlanList.stream().filter(plan2 -> {
+                String[] split = plan2.getWbs().split("\\.");
+                return  (split.length>1&&split[0].equals("2"));}).collect(Collectors.toList());
+            map.put("hardwareList",hardwareList);
+
+            map.put("planTaskList",planTaskList);
+            map.put("planTaskList1",planTaskList1);
+            map.put("planTaskList2",planTaskList2);
 
             //用户输入：
             map.put("项目标识", createDocumentParam.getProjectMark());
@@ -181,17 +222,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             //前端传入：//模板需要加 #list
             map.put("recordList", recordList);
             map.put("referenceList", referenceList);
-
-
         }
 
-
-//        map.put("引用文档",referenceList);
+//      map.put("引用文档",referenceList);
         //输出到服务器和D:/outPutDoc.doc
         String docName = createDocumentParam.getDocumentName() + ".doc";
         String upLoadPath = documentHandler.createDoc(map, docName, tempName);
         //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
         Document autoDoc = new Document();
+        autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
         autoDoc.setCreateTime(new Date());
         autoDoc.setPath(upLoadPath);
         autoDoc.setUpdateTime(new Date());
@@ -199,6 +238,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         autoDoc.setName(createDocumentParam.getDocumentName());
         autoDoc.setType(DocumentTypeEnum.GENERATE);
         autoDoc.setVersion(createDocumentParam.getVersion());
+        //如果不设置目录id会报：不符合数据库约束(外键)
         if (addLocalDocument(autoDoc) == null) {
             throw new IOException("自动上传文档失败");
         }

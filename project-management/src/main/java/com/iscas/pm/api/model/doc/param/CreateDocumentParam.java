@@ -19,7 +19,7 @@ public class CreateDocumentParam {
     //软件开发计划需要的参数
 
     @ApiModelProperty(value = "目录id", required = true)
-    private String directoryId;
+    private Integer directoryId;
 
     @ApiModelProperty(value = "生成文档名", required = true)
     private String documentName;

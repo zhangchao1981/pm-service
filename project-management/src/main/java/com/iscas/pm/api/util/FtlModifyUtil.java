@@ -4,6 +4,8 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileAppender;
 import cn.hutool.core.io.file.FileReader;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -20,15 +22,16 @@ public class FtlModifyUtil {
     public static void main(String[] args) {
             //文件读取-FileReader
             //默认UTF-8编码，可以在构造中传入第二个参数作为编码
-        FileReader fileReader = new FileReader("E:\\中科院文档自动生成测试\\8月31日\\TestFtlChange831.ftl");
+        FileReader fileReader = new FileReader("F:\\模板处理测试\\8月31日文档生成测试05.ftl");
             //从文件中读取每一行数据
             List<String> strings = fileReader.readLines();
             //文件追加-FileAppender
             //destFile – 目标文件
             //capacity – 当行数积累多少条时刷入到文件
             //isNewLineMode – 追加内容是否为新行
-        FileAppender appender = new FileAppender(FileUtil.newFile("E:\\中科院文档自动生成测试\\8月31日\\NewTestFtlChange831.ftl"), 16, true);
-            //遍历得到每一行数据
+        FileAppender appender = new FileAppender(FileUtil.newFile("F:\\模板处理测试\\firstNEW8月31日文档生成测试05.ftl"), 16, true);
+        HashSet<String> dataFillName = new HashSet<>();
+        //遍历得到每一行数据
             for (String string : strings) {
                 //判断每一行数据中不包含'$'的数据先添加进新文件
                 if (!string.contains("$")) {
@@ -50,6 +53,10 @@ public class FtlModifyUtil {
                         sb.append(s1);
                         continue;
                     }
+                    //date类型转换
+                    s1=s1.replaceAll("date","date?string('dd.MM.yyyy HH:mm:ss')");
+
+
                     //被分离的数据一般都是'${'这样被分开
                     //匹配以'$'开头的变量找到'}' 得到索引位置
                     int i1 = s1.lastIndexOf("}");
@@ -58,11 +65,13 @@ public class FtlModifyUtil {
                     //把变量追加到StringBuilder
                     sb.append(substr.replaceAll("<[^>]+>", ""));
                     //再将标签数据追加到StringBuilder包裹变量
+                    dataFillName.add(substr.replaceAll("<[^>]+>", ""));
                     sb.append(s1.substring(i1 + 1));
                 }
                 appender.append(sb.toString());
             }
             appender.flush();
             appender.toString();
+        System.out.println(dataFillName);
     }
 }
