@@ -22,14 +22,16 @@ public class FtlModifyUtil {
     public static void main(String[] args) {
             //文件读取-FileReader
             //默认UTF-8编码，可以在构造中传入第二个参数作为编码
-        FileReader fileReader = new FileReader("F:\\模板处理测试\\8月31日文档生成测试05.ftl");
+        String tempPath="D:\\模板处理测试\\";
+        String tempName="02软件开发计划FTL.ftl";
+        FileReader fileReader = new FileReader(tempPath+tempName);
             //从文件中读取每一行数据
             List<String> strings = fileReader.readLines();
             //文件追加-FileAppender
             //destFile – 目标文件
             //capacity – 当行数积累多少条时刷入到文件
             //isNewLineMode – 追加内容是否为新行
-        FileAppender appender = new FileAppender(FileUtil.newFile("F:\\模板处理测试\\firstNEW8月31日文档生成测试05.ftl"), 16, true);
+        FileAppender appender = new FileAppender(FileUtil.newFile(tempPath+"first"+tempName), 16, true);
         HashSet<String> dataFillName = new HashSet<>();
         //遍历得到每一行数据
             for (String string : strings) {
@@ -55,6 +57,7 @@ public class FtlModifyUtil {
                     }
                     //date类型转换
                     s1=s1.replaceAll("date","date?string('dd.MM.yyyy HH:mm:ss')");
+                    s1=s1.replaceAll("Date","Date?string('dd.MM.yyyy HH:mm:ss')");
 
 
                     //被分离的数据一般都是'${'这样被分开

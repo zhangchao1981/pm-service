@@ -37,15 +37,15 @@ public class DocumentHandler {
      * @param fileName 生成文件的路径
      * @throws UnsupportedEncodingException
      */
-    public String createDoc(Map<String, Object> dataMap, String fileName, String tempName) throws IOException {
+    public String createDoc(Map<String, Object> dataMap, String fileName, String tempPath, String tempName) throws IOException {
         Configuration configuration = new Configuration(new Version("2.3.28"));
         configuration.setDefaultEncoding("utf-8");
-        //装载模板    设置的服务器模板存储位置为 D:/file
-        configuration.setDirectoryForTemplateLoading(new File("F:/file"));
+        //装载模板
+        configuration.setDirectoryForTemplateLoading(new File(tempPath));
         Template template = null;
 
         //测试生成本地文件：输出路径为D:/file/
-        File outFile = new File("F:/file/"+fileName);   //测试用
+        File outFile = new File(tempPath+fileName);   //测试用
         FileOutputStream fos = null;                               //测试用
         Writer out = null;                                         //测试用
 

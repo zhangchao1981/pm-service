@@ -74,7 +74,7 @@ public class PlanTask implements Serializable {
     @ApiModelProperty(value = "计划工时")
     private Double scheduleHour;
 
-    @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生成")
+    @ApiModelProperty(value = "发生工时")
     private Double happenedHour;
 
     @ApiModelProperty(value = "任务状态，前端无需传参")

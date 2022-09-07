@@ -38,12 +38,6 @@ public class ProjectPlanController {
     }
 
 
-    @GetMapping("/TestTaskList")
-    @ApiOperationSupport(order = 1)
-    @ApiOperation(value = "查询任务列表", notes = "以树形结构返回整棵计划树")
-    public List<PlanTask> getTaskListByWps(){
-        return  projectPlanService.getTaskListByWps();
-    }
 
 
 

@@ -7,10 +7,12 @@ import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
+import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.model.env.EnvHardware;
+import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.DocumentService;
 import com.iscas.pm.api.service.ProjectInfoService;
@@ -60,9 +62,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     @Autowired
     EnvHardwareMapper hardwareMapper;
     @Autowired
-    ProjectPlanMapper projectPlanMapper;
+    EnvSoftwareMapper softwareMapper;
     @Autowired
     ProjectPlanService projectPlanService;
+
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -136,18 +139,19 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
-        //问题1.  每个模板需要的数据内容不完全相同   解决方案：前端传入参数只含共用的信息，数据库查找的信息根据模板id选择性填充
+        //前端传入参数只含共用的信息，数据库查找的信息根据模板id选择性填充
 
-        //首先要将模板输出到本地的 D:/file/
+        //拿到服务器中模板的存储路径
         StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
         byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         if (null == sourceByte) {
             throw new IllegalArgumentException("模板路径错误，服务器读取不到该文件");
         }
-        String path = "F:/file/";   //暂时改为F盘
-        String tempName = createDocumentParam.getDocumentName() + ".ftl";
+        //从服务器上把模板下载到本地 ：
+        String templatePath = "D:/file/";   //暂时改为F盘
+        String tempName = createDocumentParam.getDocumentName() + "Template.ftl";
         try {
-            File file = new File(path + tempName);//文件路径（路径+文件名）
+            File file = new File(templatePath + tempName);//文件路径（路径+文件名）
             if (!file.exists()) {   //文件不存在则创建文件，先创建目录
                 File dir = new File(file.getParent());
                 dir.mkdirs();
@@ -160,57 +164,57 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             e.printStackTrace();
         }
 
-        //读取当前项目相关信息（问题：项目相关信息存在主库上）
+        //读取当前项目相关信息：
         //获取当前项目id：
         DataSourceHolder.setDB("default");
         ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(createDocumentParam.getCurrentProjectId());
-        //模板上需要替换的数据：
         HashMap<String, Object> map = new HashMap<>();
-        //替换数据为空时 需要设置默认参数(暂定为)   否则会报错
+
         //填充通用内容：
 
 
         //根据模板id填充特定内容:
         if (createDocumentParam.getTemplateId() == 1) {
-            List<ReviseRecord> recordList = createDocumentParam.getReviseRecordList();
+            List<ReviseRecord> reviseRecordListList = createDocumentParam.getReviseRecordList();
             List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
             //project获取：
             map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
             map.put("项目编号", projectDetailInfo.getBasicInfo().getId());
-            map.put("合同编号", projectDetailInfo.getBasicInfo().getContractId());
+//            map.put("合同编号", projectDetailInfo.getBasicInfo().getContractId());
             map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
-            map.put("需方用户", projectDetailInfo.getBasicInfo().getRequirementProvider());
+            map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
+            map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel());
+            map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
+            map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
+
 
             DataSourceHolder.setDB(createDocumentParam.getCurrentProjectId());
             //Hardware项目硬件环境信息获取
-            //  <#list hardwareList as hardware>
             List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-            List<PlanTask> allPlanList = projectPlanMapper.selectList(new QueryWrapper<>());
+            //Software项目软件环境信息获取
+            List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+            //项目计划信息获取
+            List<PlanTask> planTaskList = projectPlanService.getTaskListByWps();
 
             // 总体进度计划   planTask  wbs编号为一级的： <#list planTaskList as planTask>   结束用  </#list>
-//            List<PlanTask> planTaskList = allPlanList.stream().filter(plan -> plan.getWbs().split("\\.").length < 2).collect(Collectors.toList());
-
-       //修改：     //模板尚待修改，需要把剩下的去掉，全部planTask信息放到一个表里
-            List<PlanTask> planTaskList=projectPlanService.getTaskListByWps();
+            //List<PlanTask> planTaskList = allPlanList.stream().filter(plan -> plan.getWbs().split("\\.").length < 2).collect(Collectors.toList());
 
 
-
-
-            // planTask  wbs编号为二级的：
-                //系统分析与设计阶段任务计划列表：  wbs 1.x  <#list planTaskList1 as planTask1>
-            //需要添加非空校验(目前  如果没有二级编号就会报错)
-            List<PlanTask> planTaskList1 = allPlanList.stream().filter(plan -> {
-                    String[] split = plan.getWbs().split("\\.");
-                    return  (split.length>1&&split[0].equals("1"));}).collect(Collectors.toList());
-            //需求分析阶段任务计划（WBS：2）：  wbs 2.x  <#list planTaskList2 as planTask2>
-            List<PlanTask> planTaskList2 = allPlanList.stream().filter(plan2 -> {
-                String[] split = plan2.getWbs().split("\\.");
-                return  (split.length>1&&split[0].equals("2"));}).collect(Collectors.toList());
-            map.put("hardwareList",hardwareList);
-
-            map.put("planTaskList",planTaskList);
-            map.put("planTaskList1",planTaskList1);
-            map.put("planTaskList2",planTaskList2);
+//            // planTask  wbs编号为二级的：
+//                //系统分析与设计阶段任务计划列表：  wbs 1.x  <#list planTaskList1 as planTask1>
+//            //需要添加非空校验(目前  如果没有二级编号就会报错)
+//            List<PlanTask> planTaskList1 = allPlanList.stream().filter(plan -> {
+//                    String[] split = plan.getWbs().split("\\.");
+//                    return  (split.length>1&&split[0].equals("1"));}).collect(Collectors.toList());
+//            //需求分析阶段任务计划（WBS：2）：  wbs 2.x  <#list planTaskList2 as planTask2>
+//            List<PlanTask> planTaskList2 = allPlanList.stream().filter(plan2 -> {
+//                String[] split = plan2.getWbs().split("\\.");
+//                return  (split.length>1&&split[0].equals("2"));}).collect(Collectors.toList());
+//            map.put("planTaskList1",planTaskList1);
+//            map.put("planTaskList2",planTaskList2);
+            map.put("hardwareList", hardwareList);
+            map.put("softwareList", softwareList);
+            map.put("planTaskList", planTaskList);
 
             //用户输入：
             map.put("项目标识", createDocumentParam.getProjectMark());
@@ -220,14 +224,14 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
 
             //前端传入：//模板需要加 #list
-            map.put("recordList", recordList);
+            map.put("reviseRecordListList", reviseRecordListList);
             map.put("referenceList", referenceList);
         }
 
 //      map.put("引用文档",referenceList);
         //输出到服务器和D:/outPutDoc.doc
         String docName = createDocumentParam.getDocumentName() + ".doc";
-        String upLoadPath = documentHandler.createDoc(map, docName, tempName);
+        String upLoadPath = documentHandler.createDoc(map, docName, templatePath, tempName);
         //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
         Document autoDoc = new Document();
         autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());

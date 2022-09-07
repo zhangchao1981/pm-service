@@ -83,7 +83,6 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
         //新任务之后的任务后移
         movePosition(parentId, position, null, false);
-
         //插入新任务到数据库
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? position.toString() : parent.getWbs() + "." + position);
@@ -127,6 +126,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         }
 
         //更新任务
+
         planTask.setPersonCount(planTask.getWorker().split("，").length);
         planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));

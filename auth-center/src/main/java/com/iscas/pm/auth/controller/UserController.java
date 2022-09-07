@@ -102,7 +102,6 @@ public class UserController {
         userService.saveOrUpdate(user);
 
         //todo 缺少清空token信息，待开发
-
         return true;
     }
 
@@ -216,8 +215,5 @@ public class UserController {
     public Department editDepartment(@Valid @RequestBody Department Department) {
         return departmentService.editDepartment(Department);
     }
-
-
-
 
 }

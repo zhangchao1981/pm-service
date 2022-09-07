@@ -41,10 +41,14 @@ public class RoleController {
         return roleService.selectRoleList(name, type);
     }
 
+
+    //  待选人员接口   根据角色返回对应的候选角色列表
+
     @ApiOperation(value = "添加角色")
     @PostMapping("addRole")
     @PreAuthorize("hasAuthority('/role/addRole')")
     public Role addRole(@Valid @RequestBody Role role) {
+        //需要批量添加
         if (roleService.existRole(null, role.getName()))
             throw new IllegalArgumentException("角色名称已经存在");
 
@@ -113,8 +117,4 @@ public class RoleController {
         Role role = roleService.getById(roleId);
         return roleService.getRolePermissions(roleId);
     }
-
-
-
-
 }

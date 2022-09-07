@@ -1,10 +1,10 @@
 server:
-  port: 5002
+  port: 7002
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:5001/eureka
+      defaultZone: http://localhost:7001/eureka
     registry-fetch-interval-seconds: 5
   instance:
     lease-expiration-duration-in-seconds: 15

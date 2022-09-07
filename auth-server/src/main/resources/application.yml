@@ -7,12 +7,12 @@ spring:
     username: root
     password: iscas654321
 server:
-  port: 5003
+  port: 7003
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:5001/eureka
+      defaultZone: http://localhost:7001/eureka
     registry-fetch-interval-seconds: 5
   instance:
     lease-expiration-duration-in-seconds: 15
