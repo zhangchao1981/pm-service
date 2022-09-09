@@ -1,5 +1,6 @@
 package com.iscas.pm.api.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.doc.ReferenceDocMapper;
 import com.iscas.pm.api.mapper.project.ProjectUserRoleMapper;
@@ -27,9 +28,23 @@ public class ProjectTeamServiceImpl extends ServiceImpl<ProjectUserRoleMapper, P
     public List<ProjectUserRole> getMemberList() {
         String projectId = DataSourceHolder.getDB();
         DataSourceHolder.setDB("default");
-
         return projectUserRoleMapper.selectAllByProjectId(projectId);
     }
+
+//    @Override
+//    public List<ProjectUserRole> getMemberByRole(Integer roleId) {
+//        String projectId = DataSourceHolder.getDB();
+//        DataSourceHolder.setDB("default");
+//        return projectUserRoleMapper.selectList(new QueryWrapper<ProjectUserRole>().eq("role_id",roleId));
+//    }
+//
+//    @Override
+//    public List<String> getRoleList() {
+//        String projectId = DataSourceHolder.getDB();
+//        DataSourceHolder.setDB("default");
+//        return projectUserRoleMapper.selectAllRoleByProjectId(projectId);
+//    }
+
 }
 
 

@@ -1,9 +1,12 @@
 package com.iscas.pm.api.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
@@ -92,32 +95,33 @@ public class DocController {
     }
 
 
+    @GetMapping("/getDocumentBatch")
+    @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
+    @ApiOperationSupport(order = 14)
+    @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
+    public IPage<Document> getDocumentBatch(@RequestBody @Valid @RequestParam DocumentQueryParam documentQueryParam) {
+        Integer directoryId = documentQueryParam.getDirectoryId();
+        String docName = documentQueryParam.getDocName();
+        IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getDirectoryId()), new QueryWrapper<Document>()
+                                 .eq(directoryId != null, "directory_id", directoryId).eq(docName != null, "name", docName));
+        return    documentIPage;
+    }
+
+    @PostMapping("/findDocumentByName")
+    @ApiOperation(value = "查询文档", notes = "根据文档名模糊查询对应文档")
+    @ApiOperationSupport(order = 14)
+    @PreAuthorize("hasAuthority('/projectDoc/findDocumentByName')")
+    public List<Document> findDocumentByName(@NotBlank(message = "参数Id列表不能为空") @RequestParam String docName) {
+        return documentService.list(new QueryWrapper<Document>().like("name", docName));
+    }
 
     @PostMapping("/createDocument")
     @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并上传到服务器上,并在数据库记录文档信息")
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
-         documentService.createDocument(createDocumentParam);
+        documentService.createDocument(createDocumentParam);
     }
-
-
-
-
-
-
-
-
-
-
-//    @PostMapping("/uploadDocument")
-//    @ApiOperation(value = "上传本地文档", notes = "上传本地文档到服务器")
-//    @ApiOperationSupport(order = 11)
-//    @PreAuthorize("hasAuthority('/projectDoc/uploadDocument')")
-//    public String uploadDocument(MultipartFile file) throws IOException {
-//        return documentService.uploadDocument(file);
-//    }
-
 
     @PostMapping("/addLocalDocument")
     @ApiOperation(value = "添加本地文档", notes = "将文档信息存储到mysql(包括文档在服务器上的存储路径)")
@@ -135,20 +139,6 @@ public class DocController {
     }
 
 
-//    @PostMapping("/addLinkDocument")
-//    @ApiOperation(value = "添加链接文档", notes = "上传本地文档到服务器")
-//    @ApiOperationSupport(order = 12)
-//    @PreAuthorize("hasAuthority('/projectDoc/addLinkDocument')")
-//    public Document addLinkDocument(@Valid @RequestBody Document document) {
-//        if (StringUtils.isBlank(document.getPath())) {
-//            throw new IllegalArgumentException("文档路径不能为空");
-//        }
-//        document.setCreateTime(new Date());
-//        document.setUpdateTime(new Date());
-//        document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
-//        documentService.addLinkDocument(document);
-//        return document;
-//    }
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
@@ -173,14 +163,6 @@ public class DocController {
     }
 
 
-//    @GetMapping("/downloadDocument")
-//    @ApiOperation(value = "下载文档", notes = "本地上传文档和系统生成文档支持下载，链接类型文档不支持下载")
-//    @ApiOperationSupport(order = 15)
-//    @PreAuthorize("hasAuthority('/projectDoc/downloadDocument')")
-//    public void downloadDocument(Integer directoryId) {
-//        documentService.downloadDocument(directoryId, response);
-//    }
-
 
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
@@ -203,6 +185,8 @@ public class DocController {
         }
         return referenceDocService.updateById(referenceDoc);
     }
+
+
 
     @PostMapping("/referenceDocList")
     @ApiOperation(value = "查询引用文档", notes = "")
@@ -292,27 +276,6 @@ public class DocController {
     }
 
 
-//    @PostMapping("/uploadTemplate")
-//    @ApiOperation(value = "上传文档模板", notes = "上传本地文档模板到服务器")
-//    @ApiOperationSupport(order = 26)
-//    @PreAuthorize("hasAuthority('/projectDoc/uploadTemplate')")
-//    public String uploadTemplate(MultipartFile file) throws IOException {
-//        return docTemplateService.uploadTemplate(file);
-//    }
-
-//    @GetMapping("/downloadTemplate")
-//    @ApiOperation(value = "下载文档模板", notes = "本地上传模板和系统生成模板支持下载，链接类型模板不支持下载")
-//    @ApiOperationSupport(order = 27)
-//    @PreAuthorize("hasAuthority('/projectDoc/downloadTemplate')")
-//    public void downloadTemplate(@RequestParam @NotNull(message = "文档模板id不能为空") Integer templateId) throws IOException {
-//        //mysql查询文档模板的服务器存储路径
-//        DocTemplate localTemplate = docTemplateService.getById(templateId);
-//        if (localTemplate == null) {
-//            throw new IllegalArgumentException("文档不存在");
-//        }
-//        //返回值待  进一步处理
-//        docTemplateService.downLoadTemplate(localTemplate.getPath(), localTemplate.getName(), response);
-//    }
 
     @PostMapping("/editTemplate")
     @ApiOperation(value = "修改文档模板", notes = "")

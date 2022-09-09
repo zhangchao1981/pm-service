@@ -47,12 +47,22 @@ public class UserController {
     @Autowired
     DepartmentService departmentService;
 
-    @ApiOperation(value = "人员列表（分页）", notes = "分页返回符合条件的人员列表")
+
+    @ApiOperation(value = "人员简要信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
+    @PostMapping("/userBriefList")
+    @PreAuthorize("hasAuthority('/user/userBriefList')")
+    public List<UserBriefInfo> userBriefList(@RequestParam  String name){
+        return userService.selectUserBriefInfoByName(name);
+    }
+
+
+    @ApiOperation(value = "人员列表", notes = "")
     @PostMapping("/userPageList")
     @PreAuthorize("hasAuthority('/user/userList')")
     public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
         return userService.selectUserList(queryParam);
     }
+
 
     @ApiOperation(value = "人员列表(废弃)", notes = "分页返回符合条件的人员列表")
     @GetMapping("/userList")
@@ -80,7 +90,6 @@ public class UserController {
         User dbUser = userService.getById(user.getId());
         if (dbUser == null)
             throw new IllegalArgumentException("用户不存在");
-
         //用户名、姓名、密码都不允许修改
         user.setUserName(dbUser.getUserName());
         user.setEmployeeName(dbUser.getEmployeeName());
@@ -100,7 +109,6 @@ public class UserController {
         }
         user.setStatus(UserStatusEnum.CANCEL);
         userService.saveOrUpdate(user);
-
         //todo 缺少清空token信息，待开发
         return true;
     }
@@ -163,12 +171,6 @@ public class UserController {
         List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
         return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());
     }
-
-
-    /**
-     * 部门树
-     */
-
 
     @GetMapping("/findDepartment")
     @ApiOperation(value = "查询部门树", notes = "查询整棵部门树")

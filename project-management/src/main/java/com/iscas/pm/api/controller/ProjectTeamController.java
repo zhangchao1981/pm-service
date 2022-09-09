@@ -11,7 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -26,24 +28,38 @@ public class ProjectTeamController {
     @Autowired
     private ProjectTeamService projectTeamService;
 
+
+    @PostMapping("/addMember")
+    @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员")
+    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
+    public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole>  memberList){
+        String projectId = DataSourceHolder.getDB();
+        memberList.stream().forEach(member->{
+            member.setEmployeeName(null);
+            member.setProjectId(projectId);
+        });
+        DataSourceHolder.setDB("default");
+        projectTeamService.saveOrUpdateBatch(memberList);
+        return memberList;
+    }
+
     @GetMapping("/memberList")
-    @ApiOperation(value = "查询团队成员", notes = "查询所有团队成员")
+    @ApiOperation(value = "查询团队成员", notes = "查询当前项目下的所有团队成员")
     public List<ProjectUserRole> memberList(){
         return  projectTeamService.getMemberList();
     }
 
-    @PostMapping("/addMember")
-    @ApiOperation(value = "添加团队成员", notes = "添加一个团队成员")
-    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
-    public ProjectUserRole addMember(@Valid @RequestBody ProjectUserRole member){
-        String projectId = DataSourceHolder.getDB();
-        DataSourceHolder.setDB("default");
-
-        member.setProjectId(projectId);
-        member.setEmployeeName(null);
-        projectTeamService.save(member);
-        return member;
-    }
+//    @GetMapping("/memberListByRole")
+//    @ApiOperation(value = "查询某角色对应的团队成员", notes = "查询团队成员中指定角色的成员,用于回显")//未添加权限
+//    public List<ProjectUserRole> memberListByRole(@NotNull(message = "角色ID不能为空") @RequestParam Integer roleId ){
+//        return  projectTeamService.getMemberByRole(roleId);
+//    }
+//
+////    @GetMapping("/roleList")
+////    @ApiOperation(value = "查询团队角色列表(弃用)", notes = "查询当前项目下的所有角色")
+////    public List<String> roleList(){
+////        return  projectTeamService.getRoleList();
+////    }
 
     @GetMapping("/deleteMember")
     @ApiOperation(value = "删除团队成员", notes = "删除指定的团队成员")
@@ -52,7 +68,6 @@ public class ProjectTeamController {
         DataSourceHolder.setDB("default");
         if (projectTeamService.getById(id) == null)
             throw new IllegalArgumentException("不存在的人员授权");
-
         projectTeamService.removeById(id);
         return  true;
     }

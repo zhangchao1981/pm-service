@@ -3,6 +3,7 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -13,4 +14,8 @@ import java.util.List;
 public interface ProjectTeamService extends IService<ProjectUserRole> {
 
     List<ProjectUserRole> getMemberList();
+
+//    List<ProjectUserRole> getMemberByRole(@NotNull(message = "角色ID不能为空") Integer roleId);
+//
+//    List<String> getRoleList();
 }

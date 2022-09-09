@@ -38,9 +38,6 @@ public class ProjectPlanController {
     }
 
 
-
-
-
     @PostMapping("/addTask")
     @ApiOperation(value = "添加计划任务", notes = "在指定任务下添加计划任务，根任务的parentId为0")
     @ApiOperationSupport(order = 2)
@@ -74,7 +71,6 @@ public class ProjectPlanController {
     public Boolean deleteTask(Integer id){
         if (getTaskFeedbacks(id).size() > 0)
             throw new IllegalArgumentException("该任务已填写反馈，不允许删除");
-
         projectPlanService.deleteTask(id);
         return  true;
     }
@@ -95,7 +91,5 @@ public class ProjectPlanController {
     public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
         return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskId));
     }
-
-
 
 }

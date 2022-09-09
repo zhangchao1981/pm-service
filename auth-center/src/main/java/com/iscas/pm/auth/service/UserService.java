@@ -1,6 +1,7 @@
 package com.iscas.pm.auth.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.iscas.pm.auth.model.UserBriefInfo;
 import com.iscas.pm.auth.model.UserQueryParam;
 import com.iscas.pm.common.core.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -26,4 +27,6 @@ public interface UserService  extends IService<User>{
     Boolean addUserRoles(Integer userId, List<Integer> roles);
 
     IPage<User> selectUserList(UserQueryParam condition);
+
+    List<UserBriefInfo> selectUserBriefInfoByName(String name);
 }

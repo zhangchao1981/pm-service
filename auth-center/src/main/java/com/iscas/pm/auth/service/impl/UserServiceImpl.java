@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.auth.model.AuthUserRole;
 import com.iscas.pm.auth.model.ProjectPermission;
+import com.iscas.pm.auth.model.UserBriefInfo;
 import com.iscas.pm.auth.model.UserQueryParam;
 import com.iscas.pm.common.core.model.User;
 import com.iscas.pm.common.core.model.UserStatusEnum;
@@ -136,6 +137,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             records.get(i).setPassword(null);
         }
         return userPage;
+    }
+
+    @Override
+    public List<UserBriefInfo> selectUserBriefInfoByName(String name) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.like(!StringUtils.isEmpty(name), "employee_name", name)
+                .or().like(!StringUtils.isEmpty(name), "user_name", name).eq( "status", "NORMAL");
+        return  userMapper.selectList(wrapper).stream().map(user->new UserBriefInfo(user)).collect(Collectors.toList());
     }
 
     @Override
