@@ -14,7 +14,9 @@ spring:
     username: root
     password: iscas654321
       #允许freeMark传入参数为空，为空时，使用空串替换
-  freemarker:classic_compatible: true
+  freemarker:
+    setting:
+      classic_compatible: true
 
 
 mybatis-plus:

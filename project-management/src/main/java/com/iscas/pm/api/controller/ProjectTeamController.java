@@ -30,7 +30,7 @@ public class ProjectTeamController {
 
 
     @PostMapping("/addMember")
-    @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员")
+    @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员，需要传入：userId,roleId")
     @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
     public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole>  memberList){
         String projectId = DataSourceHolder.getDB();
@@ -39,7 +39,11 @@ public class ProjectTeamController {
             member.setProjectId(projectId);
         });
         DataSourceHolder.setDB("default");
-        projectTeamService.saveOrUpdateBatch(memberList);
+        try {
+            projectTeamService.saveBatch(memberList);
+        }catch (Exception e){
+            throw new IllegalArgumentException("人员角色分配重复");
+        }
         return memberList;
     }
 

@@ -28,5 +28,5 @@ public interface UserService  extends IService<User>{
 
     IPage<User> selectUserList(UserQueryParam condition);
 
-    List<UserBriefInfo> selectUserBriefInfoByName(String name);
+    List<UserBriefInfo> selectUserBriefInfo();
 }

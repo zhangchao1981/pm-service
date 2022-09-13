@@ -1,10 +1,13 @@
 package com.iscas.pm.auth.mapper;
 
+import com.iscas.pm.auth.model.UserBriefInfo;
 import com.iscas.pm.common.core.model.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @author 李昶
@@ -18,6 +21,12 @@ public interface UserMapper extends BaseMapper<User> {
             "from auth_user " +
             "where user_name= #{userName}")
     User loadUserByUsername(@Param("userName") String userName);
+
+
+    @Select("select auth_user.employeeName as employeeName,auth_department.name as departmentName,auth_user.id as userId ,auth_user.name as userName " +
+            "from auth_user ,auth_department " +
+            "where auth_user.status= #{status} "+"and auth_user.department_id=auth_department.id")
+    List<UserBriefInfo> loadUserBriefInfo(@Param("status") String status);
 
 }
 

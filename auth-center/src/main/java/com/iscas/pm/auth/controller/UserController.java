@@ -2,7 +2,6 @@ package com.iscas.pm.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.iscas.pm.auth.mapper.DepartmentMapper;
 import com.iscas.pm.auth.model.*;
 import com.iscas.pm.auth.service.AuthUserRoleService;
 import com.iscas.pm.auth.service.DepartmentService;
@@ -16,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Directory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,10 +49,9 @@ public class UserController {
     @ApiOperation(value = "人员简要信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
     @PostMapping("/userBriefList")
     @PreAuthorize("hasAuthority('/user/userBriefList')")
-    public List<UserBriefInfo> userBriefList(@RequestParam  String name){
-        return userService.selectUserBriefInfoByName(name);
+    public List<UserBriefInfo> userBriefList(){
+        return userService.selectUserBriefInfo();
     }
-
 
     @ApiOperation(value = "人员列表", notes = "")
     @PostMapping("/userPageList")
@@ -132,10 +129,10 @@ public class UserController {
     @PreAuthorize("hasAuthority('/user/settingSystemRole')")
     public Boolean settingSystemRole(@Valid @RequestBody SettingSystemRoleQueryParam queryParam) {
         if (userService.getById(queryParam.getUserId()) == null) {
-            throw new IllegalArgumentException("用户不存在");
-        }
+            throw new IllegalArgumentException("用户不存在"); }
         return userService.addUserRoles(queryParam.getUserId(),queryParam.getRoles());
     }
+
 
     @ApiOperation(value = "修改用户密码")
     @PostMapping(value = "/changePassword")
@@ -209,7 +206,6 @@ public class UserController {
         return true;
     }
 
-
     @PostMapping("/editDepartment")
     @ApiOperation(value = "修改部门", notes = "修改部门名称(或父id)， children属性是查询显示的，修改不传该值")
     @ApiOperationSupport(order = 4)
@@ -217,5 +213,7 @@ public class UserController {
     public Department editDepartment(@Valid @RequestBody Department Department) {
         return departmentService.editDepartment(Department);
     }
+
+
 
 }

@@ -13,12 +13,13 @@ import lombok.experimental.Accessors;
 @ApiModel("添加用户时候选名单上显示的信息")
 @Accessors(chain = true)
 public class UserBriefInfo {
-    private  String employName;
-    private  Integer departmentId;
-   public  UserBriefInfo(){}
 
-    public UserBriefInfo(User user) {
-        this.employName = user.getEmployeeName();
-        this.departmentId = user.getDepartmentId();
-    }
+    private  String employName;
+
+    private  String departmentName;  //换成  部门名
+
+    private  Integer userId;
+
+    private  String  userName;
+
 }

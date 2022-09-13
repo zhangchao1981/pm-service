@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.iscas.pm.auth.mapper.DepartmentMapper;
 import com.iscas.pm.auth.model.AuthUserRole;
 import com.iscas.pm.auth.model.ProjectPermission;
 import com.iscas.pm.auth.model.UserBriefInfo;
@@ -39,6 +40,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PermissionService permissionService;
     @Autowired
     private AuthUserRoleServiceImpl authUserRoleService;
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     @Override
     public User addUser(User user) {
@@ -140,11 +143,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<UserBriefInfo> selectUserBriefInfoByName(String name) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like(!StringUtils.isEmpty(name), "employee_name", name)
-                .or().like(!StringUtils.isEmpty(name), "user_name", name).eq( "status", "NORMAL");
-        return  userMapper.selectList(wrapper).stream().map(user->new UserBriefInfo(user)).collect(Collectors.toList());
+    public List<UserBriefInfo> selectUserBriefInfo() {
+        //        //方案1.  多表查询
+        String  status="NORMAL";
+        return  userMapper.loadUserBriefInfo(status);
+        //                QueryWrapper<User> wrapper = new QueryWrapper<>();
+        //      wrapper.eq( "status", "NORMAL");
+        //        //方案2.        将所有部门名称搜出来，以部门id为key，部门名称为value存到hashMap里，然后在构造器中，把部门id传进来
+        //        return  userMapper.selectList(wrapper).stream().map(user->new UserBriefInfo(user)).collect(Collectors.toList());
     }
 
     @Override
