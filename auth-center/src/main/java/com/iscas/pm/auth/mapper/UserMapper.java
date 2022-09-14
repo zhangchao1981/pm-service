@@ -23,9 +23,9 @@ public interface UserMapper extends BaseMapper<User> {
     User loadUserByUsername(@Param("userName") String userName);
 
 
-    @Select("select auth_user.employeeName as employeeName,auth_department.name as departmentName,auth_user.id as userId ,auth_user.name as userName " +
-            "from auth_user ,auth_department " +
-            "where auth_user.status= #{status} "+"and auth_user.department_id=auth_department.id")
+    @Select("select auth_user.employee_name  as employName,auth_department.name as departmentName,auth_user.id as userId ,auth_user.user_name as userName " +
+            "from auth_user " + "left join auth_department  " + "on auth_user.department_id=auth_department.id " +
+            "where auth_user.status= #{status} ")
     List<UserBriefInfo> loadUserBriefInfo(@Param("status") String status);
 
 }

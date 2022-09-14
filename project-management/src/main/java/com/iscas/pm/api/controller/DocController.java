@@ -98,12 +98,17 @@ public class DocController {
     @PostMapping("/getDocumentBatch")
     @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
     @ApiOperationSupport(order = 14)
+
+
+
+
+
     @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
     public IPage<Document> getDocumentBatch(@RequestBody @Valid  DocumentQueryParam documentQueryParam) {
         Integer directoryId = documentQueryParam.getDirectoryId();
         String docName = documentQueryParam.getDocName();
         IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getDirectoryId()), new QueryWrapper<Document>()
-                                 .eq(directoryId != null, "directory_id", directoryId).eq(docName != null, "name", docName));
+                                 .eq(directoryId != null, "directory_id", directoryId).eq(!StringUtils.isBlank(docName), "name", docName));
         return    documentIPage;
     }
 
@@ -114,6 +119,7 @@ public class DocController {
 //    public List<Document> findDocumentByName(@NotBlank(message = "参数Id列表不能为空") @RequestParam String docName) {
 //        return documentService.list(new QueryWrapper<Document>().like("name", docName));
 //    }
+
 
     @PostMapping("/createDocument")
     @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并上传到服务器上,并在数据库记录文档信息")

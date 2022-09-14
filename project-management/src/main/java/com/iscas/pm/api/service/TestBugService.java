@@ -24,6 +24,8 @@ public interface TestBugService extends IService<TestBug> {
 
     void transferBug(TransferBugParam param);
 
+    void dispatchBug(TransferBugParam param);
+
     void solveBug(SolveBugParam param);
 
     void delayedSolveBug(Integer bugId, String explain);

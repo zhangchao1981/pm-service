@@ -256,6 +256,15 @@ public class TestController {
     }
 
     @ApiOperationSupport(order = 24)
+    @PostMapping("/dispatchBug")
+    @ApiOperation(value = "指派缺陷", notes = "将缺陷指派给其他人处理,缺陷归属人不变")
+    @PreAuthorize("hasAuthority('/test/dispatchBug')")
+    public Boolean dispatchBug(@Valid @RequestBody TransferBugParam param) {
+        testBugService.dispatchBug(param);
+        return true;
+    }
+
+    @ApiOperationSupport(order = 25)
     @GetMapping("/startProcessBug")
     @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷，更改缺陷状态为进行中")
     @PreAuthorize("hasAuthority('/test/startProcessBug')")
@@ -264,7 +273,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 25)
+    @ApiOperationSupport(order = 26)
     @PostMapping("/solveBug")
     @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
     @PreAuthorize("hasAuthority('/test/solveBug')")
@@ -273,7 +282,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 26)
+    @ApiOperationSupport(order = 27)
     @GetMapping("/delayedSolveBug")
     @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
     @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
@@ -282,7 +291,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 27)
+    @ApiOperationSupport(order = 28)
     @GetMapping("/reopenBug")
     @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
     @PreAuthorize("hasAuthority('/test/reopenBug')")
@@ -291,7 +300,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 28)
+    @ApiOperationSupport(order = 29)
     @PostMapping("/closeBug")
     @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
     @PreAuthorize("hasAuthority('/test/closeBug')")
@@ -300,7 +309,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 29)
+    @ApiOperationSupport(order = 30)
     @GetMapping("/bugProgressLog")
     @ApiOperation(value = "缺陷处理日志", notes = "查询指定缺陷的处理日志")
     public List<TestBugProcessLog> bugProgressLog(Integer bugId) {

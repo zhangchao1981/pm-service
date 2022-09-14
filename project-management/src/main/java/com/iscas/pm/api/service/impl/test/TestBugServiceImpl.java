@@ -110,8 +110,27 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
             throw new IllegalArgumentException("缺陷id不存在");
 
         //添加缺陷处理日志
-        String description = "给" + param.getTransferName() + ",转办说明：" + param.getExplain();
+        String description = "给" + param.getTransferName() + ",指派说明：" + param.getExplain();
         TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.TRANSFER, description);
+        testBugProcessLogMapper.insert(processLog);
+    }
+
+    @Override
+    public void dispatchBug(TransferBugParam param) {
+        //当前处理人或技术经理可以转办缺陷
+
+        //更新缺陷信息
+        UpdateWrapper<TestBug> wrapper = Wrappers.update();
+        wrapper.lambda()
+                .set(TestBug::getCurrentProcessor, param.getTransferName())
+                .set(TestBug::getCurrentProcessorUserName, param.getTransferUserName())
+                .eq(TestBug::getId, param.getBugId());
+        if (!super.update(wrapper))
+            throw new IllegalArgumentException("缺陷id不存在");
+
+        //添加缺陷处理日志
+        String description = "给" + param.getTransferName() + ",转办说明：" + param.getExplain();
+        TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.DISPATCH, description);
         testBugProcessLogMapper.insert(processLog);
     }
 

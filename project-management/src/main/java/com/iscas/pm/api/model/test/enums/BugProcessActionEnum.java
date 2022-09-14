@@ -17,6 +17,7 @@ public enum BugProcessActionEnum {
     START("START", "开始解决缺陷"),
     SOLVED("SOLVED", "解决缺陷"),
     TRANSFER("TRANSFER", "转办缺陷"),
+    DISPATCH("DISPATCH", "指派缺陷"),
     FEEDBACK("FEEDBACK", "填写反馈"),
     DELAYED_SOLVED("DELAYED_SOLVED", "延时解决缺陷"),
     CLOSE("CLOSE", "关闭缺陷"),

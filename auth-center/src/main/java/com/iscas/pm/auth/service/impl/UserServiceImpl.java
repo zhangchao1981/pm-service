@@ -144,13 +144,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<UserBriefInfo> selectUserBriefInfo() {
-        //        //方案1.  多表查询
+
         String  status="NORMAL";
         return  userMapper.loadUserBriefInfo(status);
-        //                QueryWrapper<User> wrapper = new QueryWrapper<>();
-        //      wrapper.eq( "status", "NORMAL");
-        //        //方案2.        将所有部门名称搜出来，以部门id为key，部门名称为value存到hashMap里，然后在构造器中，把部门id传进来
-        //        return  userMapper.selectList(wrapper).stream().map(user->new UserBriefInfo(user)).collect(Collectors.toList());
+
     }
 
     @Override
