@@ -103,9 +103,13 @@ public class DevRequirement implements Serializable {
     private Date createTime;
 
 
-    pr
+    @TableField(exist = false)
+    @ApiModelProperty(value = "返回值类型")
+    private DevTypeEnum type;
 
-
+    public DevRequirement() {
+        setType(DevTypeEnum.DevRequirement);
+    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

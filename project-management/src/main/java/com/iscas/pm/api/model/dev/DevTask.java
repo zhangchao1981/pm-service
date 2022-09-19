@@ -64,5 +64,13 @@ public class DevTask implements Serializable {
     private Integer requireId;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "返回值类型")
+    private DevTypeEnum type;
+
+    public DevTask() {
+        setType(DevTypeEnum.DevTask);
+    }
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

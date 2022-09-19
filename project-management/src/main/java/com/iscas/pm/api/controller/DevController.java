@@ -133,7 +133,6 @@ public class DevController {
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里",response=DevRequirement.class)
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
-
         return devRequirementService.getById(requirementId);
     }
 
