@@ -1,5 +1,6 @@
 package com.iscas.pm.api.controller;
 
+import com.iscas.pm.api.model.dev.DevTypeEnum;
 import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
 import com.iscas.pm.api.model.dev.RequireStatusEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
@@ -89,6 +90,9 @@ public class EnumController {
     @PostMapping(value = "/interfaceType")
     public InterfaceTypeEnum[] interfaceTypeEnum() {  return InterfaceTypeEnum.values(); }
 
+    @ApiOperation(value = "查询开发相关接口的返回值类型", notes = "需求开发模块中项目模块列表、查询开发需求、查询开发任务三个接口的返回值类型")
+    @PostMapping(value = "/devType")
+    public DevTypeEnum[] devTypeEnum() {  return DevTypeEnum.values(); }
 
 
 

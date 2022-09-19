@@ -120,12 +120,11 @@ public class DevController {
         }
         return true;
     }
-
     @ApiOperationSupport(order = 7)
     @GetMapping("/devRequirementList")
-    @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息")
+    @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息,类型为")
     @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
-    public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
+    public  List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
     }
 

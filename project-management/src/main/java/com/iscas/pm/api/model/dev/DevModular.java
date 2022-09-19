@@ -35,6 +35,13 @@ public class DevModular implements Serializable {
     @ApiModelProperty(value = "子节点")
     private List<Directory> children;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "返回值类型")
+    private DevTypeEnum type;
+
+    public DevModular() {
+        setType(DevTypeEnum.DevModular);
+    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

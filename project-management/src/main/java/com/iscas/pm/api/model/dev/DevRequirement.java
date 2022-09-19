@@ -102,6 +102,11 @@ public class DevRequirement implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
+
+    pr
+
+
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
