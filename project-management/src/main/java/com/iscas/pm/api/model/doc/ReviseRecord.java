@@ -42,8 +42,8 @@ public class ReviseRecord implements Serializable {
     private String notes;
 
     @ApiModelProperty(value = "修订日期",required = true)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date date;
 
     @NotBlank(message = "修改人不能为空")

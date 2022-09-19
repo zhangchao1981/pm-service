@@ -64,7 +64,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
-    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型)")
+    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>",response=DevModular.class)
     @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
@@ -131,9 +131,10 @@ public class DevController {
 
     @ApiOperationSupport(order = 8)
     @GetMapping("/devRequirement")
-    @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里")
+    @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里",response=DevRequirement.class)
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
+
         return devRequirementService.getById(requirementId);
     }
 
@@ -188,7 +189,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 12)
     @GetMapping("/devTaskList")
-    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务,需求id为null返回所有任务")
+    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务 返回值类型为List<DevTask>,需求id为null返回所有任务",response=DevTask.class)
     @PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
         return devTaskService.list(new QueryWrapper<DevTask>().eq(requireId != null, "require_id", requireId));

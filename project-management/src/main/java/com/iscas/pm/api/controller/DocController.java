@@ -161,7 +161,7 @@ public class DocController {
     @ApiOperation(value = "批量删除文档", notes = "参数不可为空,删除参数list中所有id对应的文档")
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
-    public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") @RequestParam List<Integer> docIdList) {
+    public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
         if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))) {
             throw new IllegalArgumentException("删除失败，文档不存在");
         }

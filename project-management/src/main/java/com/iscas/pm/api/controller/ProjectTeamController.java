@@ -32,16 +32,16 @@ public class ProjectTeamController {
     @PostMapping("/addMember")
     @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员，需要传入：userId,roleId")
     @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
-    public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole>  memberList){
+    public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole> memberList) {
         String projectId = DataSourceHolder.getDB();
-        memberList.stream().forEach(member->{
+        memberList.stream().forEach(member -> {
             member.setEmployeeName(null);
             member.setProjectId(projectId);
         });
         DataSourceHolder.setDB("default");
         try {
             projectTeamService.saveBatch(memberList);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("人员角色分配重复");
         }
         return memberList;
@@ -49,8 +49,9 @@ public class ProjectTeamController {
 
     @GetMapping("/memberList")
     @ApiOperation(value = "查询团队成员", notes = "查询当前项目下的所有团队成员")
-    public List<ProjectUserRole> memberList(){
-        return  projectTeamService.getMemberList();
+    public List<ProjectUserRole> memberList() {
+        //问题：返回雇员名可能重名，需要用户名    方案1.
+        return projectTeamService.getMemberList();
     }
 
 //    @GetMapping("/memberListByRole")
@@ -68,12 +69,12 @@ public class ProjectTeamController {
     @GetMapping("/deleteMember")
     @ApiOperation(value = "删除团队成员", notes = "删除指定的团队成员")
     @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
-    public Boolean deleteMember(String id){
+    public Boolean deleteMember(String id) {
         DataSourceHolder.setDB("default");
         if (projectTeamService.getById(id) == null)
             throw new IllegalArgumentException("不存在的人员授权");
         projectTeamService.removeById(id);
-        return  true;
+        return true;
     }
 
 }

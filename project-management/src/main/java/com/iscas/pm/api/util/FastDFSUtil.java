@@ -86,6 +86,11 @@ public class FastDFSUtil {
         fastFileStorageClient.deleteFile(group, path);
     }
 
+
+
+    // data   filename:  文件名.dox    带扩展名的0
+        //文件流放到 data下面
+
     /**
      * 文件下载
      *
@@ -101,7 +106,6 @@ public class FastDFSUtil {
         }
         byte[] bytes = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         response.reset();
-
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, DEFAULT_CHARSET));
         response.setCharacterEncoding(DEFAULT_CHARSET);
         // 设置强制下载不打开

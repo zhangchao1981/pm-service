@@ -26,6 +26,13 @@ public interface ProjectUserRoleMapper extends BaseMapper<ProjectUserRole> {
 
     @Select("SELECT auth_role.`name` as role_name " +" from auth_role  "+" where auth_role.id " +"in("+"select distinct pm_project_user_role.role_id"+"FROM  pm_project_user_role"+"where pm_project_user_role.project_id= #{projectId})")
     List<String> selectAllRoleByProjectId(String projectId);
+
+
+
+//    @Select("select auth_user.employee_name  as employName,auth_department.name as departmentName,auth_user.id as userId ,auth_user.user_name as userName " +
+//            "from auth_user " + "left join auth_department  " + "on auth_user.department_id=auth_department.id " +
+//            "where auth_user.status= #{status} ")
+//    List<ProjectUserRole> getMemberList(String projectId);
 }
 
 
