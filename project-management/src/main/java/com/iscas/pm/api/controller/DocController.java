@@ -10,6 +10,7 @@ import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -98,17 +99,10 @@ public class DocController {
     @PostMapping("/getDocumentBatch")
     @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
     @ApiOperationSupport(order = 14)
-
-
-
-
-
     @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
     public IPage<Document> getDocumentBatch(@RequestBody @Valid  DocumentQueryParam documentQueryParam) {
-        Integer directoryId = documentQueryParam.getDirectoryId();
-        String docName = documentQueryParam.getDocName();
-        IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getDirectoryId()), new QueryWrapper<Document>()
-                                 .eq(directoryId != null, "directory_id", directoryId).eq(!StringUtils.isBlank(docName), "name", docName));
+        IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getPageSize()), new QueryWrapper<Document>()
+                                 .eq(documentQueryParam.getDirectoryId()!= null, "directory_id",documentQueryParam.getDirectoryId()).like(!StringUtils.isBlank(documentQueryParam.getDocName()), "name", documentQueryParam.getDocName()));
         return    documentIPage;
     }
 
@@ -265,7 +259,7 @@ public class DocController {
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
-    public boolean deleteTemplate(@NotEmpty(message = "模板id不能为空") @RequestParam List<Integer> idList) {
+    public boolean deleteTemplate(@NotEmpty(message = "模板id不能为空") @RequestBody List<Integer> idList) {
         if (!docTemplateService.removeByIds(idList)) {
             throw new IllegalArgumentException("要删除的模板id不存在");
         }
@@ -298,8 +292,8 @@ public class DocController {
     @ApiOperation(value = "查询文档模板", notes = "")
     @ApiOperationSupport(order = 29)
     @PreAuthorize("hasAuthority('/projectDoc/templateList')")
-    public List<DocTemplate> templateList(@NotBlank(message = "templateId不能为空") @RequestParam String nameOrMaintainer) {
-        return docTemplateService.list(new QueryWrapper<DocTemplate>().like("name", nameOrMaintainer).or().like("maintainer", nameOrMaintainer));
+    public List<DocTemplate> templateList() {
+        return docTemplateService.list();
     }
 
 

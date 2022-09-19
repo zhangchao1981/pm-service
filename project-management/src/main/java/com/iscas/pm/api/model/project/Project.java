@@ -36,7 +36,7 @@ public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目名称", required = true)
     @NotBlank(message = "项目名称不能为空")
-    @Size(max = 25)
+    @Size(max = 25,message = "项目名称长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "项目密级", required = true)

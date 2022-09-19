@@ -48,6 +48,9 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
 
     @Override
     public Directory editDirectory(Directory directory) {
+        if (directory.getId()==null){
+            throw new IllegalArgumentException("请输入要修改目录的id");
+        }
         Integer parentId = directory.getParentId();
         //验证是否有效：  判断父id是否存在
         if (parentId != 0) {
@@ -56,7 +59,7 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
             }
         }
         //判断父id是否和自身id相同
-        if (parentId.equals(directory.getParentId())){
+        if (parentId.equals(directory.getId())){
             throw new IllegalArgumentException("父id与自身id相同，死循环");
         }
 

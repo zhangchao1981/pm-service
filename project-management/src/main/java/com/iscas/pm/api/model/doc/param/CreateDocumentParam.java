@@ -36,24 +36,24 @@ public class CreateDocumentParam {
     @ApiModelProperty(value = "项目标识", required = true)
     private String projectMark;
 
-    @ApiModelProperty(value = "软件研制单位", required = true)
-    private String unit;
-
-    @ApiModelProperty(value = "软件负责人", required = true)
-    private String softwareManager;
-
-    @ApiModelProperty(value = "软件开发组", required = true)
-    private String softwareDevTeam;
+//    @ApiModelProperty(value = "软件研制单位", required = false)
+//    private String unit;
+//
+//    @ApiModelProperty(value = "软件负责人", required = false)
+//    private String softwareManager;
+//
+//    @ApiModelProperty(value = "软件开发组", required = false)
+//    private String softwareDevTeam;
 
     @NotBlank(message = "当前项目id不能为空")
     @ApiModelProperty(value = "当前项目id", required = true)
     private String currentProjectId;
 
-    @ApiModelProperty(value = "选中的引用文档", required = true)
-    private List<ReferenceDoc> referenceDocList;
-
-    @ApiModelProperty(value = "选中的文档修订记录", required = true)
-    private List<ReviseRecord> reviseRecordList;
+//    @ApiModelProperty(value = "选中的引用文档", required = true)
+//    private List<ReferenceDoc> referenceDocList;
+//
+//    @ApiModelProperty(value = "选中的文档修订记录", required = true)
+//    private List<ReviseRecord> reviseRecordList;
 
 
 }

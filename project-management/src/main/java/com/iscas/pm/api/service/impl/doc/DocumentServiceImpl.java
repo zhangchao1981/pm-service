@@ -175,8 +175,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
         //根据模板id填充特定内容:
         if (createDocumentParam.getTemplateId() == 1) {
-            List<ReviseRecord> reviseRecordList = createDocumentParam.getReviseRecordList();
-            List<ReferenceDoc> referenceList = createDocumentParam.getReferenceDocList();
+
+
+            List<ReviseRecord> reviseRecordList = null;
+            List<ReferenceDoc> referenceList = null;
             //project获取：
             map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
             map.put("项目编号", projectDetailInfo.getBasicInfo().getId());
@@ -217,10 +219,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             map.put("planTaskList", planTaskList);
             //用户输入：
             map.put("项目标识", createDocumentParam.getProjectMark());
-            map.put("软件负责人", createDocumentParam.getSoftwareManager());
+//            map.put("软件负责人", createDocumentParam.getSoftwareManager());
             map.put("本文档版本号", createDocumentParam.getVersion());
-            map.put("单位名称", createDocumentParam.getUnit());
-            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
+//            map.put("单位名称", createDocumentParam.getUnit());
+//            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
 
             //前端传入：//模板需要加 #list
             map.put("reviseRecordList", reviseRecordList);

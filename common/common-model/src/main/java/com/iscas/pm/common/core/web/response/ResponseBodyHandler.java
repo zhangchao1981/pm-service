@@ -33,6 +33,7 @@ public class ResponseBodyHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+
         BaseResponse baseResponse;
         HttpServletResponse httpResponse = ((ServletServerHttpResponse) response).getServletResponse();
         if (body instanceof BaseResponse) {

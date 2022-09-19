@@ -4,6 +4,7 @@ import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -98,7 +99,7 @@ public class FastDFSUtil {
      * @param filename 下载的文件命名
      * @return
      */
-    public void download(String path, String filename, HttpServletResponse response) throws IOException {
+    public byte[] download(String path, String filename, HttpServletResponse response) throws IOException {
         // 获取文件
         StorePath storePath = StorePath.parseFromUrl(path);
         if (StringUtils.isBlank(filename)) {
@@ -106,25 +107,30 @@ public class FastDFSUtil {
         }
         byte[] bytes = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         response.reset();
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, DEFAULT_CHARSET));
-        response.setCharacterEncoding(DEFAULT_CHARSET);
-        // 设置强制下载不打开
-//        response.setContentType("application/force-download");
-        ServletOutputStream outputStream = null;
-        try {
-            outputStream = response.getOutputStream();
-            outputStream.write(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        return  fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
+//        response.setContentType("application/octet-stream");
+//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, DEFAULT_CHARSET));
+//
+//        // 设置强制下载不打开
+////        response.setContentType("application/force-download");
+//        ServletOutputStream outputStream = null;
+//        try {
+//            outputStream = response.getOutputStream();
+//            outputStream.write(bytes);
+//            outputStream.flush();
+//        } catch (IOException e) {
+//            System.out.println("");
+//        } finally {
+//            try {
+//                outputStream.close();
+//            } catch (IOException e) {
+//                System.out.println("");
+//            }
+//        }
     }
+
+
+    //直接让前端下载并
 
 
     /**
