@@ -52,9 +52,10 @@ public class FastDfsController {
     @ApiOperation(value = "下载文件", notes = "从服务器上下载文件,需要两个参数：路径为path，文件名重命名为请求参数name")
     @ApiOperationSupport(order = 27)
 //    @PreAuthorize("hasAuthority('/projectFile/downloadFile')")
-    public void downloadTemplate(@RequestParam String path,@RequestParam String name,HttpServletResponse response) throws IOException {
-        fastDFSUtil.download(path,name,response);
+    public byte[] downloadTemplate(@RequestParam String path,@RequestParam String name,HttpServletResponse response) throws IOException {
+           return      fastDFSUtil.download(path,name,response);
     }
+
 
 
     @PostMapping("/deleteFile")

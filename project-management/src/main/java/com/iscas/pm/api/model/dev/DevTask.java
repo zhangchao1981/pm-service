@@ -65,10 +65,10 @@ public class DevTask implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    private DevTypeEnum type;
+    private String type;
 
     public DevTask() {
-        setType(DevTypeEnum.DevTask);
+        type= String.valueOf(DevTypeEnum.Task);
     }
 
     @TableField(exist = false)

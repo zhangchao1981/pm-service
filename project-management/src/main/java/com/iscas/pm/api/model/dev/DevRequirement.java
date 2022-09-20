@@ -105,10 +105,10 @@ public class DevRequirement implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    private DevTypeEnum type;
+    private String type;
 
     public DevRequirement() {
-        setType(DevTypeEnum.DevRequirement);
+        type= String.valueOf(DevTypeEnum.Requirement);
     }
 
     @TableField(exist = false)

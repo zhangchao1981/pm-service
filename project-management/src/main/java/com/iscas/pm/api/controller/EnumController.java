@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * @author zhangchao
  * @Date: 20122/7/14 16:42
@@ -92,7 +95,7 @@ public class EnumController {
 
     @ApiOperation(value = "查询开发相关接口的返回值类型", notes = "需求开发模块中项目模块列表、查询开发需求、查询开发任务三个接口的返回值类型")
     @PostMapping(value = "/devType")
-    public DevTypeEnum[] devTypeEnum() {  return DevTypeEnum.values(); }
+    public String[] devTypeEnum() {  return new String[]{Arrays.toString(DevTypeEnum.values())}; }
 
 
 
