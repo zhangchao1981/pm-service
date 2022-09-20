@@ -70,6 +70,17 @@ public class DevController {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
     }
 
+    @ApiOperationSupport(order = 14)
+    @PostMapping("/devChildModularList")
+    @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>",response=DevModular.class)
+    @PreAuthorize("hasAuthority('/projectDev/devChildModularList')")
+    public List<DevModular> devChildModularList(@NotNull(message = "id不能为空")@RequestParam Integer id) {
+        return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id",id));
+    }
+
+
+
+
     @ApiOperationSupport(order = 4)
     @PostMapping("/deleteDevModular")
     @ApiOperation(value = "删除项目模块", notes = "")
