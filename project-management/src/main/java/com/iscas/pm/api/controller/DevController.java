@@ -116,7 +116,7 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-
+        devRequirement.setChanged(false);
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());
         devRequirement.setStatus(getStatus(devRequirement.getStartDate(), devRequirement.getEndDate()));
@@ -133,6 +133,8 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+
+        devRequirement.setChanged(true);
         if (!devRequirementService.updateById(devRequirement)) {
             throw new IllegalArgumentException("要修改的开发需求id不存在");
         }
