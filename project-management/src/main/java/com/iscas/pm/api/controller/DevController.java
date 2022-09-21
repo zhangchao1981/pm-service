@@ -61,10 +61,6 @@ public class DevController {
         return devModular;
     }
 
-
-
-
-
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
     @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>",response=DevModular.class)
