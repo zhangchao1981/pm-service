@@ -48,6 +48,21 @@
     </modules>
 
     <dependencies>
+        <!-- 指定日志实现类，spring boot的2.1.6自带的log4j和poi-tl不兼容 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-to-slf4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
         <!--springboot启动器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

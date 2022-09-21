@@ -1,48 +1,66 @@
-//package com.iscas.pm.api.util;
-//
-//import java.io.IOException;
-//import java.io.UnsupportedEncodingException;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-///**
-// * @author by zhangchao
-// * @date 2022/6/16.
-// * word文档工具类
-// */
-//public class WordUtil {
-//    public static void main(String[] args) throws IOException {
-//        DocumentHandler documentHandler = new DocumentHandler();
-//        DocumentHandler.createDoc(getData(),"D:/test001.doc","D:/test");//输出到F:/test.doc
-//    }
-//
-//    private static Map<String,Object> getData(){//要输入到模板上的数据
-//
-//        Map<String,Object> dataMap = new HashMap<>();
-//        //等会再从mysql里拿数据填进去
-//        //这里是普通息⽤于普通⽂本处理
-//        dataMap.put("id","id假数据");
-//        dataMap.put("pjname","pjname假数据");
-//        dataMap.put("pjnumber","pjnumber假数据");
-//        dataMap.put("pjstage","pjstage假数据");
-//
-//        //输入 数据封装对象   这里是用于表格和图片处理
-////        Developmentplan case1 = new Developmentplan("0001","用例1");
-////        Developmentplan case2 = new Developmentplan("0002","用例2");
-////        List<Developmentplan> caseList = new ArrayList<>();
-////        caseList.add(case1);
-////        caseList.add(case2);
-////        Model subModel = new Model("子模块1",caseList,new ArrayList<>());
-////        List<Model> subModels = new ArrayList<>();
-////        subModels.add(subModel);
-////        Model model1 = new Model("模块1",new ArrayList<>(),subModels);
-////        Model model2 = new Model("模块2",caseList,new ArrayList<>());
-////
-////        List<Model> models = new ArrayList<>();
-////        models.add(model1);
-////        models.add(model2);
-////        dataMap.put("models",models);
-//        return dataMap;
-//    }
-//
-//}
+package com.iscas.pm.api.util;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IORuntimeException;
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.map.MapUtil;
+import com.deepoove.poi.XWPFTemplate;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Map;
+
+public class WordUtil {
+    public static void main(String[] args) throws IOException {
+        XWPFTemplate compile = XWPFTemplate.compile("D:\\文档\\TestPoi-Tl.doc");
+
+        parse("D:\\文档\\TestPoi-Tl.doc",
+                MapUtil.of("title", "Hello poi-tl模版引擎"),
+                "D:\\TestPoi-Tl.doc");
+    }
+
+
+    /**
+     * 解析word文件并将结果输出到OutputStream
+     *
+     * @param in      输入流
+     * @param dataMap 数据Map
+     * @param out     输出流
+     */
+    public static void parse(InputStream in,
+                             Map<String, Object> dataMap,
+                             OutputStream out) {
+        Assert.notNull(in, "in can not be null");
+        Assert.notNull(out, "out can not be null");
+        Assert.notNull(dataMap, "dataMap can not be null");
+        try {
+            XWPFTemplate.compile(in).render(dataMap).writeAndClose(out);
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    throw new IORuntimeException(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析word文件并将结果输出到OutputStream
+     *
+     * @param templateFilePath word文件路径，不存在该文件会报错
+     * @param dataMap          数据Map
+     * @param outFilePath      输出文件路径。不存在该文件会自动创建
+     */
+    public static void parse(String templateFilePath,
+                             Map<String, Object> dataMap,
+                             String outFilePath) {
+        InputStream inputStream = FileUtil.getInputStream(templateFilePath);
+        OutputStream out = FileUtil.getOutputStream(FileUtil.touch(outFilePath));
+        parse(inputStream, dataMap, out);
+    }
+}
