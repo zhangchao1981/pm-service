@@ -37,10 +37,10 @@ public class DevModular implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    private DevTypeEnum type;
+    private String type;
 
     public DevModular() {
-        setType(DevTypeEnum.DevModular);
+        type= String.valueOf(DevTypeEnum.Modular);
     }
 
     @TableField(exist = false)

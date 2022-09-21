@@ -39,8 +39,7 @@ public class DevRequirement implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "需求描述",required = true)
-    @NotBlank
-    private String description;
+    private String requirementDescription;
 
     @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName",required = true)
     private String worker;
@@ -54,7 +53,7 @@ public class DevRequirement implements Serializable {
     private RequirementTypeEnum requirementType;
 
     @TableField("is_change")
-    @ApiModelProperty(value = "是否是变更需求",required = true)
+    @ApiModelProperty(value = "是否是变更需求")
     private Boolean changed;
 
     @ApiModelProperty(value = "开发状态，前端无需传参，后端自动生成")
@@ -109,10 +108,10 @@ public class DevRequirement implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    private DevTypeEnum type;
+    private String type;
 
     public DevRequirement() {
-        setType(DevTypeEnum.DevRequirement);
+        type= String.valueOf(DevTypeEnum.Requirement);
     }
 
     @TableField(exist = false)

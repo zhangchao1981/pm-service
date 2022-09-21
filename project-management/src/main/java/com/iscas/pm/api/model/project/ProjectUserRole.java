@@ -26,6 +26,7 @@ public class ProjectUserRole implements Serializable {
     @ApiModelProperty("id")
     private Integer id;
 
+
     @ApiModelProperty(value = "用户id",required = true)
     @NotNull
     private Integer userId;
@@ -41,6 +42,11 @@ public class ProjectUserRole implements Serializable {
     @JsonIgnore
     @ApiModelProperty(value = "项目id",required = true)
     private String projectId;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户名",required = true)
+    private String userName;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

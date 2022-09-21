@@ -62,6 +62,9 @@ public class DevController {
     }
 
 
+
+
+
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
     @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>",response=DevModular.class)
@@ -77,6 +80,11 @@ public class DevController {
     public List<DevModular> devChildModularList(@NotNull(message = "id不能为空")@RequestParam Integer id) {
         return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id",id));
     }
+
+
+
+
+
 
 
 
@@ -108,7 +116,7 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-
+        devRequirement.setChanged(false);
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());
         devRequirement.setStatus(getStatus(devRequirement.getStartDate(), devRequirement.getEndDate()));
@@ -125,6 +133,8 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+
+        devRequirement.setChanged(true);
         if (!devRequirementService.updateById(devRequirement)) {
             throw new IllegalArgumentException("要修改的开发需求id不存在");
         }

@@ -10,9 +10,11 @@ import lombok.Getter;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DevTypeEnum {
-    DevModular("模块"),DevRequirement("开发需求"),DevTask("开发任务");
-    private  String type;
-    DevTypeEnum(String type) {
-        this.type = type;
-    }
+
+    Modular,
+    Requirement,
+    Task;
+
+
+
 }
