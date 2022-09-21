@@ -62,6 +62,9 @@ public class DevController {
     }
 
 
+
+
+
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
     @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>",response=DevModular.class)
@@ -77,6 +80,10 @@ public class DevController {
     public List<DevModular> devChildModularList(@NotNull(message = "id不能为空")@RequestParam Integer id) {
         return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id",id));
     }
+
+
+
+
 
 
 
