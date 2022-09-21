@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @TableName(value ="auth_role_permission")
@@ -20,9 +21,11 @@ public class RolePermission implements Serializable {
     private Integer roleId;
 
     @ApiModelProperty(value = "权限id")
+    @Size(max = 50,message = "权限id长度不能大于50")
     private String permissionId;
 
     @ApiModelProperty(value = "项目id")
+    @TableField(exist = false)
     private String projectId;
 
     @TableField(exist = false)

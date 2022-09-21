@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -33,20 +34,26 @@ public class EnvInformation implements Serializable {
 
     @ApiModelProperty(value = "分类",required = true)
     @NotBlank(message = "分类不能为空")
+    @Size(max = 11,message = "接收方长度不能大于25")
     private String category;
 
     @ApiModelProperty(value = "服务器或系统地址",required = true)
     @NotBlank(message = "服务器或系统地址不能为空")
+    @Size(max = 32,message = "服务器或系统地址长度不能大于32")
     private String serverAddress;
 
     @ApiModelProperty(value = "用户名")
     @NotBlank(message = "用户名不能为空")
+    @Size(max = 11,message = "用户名长度不能大于25")
     private String username;
 
     @ApiModelProperty(value = "密码")
+    @Size(max = 32,message = "密码长度不能大于25")
+    //数据库需修改
     private String password;
 
     @ApiModelProperty(value = "说明")
+    @Size(max = 255,message = "接收方长度不能大于25")
     private String description;
 
 

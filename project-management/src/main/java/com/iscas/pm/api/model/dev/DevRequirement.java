@@ -17,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -35,13 +36,16 @@ public class DevRequirement implements Serializable {
     private Integer id;
 
     @ApiModelProperty(value = "需求用例名称",required = true)
+    @Size(max = 25,message = "需求用例名称长度不能大于25")
     @NotBlank
     private String name;
 
     @ApiModelProperty(value = "需求描述",required = true)
+    @Size(max = 150,message = "需求描述长度不能大于150")
     private String requirementDescription;
 
     @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName",required = true)
+    @Size(max = 50,message = "责任人长度不能大于50")
     private String worker;
 
     @ApiModelProperty(value = "优先级",required = true)

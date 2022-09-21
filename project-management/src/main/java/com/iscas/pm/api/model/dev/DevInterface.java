@@ -12,6 +12,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 
@@ -28,6 +29,7 @@ public class DevInterface implements Serializable {
 
     @ApiModelProperty(value = "接口名称",required = true)
     @NotBlank(message = "接口名称不能为空")
+    @Size(max = 25,message = "接口名称长度不能大于25")
     private String name;
 
 
@@ -37,16 +39,19 @@ public class DevInterface implements Serializable {
 
 
     @ApiModelProperty(value = "维护人，即新建接口的用户")
+    @Size(max = 12,message = "维护人长度不能大于12")
     private String maintainer;
 
 
     @ApiModelProperty(value = "发送方",required = true)
     @NotBlank(message = "发送方不能为空")
+    @Size(max = 25,message = "发送方长度不能大于25")
     private String sender;
 
 
     @ApiModelProperty(value = "接收方",required = true)
     @NotBlank(message = "接收方不能为空")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String acceptor;
 
     @ApiModelProperty(value = "优先级",required = true)

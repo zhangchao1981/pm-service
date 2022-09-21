@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @TableName(value ="auth_permission")
 @Data
@@ -24,13 +25,16 @@ public class Permission implements Serializable {
 
     @ApiModelProperty(value = "权限名称",required = true)
     @NotBlank(message = "权限名称不能为空")
+    @Size(max = 20,message = "权限名称长度不能大于20")
     private String name;
 
     @ApiModelProperty(value = "权限描述")
+    @Size(max = 255,message = "权限描述长度不能大于255")
     private String description;
 
     @ApiModelProperty(value = "权限所属模块",required = true)
     @NotBlank(message = "权限所属模块不能为空")
+    @Size(max = 20,message = "权限所属模块长度不能大于20")
     private String module;
 
     @JsonIgnore

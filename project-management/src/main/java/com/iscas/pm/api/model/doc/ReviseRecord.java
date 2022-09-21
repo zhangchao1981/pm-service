@@ -16,6 +16,7 @@ import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 @Accessors(chain = true)
@@ -48,10 +49,12 @@ public class ReviseRecord implements Serializable {
 
     @NotBlank(message = "修改人不能为空")
     @ApiModelProperty(value = "修改人",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String mender;
 
 
     @ApiModelProperty(value = "批准人")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String approver;
 
     @TableField(exist = false)

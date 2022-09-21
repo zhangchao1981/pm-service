@@ -17,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @ApiModel(value = "项目文档", description = "项目文档基本信息，对应项目库doc_document表")
@@ -30,12 +31,15 @@ public class Document implements Serializable {
 
     @ApiModelProperty(value = "文档名称",required = true)
     @NotBlank(message = "文档名称不能为空")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "上传者姓名，后端自动生成，前端无需传参")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String uploader;
 
     @ApiModelProperty(value = "版本号")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String version;
 
     @ApiModelProperty(value = "文档类型",required = true)
@@ -47,6 +51,7 @@ public class Document implements Serializable {
     private Integer directoryId;
 
     @ApiModelProperty(value = "文档路径",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String path;
 
     @ApiModelProperty(value = "生成时间，后端自动生成，前端无需传参")

@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @Accessors(chain = true)
@@ -28,6 +29,7 @@ public class Directory implements Serializable {
 
     @NotBlank(message = "目录名称不能为空")
     @ApiModelProperty(value = "目录名称",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String name;
 
     @NotNull(message = "父节点id不能为空")

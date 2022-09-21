@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,10 +30,12 @@ public class DevTask implements Serializable {
 
     @NotBlank(message = "任务名称不能为空")
     @ApiModelProperty(value = "任务名称",required = true)
+    @Size(max = 32,message = "任务名称长度不能大于32")
     private String name;
 
     @NotBlank(message = "责任人不能为空")
     @ApiModelProperty(value = "责任人,传参是人员姓名",required = true)
+    @Size(max = 11,message = "责任人长度不能大于11")
     private String worker;
 
     @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")

@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @TableName pm_project_user_role
@@ -29,6 +30,7 @@ public class ProjectUserRole implements Serializable {
 
     @ApiModelProperty(value = "用户id",required = true)
     @NotNull
+    @Size(max = 11,message = "用户id不能大于11")
     private Integer userId;
 
     @TableField(exist = false)

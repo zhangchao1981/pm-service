@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class DevModular implements Serializable {
 
 
     @ApiModelProperty(value = "模块名称",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String name;
 
     @NotNull(message = "父节点id不能为空")
@@ -37,6 +39,7 @@ public class DevModular implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String type;
 
     public DevModular() {

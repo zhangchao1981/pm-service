@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -31,7 +32,7 @@ public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目编号,不允许修改", notes = "对应数据库名，小写英文.", required = true)
     @NotBlank(message = "项目编号不能为空")
-    @Size(max = 10)
+    @Size(max = 10,message = "项目编号长度不能大于10")
     private String id;
 
     @ApiModelProperty(value = "项目名称", required = true)
@@ -62,28 +63,36 @@ public class Project implements Serializable {
 
     @ApiModelProperty(value = "项目负责人", required = true)
     @NotBlank(message = "项目负责人不能为空")
-    @Size(max = 25)
+    @Size(max = 10,message = "项目负责人长度不能大于10")
     private String managerName;
 
     @ApiModelProperty(value = "项目概述")
+    @Size(max = 5000,message = "项目概述长度不能大于10")
     private String description;
 
     @ApiModelProperty(value = "研制单位")
+    @Size(max = 255,message = "研制单位长度不能大于255")
     private String manufacture;
 
     @ApiModelProperty(value = "项目提出方")
+    @Size(max = 255,message = "项目提出方长度不能大于255")
     private String projectProvider;
 
     @ApiModelProperty(value = "需求提出方")
+    @Size(max = 255,message = "需求提出方长度不能大于255")
     private String requirementProvider;
 
     @ApiModelProperty(value = "合同编号")
+    @Size(max = 255,message = "合同编号长度不能大于255")
     private String contractId;
 
     @ApiModelProperty(value = "合同金额")
+    @Size(max = 10,message = "合同金额长度不能大于10")
+    @Min(value = 0,message = "合同金额大小不能为负")
     private BigDecimal contractAmount;
 
     @ApiModelProperty(value = "创建人的用户名")
+    @Size(max = 255,message = "创建人的用户名不能大于255")
     private String createUser;
 
     @JsonIgnore
@@ -95,5 +104,6 @@ public class Project implements Serializable {
     private Date updateTime;
 
     @ApiModelProperty(value = "审核意见")
+    @Size(max = 255,message = "审核意见不能大于255")
     private String approveComments;
 }

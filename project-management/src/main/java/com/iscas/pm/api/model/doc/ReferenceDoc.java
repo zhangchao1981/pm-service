@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 @Accessors(chain = true)
@@ -31,6 +32,7 @@ public class ReferenceDoc implements Serializable {
 
     @NotBlank(message = "引用文档名称不能为空")
     @ApiModelProperty(value = "文档名称",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "标识")

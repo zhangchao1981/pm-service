@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @ApiModel(value = "文档生成模板", description = "文档生成模板，对应project_demo库doc_template表")
@@ -30,17 +31,21 @@ public class DocTemplate implements Serializable {
 
     @NotBlank(message = "维护人不能为空")
     @ApiModelProperty(value = "维护人",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String maintainer;
 
     @NotBlank(message = "模板名称不能为空")
     @ApiModelProperty(value = "模板名称",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "模板描述",required = false)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String description;
 
 
     @ApiModelProperty(value = "模板文件",required = true)
+    @Size(max = 25,message = "接收方长度不能大于25")
     private String path;
 
 
