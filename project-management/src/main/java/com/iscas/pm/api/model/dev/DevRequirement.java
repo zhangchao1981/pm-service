@@ -38,6 +38,10 @@ public class DevRequirement implements Serializable {
     @NotBlank
     private String name;
 
+    @ApiModelProperty(value = "需求描述",required = true)
+    @NotBlank
+    private String description;
+
     @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName",required = true)
     private String worker;
 
