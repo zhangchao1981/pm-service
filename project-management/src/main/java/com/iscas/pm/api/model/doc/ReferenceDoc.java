@@ -32,20 +32,24 @@ public class ReferenceDoc implements Serializable {
 
     @NotBlank(message = "引用文档名称不能为空")
     @ApiModelProperty(value = "文档名称",required = true)
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 25,message = "文档名称长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "标识")
+    @Size(max = 25,message = "标识长度不能大于25")
     private String mark;
 
     @ApiModelProperty(value = "版本号")
+    @Size(max = 10,message = "标识长度不能大于10")
     private String version;
 
     @NotBlank(message = "引用文档来源不能为空")
     @ApiModelProperty(value = "来源")
+    @Size(max = 25,message = "来源长度不能大于25")
     private String source;
 
     @ApiModelProperty(value = "备注")
+    @Size(max = 25,message = "备注长度不能大于25")
     private String notes;
 
     @TableField(exist = false)

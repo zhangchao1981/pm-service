@@ -10,10 +10,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -87,8 +84,7 @@ public class Project implements Serializable {
     private String contractId;
 
     @ApiModelProperty(value = "合同金额")
-    @Size(max = 10,message = "合同金额长度不能大于10")
-    @Min(value = 0,message = "合同金额大小不能为负")
+    @DecimalMin(value = "0.0", message = "合同金额大小不能为负")
     private BigDecimal contractAmount;
 
     @ApiModelProperty(value = "创建人的用户名")

@@ -36,14 +36,6 @@ public class CreateDocumentParam {
     @ApiModelProperty(value = "项目标识", required = true)
     private String projectMark;
 
-//    @ApiModelProperty(value = "软件研制单位", required = false)
-//    private String unit;
-//
-//    @ApiModelProperty(value = "软件负责人", required = false)
-//    private String softwareManager;
-//
-//    @ApiModelProperty(value = "软件开发组", required = false)
-//    private String softwareDevTeam;
 
     @NotBlank(message = "当前项目id不能为空")
     @ApiModelProperty(value = "当前项目id", required = true)

@@ -3,10 +3,10 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.doc.Document;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,6 +29,8 @@ public interface DocumentService extends IService<Document> {
 
     void downloadDocument(Integer id, HttpServletResponse response);
 
-
     void createDocument(CreateDocumentParam createDocumentParam) throws IOException;
+
+    HashMap<String,Object> getDocumentContext(Integer templateId);
+
 }

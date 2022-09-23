@@ -31,15 +31,15 @@ public class Document implements Serializable {
 
     @ApiModelProperty(value = "文档名称",required = true)
     @NotBlank(message = "文档名称不能为空")
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 25,message = "文档名称长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "上传者姓名，后端自动生成，前端无需传参")
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 10,message = "上传者姓名长度不能大于10")
     private String uploader;
 
     @ApiModelProperty(value = "版本号")
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 10,message = "版本号长度不能大于10")
     private String version;
 
     @ApiModelProperty(value = "文档类型",required = true)
@@ -51,7 +51,7 @@ public class Document implements Serializable {
     private Integer directoryId;
 
     @ApiModelProperty(value = "文档路径",required = true)
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 255,message = "文档路径方长度不能大于255")
     private String path;
 
     @ApiModelProperty(value = "生成时间，后端自动生成，前端无需传参")

@@ -34,7 +34,7 @@ public class EnvInformation implements Serializable {
 
     @ApiModelProperty(value = "分类",required = true)
     @NotBlank(message = "分类不能为空")
-    @Size(max = 11,message = "接收方长度不能大于25")
+    @Size(max = 11,message = "分类方长度不能大于11")
     private String category;
 
     @ApiModelProperty(value = "服务器或系统地址",required = true)
@@ -53,7 +53,7 @@ public class EnvInformation implements Serializable {
     private String password;
 
     @ApiModelProperty(value = "说明")
-    @Size(max = 255,message = "接收方长度不能大于25")
+    @Size(max = 255,message = "说明长度不能大于25")
     private String description;
 
 

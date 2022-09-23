@@ -61,9 +61,15 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
     @Override
     public Boolean switchProject(String token, String projectId) {
-        //判断当前用户在要切换的项目上是否有权限
+        //超级角色可以切换到任意项目
+        List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
+        boolean super_role = false;
+        if (systemPermissions != null && systemPermissions.contains("/projectInfo/approveProject") )
+            super_role = true;
+
+        //其他用户只能切换到有权限的项目
         Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
-        if (projectPermissions == null || projectPermissions.get(projectId) == null || projectPermissions.get(projectId).size() == 0) {
+        if (!super_role && (projectPermissions == null || projectPermissions.get(projectId) == null || projectPermissions.get(projectId).size() == 0)) {
             throw new AuthorizeException("当前用户无权限访问目标项目");
         }
         //redis中更新当前项目

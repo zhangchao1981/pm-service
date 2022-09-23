@@ -26,7 +26,7 @@ public class DevModular implements Serializable {
 
 
     @ApiModelProperty(value = "模块名称",required = true)
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 25,message = "模块名称长度不能大于25")
     private String name;
 
     @NotNull(message = "父节点id不能为空")
@@ -39,7 +39,7 @@ public class DevModular implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    @Size(max = 25,message = "接收方长度不能大于25")
+    @Size(max = 25,message = "返回值类型长度不能大于25")
     private String type;
 
     public DevModular() {

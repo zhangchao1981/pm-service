@@ -10,7 +10,6 @@ import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.*;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -120,7 +118,7 @@ public class DocController {
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
-        documentService.createDocument(createDocumentParam);
+      documentService.createDocument(createDocumentParam);
     }
 
     @PostMapping("/addLocalDocument")
@@ -129,8 +127,7 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath())) {
-            throw new IllegalArgumentException("文档路径不能为空");
-        }
+            throw new IllegalArgumentException("文档路径不能为空");}
         document.setCreateTime(new Date());
         document.setUpdateTime(new Date());
         document.setUploader(RequestHolder.getUserInfo().getEmployeeName());

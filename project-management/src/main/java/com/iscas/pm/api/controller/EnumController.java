@@ -1,8 +1,6 @@
 package com.iscas.pm.api.controller;
 
-import com.iscas.pm.api.model.dev.DevTypeEnum;
-import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
-import com.iscas.pm.api.model.dev.RequireStatusEnum;
+import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -98,5 +95,14 @@ public class EnumController {
     public String[] devTypeEnum() {  return new String[]{Arrays.toString(DevTypeEnum.values())}; }
 
 
+
+    @ApiOperation(value = "需求来源", notes = "需求开发模块中开发需求的需求来源类型")
+    @PostMapping(value = "/requirementSource")
+    public RequirementSourceEnum[] RequirementSourceEnum() {  return RequirementSourceEnum.values(); }
+
+
+    @ApiOperation(value = "需求类型", notes = "需求开发模块中开发需求的需求类型")
+    @PostMapping(value = "/requirementType")
+    public RequirementTypeEnum[] RequirementTypeEnum() {  return RequirementTypeEnum.values(); }
 
 }
