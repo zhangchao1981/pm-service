@@ -25,6 +25,15 @@ public class DatasourceRequestFilter implements Filter{
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
+
+//        //切换数据源之前先判断是否存在数据库
+//        //  SELECT * FROM information_schema.SCHEMATA where SCHEMA_NAME= ${databaseName};
+//        AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
+//        dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
+//        dataSourceBean.setTestQuery("SELECT * FROM information_schema.SCHEMATA where SCHEMA_NAME= "+databaseName);
+
+
+
         //切换数据源
         String databaseName = (String)request.getAttribute(DATA_BASE_FIELD);
         if (request.getRequestURI().startsWith("/projectInfo")) {

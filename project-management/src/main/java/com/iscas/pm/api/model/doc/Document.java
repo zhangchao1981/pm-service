@@ -61,6 +61,7 @@ public class Document implements Serializable {
 
     @JsonIgnore
     @ApiModelProperty(value = "最后更新时间,后端自动生成，前端无需传参")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     @TableField(exist = false)

@@ -1,5 +1,6 @@
 package com.iscas.pm.api.controller;
 
+import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 import com.iscas.pm.api.service.ProjectTeamService;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
@@ -53,6 +54,9 @@ public class ProjectTeamController {
         //问题：返回雇员名可能重名，需要用户名    方案1.
         return projectTeamService.getMemberList();
     }
+
+
+
 
 //    @GetMapping("/memberListByRole")
 //    @ApiOperation(value = "查询某角色对应的团队成员", notes = "查询团队成员中指定角色的成员,用于回显")//未添加权限

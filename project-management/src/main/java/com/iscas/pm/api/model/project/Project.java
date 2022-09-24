@@ -64,7 +64,7 @@ public class Project implements Serializable {
     private String managerName;
 
     @ApiModelProperty(value = "项目概述")
-    @Size(max = 5000,message = "项目概述长度不能大于10")
+    @Size(max = 5000,message = "项目概述长度不能大于5000")
     private String description;
 
     @ApiModelProperty(value = "研制单位")
@@ -100,6 +100,6 @@ public class Project implements Serializable {
     private Date updateTime;
 
     @ApiModelProperty(value = "审核意见")
-    @Size(max = 255,message = "审核意见不能大于255")
+    @Size(max = 5000,message = "审核意见不能大于5000")
     private String approveComments;
 }

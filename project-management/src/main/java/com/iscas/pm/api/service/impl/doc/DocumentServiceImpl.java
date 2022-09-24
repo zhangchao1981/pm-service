@@ -12,9 +12,12 @@ import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
 import com.iscas.pm.api.model.doc.*;
+import com.iscas.pm.api.model.doc.data.DocPlanTask;
+import com.iscas.pm.api.model.doc.data.DocReviseRecord;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
+import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.api.util.DocumentHandler;
@@ -24,11 +27,13 @@ import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.apache.commons.lang.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +67,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     ReviseRecordService reviseRecordService;
     @Autowired
     ReferenceDocService referenceDocService;
+    @Autowired
+    ProjectTeamService  projectTeamService;
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -187,13 +194,25 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
             //项目计划信息获取
             List<PlanTask> planTaskList = projectPlanService.getTaskListByWps();
+            List<ProjectMember> memberList = projectTeamService.memberRoleList();
 
-            map.put("reviseRecordList", reviseRecordList);
+            List<DocReviseRecord> docReviseRecordList=new ArrayList<>();
+            List<DocPlanTask> docPlanTaskList =new ArrayList<>();
+            reviseRecordList.forEach(reviseRecord->{
+                docReviseRecordList.add(new DocReviseRecord(reviseRecord));
+            });
+            planTaskList.forEach(planTask->{
+               docPlanTaskList.add(new DocPlanTask(planTask));
+            });
+
+
+            map.put("reviseRecordList", docReviseRecordList);
             map.put("referenceList", referenceList);
+            map.put("memberList",memberList);
             //project获取：
             map.put("hardwareList", hardwareList);
             map.put("softwareList", softwareList);
-            map.put("planTaskList", planTaskList);
+            map.put("planTaskList", docPlanTaskList);
 
             DataSourceHolder.setDB("default");
             ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);

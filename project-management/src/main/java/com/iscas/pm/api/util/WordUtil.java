@@ -10,30 +10,70 @@ import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.iscas.pm.api.mapper.doc.ReviseRecordMapper;
 import com.iscas.pm.api.model.doc.ReviseRecord;
+import com.iscas.pm.api.model.doc.data.DocReviseRecord;
 import com.iscas.pm.api.service.ReviseRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.print.Doc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class WordUtil {
 
+//
 
-    public static void main(String[] args) throws IOException {
+
+
+    public static void main(String[] args) throws IOException, IllegalAccessException {
 //        MapUtil.of("title", "Hello poi-tl模版引擎")
         HashMap<String, Object> data = new HashMap<>();
         List<ReviseRecord> reviseRecordList =new ArrayList<>();
+        //新建一个类  把日期属性改成String类型，并用  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");转换后存储过来
+
         ReviseRecord reviseRecord = new ReviseRecord();
-        reviseRecord.setId(5).setMender("lichang").setTemplateId(1).setVersion("1.0").setDate(new Date()).setApprover("lichang").setNotes("test");
+        Date date = new Date();
+        //日期类型对象  在不改变实体类和模板的情况下   输出正确格式
+
+        reviseRecord.setId(5).setMender("lichang").setTemplateId(1).setVersion("1.0").setDate(date).setApprover("lichang").setNotes("test");
         reviseRecordList.add(reviseRecord);
+
+        List<DocReviseRecord> reviseRecordListNew =new ArrayList<>();
+        reviseRecordList.forEach(revise->{
+            reviseRecordListNew.add(new DocReviseRecord(revise));
+        });
+
+
+//
+//
+//        List< Map<String, String>> newReviseRecordList =new ArrayList<>();
+//        reviseRecordList.forEach(revise->{
+//            Map<String, String> newReviseRecord = new HashMap<String, String>();
+//            Field[] declaredFields = revise.getClass().getDeclaredFields();
+//            for (Field field : declaredFields) {
+//                field.setAccessible(true);
+//                try {
+//                    newReviseRecord.put(field.getName(), (String) field.get(revise));
+//                } catch (IllegalAccessException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            newReviseRecordList.add(newReviseRecord);
+//        });
+//
+
+
+
         data.put("项目名称","poil测试");
-        data.put("reviseRecordList",reviseRecordList);
+        data.put("reviseRecordList",reviseRecordListNew);
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
         Configure config = Configure.builder()
                 .bind("reviseRecordList", policy).build();
+
         parse("F:\\POI测试\\表格文本替换测试文件.docx",config,data,
                 "F:\\POI测试\\OutPutPoi-Tl.doc");
     }

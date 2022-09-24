@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.doc.ReferenceDocMapper;
 import com.iscas.pm.api.mapper.project.ProjectUserRoleMapper;
 import com.iscas.pm.api.model.doc.ReferenceDoc;
+import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 import com.iscas.pm.api.service.ProjectTeamService;
 import com.iscas.pm.api.service.ReferenceDocService;
@@ -30,6 +31,13 @@ public class ProjectTeamServiceImpl extends ServiceImpl<ProjectUserRoleMapper, P
         DataSourceHolder.setDB("default");
         return  projectUserRoleMapper.getMemberList(projectId);
 //        return projectUserRoleMapper.selectAllByProjectId(projectId);
+    }
+
+    @Override
+    public List<ProjectMember> memberRoleList() {
+        String projectId = DataSourceHolder.getDB();
+        DataSourceHolder.setDB("default");
+        return  projectUserRoleMapper.memberRoleList(projectId);
     }
 
 //    @Override

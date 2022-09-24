@@ -181,7 +181,9 @@ public class DevController {
         if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devTask.getRequireId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
-
+        if (devTask.getDevProgress()==null){
+            devTask.setDevProgress(0);
+        }
         devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), devTask.getDevProgress()));
         devTaskService.save(devTask);
         return true;
@@ -214,7 +216,7 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (getTaskFeedbacks(id).size() > 0)
+        if (taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(id)).size() > 0)
             throw new IllegalArgumentException("该开发任务已填写反馈，不允许删除");
 
         if (!devTaskService.removeById(id)) {
@@ -224,21 +226,13 @@ public class DevController {
         return true;
     }
 
-    @PostMapping("/addTaskFeedback")
-    @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改开发任务完成情况的反馈信息")
-    @ApiOperationSupport(order = 14)
-    @PreAuthorize("hasAuthority('/projectDev/saveTaskFeedback')")
-    public TaskFeedback saveTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback) {
-        taskFeedbackService.saveTaskFeedback(taskFeedback);
-        return taskFeedback;
-    }
 
     @GetMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(@NotNull Integer taskId) {
-        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(taskId));
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull Integer DevTaskId) {
+        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(DevTaskId));
     }
 
     @ApiOperationSupport(order = 16)

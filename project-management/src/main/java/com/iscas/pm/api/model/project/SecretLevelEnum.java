@@ -15,12 +15,16 @@ public enum SecretLevelEnum {
     INTERNAL("INTERNAL","内部"),
     SECRET("SECRET","秘密");
 
-    private final String code;
     private final String value;
+    private final String code;
 
-    SecretLevelEnum(String code, String value) {
-
-        this.code = code;
+    SecretLevelEnum(String value,String code) {
         this.value = value;
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return code;
     }
 }

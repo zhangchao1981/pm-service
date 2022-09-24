@@ -41,7 +41,7 @@ public class DevTask implements Serializable {
     @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")
     private TaskStatusEnum status;
 
-    @ApiModelProperty(value = "开发进度，前端无需传参，后端自动生成")
+    @ApiModelProperty(value = "开发进度")
     private Integer devProgress;
 
 

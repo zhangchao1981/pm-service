@@ -22,5 +22,9 @@ public enum MediumEnum {
         this.code = code;
         this.value = value;
     }
+    @Override
+    public String toString() {
+        return code;
+    }
 
 }
