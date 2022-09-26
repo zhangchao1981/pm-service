@@ -53,24 +53,15 @@ public class UserController {
 //        return userService.selectUserBriefInfo();
 //    }
 
-    @ApiOperation(value = "人员列表", notes = "")
+    @ApiOperation(value = "人员列表", notes = "查询用户人员列表")
     @PostMapping("/userPageList")
-    @PreAuthorize("hasAuthority('/user/userList')")
+    @PreAuthorize("hasAuthority('/user/userPageList')")
     public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
         return userService.selectUserList(queryParam);
     }
 
 
-    @ApiOperation(value = "人员列表(废弃)", notes = "分页返回符合条件的人员列表")
-    @GetMapping("/userList")
-    @PreAuthorize("hasAuthority('/user/userList')")
-    @Deprecated
-    public List<User> listAll() {
-        UserQueryParam param = new UserQueryParam();
-        param.setPageNum(1);
-        param.setPageSize(Integer.MAX_VALUE);
-        return userService.selectUserList(param).getRecords();
-    }
+
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
