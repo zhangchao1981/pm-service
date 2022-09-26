@@ -216,7 +216,7 @@ public class DevController {
     @ApiOperation(value = "删除开发任务", notes = "删除id对应信息")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevTask')")
     public boolean deleteDevTask(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(id)).size() > 0)
+        if (taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(id)).size() > 0)
             throw new IllegalArgumentException("该开发任务已填写反馈，不允许删除");
 
         if (!devTaskService.removeById(id)) {
@@ -231,8 +231,8 @@ public class DevController {
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(@NotNull Integer DevTaskId) {
-        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setDevTaskId(DevTaskId));
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空")@RequestParam Integer DevTaskId) {
+        return taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(DevTaskId));
     }
 
     @ApiOperationSupport(order = 16)

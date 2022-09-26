@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -88,8 +89,8 @@ public class ProjectPlanController {
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 7)
     @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(Integer taskId){
-        return taskFeedbackService.selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskId));
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空") @RequestParam Integer taskId){
+        return taskFeedbackService.selectListByTaskId(new TaskFeedback().setPlanTaskId(taskId));
     }
 
 }
