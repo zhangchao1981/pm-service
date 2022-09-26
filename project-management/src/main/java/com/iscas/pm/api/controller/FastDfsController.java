@@ -38,7 +38,6 @@ public class FastDfsController {
     @PostMapping("/uploadFile")
     @ApiOperation(value = "上传本地文件", notes = "上传本地文件到服务器")
     @ApiOperationSupport(order = 26)
-//    @PreAuthorize("hasAuthority('/projectFile/uploadFile')")
     public String uploadTemplate(MultipartFile file) throws IOException {
         //文件存入FastDFs
         StorePath path = fastDFSUtil.upload(file);
@@ -51,7 +50,6 @@ public class FastDfsController {
     @GetMapping("/downloadFile")
     @ApiOperation(value = "下载文件", notes = "从服务器上下载文件,需要两个参数：路径为path，文件名重命名为请求参数name")
     @ApiOperationSupport(order = 27)
-//    @PreAuthorize("hasAuthority('/projectFile/downloadFile')")
     public byte[] downloadTemplate(@RequestParam String path,@RequestParam String name,HttpServletResponse response) throws IOException {
            return      fastDFSUtil.download(path,name,response);
     }
@@ -61,7 +59,7 @@ public class FastDfsController {
     @PostMapping("/deleteFile")
     @ApiOperation(value = "删除文件", notes = "根据全路径删除")
     @ApiOperationSupport(order = 24)
-//    @PreAuthorize("hasAuthority('/projectFile/deleteFile')")
+    @PreAuthorize("hasAuthority('/projectFile/deleteFile')")
     public void deleteTemplate(String path) {
         redisUtil.del(path);
         fastDFSUtil.delete(path);

@@ -43,7 +43,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
-    @ApiOperation(value = "添加项目模块", notes = "内含模块名重复校验")
+    @ApiOperation(value = "添加项目模块", notes = "添加项目模块，内含模块名重复校验")
     @PreAuthorize("hasAuthority('/projectDev/addDevModular')")
     public DevModular addDevModular(@Valid @RequestBody DevModular devModular) {
         devModularService.save(devModularService.modularValidCheck(devModular));

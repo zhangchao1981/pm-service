@@ -34,6 +34,7 @@ public class ProjectPlanController {
     @GetMapping("/taskList")
     @ApiOperationSupport(order = 1)
     @ApiOperation(value = "查询任务列表", notes = "以树形结构返回整棵计划树")
+    @PreAuthorize("hasAuthority('/projectPlan/taskList')")
     public List<PlanTask> taskList(){
         return  projectPlanService.getTaskList();
     }
@@ -48,13 +49,13 @@ public class ProjectPlanController {
         return planTask;
     }
 
-    @PostMapping("/importTemplate")
-    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
-    @ApiOperationSupport(order = 3)
-    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
-    public Boolean importTemplate(Integer planTemplateId){
-        return  null;
-    }
+//    @PostMapping("/importTemplate")
+//    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
+//    @ApiOperationSupport(order = 3)
+//    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
+//    public Boolean importTemplate(Integer planTemplateId){
+//        return  null;
+//    }
 
     @PostMapping("/editTask")
     @ApiOperation(value = "修改计划任务", notes = "修改指定计划任务")
@@ -79,8 +80,8 @@ public class ProjectPlanController {
     @PostMapping("/addTaskFeedback")
     @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改任务完成情况的反馈信息")
     @ApiOperationSupport(order = 6)
-    @PreAuthorize("hasAuthority('/projectPlan/saveTaskFeedback')")
-    public TaskFeedback saveTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback){
+    @PreAuthorize("hasAuthority('/projectPlan/addTaskFeedback')")
+    public TaskFeedback addTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback){
         taskFeedbackService.saveTaskFeedback(taskFeedback);
         return  taskFeedback;
     }

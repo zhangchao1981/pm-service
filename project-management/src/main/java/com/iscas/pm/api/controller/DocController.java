@@ -104,13 +104,7 @@ public class DocController {
         return    documentIPage;
     }
 
-//    @PostMapping("/findDocumentByName")
-//    @ApiOperation(value = "查询文档", notes = "根据文档名模糊查询对应文档")
-//    @ApiOperationSupport(order = 14)
-//    @PreAuthorize("hasAuthority('/projectDoc/findDocumentByName')")
-//    public List<Document> findDocumentByName(@NotBlank(message = "参数Id列表不能为空") @RequestParam String docName) {
-//        return documentService.list(new QueryWrapper<Document>().like("name", docName));
-//    }
+
 
 
     @PostMapping("/createDocument")
@@ -279,6 +273,9 @@ public class DocController {
         if (!docTemplateService.save(template)) {
             throw new IllegalArgumentException("要修改的template不存在");
         }
+        //待添加校验( 存储路径是否改变 改变则删除服务器上的旧文档模板)
+
+
         return true;
     }
 
@@ -298,8 +295,17 @@ public class DocController {
         return docTemplateService.page(new Page<>(pageNum,pageSize));
     }
 
-
-
-
+//    /**
+//     * 连接指定数据库
+//     */
+//
+//
+//    @PostMapping("/")
+//    @ApiOperation(value = "查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
+//    @ApiOperationSupport(order = 29)
+//    @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
+//    public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+//        return docTemplateService.page(new Page<>(pageNum,pageSize));
+//    }
 
 }

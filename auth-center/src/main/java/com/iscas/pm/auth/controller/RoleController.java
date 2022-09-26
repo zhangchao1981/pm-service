@@ -111,9 +111,9 @@ public class RoleController {
     }
 
     @ApiOperation(value = "查询角色已分配的权限列表", notes = "查询指定角色已分配的权限列表，给角色分配权限的时候使用")
-    @PostMapping("getRolePermissions")
-    @PreAuthorize("hasAuthority('/role/getRolePermissions')")
-    public List<Permission> getRolePermissions(@NotNull @RequestParam Integer roleId) {
+    @PostMapping("rolePermissionList")
+    @PreAuthorize("hasAuthority('/role/rolePermissionList')")
+    public List<Permission> rolePermissionList(@NotNull @RequestParam Integer roleId) {
         Role role = roleService.getById(roleId);
         return roleService.getRolePermissions(roleId);
     }

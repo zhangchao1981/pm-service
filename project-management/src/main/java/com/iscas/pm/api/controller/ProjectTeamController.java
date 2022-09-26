@@ -32,7 +32,7 @@ public class ProjectTeamController {
 
     @PostMapping("/addMember")
     @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员，需要传入：userId,roleId")
-    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
+    @PreAuthorize("hasAuthority('/projectTeam/addMember')")
     public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole> memberList) {
         String projectId = DataSourceHolder.getDB();
         memberList.stream().forEach(member -> {
@@ -50,29 +50,17 @@ public class ProjectTeamController {
 
     @GetMapping("/memberList")
     @ApiOperation(value = "查询团队成员", notes = "查询当前项目下的所有团队成员")
+    @PreAuthorize("hasAuthority('/projectTeam/addMember')")
     public List<ProjectUserRole> memberList() {
-        //问题：返回雇员名可能重名，需要用户名    方案1.
         return projectTeamService.getMemberList();
     }
 
 
 
 
-//    @GetMapping("/memberListByRole")
-//    @ApiOperation(value = "查询某角色对应的团队成员", notes = "查询团队成员中指定角色的成员,用于回显")//未添加权限
-//    public List<ProjectUserRole> memberListByRole(@NotNull(message = "角色ID不能为空") @RequestParam Integer roleId ){
-//        return  projectTeamService.getMemberByRole(roleId);
-//    }
-//
-////    @GetMapping("/roleList")
-////    @ApiOperation(value = "查询团队角色列表(弃用)", notes = "查询当前项目下的所有角色")
-////    public List<String> roleList(){
-////        return  projectTeamService.getRoleList();
-////    }
-
     @GetMapping("/deleteMember")
     @ApiOperation(value = "删除团队成员", notes = "删除指定的团队成员")
-    @PreAuthorize("hasAuthority('/projectTeam/memberManage')")
+    @PreAuthorize("hasAuthority('/projectTeam/deleteMember')")
     public Boolean deleteMember(String id) {
         DataSourceHolder.setDB("default");
         if (projectTeamService.getById(id) == null)

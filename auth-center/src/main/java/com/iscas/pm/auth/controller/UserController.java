@@ -46,14 +46,14 @@ public class UserController {
     DepartmentService departmentService;
 
 
-//    @ApiOperation(value = "人员简要信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
-//    @PostMapping("/userBriefList")
-//    @PreAuthorize("hasAuthority('/user/userBriefList')")
-//    public List<UserBriefInfo> userBriefList(){
-//        return userService.selectUserBriefInfo();
-//    }
+    @ApiOperation(value = "人员简要信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
+    @PostMapping("/userBriefList")
+    @PreAuthorize("hasAuthority('/user/userBriefList')")
+    public List<UserBriefInfo> userBriefList(){
+        return userService.selectUserBriefInfo();
+    }
 
-    @ApiOperation(value = "人员列表", notes = "查询用户人员列表")
+    @ApiOperation(value = "人员列表", notes = "分页查询用户人员列表")
     @PostMapping("/userPageList")
     @PreAuthorize("hasAuthority('/user/userPageList')")
     public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
@@ -127,7 +127,7 @@ public class UserController {
 
     @ApiOperation(value = "修改用户密码")
     @PostMapping(value = "/changePassword")
-    public Boolean change(@Valid @RequestBody ModifyPwdParam modifyPwdParam) {
+    public Boolean changePassword(@Valid @RequestBody ModifyPwdParam modifyPwdParam) {
         return userService.changePassword(RequestHolder.getUserInfo().getUserName(),modifyPwdParam.getOldPassword(), modifyPwdParam.getNewPassword());
     }
 
@@ -164,7 +164,7 @@ public class UserController {
     @ApiOperation(value = "查询部门树", notes = "查询整棵部门树")
     @ApiOperationSupport(order = 1)
     @PreAuthorize("hasAuthority('/user/findDepartment')")
-    public List<Department> getAll() {
+    public List<Department> findDepartment() {
         return departmentService.getDepartmentTree();
     }
 

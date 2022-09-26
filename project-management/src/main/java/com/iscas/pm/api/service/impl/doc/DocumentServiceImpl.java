@@ -260,6 +260,27 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<Document> documents = documentMapper.selectList(documentQueryWrapper);
         return documents != null && documents.size() != 0;
     }
+
+
+    /**
+     * 查询指定数据库表信息：
+     */
+
+
+
+
+    private
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
