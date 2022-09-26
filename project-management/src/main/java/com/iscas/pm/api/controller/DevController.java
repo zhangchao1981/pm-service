@@ -178,15 +178,13 @@ public class DevController {
     @ApiOperation(value = "添加开发任务", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevTask')")
     public Boolean addDevTask(@Valid @RequestBody DevTask devTask) {
-        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devTask.getRequireId())).size() < 1) {
-            throw new IllegalArgumentException("父模块Id不存在");
-        }
+
+
         if (devTask.getDevProgress()==null){
             devTask.setDevProgress(0);
         }
         devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), devTask.getDevProgress()));
-        devTaskService.save(devTask);
-        return true;
+        return  devTaskService.addDevTask(devTask);
     }
 
     @ApiOperationSupport(order = 11)
@@ -231,8 +229,8 @@ public class DevController {
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空")@RequestParam Integer DevTaskId) {
-        return taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(DevTaskId));
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空")@RequestParam Integer devTaskId) {
+        return taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(devTaskId));
     }
 
     @ApiOperationSupport(order = 16)
@@ -269,7 +267,7 @@ public class DevController {
     @GetMapping("/DevInterfaceList")
     @ApiOperation(value = "查询关联接口", notes = "返回需求id对应的关联接口,参数为空则查询全部关联接口")
     @PreAuthorize("hasAuthority('/projectDev/DevInterfaceList')")
-    public List<DevInterface> DevInterfaceList(@RequestParam Integer requireId) {
+    public List<DevInterface> devInterfaceList(@RequestParam Integer requireId) {
         return devInterfaceService.list(new QueryWrapper<DevInterface>().eq(requireId != null, "require_id", requireId));
     }
 

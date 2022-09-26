@@ -88,7 +88,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         Document document = documentMapper.selectById(id);
         if (document == null)
             throw new IllegalArgumentException("待删除的文档不存在");
-
         if (StringUtils.isNotBlank(document.getPath()) && document.getType() != DocumentTypeEnum.LINK)
             fastDFSUtil.delete(document.getPath());
         return true;

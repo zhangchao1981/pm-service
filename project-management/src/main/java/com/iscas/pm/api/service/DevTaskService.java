@@ -11,4 +11,5 @@ import com.iscas.pm.api.model.dev.DevTask;
 */
 public interface DevTaskService extends IService<DevTask> {
 
+    Boolean addDevTask(DevTask devTask);
 }

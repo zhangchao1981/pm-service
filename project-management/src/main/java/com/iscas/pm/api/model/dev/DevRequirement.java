@@ -51,7 +51,6 @@ public class DevRequirement implements Serializable {
     @ApiModelProperty(value = "责任人userId",required = true)
     private Integer workerId;
 
-
     @ApiModelProperty(value = "优先级",required = true)
     @NotNull
     private PriorityEnum priority;

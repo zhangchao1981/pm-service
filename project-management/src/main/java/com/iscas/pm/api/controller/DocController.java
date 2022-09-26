@@ -142,10 +142,7 @@ public class DocController {
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
-        if (!documentService.removeById(documentId)) {
-            throw new IllegalArgumentException("删除失败，文档不存在");
-        }
-        return true;
+     return  documentService.deleteDocument(documentId);
     }
 
     @PostMapping("/deleteDocumentBatch")
@@ -153,10 +150,13 @@ public class DocController {
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
     public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
-        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))) {
-            throw new IllegalArgumentException("删除失败，文档不存在");
-        }
-        return true;
+//        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))) {
+//            throw new IllegalArgumentException("删除失败，文档不存在");
+//        }
+//        return true;
+//
+       return  documentService.deleteDocumentBatch(docIdList);
+
     }
 
 

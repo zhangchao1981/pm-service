@@ -38,6 +38,11 @@ public class DevTask implements Serializable {
     @Size(max = 11,message = "责任人长度不能大于11")
     private String worker;
 
+    @NotBlank(message = "责任人对应userId不能为空")
+    @ApiModelProperty(value = "责任人userId",required = true)
+    @Size(max = 10,message = "责任人userId长度不能大于10")
+    private Integer workerId;
+
     @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")
     private TaskStatusEnum status;
 
