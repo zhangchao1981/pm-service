@@ -18,9 +18,9 @@ public enum SecretLevelEnum {
     private final String value;
     private final String code;
 
-    SecretLevelEnum(String value,String code) {
-        this.value = value;
+    SecretLevelEnum(String code,String value) {
         this.code = code;
+        this.value = value;
     }
 
     @Override

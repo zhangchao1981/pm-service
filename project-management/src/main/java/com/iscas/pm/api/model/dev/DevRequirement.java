@@ -48,6 +48,10 @@ public class DevRequirement implements Serializable {
     @Size(max = 50,message = "责任人长度不能大于50")
     private String worker;
 
+    @ApiModelProperty(value = "责任人userId",required = true)
+    private Integer workerId;
+
+
     @ApiModelProperty(value = "优先级",required = true)
     @NotNull
     private PriorityEnum priority;

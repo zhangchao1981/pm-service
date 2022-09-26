@@ -121,7 +121,7 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
         QueryWrapper<TaskFeedback> wrapper = new QueryWrapper<TaskFeedback>()
                 .eq("user_id", userId)
                 .eq("date", taskFeedback.getDate())
-                .eq("dev_task_id", taskFeedback.getPlanTaskId());
+                .eq("dev_task_id", taskFeedback.getDevTaskId());
         TaskFeedback feedback = taskFeedbackMapper.selectOne(wrapper);
         if (feedback != null)
             taskFeedback.setId(feedback.getId());

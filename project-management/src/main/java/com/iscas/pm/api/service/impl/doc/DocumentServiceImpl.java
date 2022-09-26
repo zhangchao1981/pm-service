@@ -1,5 +1,6 @@
 package com.iscas.pm.api.service.impl.doc;
 
+import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.deepoove.poi.config.Configure;
@@ -227,6 +228,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             DataSourceHolder.setDB(currentProject);
         }
         return  map;
+    }
+
+    @Override
+    public void deleteTemplate(Integer templateId) {
+        Document document = documentMapper.selectById(templateId);
+        Assert.notNull(document,"要删除的文档不存在");
+        if (!StringUtils.isEmpty(document.getPath())){
+            fastDFSUtil.delete(document.getPath());
+        }
+         documentMapper.deleteById(templateId);
     }
 
     /**

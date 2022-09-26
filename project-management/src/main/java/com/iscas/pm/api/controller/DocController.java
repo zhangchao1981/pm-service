@@ -256,11 +256,8 @@ public class DocController {
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
-    public boolean deleteTemplate(@NotEmpty(message = "模板id不能为空") @RequestBody List<Integer> idList) {
-        if (!docTemplateService.removeByIds(idList)) {
-            throw new IllegalArgumentException("要删除的模板id不存在");
-        }
-        return true;
+    public void deleteTemplate(@NotNull(message = "模板id不能为空") Integer templateId) {
+        documentService.deleteTemplate(templateId);
     }
 
 
@@ -285,13 +282,24 @@ public class DocController {
         return true;
     }
 
-    @PostMapping("/TemplateList")
-    @ApiOperation(value = "查询文档模板", notes = "")
+    @GetMapping("/TemplateList")
+    @ApiOperation(value = "查询文档模板", notes = "不带分页，用于生成文档时选择模板")
     @ApiOperationSupport(order = 29)
     @PreAuthorize("hasAuthority('/projectDoc/templateList')")
     public List<DocTemplate> templateList() {
         return docTemplateService.list();
     }
+
+    @GetMapping("/templatePageList")
+    @ApiOperation(value = "查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
+    @ApiOperationSupport(order = 29)
+    @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
+    public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        return docTemplateService.page(new Page<>(pageNum,pageSize));
+    }
+
+
+
 
 
 }
