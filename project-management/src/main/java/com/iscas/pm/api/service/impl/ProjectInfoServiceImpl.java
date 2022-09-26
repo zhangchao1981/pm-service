@@ -64,7 +64,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         //超级角色可以切换到任意项目
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         boolean super_role = false;
-        if (systemPermissions != null && systemPermissions.contains("/projectInfo/approveProject") )
+        if (systemPermissions != null && systemPermissions.contains("/projectInfo/addProject") )
             super_role = true;
 
         //其他用户只能切换到有权限的项目
