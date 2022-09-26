@@ -46,12 +46,12 @@ public class UserController {
     DepartmentService departmentService;
 
 
-//    @ApiOperation(value = "人员简要信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
-//    @PostMapping("/userBriefList")
-//    @PreAuthorize("hasAuthority('/user/userBriefList')")
-//    public List<UserBriefInfo> userBriefList(){
-//        return userService.selectUserBriefInfo();
-//    }
+    @ApiOperation(value = "人员信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
+    @PostMapping("/userBriefList")
+    @PreAuthorize("hasAuthority('/user/userBriefList')")
+    public List<UserBriefInfo> userBriefList(){
+        return userService.selectUserBriefInfo();
+    }
 
     @ApiOperation(value = "人员列表", notes = "查询用户人员列表")
     @PostMapping("/userPageList")
@@ -59,9 +59,6 @@ public class UserController {
     public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
         return userService.selectUserList(queryParam);
     }
-
-
-
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")
@@ -125,7 +122,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "修改用户密码")
+    @ApiOperation(value = "修改个人用户密码")
     @PostMapping(value = "/changePassword")
     public Boolean change(@Valid @RequestBody ModifyPwdParam modifyPwdParam) {
         return userService.changePassword(RequestHolder.getUserInfo().getUserName(),modifyPwdParam.getOldPassword(), modifyPwdParam.getNewPassword());
@@ -150,7 +147,6 @@ public class UserController {
     public UserDetailInfo getUserDetails(@RequestParam String userName) {
         return userService.getUserDetails(userName);
     }
-
 
     @ApiOperation(value = "获取用户已分配的系统角色", notes = "根据userId查询对应的系统角色")
     @PostMapping("systemRolesByUserId")
@@ -204,7 +200,5 @@ public class UserController {
     public Department editDepartment(@Valid @RequestBody Department Department) {
         return departmentService.editDepartment(Department);
     }
-
-
 
 }
