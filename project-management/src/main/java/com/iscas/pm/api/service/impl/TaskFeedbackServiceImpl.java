@@ -11,7 +11,6 @@ import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.TaskFeedbackService;
 import com.iscas.pm.api.mapper.projectPlan.TaskFeedbackMapper;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
     @Autowired
     DevTaskMapper devTaskMapper;
 
-    public List<TaskFeedback> selectListByPlanTaskId(TaskFeedback taskFeedback) {
+    public List<TaskFeedback> selectListByTaskId(TaskFeedback taskFeedback) {
         QueryWrapper<TaskFeedback> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(taskFeedback.getPlanTaskId() != null, "plan_task_id", taskFeedback.getPlanTaskId());
         queryWrapper.eq(taskFeedback.getDevTaskId() != null, "dev_task_id", taskFeedback.getDevTaskId());
@@ -63,13 +62,14 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
                 .eq("user_id", userId)
                 .eq("date", taskFeedback.getDate())
                 .eq("plan_task_id", taskFeedback.getPlanTaskId());
-        TaskFeedback feedback = taskFeedbackMapper.selectOne(wrapper);
-        if (feedback != null)
-            taskFeedback.setId(feedback.getId());
+        List<TaskFeedback> feedbacks = taskFeedbackMapper.selectList(wrapper);
+        //无法保证只有一个查询结果  （由于反馈的date属性只保存到日，所以会查询到多个结果）因此
+        if (feedbacks.size()>0)
+            taskFeedback.setId(feedbacks.stream().max(Comparator.comparing(TaskFeedback::getId)).get().getId());
         super.saveOrUpdate(taskFeedback);
 
         //查询该计划任务的所有反馈
-        List<TaskFeedback> taskFeedbacks = selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskFeedback.getPlanTaskId()));
+        List<TaskFeedback> taskFeedbacks = selectListByTaskId(new TaskFeedback().setPlanTaskId(taskFeedback.getPlanTaskId()));
 
         //计算任务的实际发生工时=所有反馈工时的和
         Double happenedHour = taskFeedbacks.stream().collect(Collectors.summingDouble(TaskFeedback::getWorkingHour));
@@ -122,13 +122,14 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
                 .eq("user_id", userId)
                 .eq("date", taskFeedback.getDate())
                 .eq("dev_task_id", taskFeedback.getDevTaskId());
-        TaskFeedback feedback = taskFeedbackMapper.selectOne(wrapper);
-        if (feedback != null)
-            taskFeedback.setId(feedback.getId());
+        List<TaskFeedback> feedbacks = taskFeedbackMapper.selectList(wrapper);
+        //无法保证只有一个查询结果  （由于反馈的date属性只保存到日，所以会查询到多个结果）因此
+        if (feedbacks.size()>0)
+            taskFeedback.setId(feedbacks.stream().max(Comparator.comparing(TaskFeedback::getId)).get().getId());
         super.saveOrUpdate(taskFeedback);
 
         //查询该开发任务的所有反馈
-        List<TaskFeedback> taskFeedbacks = selectListByPlanTaskId(new TaskFeedback().setPlanTaskId(taskFeedback.getDevTaskId()));
+        List<TaskFeedback> taskFeedbacks = selectListByTaskId(new TaskFeedback().setDevTaskId(taskFeedback.getDevTaskId()));
 
         //计算任务的实际发生工时=所有反馈工时的和
         Double happenedHour = taskFeedbacks.stream().collect(Collectors.summingDouble(TaskFeedback::getWorkingHour));
