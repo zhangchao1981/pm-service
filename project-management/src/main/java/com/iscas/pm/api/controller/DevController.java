@@ -112,6 +112,8 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("父模块Id不存在");
         }
+        devRequirement.setWorker(RequestHolder.getUserInfo().getUserName());
+        devRequirement.setUserId(RequestHolder.getUserInfo().getId());
         devRequirement.setChanged(false);
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());

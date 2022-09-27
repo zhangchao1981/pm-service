@@ -10,15 +10,20 @@ import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iscas.pm.api.model.projectPlan.param.Worker;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.type.JdbcType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 @Accessors(chain = true)
 @ApiModel(value = "项目计划", description = "项目计划管理，对应project_plan表")
@@ -52,8 +57,10 @@ public class PlanTask implements Serializable {
     @NotBlank(message = "任务名称不能为空")
     private String name;
 
-   @ApiModelProperty(value = "责任人，人员姓名，多个人用逗号隔开")
-    private String worker;
+   @ApiModelProperty(value = "责任人，成员为employName,userId",required = true)
+   @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+   private List<Worker> workerList;
+
 
     @ApiModelProperty(value = "人数,前端无需传参，后端自动根据责任人计算")
     private Integer personCount;

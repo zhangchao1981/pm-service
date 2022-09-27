@@ -12,7 +12,6 @@ import com.iscas.pm.common.core.util.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -86,7 +85,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         //插入新任务到数据库
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? position.toString() : parent.getWbs() + "." + position);
-        planTask.setPersonCount(planTask.getWorker().split("，").length);
+        planTask.setPersonCount(planTask.getWorkerList().size());
         planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         projectPlanMapper.insert(planTask);
 
@@ -127,7 +126,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
         //更新任务
 
-        planTask.setPersonCount(planTask.getWorker().split("，").length);
+        planTask.setPersonCount(planTask.getWorkerList().size());
         planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? planTask.getPosition().toString() : parent.getWbs() + "." + planTask.getPosition());
