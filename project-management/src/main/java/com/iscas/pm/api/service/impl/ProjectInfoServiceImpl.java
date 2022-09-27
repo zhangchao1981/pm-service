@@ -123,11 +123,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
             initSchemaService.initSchema(project.getId());
         }
 
-        //分配权限
-        SettingSystemRoleQueryParam roleQueryParam = new SettingSystemRoleQueryParam();
-        roleQueryParam.setUserId(project.getUserId());
-        roleQueryParam.setRoles(Arrays.asList(6));
-        return  userService.settingSystemRole(roleQueryParam);
+//        //分配权限
+//        SettingSystemRoleQueryParam roleQueryParam = new SettingSystemRoleQueryParam();
+//        roleQueryParam.setUserId(project.getUserId());
+//        roleQueryParam.setRoles(Arrays.asList(6));
+//        return  userService.settingSystemRole(roleQueryParam);
+        return  true;
     }
 
     @Override
