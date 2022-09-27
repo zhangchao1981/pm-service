@@ -88,12 +88,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         projectMapper.insert(project);
 
-        //为创建者添加项目经理角色
-        ProjectUserRole member = new ProjectUserRole();
-        member.setProjectId(project.getId());
-        member.setUserId(RequestHolder.getUserInfo().getId());
-        member.setRoleId(6);
-        projectUserRoleMapper.insert(member);
+//        //为创建者添加项目经理角色
+//        ProjectUserRole member = new ProjectUserRole();
+//        member.setProjectId(project.getId());
+//        member.setUserId(RequestHolder.getUserInfo().getId());
+//        member.setRoleId(6);
+//        projectUserRoleMapper.insert(member);
         return project;
     }
 
