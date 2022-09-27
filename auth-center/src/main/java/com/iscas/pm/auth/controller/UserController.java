@@ -46,22 +46,18 @@ public class UserController {
     DepartmentService departmentService;
 
 
-    @ApiOperation(value = "人员信息列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
+    @ApiOperation(value = "所有正常状态人员列表", notes = "列表返回所有正常状态的人员,支持姓名模糊查询")
     @PostMapping("/userBriefList")
-    @PreAuthorize("hasAuthority('/user/userBriefList')")
     public List<UserBriefInfo> userBriefList(){
         return userService.selectUserBriefInfo();
     }
 
-    @ApiOperation(value = "人员列表", notes = "分页查询用户人员列表")
+    @ApiOperation(value = "所有人员分页列表", notes = "分页查询用户人员列表")
     @PostMapping("/userPageList")
     @PreAuthorize("hasAuthority('/user/userPageList')")
     public IPage<User> userPageList(@RequestBody @Valid UserQueryParam queryParam) {
         return userService.selectUserList(queryParam);
     }
-
-
-
 
     @ApiOperation(value = "添加人员")
     @PostMapping("addUser")

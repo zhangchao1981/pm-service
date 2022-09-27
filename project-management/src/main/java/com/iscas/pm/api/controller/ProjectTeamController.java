@@ -29,7 +29,6 @@ public class ProjectTeamController {
     @Autowired
     private ProjectTeamService projectTeamService;
 
-
     @PostMapping("/addMember")
     @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员，需要传入：userId,roleId")
     @PreAuthorize("hasAuthority('/projectTeam/addMember')")
@@ -50,13 +49,9 @@ public class ProjectTeamController {
 
     @GetMapping("/memberList")
     @ApiOperation(value = "查询团队成员", notes = "查询当前项目下的所有团队成员")
-    @PreAuthorize("hasAuthority('/projectTeam/addMember')")
     public List<ProjectUserRole> memberList() {
         return projectTeamService.getMemberList();
     }
-
-
-
 
     @GetMapping("/deleteMember")
     @ApiOperation(value = "删除团队成员", notes = "删除指定的团队成员")
