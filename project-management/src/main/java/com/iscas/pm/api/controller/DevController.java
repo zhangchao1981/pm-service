@@ -180,8 +180,6 @@ public class DevController {
     @ApiOperation(value = "添加开发任务", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevTask')")
     public Boolean addDevTask(@Valid @RequestBody DevTask devTask) {
-
-
         if (devTask.getDevProgress()==null){
             devTask.setDevProgress(0);
         }

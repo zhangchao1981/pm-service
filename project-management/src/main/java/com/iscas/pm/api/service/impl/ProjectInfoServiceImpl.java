@@ -18,9 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author： zhangchao
@@ -37,6 +35,8 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private InitSchemaService initSchemaService;
     @Autowired
     private ProjectUserRoleMapper projectUserRoleMapper;
+    @Autowired
+    UserService userService;
 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
@@ -122,7 +122,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         if (project.getStatus() == ProjectStatusEnum.RUNNING) {
             initSchemaService.initSchema(project.getId());
         }
-        return true;
+
+        //分配权限
+        SettingSystemRoleQueryParam roleQueryParam = new SettingSystemRoleQueryParam();
+        roleQueryParam.setUserId(project.getUserId());
+        roleQueryParam.setRoles(Arrays.asList(6));
+        return  userService.settingSystemRole(roleQueryParam);
     }
 
     @Override
