@@ -98,6 +98,7 @@ public class ProjectInfoController {
         else
             project.setStatus(ProjectStatusEnum.UN_PASS);
         project.setApproveComments(approve.getApproveComments());
+
         return projectInfoService.approveProject(project);
     }
 

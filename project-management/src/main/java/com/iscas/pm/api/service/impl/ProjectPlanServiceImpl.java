@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
+import com.iscas.pm.api.model.project.SettingSystemRoleQueryParam;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.ProjectPlanService;
@@ -45,14 +46,14 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 if (split[i].equals(split1[i])) {
                     continue;
                 }
-                if ( Integer.parseInt(split[i]) < Integer.parseInt(split1[i])) {
+                if (Integer.parseInt(split[i]) < Integer.parseInt(split1[i])) {
                     return -1;
                 } else {
                     return 1;
                 }
             }
             //编码有位数的部分全部相同
-            return  split.length > split1.length ?1:-1;
+            return split.length > split1.length ? 1 : -1;
         });
         return planTasks;
     }
@@ -74,7 +75,6 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     public PlanTask addTask(PlanTask planTask) {
         Integer position = planTask.getPosition();
         Integer parentId = planTask.getParentId();
-
         //查询父任务信息
         final PlanTask parent = projectPlanMapper.selectById(planTask.getParentId());
         if (parent == null && parentId != 0)

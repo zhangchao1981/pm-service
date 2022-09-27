@@ -65,9 +65,8 @@ public class Project implements Serializable {
     private String managerName;
 
     @ApiModelProperty(value = "项目负责人的userId", required = true)
-    @NotBlank(message = "负责人用户ID不能为空")
-    @Size(max = 10,message = "负责人用户ID长度不能大于10")
-    private String userId;
+    @NotNull(message = "负责人用户ID不能为空")
+    private Integer userId;
 
 
 

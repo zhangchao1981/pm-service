@@ -111,7 +111,7 @@ public class UserController {
         return true;
     }
 
-    @ApiOperation(value = "分配角色", notes = "为指定用户分配系统角色:(删除用户的角色：传空参)")
+    @ApiOperation(value = "分配角色", notes = "为指定用户分配角色:(删除用户的角色：传空参)")
     @PostMapping("settingSystemRole")
     @PreAuthorize("hasAuthority('/user/settingSystemRole')")
     public Boolean settingSystemRole(@Valid @RequestBody SettingSystemRoleQueryParam queryParam) {
