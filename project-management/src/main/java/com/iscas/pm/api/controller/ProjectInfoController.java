@@ -76,11 +76,7 @@ public class ProjectInfoController {
     @GetMapping("/projectList")
     @ApiOperation(value = "项目列表", notes = "返回所有权限范围内的项目列表信息")
     public List<Project> projectList() {
-        ProjectQueryParam param = new ProjectQueryParam();
-        param.setUserId(RequestHolder.getUserInfo().getId());
-        param.setPageNum(1);
-        param.setPageSize(Integer.MAX_VALUE);
-        return projectInfoService.projectPageList(param).getRecords();
+        return projectInfoService.projectList();
     }
 
     @PostMapping("/approveProject")

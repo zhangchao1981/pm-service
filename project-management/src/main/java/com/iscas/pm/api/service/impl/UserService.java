@@ -12,7 +12,7 @@ import javax.validation.Valid;
  * @author by  lichang
  * @date 2022/9/27.
  */
-@FeignClient(name="addRole",fallback=Boolean.class)
+@FeignClient(name="auth-center",fallback=Boolean.class)
 public interface UserService {
     @RequestMapping(value="/user/settingSystemRole",method = RequestMethod.POST)
     Boolean settingSystemRole(@Valid @RequestBody SettingSystemRoleQueryParam queryParam);

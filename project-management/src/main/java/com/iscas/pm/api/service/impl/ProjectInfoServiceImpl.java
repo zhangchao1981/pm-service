@@ -41,6 +41,8 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
+
+        //有审核权限的用户可以访问所有项目
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         if (systemPermissions != null)
             if (systemPermissions.contains("/projectInfo/approveProject")) {
@@ -49,9 +51,37 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
                         .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
                 return projectMapper.selectPage(page, queryWrapper);
             }
-        //否则返回有权限的项目
+
+        //其他用户返回有权限的项目
         param.setUserId(RequestHolder.getUserInfo().getId());
         return projectMapper.getProjectList(page, param);
+    }
+
+    @Override
+    public List<Project> projectList() {
+        //有审核权限的用户返回所有通过审核的项目
+        List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
+        if (systemPermissions != null)
+            if (systemPermissions.contains("/projectInfo/approveProject")) {
+                QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>()
+                        .eq("status","RUNNING").or()
+                        .eq("status","CLOSED");
+                return projectMapper.selectList(queryWrapper);
+            }
+
+        //其他用户返回有权限的通过审核的项目
+        List<Project> projects = new ArrayList<>();
+
+        ProjectQueryParam param = new ProjectQueryParam();
+        Page<Project> page = new Page<>(1, Integer.MAX_VALUE);
+        param.setUserId(RequestHolder.getUserInfo().getId());
+        Page<Project> projectList = projectMapper.getProjectList(page, param);
+
+        projectList.getRecords().forEach(project -> {
+            if (project.getStatus()==ProjectStatusEnum.RUNNING || project.getStatus() == ProjectStatusEnum.CLOSED)
+                projects.add(project);
+        });
+        return projects;
     }
 
     @Override
@@ -88,12 +118,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         projectMapper.insert(project);
 
-//        //为创建者添加项目经理角色
-//        ProjectUserRole member = new ProjectUserRole();
-//        member.setProjectId(project.getId());
-//        member.setUserId(RequestHolder.getUserInfo().getId());
-//        member.setRoleId(6);
-//        projectUserRoleMapper.insert(member);
+        //为创建者添加项目经理角色
+        ProjectUserRole member = new ProjectUserRole();
+        member.setProjectId(project.getId());
+        member.setUserId(RequestHolder.getUserInfo().getId());
+        member.setRoleId(6);
+        projectUserRoleMapper.insert(member);
         return project;
     }
 
@@ -123,11 +153,20 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
             initSchemaService.initSchema(project.getId());
         }
 
-        //分配权限
-        SettingSystemRoleQueryParam roleQueryParam = new SettingSystemRoleQueryParam();
-        roleQueryParam.setUserId(project.getUserId());
-        roleQueryParam.setRoles(Arrays.asList(6));
-        return  userService.settingSystemRole(roleQueryParam);
+        //为项目责任人添加项目经理角色
+        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<ProjectUserRole>()
+                .eq("project_id",project.getId())
+                .eq("user_id",project.getUserId())
+                .eq("role_id",6);
+        ProjectUserRole projectUserRole = projectUserRoleMapper.selectOne(queryWrapper);
+        if (projectUserRole == null){
+            ProjectUserRole member = new ProjectUserRole();
+            member.setProjectId(project.getId());
+            member.setUserId(project.getUserId());
+            member.setRoleId(6);
+            projectUserRoleMapper.insert(member);
+        }
+        return true;
     }
 
     @Override

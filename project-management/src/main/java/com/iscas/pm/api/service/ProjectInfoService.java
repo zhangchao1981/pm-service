@@ -18,6 +18,8 @@ public interface ProjectInfoService extends IService<Project> {
 
     IPage<Project> projectPageList(ProjectQueryParam projectQueryParam);
 
+    List<Project> projectList();
+
     List<String> projectPermissions(String projectId);
 
     Boolean switchProject(String token,String projectId);
