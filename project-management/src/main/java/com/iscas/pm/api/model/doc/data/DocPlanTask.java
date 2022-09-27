@@ -1,19 +1,10 @@
 package com.iscas.pm.api.model.doc.data;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
-import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @Author： zhangchao
@@ -68,7 +59,7 @@ public class DocPlanTask {
         this.wbs = planTask.getWbs();
         this.docPath = planTask.getDocPath();
         this.name = planTask.getName();
-        this.worker = planTask.getWorker();
+        planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE.getWorkerName());
         this.workingDays = planTask.getWorkingDays();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

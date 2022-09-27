@@ -44,12 +44,11 @@ public class DevRequirement implements Serializable {
     @Size(max = 150,message = "需求描述长度不能大于150")
     private String requirementDescription;
 
-    @ApiModelProperty(value = "责任人，前端传参时传人员姓名，即employeeName",required = true)
-    @Size(max = 50,message = "责任人长度不能大于50")
+    @ApiModelProperty(value = "责任人，前端无需传参")
     private String worker;
 
-    @ApiModelProperty(value = "责任人userId",required = true)
-    private Integer workerId;
+    @ApiModelProperty(value = "责任人的userId")
+    private Integer userId;
 
     @ApiModelProperty(value = "优先级",required = true)
     @NotNull
