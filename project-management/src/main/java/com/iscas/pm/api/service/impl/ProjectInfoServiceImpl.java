@@ -43,7 +43,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         Page<Project> page = new Page<>(param.getPageNum(), param.getPageSize());
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         if (systemPermissions != null)
-            if (systemPermissions.contains("/projectInfo/approveProject") || systemPermissions.contains("/projectInfo/addProject")) {
+            if (systemPermissions.contains("/projectInfo/approveProject")) {
                 QueryWrapper<Project> queryWrapper = new QueryWrapper<Project>()
                         .eq(StringUtils.isNotBlank(param.getStatus()), "status", param.getStatus())
                         .like(StringUtils.isNotBlank(param.getProjectName()), "name", param.getProjectName());
@@ -64,7 +64,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         //超级角色可以切换到任意项目
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         boolean super_role = false;
-        if (systemPermissions != null && systemPermissions.contains("/projectInfo/addProject"))
+        if (systemPermissions != null && systemPermissions.contains("/projectInfo/approveProject"))
             super_role = true;
 
         //其他用户只能切换到有权限的项目
@@ -88,12 +88,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         projectMapper.insert(project);
 
-        //为创建者添加项目经理角色
-        ProjectUserRole member = new ProjectUserRole();
-        member.setProjectId(project.getId());
-        member.setUserId(RequestHolder.getUserInfo().getId());
-        member.setRoleId(6);
-        projectUserRoleMapper.insert(member);
+//        //为创建者添加项目经理角色
+//        ProjectUserRole member = new ProjectUserRole();
+//        member.setProjectId(project.getId());
+//        member.setUserId(RequestHolder.getUserInfo().getId());
+//        member.setRoleId(6);
+//        projectUserRoleMapper.insert(member);
         return project;
     }
 
