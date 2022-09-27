@@ -33,8 +33,6 @@ public class CreateDocumentParam {
     @ApiModelProperty(value = "模板存储路径", required = true)
     private String templatePath;
 
-    @ApiModelProperty(value = "项目标识", required = true)
-    private String projectMark;
 
 
     @NotBlank(message = "当前项目id不能为空")

@@ -139,7 +139,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //后台获取内容
         HashMap<String, Object> map = getDocumentContext(createDocumentParam.getTemplateId());
         //用户输入内容：
-        map.put("项目标识", createDocumentParam.getProjectMark());
         map.put("本文档版本号", createDocumentParam.getVersion());
 //            map.put("软件负责人", createDocumentParam.getSoftwareManager());
 //            map.put("单位名称", createDocumentParam.getUnit());
@@ -218,12 +217,19 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
             map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
             map.put("项目编号", projectDetailInfo.getBasicInfo().getId());
+
 //          map.put("合同编号", projectDetailInfo.getBasicInfo().getContractId());
             map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
             map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
             map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel());
             map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
             map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
+
+            /**
+             * 未知字段待填充
+             */
+            map.put("项目标识","未知字段" );
+
             DataSourceHolder.setDB(currentProject);
         }
         return  map;
@@ -262,14 +268,14 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
 
-    /**
-     * 查询指定数据库表信息：
-     */
-
-
-
-
-    private
+//    /**
+//     * 查询指定数据库表信息：
+//     */
+//
+//
+//
+//
+//    private
 
 
 
