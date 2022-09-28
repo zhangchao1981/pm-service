@@ -1,8 +1,8 @@
 package com.iscas.pm.auth.controller;
 
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.iscas.pm.auth.mapper.PermissionMapper;
 import com.iscas.pm.auth.model.Permission;
-import com.iscas.pm.auth.model.RolePermission;
 import com.iscas.pm.auth.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,25 +34,26 @@ public class PermissionController {
     @Autowired
     RolePermissionService rolePermissionService;
 
-
-
-    @ApiOperation(value = "权限列表",notes = "返回权限列表")
+    @ApiOperation(value = "权限列表", notes = "返回权限列表")
     @GetMapping("/permissionList")
     @PreAuthorize("hasAuthority('/permission/permissionList')")
     public List<Permission> permissionList() {
-        return  permissionService.list();
+        LambdaQueryWrapper<Permission> lwq = new LambdaQueryWrapper<>();
+        lwq.orderBy(true,true,Permission::getModulePosition,Permission::getPosition);
+
+        return permissionService.list(lwq);
     }
 
-    @ApiOperation(value = "添加权限",notes = "添加新权限")
+    @ApiOperation(value = "添加权限", notes = "添加新权限")
     @PostMapping("/addPermission")
     @PreAuthorize("hasAuthority('/permission/addPermission')")
-    public  boolean addPermission(@RequestBody @Valid Permission permission) {
+    public boolean addPermission(@RequestBody @Valid Permission permission) {
         if (permissionService.getById(permission.getId()) != null) {
             throw new IllegalArgumentException("权限标识已经存在，不能重复添加");
         }
         permission.setCreateTime(new Date());
         permission.setUpdateTime(new Date());
-       return permissionService.save(permission);
+        return permissionService.save(permission);
     }
 
     @ApiOperation(value = "编辑权限", notes = "编辑指定的权限信息")
@@ -76,29 +77,4 @@ public class PermissionController {
         permissionService.removeById(permissionId);
         return true;
     }
-
-
-    @ApiOperation(value = "添加权限并给某角色赋予对应新权限",notes = "添加新权限")
-    @PostMapping("/addPermission/{roleId}")
-//    @PreAuthorize("hasAuthority('/permission/addPermissionRole')")
-    public  boolean addPermissionRole(@RequestBody @Valid Permission permission ,@PathVariable Integer roleId) {
-        if (permissionService.getById(permission.getId()) != null) {
-            throw new IllegalArgumentException("权限标识已经存在，不能重复添加");
-        }
-        permission.setCreateTime(new Date());
-        permission.setUpdateTime(new Date());
-        if (!permissionService.save(permission)){
-            throw new IllegalArgumentException("权限保存失败");
-        };
-
-        RolePermission rolePermission = new RolePermission();
-        rolePermission.setRoleId(roleId);
-        rolePermission.setPermissionId(permission.getId());
-
-        if (!rolePermissionService.save(rolePermission)){
-            throw new IllegalArgumentException("角色权限保存失败");
-        };
-        return true;
-    }
-
 }

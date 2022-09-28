@@ -154,18 +154,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         }
 
         //为项目责任人添加项目经理角色
-        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<ProjectUserRole>()
-                .eq("project_id",project.getId())
-                .eq("user_id",project.getUserId())
-                .eq("role_id",6);
-        ProjectUserRole projectUserRole = projectUserRoleMapper.selectOne(queryWrapper);
-        if (projectUserRole == null){
-            ProjectUserRole member = new ProjectUserRole();
-            member.setProjectId(project.getId());
-            member.setUserId(project.getUserId());
-            member.setRoleId(6);
-            projectUserRoleMapper.insert(member);
-        }
+        addProjectManagerRole(project);
         return true;
     }
 
@@ -180,6 +169,29 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         //待补充其余项目详情信息
 
         return projectDetailInfo;
+    }
+
+    @Override
+    public void editProject(Project project) {
+        projectMapper.updateById(project);
+
+        //为项目责任人添加项目经理角色
+        addProjectManagerRole(project);
+    }
+
+    private void addProjectManagerRole(Project project) {
+        QueryWrapper<ProjectUserRole> queryWrapper = new QueryWrapper<ProjectUserRole>()
+                .eq("project_id",project.getId())
+                .eq("user_id",project.getUserId())
+                .eq("role_id",6);
+        ProjectUserRole projectUserRole = projectUserRoleMapper.selectOne(queryWrapper);
+        if (projectUserRole == null){
+            ProjectUserRole member = new ProjectUserRole();
+            member.setProjectId(project.getId());
+            member.setUserId(project.getUserId());
+            member.setRoleId(6);
+            projectUserRoleMapper.insert(member);
+        }
     }
 }
 

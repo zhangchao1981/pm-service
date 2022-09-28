@@ -54,22 +54,19 @@ public class ProjectInfoController {
         if (projectInfoService.findProjectByNotIdAndName(project.getId(), project.getName()))
             throw new IllegalArgumentException("项目名称已经存在！");
 
-        List<String> permissions = projectInfoService.projectPermissions(project.getId());
-        //不是本人且没有项目权限，不允许修改
-        if (!dbProject.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject")))
+
+        List<String> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions().get(project.getId());
+        List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
+        if ((systemPermissions == null || !systemPermissions.contains("/projectInfo/editProject")) && (projectPermissions == null || !projectPermissions.contains("/projectInfo/editProject")))
             throw new IllegalArgumentException("您无权限修改该项目");
-        projectInfoService.saveOrUpdate(project);
+
+        projectInfoService.editProject(project);
         return project;
     }
-
-
-
 
     @PostMapping("/projectPageList")
     @ApiOperation(value = "项目列表（分页）", notes = "返回符合查询条件且权限范围内的项目列表信息")
     public IPage<Project> projectPageList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
-        //问题： 如果有审批权限 则应当显示全部的项目列表，但这样，切项目的候选栏里就有全部的项目了(尽管有些不能切)
-
         return projectInfoService.projectPageList(projectQueryParam);
     }
 

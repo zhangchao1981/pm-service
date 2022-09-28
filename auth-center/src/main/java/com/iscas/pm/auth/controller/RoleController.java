@@ -33,7 +33,6 @@ public class RoleController {
 
     @ApiOperation(value = "角色列表", notes = "返回符合条件的角色列表,包括系统角色和项目角色")
     @GetMapping("/roleList")
-    @PreAuthorize("hasAuthority('/role/roleList')")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "角色名称", dataType = "String"),
             @ApiImplicitParam(name = "type", value = "角色类型，取值：project或system", dataType = "String")})
@@ -105,7 +104,6 @@ public class RoleController {
 
     @ApiOperation(value = "查询系统角色列表", notes = "返回所有系统角色列表,给用户分配系统角色时使用")
     @GetMapping("/systemRoleList")
-    @PreAuthorize("hasAuthority('/user/systemRoleList')")
     public List<Role> systemRoleList() {
         return roleService.selectRoleList(null, RoleTypeEnum.system.name());
     }

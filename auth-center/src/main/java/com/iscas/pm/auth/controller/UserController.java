@@ -149,7 +149,6 @@ public class UserController {
 
     @ApiOperation(value = "获取用户已分配的系统角色", notes = "根据userId查询对应的系统角色")
     @PostMapping("systemRolesByUserId")
-    @PreAuthorize("hasAuthority('/user/systemRolesByUserId')")
     public List<Integer> systemRolesByUserId(@NotNull @RequestParam Integer userId) {
         List<AuthUserRole> roleList = authUserRoleService.list(new QueryWrapper<AuthUserRole>().eq("user_id", userId));
         return roleList.stream().map(AuthUserRole::getRoleId).collect(Collectors.toList());

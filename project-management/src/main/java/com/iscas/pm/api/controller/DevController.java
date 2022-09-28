@@ -40,7 +40,6 @@ public class DevController {
     @Autowired
     DevInterfaceService devInterfaceService;
 
-
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
     @ApiOperation(value = "添加项目模块", notes = "添加项目模块，内含模块名重复校验")
@@ -77,13 +76,6 @@ public class DevController {
         return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id",id));
     }
 
-
-
-
-
-
-
-
     @ApiOperationSupport(order = 4)
     @PostMapping("/deleteDevModular")
     @ApiOperation(value = "删除项目模块", notes = "")
@@ -101,7 +93,6 @@ public class DevController {
         }
         return true;
     }
-
 
     @ApiOperationSupport(order = 5)
     @PostMapping("/addEnvInformation")
@@ -153,7 +144,6 @@ public class DevController {
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         return devRequirementService.getById(requirementId);
     }
-
 
     @ApiOperationSupport(order = 9)
     @PostMapping("/deleteDevRequirement")
@@ -223,7 +213,6 @@ public class DevController {
 
         return true;
     }
-
 
     @GetMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")

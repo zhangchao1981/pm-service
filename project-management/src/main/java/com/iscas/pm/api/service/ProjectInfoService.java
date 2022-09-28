@@ -33,4 +33,6 @@ public interface ProjectInfoService extends IService<Project> {
     Boolean approveProject(Project project);
 
     ProjectDetailInfo getProjectDetailInfo(String id);
+
+    void editProject(Project project);
 }

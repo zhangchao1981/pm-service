@@ -30,7 +30,7 @@
         manager_name,description,status,
         manufacture,project_provider,requirement_provider,
         contract_id,contract_amount,create_user,
-        create_time,update_time
+        create_time,update_time,pm_project.user_id
     </sql>
 
     <select id="getProjectList" resultType="com.iscas.pm.api.model.project.Project">

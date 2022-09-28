@@ -143,7 +143,7 @@ public class DocController {
     @ApiOperation(value = "批量删除文档", notes = "参数不可为空,删除参数list中所有id对应的文档")
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
-    public boolean deleteBatchDocument(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
+    public boolean deleteDocumentBatch(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
 //        if (!documentService.remove(new QueryWrapper<Document>().in("id", docIdList))) {
 //            throw new IllegalArgumentException("删除失败，文档不存在");
 //        }
@@ -288,7 +288,7 @@ public class DocController {
     }
 
     @GetMapping("/templatePageList")
-    @ApiOperation(value = "查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
+    @ApiOperation(value = "分页查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
     @ApiOperationSupport(order = 29)
     @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
     public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
