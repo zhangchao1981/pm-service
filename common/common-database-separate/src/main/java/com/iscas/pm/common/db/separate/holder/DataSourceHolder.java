@@ -11,6 +11,11 @@ public class DataSourceHolder {
 
     // 默认数据源名称为:default
     public static final String DEFAULT_DATASOURCE = "default";
+    public static String UserName;
+    public static String password;
+    public static String driverClassName;
+    public static String url;
+    public static String databaseName;
 
     private static final  ThreadLocal<String> DATA_SOURCE_HOLDER = new ThreadLocal<>();
 
@@ -20,6 +25,15 @@ public class DataSourceHolder {
 
     public static void setDB(String databaseName) {
         DATA_SOURCE_HOLDER.set(databaseName);
+    }
+
+    public static void setUniqDB(String url,String databaseName, String userName,String password, String driverClassName) {
+        DataSourceHolder.url=url;
+        DataSourceHolder.databaseName=databaseName;
+        DataSourceHolder.UserName=userName;
+        DataSourceHolder.password=password;
+        DataSourceHolder.driverClassName=driverClassName;
+
     }
 
     public static String getDB() {

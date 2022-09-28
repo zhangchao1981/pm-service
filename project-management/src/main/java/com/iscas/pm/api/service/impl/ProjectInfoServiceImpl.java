@@ -35,8 +35,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     private InitSchemaService initSchemaService;
     @Autowired
     private ProjectUserRoleMapper projectUserRoleMapper;
-    @Autowired
-    UserService userService;
+
 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
@@ -88,12 +87,12 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
 
         projectMapper.insert(project);
 
-//        //为创建者添加项目经理角色
-//        ProjectUserRole member = new ProjectUserRole();
-//        member.setProjectId(project.getId());
-//        member.setUserId(RequestHolder.getUserInfo().getId());
-//        member.setRoleId(6);
-//        projectUserRoleMapper.insert(member);
+        //为创建者添加项目经理角色
+        ProjectUserRole member = new ProjectUserRole();
+        member.setProjectId(project.getId());
+        member.setUserId(RequestHolder.getUserInfo().getId());
+        member.setRoleId(6);
+        projectUserRoleMapper.insert(member);
         return project;
     }
 
@@ -122,12 +121,14 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
         if (project.getStatus() == ProjectStatusEnum.RUNNING) {
             initSchemaService.initSchema(project.getId());
         }
-
 //        //分配权限
-//        SettingSystemRoleQueryParam roleQueryParam = new SettingSystemRoleQueryParam();
-//        roleQueryParam.setUserId(project.getUserId());
-//        roleQueryParam.setRoles(Arrays.asList(6));
-//        return  userService.settingSystemRole(roleQueryParam);
+        ProjectUserRole member = new ProjectUserRole();
+        member.setProjectId(project.getId());
+        member.setUserId(project.getUserId());
+        member.setRoleId(6);
+        projectUserRoleMapper.insert(member);
+        projectMapper.insert(project);
+
         return  true;
     }
 

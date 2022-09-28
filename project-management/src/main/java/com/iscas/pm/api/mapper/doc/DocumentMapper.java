@@ -2,7 +2,12 @@ package com.iscas.pm.api.mapper.doc;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.api.model.doc.Document;
+import com.iscas.pm.api.model.doc.MyTable;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -12,6 +17,12 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface DocumentMapper extends BaseMapper<Document> {
+
+//    @Select("select table_name as name,table_comment as comment "
+//            +"from information_schema.tables "
+//            +"where table_schema =#{blog}")
+    @Select("select * "+"from  test_table" )
+    List<MyTable> getDBInfo(@Param("blog") String blog);
 
 }
 

@@ -6,9 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.doc.param.DateBaseLinkParam;
 import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
+import com.iscas.pm.common.db.separate.config.DatasourceFactory;
+import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
+
 
 /**
  * @author by  lichang
@@ -45,6 +50,9 @@ public class DocController {
     DocTemplateService docTemplateService;
     @Autowired
     HttpServletResponse response;
+
+    @Autowired
+    DatasourceFactory  datasourceFactory;
 
 
     @GetMapping("/findDirectory")
@@ -296,8 +304,32 @@ public class DocController {
     }
 
     /**
-     * 连接指定数据库
+     * 连接自定义数据库
      */
+
+
+    @PostMapping("/linkUserDB")
+    @ApiOperation(value = "测试连接自定义数据库", notes = "测试连接用户参数输入的数据库")
+    @ApiOperationSupport(order = 29)
+//    @PreAuthorize("hasAuthority('/projectDoc/linkUserDB')")
+    public Boolean linkUserDBTest(@RequestBody  @Valid DateBaseLinkParam dateBaseLinkParam) {
+        if (dateBaseLinkParam.getDbType()==DateBaseType.MYSQL){
+            String url="jdbc:mysql://"+ dateBaseLinkParam.getDbPath()+"/"+dateBaseLinkParam.getDbName()+"?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            DataSourceHolder.setUniqDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),dateBaseLinkParam.getDriverClassName());
+            documentService.getDBInfo(dateBaseLinkParam.getDbName());
+            return  true;
+        }else {
+            return false;
+        }
+
+
+
+
+
+
+    }
+
+
 
 
 //

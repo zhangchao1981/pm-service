@@ -38,7 +38,7 @@ public class DatasourceRequestFilter implements Filter{
         String databaseName = (String)request.getAttribute(DATA_BASE_FIELD);
         if (request.getRequestURI().startsWith("/projectInfo")) {
             DataSourceHolder.setDB("default");
-        } else {
+        } else if (!request.getRequestURI().startsWith("/projectDoc/link")){
             DataSourceHolder.setDB(databaseName);
         }
         filterChain.doFilter(servletRequest, servletResponse);

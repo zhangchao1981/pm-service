@@ -34,4 +34,7 @@ public interface DocumentService extends IService<Document> {
     HashMap<String,Object> getDocumentContext(Integer templateId);
 
     void deleteTemplate(Integer templateId);
+
+    void getDBInfo(String dbName);
+
 }

@@ -32,14 +32,14 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     private DataSource dataSource;
 
     //存放所有数据源
-    private Map<Object,Object>  dataSourceMap;
+    private Map<Object, Object> dataSourceMap;
 
     public DynamicDataSource() {
         this.dataSourceMap = new ConcurrentHashMap<>();
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         dataSourceMap.put("default", dataSource);
         setTargetDataSources(dataSourceMap);
         setDefaultTargetDataSource(dataSource);
@@ -48,23 +48,39 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
         String currentDB = DataSourceHolder.getDB();
-        if(!dataSourceMap.containsKey(currentDB)) {
+        if (!dataSourceMap.containsKey(currentDB)) {
             this.addDataSourceByName(currentDB);
         }
-        log.info(" 切换数据库到:"+ currentDB);
+        if (DataSourceHolder.url.startsWith("jdbc:mysql://")) {
+//            this.addDataSource(DataSourceHolder.);
+           this.addUniqDataSource(DataSourceHolder.url,DataSourceHolder.databaseName,DataSourceHolder.UserName,DataSourceHolder.password,DataSourceHolder.driverClassName);
+           return DataSourceHolder.url;
+        }
+        log.info(" 切换数据库到:" + currentDB);
         return currentDB;
     }
+    //入口都在determinCurrentLook
 
-    public void addDataSourceByName(String name){
+    //重写一个：
+
+
+    public void addDataSourceByName(String name) {
         addDataSource(name, datasourceFactory.createDataSource(name, name));
     }
 
-    public void addDataSource(String datasourceName, DataSource dataSource){
+
+    public void addUniqDataSource(String url, String databaseName, String userName, String password, String driverClassName) {
+        dataSourceMap.put(url, datasourceFactory.createDataSource(url, databaseName, userName, password, driverClassName));
+        this.afterPropertiesSet();
+    }
+
+
+    public void addDataSource(String datasourceName, DataSource dataSource) {
         dataSourceMap.put(datasourceName, dataSource);
         this.afterPropertiesSet();
     }
 
-    public void deleteDataSourceByName(String datasourceName){
+    public void deleteDataSourceByName(String datasourceName) {
         dataSourceMap.remove(datasourceName);
     }
 }
