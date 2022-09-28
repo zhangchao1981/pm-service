@@ -43,10 +43,10 @@ public class DatasourceFactory {
     }
 
 
-    public DataSource createDataSource(String url,String databaseName, String userName,String password, String driverClassName){
+    public DataSource createDataSource(String name,String url,String databaseName, String userName,String password, String driverClassName){
         AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
         dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
-        dataSourceBean.setUniqueResourceName("url");
+        dataSourceBean.setUniqueResourceName(name);
         dataSourceBean.setPoolSize(5);
         ///读取配置文件配置信息
         Properties prop = build(url,userName,password,driverClassName);

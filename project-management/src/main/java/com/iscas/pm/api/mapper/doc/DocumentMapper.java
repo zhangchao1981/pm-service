@@ -21,7 +21,7 @@ public interface DocumentMapper extends BaseMapper<Document> {
 //    @Select("select table_name as name,table_comment as comment "
 //            +"from information_schema.tables "
 //            +"where table_schema =#{blog}")
-    @Select("select * "+"from  test_table" )
+    @Select("select id,name "+"from  test_plan" )
     List<MyTable> getDBInfo(@Param("blog") String blog);
 
 }

@@ -314,8 +314,10 @@ public class DocController {
 //    @PreAuthorize("hasAuthority('/projectDoc/linkUserDB')")
     public Boolean linkUserDBTest(@RequestBody  @Valid DateBaseLinkParam dateBaseLinkParam) {
         if (dateBaseLinkParam.getDbType()==DateBaseType.MYSQL){
-            String url="jdbc:mysql://"+ dateBaseLinkParam.getDbPath()+"/"+dateBaseLinkParam.getDbName()+"?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            //String url = 'aaaaaa';
+            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort()+ "/" + dateBaseLinkParam.getDbName()  + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
             DataSourceHolder.setUniqDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),dateBaseLinkParam.getDriverClassName());
+            //DataSourceHolder.setDB("wdscgj");
             documentService.getDBInfo(dateBaseLinkParam.getDbName());
             return  true;
         }else {

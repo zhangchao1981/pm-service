@@ -18,6 +18,7 @@ public class DataSourceHolder {
     public static String databaseName;
 
     private static final  ThreadLocal<String> DATA_SOURCE_HOLDER = new ThreadLocal<>();
+    private static final  ThreadLocal<DBInfo> PRIVATE_DATA_SOURCE_HOLDER = new ThreadLocal<>();
 
     private DataSourceHolder() {
         setDB(DEFAULT_DATASOURCE);

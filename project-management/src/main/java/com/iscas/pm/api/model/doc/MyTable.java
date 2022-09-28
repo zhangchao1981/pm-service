@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class MyTable {
-    public String  name;
+    public String  id;
 
-    public String  comment;
+    public String  name;
 }
