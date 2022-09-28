@@ -56,12 +56,15 @@ public class FastDfsController {
 
 
 
-    @PostMapping("/deleteFile")
-    @ApiOperation(value = "删除文件", notes = "根据全路径删除")
-    @ApiOperationSupport(order = 24)
-    @PreAuthorize("hasAuthority('/projectFile/deleteFile')")
-    public void deleteTemplate(String path) {
-        redisUtil.del(path);
-        fastDFSUtil.delete(path);
-    }
+//    @PostMapping("/deleteFile")
+//    @ApiOperation(value = "删除文件", notes = "根据全路径删除")
+//    @ApiOperationSupport(order = 24)
+//    @PreAuthorize("hasAuthority('/projectFile/deleteFile')")
+//    public void deleteTemplate(String path) {
+//        redisUtil.del(path);
+//        fastDFSUtil.delete(path);
+//    }
+
+
+
 }

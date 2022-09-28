@@ -28,7 +28,6 @@ import com.iscas.pm.common.core.util.RedisUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -243,6 +242,12 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             fastDFSUtil.delete(document.getPath());
         }
          documentMapper.deleteById(templateId);
+    }
+
+    @Override
+    public void getDBInfo(String dbName) {
+        List<MyTable> myTableList = new ArrayList<>();
+        myTableList=documentMapper.getDBInfo(dbName);
     }
 
     /**

@@ -23,7 +23,6 @@ public class DatasourceFactory {
 
     public DataSource createDataSource(String uniqName, String databaseName){
         AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
-
         dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
         dataSourceBean.setUniqueResourceName(uniqName);
         dataSourceBean.setPoolSize(5);
@@ -42,6 +41,27 @@ public class DatasourceFactory {
         log.info("创建新的数据源，地址= {}", prop.getProperty("url"));
         return dataSourceBean;
     }
+
+
+    public DataSource createDataSource(String url,String databaseName, String userName,String password, String driverClassName){
+        AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
+        dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
+        dataSourceBean.setUniqueResourceName("url");
+        dataSourceBean.setPoolSize(5);
+        ///读取配置文件配置信息
+        Properties prop = build(url,userName,password,driverClassName);
+        //取得连接前先测试是否可用
+        dataSourceBean.setTestQuery("select 1");
+        if(databaseName != null){
+            prop.setProperty("url", url);
+        }
+        dataSourceBean.setXaProperties(prop);
+        log.info("创建新的数据源，地址= {}",url );
+        return dataSourceBean;
+    }
+
+
+
 
     private static String replaceDBFromURL(String url, String dbName){
         int hostEnd = url.lastIndexOf('/');
@@ -73,4 +93,15 @@ public class DatasourceFactory {
 //        prop.put("testWhileIdle", environment.getProperty(prefix + "testWhileIdle", Boolean.class));
         return prop;
     }
+    private Properties build(String url,String userName,String password, String driverClassName ) {
+        Properties prop = new Properties();
+        prop.put("url", url);
+        prop.put("username", userName);
+        prop.put("password", password);
+        prop.put("driverClassName", driverClassName);
+        return prop;
+    }
+
+
+
 }
