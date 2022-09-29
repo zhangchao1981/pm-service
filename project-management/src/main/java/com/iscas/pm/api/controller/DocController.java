@@ -6,11 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
-import com.iscas.pm.api.model.doc.param.DateBaseLinkParam;
+import com.iscas.pm.api.model.doc.param.DBLinkParam;
 import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.config.DatasourceFactory;
+import com.iscas.pm.common.db.separate.datasource.DynamicDataSource;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +51,9 @@ public class DocController {
     @Autowired
     HttpServletResponse response;
     @Autowired
-    DatasourceFactory  datasourceFactory;
+    DatasourceFactory datasourceFactory;
+    @Autowired
+    DynamicDataSource dynamicDataSource;
 
     @GetMapping("/findDirectory")
     @ApiOperation(value = "查询目录树", notes = "查询整棵目录树")
@@ -99,10 +102,10 @@ public class DocController {
     @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
-    public IPage<Document> getDocumentBatch(@RequestBody @Valid  DocumentQueryParam documentQueryParam) {
+    public IPage<Document> getDocumentBatch(@RequestBody @Valid DocumentQueryParam documentQueryParam) {
         IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getPageSize()), new QueryWrapper<Document>()
-                                 .eq(documentQueryParam.getDirectoryId()!= null, "directory_id",documentQueryParam.getDirectoryId()).like(!StringUtils.isBlank(documentQueryParam.getDocName()), "name", documentQueryParam.getDocName()));
-        return    documentIPage;
+                .eq(documentQueryParam.getDirectoryId() != null, "directory_id", documentQueryParam.getDirectoryId()).like(!StringUtils.isBlank(documentQueryParam.getDocName()), "name", documentQueryParam.getDocName()));
+        return documentIPage;
     }
 
     @PostMapping("/createDocument")
@@ -110,7 +113,7 @@ public class DocController {
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
-      documentService.createDocument(createDocumentParam);
+        documentService.createDocument(createDocumentParam);
     }
 
     @PostMapping("/addLocalDocument")
@@ -119,7 +122,8 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath())) {
-            throw new IllegalArgumentException("文档路径不能为空");}
+            throw new IllegalArgumentException("文档路径不能为空");
+        }
         document.setCreateTime(new Date());
         document.setUpdateTime(new Date());
         document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
@@ -132,7 +136,7 @@ public class DocController {
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
-     return  documentService.deleteDocument(documentId);
+        return documentService.deleteDocument(documentId);
     }
 
     @PostMapping("/deleteDocumentBatch")
@@ -140,7 +144,7 @@ public class DocController {
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
     public boolean deleteDocumentBatch(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
-       return  documentService.deleteDocumentBatch(docIdList);
+        return documentService.deleteDocumentBatch(docIdList);
     }
 
     @PostMapping("/addReferenceDoc")
@@ -271,26 +275,36 @@ public class DocController {
     @ApiOperationSupport(order = 29)
     @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
     public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        return docTemplateService.page(new Page<>(pageNum,pageSize));
+        return docTemplateService.page(new Page<>(pageNum, pageSize));
     }
 
     @PostMapping("/testDB")
     @ApiOperation(value = "测试数据库连接", notes = "测试数据库能否正常连接")
     @ApiOperationSupport(order = 29)
-    public Boolean testDB(@RequestBody  @Valid DateBaseLinkParam dateBaseLinkParam) {
-        if (dateBaseLinkParam.getDbType()==DateBaseType.MYSQL){
-            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort()+ "/" + dateBaseLinkParam.getDbName()+ "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-
-            DataSourceHolder.setDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),"com.mysql.cj.jdbc.Driver",UUID.randomUUID().toString());
-
-            documentService.getDBInfo(dateBaseLinkParam.getDbName());
-            return  true;
-        }else {
-            return false;
+    public Boolean testDB(@RequestBody @Valid DBLinkParam dbLinkParam) {
+        String dataSourceName = UUID.randomUUID().toString();
+        String url, driverName;
+        if (dbLinkParam.getDbType() == DateBaseType.MYSQL) {
+            url = "jdbc:mysql://" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + "/" + dbLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            driverName = "com.mysql.cj.jdbc.Driver";
+        } else if (dbLinkParam.getDbType() == DateBaseType.ORACLE) {
+            url = "jdbc:oracle:thin:@" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + ":" + dbLinkParam.getDbName();
+            driverName = "oracle.jdbc.driver.OracleDriver";
+        } else {
+            throw new IllegalArgumentException("暂不支持该数据库类型！");
         }
 
+        DataSourceHolder.setDB(url, dbLinkParam.getDbName(), dbLinkParam.getUserName(), dbLinkParam.getPassword(), driverName, dataSourceName);
+        try {
+            documentService.getDBInfo(dbLinkParam.getDbName());
+        } catch (Exception e) {
+            return false;
+        } finally {
+            dynamicDataSource.deleteDataSourceByName(dataSourceName);
+        }
+
+        return true;
 
     }
-
 
 }
