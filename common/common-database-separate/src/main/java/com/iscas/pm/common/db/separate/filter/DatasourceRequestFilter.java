@@ -32,8 +32,6 @@ public class DatasourceRequestFilter implements Filter{
 //        dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
 //        dataSourceBean.setTestQuery("SELECT * FROM information_schema.SCHEMATA where SCHEMA_NAME= "+databaseName);
 
-
-
         //切换数据源
         String databaseName = (String)request.getAttribute(DATA_BASE_FIELD);
         if (request.getRequestURI().startsWith("/projectInfo")) {
@@ -43,5 +41,4 @@ public class DatasourceRequestFilter implements Filter{
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
-
 }

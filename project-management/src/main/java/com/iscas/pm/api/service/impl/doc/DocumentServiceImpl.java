@@ -248,6 +248,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
        return documentMapper.getDBInfo(dbName);
     }
 
+    @Override
+    public List<TableStructure> getTableStructureList(String tableName) {
+        return documentMapper.getTableStructureList(tableName);
+    }
+
     /**
      * 校验目录是否存在
      */

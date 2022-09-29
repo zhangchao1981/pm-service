@@ -81,6 +81,7 @@ public class DatasourceFactory {
             prop.put("username", dbInfo.getUserName());
             prop.put("password", dbInfo.getPassword());
             prop.put("driverClassName", dbInfo.getDriverClassName());
+
         }else {
             String prefix= "spring.datasource.";
             prop.put("url", environment.getProperty(prefix + "url"));

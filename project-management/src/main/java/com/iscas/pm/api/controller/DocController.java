@@ -24,6 +24,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -307,7 +308,6 @@ public class DocController {
     public Boolean linkUserDBTest(@RequestBody @Valid DateBaseLinkParam dateBaseLinkParam) {
         if (dateBaseLinkParam.getDbType() == DateBaseType.MYSQL) {
             //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
-            //String url = 'aaaaaa';
             String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort() + "/" + dateBaseLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
             DataSourceHolder.setDB(url, dateBaseLinkParam.getDbName(), dateBaseLinkParam.getUserName(), dateBaseLinkParam.getPassword(), "com.mysql.cj.jdbc.Driver");
             //DataSourceHolder.setDB("wdscgj");
@@ -329,20 +329,20 @@ public class DocController {
             String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort() + "/" + dateBaseLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
             DataSourceHolder.setDB(url, dateBaseLinkParam.getDbName(), dateBaseLinkParam.getUserName(), dateBaseLinkParam.getPassword(), "com.mysql.cj.jdbc.Driver");
             //DataSourceHolder.setDB("wdscgj");
-            return documentService.getDBInfo(dateBaseLinkParam.getDbName());
+            //数据库中对应的所有表的表名()
+            List<TableByDB> tableList = documentService.getDBInfo(dateBaseLinkParam.getDbName());
+            HashMap<String, Object> DBStructureInfo = new HashMap<>();
+            tableList.forEach(table->DBStructureInfo.put(table.getName(), documentService.getTableStructureList(table.getName())));
+
+
+
+            return null;
         }
         return null;
     }
 
 
-//
-//
-//    @PostMapping("/")
-//    @ApiOperation(value = "查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
-//    @ApiOperationSupport(order = 29)
-//    @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
-//    public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-//        return docTemplateService.page(new Page<>(pageNum,pageSize));
-//    }
+
+
 
 }
