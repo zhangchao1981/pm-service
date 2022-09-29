@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.api.model.projectPlan.param.Worker;
+import com.iscas.pm.common.core.util.ObjectAndJsonHandler;
 import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,7 +29,7 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 @Accessors(chain = true)
 @ApiModel(value = "项目计划", description = "项目计划管理，对应project_plan表")
 @CheckTimeInterval(beginTime = {"startDate"},endTime = {"endDate"},message = "计划开始日期不能大于结束日期")
-@TableName(value ="project_plan")
+@TableName(value ="project_plan", autoResultMap = true)
 @Data
 public class PlanTask implements Serializable {
 
@@ -59,6 +60,8 @@ public class PlanTask implements Serializable {
 
    @ApiModelProperty(value = "责任人，成员为employName,userId",required = true)
    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+//   @TableField(value = "worker_list", insertStrategy = NOT_NULL, typeHandler = ObjectAndJsonHandler.class)
+//   @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
    private List<Worker> workerList;
 
 
