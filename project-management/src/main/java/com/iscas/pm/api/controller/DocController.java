@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 
 
-
 /**
  * @author by  lichang
  * @date 2022/7/29.
@@ -52,7 +51,7 @@ public class DocController {
     HttpServletResponse response;
 
     @Autowired
-    DatasourceFactory  datasourceFactory;
+    DatasourceFactory datasourceFactory;
 
 
     @GetMapping("/findDirectory")
@@ -106,13 +105,11 @@ public class DocController {
     @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
     @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
-    public IPage<Document> getDocumentBatch(@RequestBody @Valid  DocumentQueryParam documentQueryParam) {
+    public IPage<Document> getDocumentBatch(@RequestBody @Valid DocumentQueryParam documentQueryParam) {
         IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getPageSize()), new QueryWrapper<Document>()
-                                 .eq(documentQueryParam.getDirectoryId()!= null, "directory_id",documentQueryParam.getDirectoryId()).like(!StringUtils.isBlank(documentQueryParam.getDocName()), "name", documentQueryParam.getDocName()));
-        return    documentIPage;
+                .eq(documentQueryParam.getDirectoryId() != null, "directory_id", documentQueryParam.getDirectoryId()).like(!StringUtils.isBlank(documentQueryParam.getDocName()), "name", documentQueryParam.getDocName()));
+        return documentIPage;
     }
-
-
 
 
     @PostMapping("/createDocument")
@@ -120,7 +117,7 @@ public class DocController {
     @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
-      documentService.createDocument(createDocumentParam);
+        documentService.createDocument(createDocumentParam);
     }
 
     @PostMapping("/addLocalDocument")
@@ -129,7 +126,8 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath())) {
-            throw new IllegalArgumentException("文档路径不能为空");}
+            throw new IllegalArgumentException("文档路径不能为空");
+        }
         document.setCreateTime(new Date());
         document.setUpdateTime(new Date());
         document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
@@ -138,13 +136,12 @@ public class DocController {
     }
 
 
-
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
     @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
-     return  documentService.deleteDocument(documentId);
+        return documentService.deleteDocument(documentId);
     }
 
     @PostMapping("/deleteDocumentBatch")
@@ -157,7 +154,7 @@ public class DocController {
 //        }
 //        return true;
 //
-       return  documentService.deleteDocumentBatch(docIdList);
+        return documentService.deleteDocumentBatch(docIdList);
 
     }
 
@@ -185,7 +182,6 @@ public class DocController {
     }
 
 
-
     @PostMapping("/referenceDocList")
     @ApiOperation(value = "查询引用文档", notes = "")
     @ApiOperationSupport(order = 18)
@@ -193,8 +189,6 @@ public class DocController {
     public List<ReferenceDoc> referenceDocList(@NotNull(message = "引用文档Id不能为空") @RequestParam Integer templateId) {
         return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
     }
-
-
 
 
     @PostMapping("/deleteReferenceDoc")
@@ -271,7 +265,6 @@ public class DocController {
     }
 
 
-
     @PostMapping("/editTemplate")
     @ApiOperation(value = "修改文档模板", notes = "")
     @ApiOperationSupport(order = 28)
@@ -296,10 +289,10 @@ public class DocController {
 
     @GetMapping("/templatePageList")
     @ApiOperation(value = "分页查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
-    @ApiOperationSupport(order = 29)
+    @ApiOperationSupport(order = 30)
     @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
     public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        return docTemplateService.page(new Page<>(pageNum,pageSize));
+        return docTemplateService.page(new Page<>(pageNum, pageSize));
     }
 
     /**
@@ -309,29 +302,37 @@ public class DocController {
 
     @PostMapping("/linkUserDB")
     @ApiOperation(value = "测试连接自定义数据库", notes = "测试连接用户参数输入的数据库")
-    @ApiOperationSupport(order = 29)
+    @ApiOperationSupport(order = 31)
 //    @PreAuthorize("hasAuthority('/projectDoc/linkUserDB')")
-    public Boolean linkUserDBTest(@RequestBody  @Valid DateBaseLinkParam dateBaseLinkParam) {
-        if (dateBaseLinkParam.getDbType()==DateBaseType.MYSQL){
+    public Boolean linkUserDBTest(@RequestBody @Valid DateBaseLinkParam dateBaseLinkParam) {
+        if (dateBaseLinkParam.getDbType() == DateBaseType.MYSQL) {
             //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
             //String url = 'aaaaaa';
-            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort()+ "/" + dateBaseLinkParam.getDbName()+ "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-            DataSourceHolder.setDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),"com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort() + "/" + dateBaseLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            DataSourceHolder.setDB(url, dateBaseLinkParam.getDbName(), dateBaseLinkParam.getUserName(), dateBaseLinkParam.getPassword(), "com.mysql.cj.jdbc.Driver");
             //DataSourceHolder.setDB("wdscgj");
             documentService.getDBInfo(dateBaseLinkParam.getDbName());
-            return  true;
-        }else {
+            return true;
+        } else {
             return false;
         }
-
-
-
-
-
-
     }
 
-
+    @PostMapping("/linkAndGetDBInfo")
+    @ApiOperation(value = "连接自定义数据库获取信息", notes = "连接自定义数据库并获取对应数据库结构信息")
+    @ApiOperationSupport(order = 32)
+//    @PreAuthorize("hasAuthority('/projectDoc/linkUserDB')")
+    public List<TableByDB> linkAndGetDBInfo(@RequestBody @Valid DateBaseLinkParam dateBaseLinkParam) {
+        if (dateBaseLinkParam.getDbType() == DateBaseType.MYSQL) {
+            //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
+            //String url = 'aaaaaa';
+            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort() + "/" + dateBaseLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            DataSourceHolder.setDB(url, dateBaseLinkParam.getDbName(), dateBaseLinkParam.getUserName(), dateBaseLinkParam.getPassword(), "com.mysql.cj.jdbc.Driver");
+            //DataSourceHolder.setDB("wdscgj");
+            return documentService.getDBInfo(dateBaseLinkParam.getDbName());
+        }
+        return null;
+    }
 
 
 //

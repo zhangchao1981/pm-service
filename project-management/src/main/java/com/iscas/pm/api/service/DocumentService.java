@@ -2,6 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.doc.Document;
+import com.iscas.pm.api.model.doc.TableByDB;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,6 @@ public interface DocumentService extends IService<Document> {
 
     void deleteTemplate(Integer templateId);
 
-    void getDBInfo(String dbName);
+    List<TableByDB> getDBInfo(String dbName);
 
 }
