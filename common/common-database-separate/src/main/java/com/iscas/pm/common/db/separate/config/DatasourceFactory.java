@@ -1,10 +1,11 @@
 package com.iscas.pm.common.db.separate.config;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.iscas.pm.common.db.separate.holder.DBInfo;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -24,71 +25,60 @@ public class DatasourceFactory {
     @Autowired
     private Environment environment;
 
-    public DataSource createDataSource(String dataSourceName, String databaseName){
-        AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
-        dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
-        dataSourceBean.setUniqueResourceName(dataSourceName);
-        dataSourceBean.setPoolSize(5);
+    public DataSource createDataSource(String databaseName) {
+        DruidDataSource druidDataSource;
 
         //获取数据源配置信息
-        Properties prop= build();
+        Properties prop = build(databaseName);
 
-        //取得连接前先测试是否可用
-        //dataSourceBean.setTestQuery("select 1");
-        if(databaseName != null){
-            String url = replaceDBFromURL(prop.getProperty("url"), databaseName);
-            prop.setProperty("url", url);
+        try {
+            druidDataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(prop);
+            //自定义数据源配置重连次数
+            if (!StringUtils.isEmpty(DataSourceHolder.getDB().getUrl())) {
+                // 失败后重连的次数(prop中设置不起作用)
+                druidDataSource.setConnectionErrorRetryAttempts(1);
+                //请求失败之后中断
+                druidDataSource.setBreakAfterAcquireFailure(true);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        dataSourceBean.setXaProperties(prop);
+
         log.info("创建新的数据源，地址= {}", prop.getProperty("url"));
-        return dataSourceBean;
+        return druidDataSource;
     }
 
-    private static String replaceDBFromURL(String url, String dbName){
+    private static String replaceDBFromURL(String url, String dbName) {
         int hostEnd = url.lastIndexOf('/');
         int propStart = url.indexOf('?');
         String props = "";
-        if(propStart != -1){
+        if (propStart != -1) {
             props = url.substring(propStart);
         }
         return url.substring(0, hostEnd + 1) + dbName + props;
     }
 
-    private Properties build() {
+    private Properties build(String databaseName) {
         Properties prop = new Properties();
         DBInfo dbInfo = DataSourceHolder.getDB();
 
         //用户自定义的数据源
-        if (!ObjectUtils.isEmpty(dbInfo)&&!StringUtils.isEmpty(dbInfo.getUrl())){
-            //有配置信息
+        if (!ObjectUtils.isEmpty(dbInfo) && !StringUtils.isEmpty(dbInfo.getUrl())) {
             prop.put("url", dbInfo.getUrl());
             prop.put("username", dbInfo.getUserName());
             prop.put("password", dbInfo.getPassword());
             prop.put("driverClassName", dbInfo.getDriverClassName());
-            prop.put("maxWait", 500);
-            //prop.put("breakAfterAcquireFailure",true);
+            prop.put("maxWait", "500");
         }
         //系统内部数据源
         else {
-            String prefix= "spring.datasource.";
-            prop.put("url", environment.getProperty(prefix + "url"));
+            String prefix = "spring.datasource.";
+            String url = environment.getProperty(prefix + "url");
+            prop.put("url", StringUtils.isEmpty(databaseName) ? url : replaceDBFromURL(url, databaseName));
             prop.put("username", environment.getProperty(prefix + "username"));
             prop.put("password", environment.getProperty(prefix + "password"));
             prop.put("driverClassName", environment.getProperty(prefix + "driverClassName", ""));
         }
-
-//        prop.put("initialSize", environment.getProperty(prefix + "initialSize", Integer.class));
-//        prop.put("maxActive", environment.getProperty(prefix + "maxActive", Integer.class));
-//        prop.put("minIdle", environment.getProperty(prefix + "minIdle", Integer.class));
-//        prop.put("maxWait", environment.getProperty(prefix + "maxWait", Integer.class));
-//        prop.put("poolPreparedStatements", environment.getProperty(prefix + "poolPreparedStatements", Boolean.class, false));
-//        prop.put("maxPoolPreparedStatementPerConnectionSize",
-//                 environment.getProperty(prefix + "maxPoolPreparedStatementPerConnectionSize", Integer.class, 20));
-//        prop.put("validationQuery", environment.getProperty(prefix + "validationQuery"));
-//        prop.put("validationQueryTimeout", environment.getProperty(prefix + "validationQueryTimeout", Integer.class));
-//        prop.put("testOnBorrow", environment.getProperty(prefix + "testOnBorrow", Boolean.class));
-//        prop.put("testOnReturn", environment.getProperty(prefix + "testOnReturn", Boolean.class));
-//        prop.put("testWhileIdle", environment.getProperty(prefix + "testWhileIdle", Boolean.class));
         return prop;
     }
 

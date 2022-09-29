@@ -50,15 +50,15 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         String dataSourceName = DataSourceHolder.getDB().dataSourceName;
         String databaseName = DataSourceHolder.getDB().databaseName;
         if (!dataSourceMap.containsKey(dataSourceName)) {
-            this.addDataSourceByName(dataSourceName,databaseName);
+            this.addDataSourceByName(dataSourceName, databaseName);
         }
 
         log.info(" 切换数据库到:" + dataSourceName);
         return dataSourceName;
     }
 
-    public void addDataSourceByName(String dataSourceName,String databaseName) {
-        addDataSource(dataSourceName, datasourceFactory.createDataSource(dataSourceName, databaseName));
+    public void addDataSourceByName(String dataSourceName, String databaseName) {
+        addDataSource(dataSourceName, datasourceFactory.createDataSource( databaseName));
     }
 
     public void addDataSource(String datasourceName, DataSource dataSource) {

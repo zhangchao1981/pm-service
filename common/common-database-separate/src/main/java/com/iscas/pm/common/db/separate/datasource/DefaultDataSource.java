@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 public class DefaultDataSource{
     @Bean("major")
     @Primary
-    public DataSource dataSource(DatasourceFactory factoryBean){
-        return factoryBean.createDataSource("default", null);
+    public DataSource dataSource(DatasourceFactory factoryBean) {
+        return factoryBean.createDataSource( null);
     }
 }
