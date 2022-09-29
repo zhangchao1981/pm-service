@@ -20,5 +20,5 @@ public interface ProjectPlanService extends IService<PlanTask> {
 
     Boolean deleteTask(Integer id);
 
-    List<PlanTask> getTaskListByWps();
+    List<PlanTask> getTaskListByWbs();
 }

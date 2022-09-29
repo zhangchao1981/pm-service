@@ -39,7 +39,6 @@ public class ProjectPlanController {
         return  projectPlanService.getTaskList();
     }
 
-
     @PostMapping("/addTask")
     @ApiOperation(value = "添加计划任务", notes = "在指定任务下添加计划任务，根任务的parentId为0")
     @ApiOperationSupport(order = 2)
@@ -48,14 +47,6 @@ public class ProjectPlanController {
         projectPlanService.addTask(planTask);
         return planTask;
     }
-
-//    @PostMapping("/importTemplate")
-//    @ApiOperation(value = "计划模板导入（暂缓实现）", notes = "选择模板，将模板内容导入计划表")
-//    @ApiOperationSupport(order = 3)
-//    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
-//    public Boolean importTemplate(Integer planTemplateId){
-//        return  null;
-//    }
 
     @PostMapping("/editTask")
     @ApiOperation(value = "修改计划任务", notes = "修改指定计划任务")
