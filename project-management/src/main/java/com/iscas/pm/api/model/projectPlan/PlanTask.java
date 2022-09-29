@@ -55,11 +55,17 @@ public class PlanTask implements Serializable {
     @NotBlank(message = "任务名称不能为空")
     private String name;
 
-   @ApiModelProperty(value = "责任人，成员为employName,userId",required = true)
+   @ApiModelProperty(value = "责任人名字List ",required = true)
    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
 //   @TableField(value = "worker_list", insertStrategy = NOT_NULL, typeHandler = ObjectAndJsonHandler.class)
 //   @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-   private List<Worker> workerList;
+   private List<String> workerList;
+
+    @ApiModelProperty(value = "责任人idList",required = true)
+    @TableField(jdbcType = JdbcType.INTEGER, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+//   @TableField(value = "worker_list", insertStrategy = NOT_NULL, typeHandler = ObjectAndJsonHandler.class)
+//   @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
+    private List<Integer> workerIds;
 
 
     @ApiModelProperty(value = "人数,前端无需传参，后端自动根据责任人计算")

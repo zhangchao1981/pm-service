@@ -59,7 +59,7 @@ public class DocPlanTask {
         this.wbs = planTask.getWbs();
         this.docPath = planTask.getDocPath();
         this.name = planTask.getName();
-        planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE.getWorkerName());
+        planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE);
         this.workingDays = planTask.getWorkingDays();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
