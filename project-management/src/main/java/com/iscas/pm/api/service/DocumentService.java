@@ -16,12 +16,7 @@ import java.util.List;
 */
 public interface DocumentService extends IService<Document> {
 
-
     Document addLocalDocument(Document document) ;
-
-//    Document addLinkDocument(Document document);
-
-//    String uploadDocument(MultipartFile file) throws IOException;
 
     Boolean deleteDocument(Integer id);
 

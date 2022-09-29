@@ -3,7 +3,6 @@ package com.iscas.pm.common.db.separate.datasource;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import com.iscas.pm.common.db.separate.config.DatasourceFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -48,32 +47,19 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        String currentDB = DataSourceHolder.getDB().databaseName;
-//        if () {
-////            this.addDataSource(DataSourceHolder.);
-////            this.addUniqDataSource("test",DataSourceHolder.url,DataSourceHolder.databaseName,DataSourceHolder.UserName,DataSourceHolder.password,DataSourceHolder.driverClassName);
-//            return "test";
-//        }
-        if (!dataSourceMap.containsKey(currentDB)) {
-            this.addDataSourceByName(currentDB);
+        String dataSourceName = DataSourceHolder.getDB().dataSourceName;
+        String databaseName = DataSourceHolder.getDB().databaseName;
+        if (!dataSourceMap.containsKey(dataSourceName)) {
+            this.addDataSourceByName(dataSourceName,databaseName);
         }
 
-        log.info(" 切换数据库到:" + currentDB);
-        return currentDB;
+        log.info(" 切换数据库到:" + dataSourceName);
+        return dataSourceName;
     }
 
-
-
-    public void addDataSourceByName(String name) {
-        addDataSource(name, datasourceFactory.createDataSource(name, name));
+    public void addDataSourceByName(String dataSourceName,String databaseName) {
+        addDataSource(dataSourceName, datasourceFactory.createDataSource(dataSourceName, databaseName));
     }
-
-
-//    public void addUniqDataSource(String name,String url, String databaseName, String userName, String password, String driverClassName) {
-//        dataSourceMap.put(name, datasourceFactory.createDataSource(name,url, databaseName, userName, password, driverClassName));
-//        this.afterPropertiesSet();
-//    }
-
 
     public void addDataSource(String datasourceName, DataSource dataSource) {
         dataSourceMap.put(datasourceName, dataSource);

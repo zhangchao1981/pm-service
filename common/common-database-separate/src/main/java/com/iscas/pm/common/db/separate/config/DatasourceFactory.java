@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-
 /**
  * @Author： zhangchao
  * @Date： 2022/7/15
@@ -25,16 +24,17 @@ public class DatasourceFactory {
     @Autowired
     private Environment environment;
 
-
-    public DataSource createDataSource(String uniqName, String databaseName){
+    public DataSource createDataSource(String dataSourceName, String databaseName){
         AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
         dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
-        dataSourceBean.setUniqueResourceName(uniqName);
+        dataSourceBean.setUniqueResourceName(dataSourceName);
         dataSourceBean.setPoolSize(5);
-        //读取配置文件配置信息
+
+        //获取数据源配置信息
         Properties prop= build();
+
         //取得连接前先测试是否可用
-        dataSourceBean.setTestQuery("select 1");
+        //dataSourceBean.setTestQuery("select 1");
         if(databaseName != null){
             String url = replaceDBFromURL(prop.getProperty("url"), databaseName);
             prop.setProperty("url", url);
@@ -43,24 +43,6 @@ public class DatasourceFactory {
         log.info("创建新的数据源，地址= {}", prop.getProperty("url"));
         return dataSourceBean;
     }
-
-//
-//    public DataSource createDataSource(String name,String url,String databaseName, String userName,String password, String driverClassName){
-//        AtomikosDataSourceBean dataSourceBean = new AtomikosDataSourceBean();
-//        dataSourceBean.setXaDataSourceClassName("com.alibaba.druid.pool.xa.DruidXADataSource");
-//        dataSourceBean.setUniqueResourceName(name);
-//        dataSourceBean.setPoolSize(5);
-//        ///读取配置文件配置信息
-//        Properties prop = build(url,userName,password,driverClassName);
-//        //取得连接前先测试是否可用
-//        dataSourceBean.setTestQuery("select 1");
-//        if(databaseName != null){
-//            prop.setProperty("url", url);
-//        }
-//        dataSourceBean.setXaProperties(prop);
-//        log.info("创建新的数据源，地址= {}",url );
-//        return dataSourceBean;
-//    }
 
     private static String replaceDBFromURL(String url, String dbName){
         int hostEnd = url.lastIndexOf('/');
@@ -73,21 +55,28 @@ public class DatasourceFactory {
     }
 
     private Properties build() {
-        DBInfo dbInfo = DataSourceHolder.getDB();
         Properties prop = new Properties();
+        DBInfo dbInfo = DataSourceHolder.getDB();
+
+        //用户自定义的数据源
         if (!ObjectUtils.isEmpty(dbInfo)&&!StringUtils.isEmpty(dbInfo.getUrl())){
             //有配置信息
             prop.put("url", dbInfo.getUrl());
             prop.put("username", dbInfo.getUserName());
             prop.put("password", dbInfo.getPassword());
             prop.put("driverClassName", dbInfo.getDriverClassName());
-        }else {
+            prop.put("maxWait", 500);
+            //prop.put("breakAfterAcquireFailure",true);
+        }
+        //系统内部数据源
+        else {
             String prefix= "spring.datasource.";
             prop.put("url", environment.getProperty(prefix + "url"));
             prop.put("username", environment.getProperty(prefix + "username"));
             prop.put("password", environment.getProperty(prefix + "password"));
             prop.put("driverClassName", environment.getProperty(prefix + "driverClassName", ""));
         }
+
 //        prop.put("initialSize", environment.getProperty(prefix + "initialSize", Integer.class));
 //        prop.put("maxActive", environment.getProperty(prefix + "maxActive", Integer.class));
 //        prop.put("minIdle", environment.getProperty(prefix + "minIdle", Integer.class));
@@ -102,8 +91,5 @@ public class DatasourceFactory {
 //        prop.put("testWhileIdle", environment.getProperty(prefix + "testWhileIdle", Boolean.class));
         return prop;
     }
-
-
-
 
 }
