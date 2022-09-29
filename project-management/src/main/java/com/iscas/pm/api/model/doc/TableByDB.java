@@ -7,8 +7,10 @@ import lombok.Data;
  * @date 2022/9/20.
  */
 @Data
-public class MyTable {
-    public String  id;
-
+public class TableByDB {
+    
     public String  name;
+    
+    public String  comment;
+    
 }

@@ -242,9 +242,13 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
     @Override
-    public void getDBInfo(String dbName) {
-        List<MyTable> myTableList = new ArrayList<>();
-        myTableList=documentMapper.getDBInfo(dbName);
+    public List<TableByDB> getDBInfo(String dbName) {
+       return documentMapper.getDBInfo(dbName);
+    }
+
+    @Override
+    public List<TableStructure> getTableStructureList(String tableName) {
+        return documentMapper.getTableStructureList(tableName);
     }
 
     /**
