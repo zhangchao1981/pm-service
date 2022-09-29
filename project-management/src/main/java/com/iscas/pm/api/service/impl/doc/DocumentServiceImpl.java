@@ -191,7 +191,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             //Software项目软件环境信息获取
             List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
             //项目计划信息获取
-            List<PlanTask> planTaskList = projectPlanService.getTaskListByWps();
+            List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
             List<ProjectMember> memberList = projectTeamService.memberRoleList();
 
             List<DocReviseRecord> docReviseRecordList=new ArrayList<>();

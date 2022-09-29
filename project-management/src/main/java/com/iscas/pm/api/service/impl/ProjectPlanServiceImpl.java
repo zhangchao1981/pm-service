@@ -32,7 +32,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
     //按wps转int的编号大小顺序查询
     @Override
-    public List<PlanTask> getTaskListByWps() {
+    public List<PlanTask> getTaskListByWbs() {
         //拿到数据库查询结果，将其转成树结构
         //方案1. sort
         //方案2.重写compare方法
