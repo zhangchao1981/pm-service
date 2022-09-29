@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
-import com.iscas.pm.api.model.project.SettingSystemRoleQueryParam;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.ProjectPlanService;
@@ -16,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author lichang
@@ -82,7 +84,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
             throw new IllegalArgumentException("父任务不存在");
 
         //新任务之后的任务后移
-        List<PlanTask> updatedPlanTasks = movePosition(planTask.getId(),parentId, position, null, false);
+        List<PlanTask> updatedPlanTasks = movePosition(planTask.getId(), parentId, position, null, false);
         if (updatedPlanTasks.size() > 0)
             super.updateBatchById(updatedPlanTasks);
 
@@ -115,37 +117,45 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         if (planTask.getParentId().equals(db_task.getParentId())) {
             //排序位置前移
             if (planTask.getPosition() < db_task.getPosition()) {
-                updatedPlanTasks.addAll(movePosition(planTask.getId(),planTask.getParentId(), planTask.getPosition(), db_task.getPosition(), false));
+                updatedPlanTasks.addAll(movePosition(planTask.getId(), planTask.getParentId(), planTask.getPosition(), db_task.getPosition(), false));
             }
             //排序位置后移
             else if (planTask.getPosition() > db_task.getPosition()) {
-                updatedPlanTasks.addAll(movePosition(planTask.getId(),planTask.getParentId(), db_task.getPosition(), planTask.getPosition(), true));
+                //由于前端参数问题，需要做-1处理
+                planTask.setPosition(planTask.getPosition() - 1);
+                updatedPlanTasks.addAll(movePosition(planTask.getId(), planTask.getParentId(), db_task.getPosition(), planTask.getPosition(), true));
             }
         }
         //父任务发生变化
         else {
             //原父任务下子任务前移
-            updatedPlanTasks.addAll(movePosition(planTask.getId(),db_task.getParentId(), db_task.getPosition(), null, true));
+            updatedPlanTasks.addAll(movePosition(planTask.getId(), db_task.getParentId(), db_task.getPosition(), null, true));
             //新父任务下子任务后移
-            updatedPlanTasks.addAll(movePosition(planTask.getId(),planTask.getParentId(), planTask.getPosition(), null, false));
+            updatedPlanTasks.addAll(movePosition(planTask.getId(), planTask.getParentId(), planTask.getPosition(), null, false));
         }
 
-        //更新任务
+        //判断新的父任务是否在变化列表中
+        if (parent != null) {
+            Map<Integer, PlanTask> updatePlanTaskMap = updatedPlanTasks.stream().collect(Collectors.toMap(PlanTask::getId, Function.identity(), (key1, key2) -> key1));
+            if (updatePlanTaskMap.containsKey(parent.getId()))
+                parent = updatePlanTaskMap.get(parent.getId());
+        }
+
+        //更新当前移动的任务
         planTask.setPersonCount(planTask.getWorkerList() == null ? 0 : planTask.getWorkerList().size());
         planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? planTask.getPosition().toString() : parent.getWbs() + "." + planTask.getPosition());
         updatedPlanTasks.add(planTask);
 
-        //更新任务下的所有子任务的wbs
-        if (!db_task.getWbs().equals(planTask.getWbs())){
+        //更新移动的任务下的所有子任务的wbs
+        if (!db_task.getWbs().equals(planTask.getWbs())) {
             QueryWrapper<PlanTask> queryWrapper = new QueryWrapper<>();
-            queryWrapper.likeRight("wbs", db_task.getWbs());
+            queryWrapper.likeRight("wbs", db_task.getWbs()).ne("wbs", db_task.getWbs());
             List<PlanTask> childPlanTasks = projectPlanMapper.selectList(queryWrapper);
 
-            //替换所有子任务的wbs
             childPlanTasks.forEach(childTask -> {
-                childTask.setWbs(childTask.getWbs().replaceFirst(db_task.getWbs(),planTask.getWbs()));
+                childTask.setWbs(childTask.getWbs().replaceFirst(db_task.getWbs(), planTask.getWbs()));
             });
             updatedPlanTasks.addAll(childPlanTasks);
         }
@@ -170,7 +180,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
             throw new IllegalArgumentException("该任务下存在子任务，请先删除子任务");
 
         //待删除任务以后的任务前移
-        List<PlanTask> updatedPlanTasks = movePosition(id,task.getParentId(), task.getPosition(), null, true);
+        List<PlanTask> updatedPlanTasks = movePosition(id, task.getParentId(), task.getPosition(), null, true);
         if (updatedPlanTasks.size() > 0)
             super.updateBatchById(updatedPlanTasks);
 
@@ -188,7 +198,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
      * @param endPosition   受影响记录的结束位置
      * @param isForward     是否是前移
      */
-    private List<PlanTask> movePosition(Integer id ,Integer parentId, Integer startPosition, Integer endPosition, boolean isForward) {
+    private List<PlanTask> movePosition(Integer id, Integer parentId, Integer startPosition, Integer endPosition, boolean isForward) {
         List<PlanTask> updatedPlanTasks = new ArrayList<>();
 
         //查询出受排序影响的任务列表
@@ -196,7 +206,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 .eq("parent_id", parentId)
                 .ge(startPosition != null, "position", startPosition)
                 .le(endPosition != null, "position", endPosition)
-                .ne("id",id);
+                .ne(id != null,"id", id);
         List<PlanTask> planTasks = projectPlanMapper.selectList(queryWrapper);
 
         //查询受影响的任务列表的wbs和排序编号
@@ -204,7 +214,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
             //查询出所有子任务
             String oldWbs = plan.getWbs();
             QueryWrapper<PlanTask> childQueryWrapper = new QueryWrapper<>();
-            childQueryWrapper.likeRight("wbs", oldWbs).ne("wbs",oldWbs);
+            childQueryWrapper.likeRight("wbs", oldWbs).ne("wbs", oldWbs);
             List<PlanTask> childPlanTasks = projectPlanMapper.selectList(childQueryWrapper);
 
             plan.setPosition(isForward ? plan.getPosition() - 1 : plan.getPosition() + 1);
@@ -217,7 +227,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
             //替换所有子任务的wbs
             childPlanTasks.forEach(planTask -> {
-                planTask.setWbs(planTask.getWbs().replaceFirst(oldWbs,plan.getWbs()));
+                planTask.setWbs(planTask.getWbs().replaceFirst(oldWbs, plan.getWbs()));
             });
 
             updatedPlanTasks.add(plan);
