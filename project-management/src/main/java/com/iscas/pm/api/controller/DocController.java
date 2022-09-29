@@ -162,7 +162,6 @@ public class DocController {
     }
 
 
-
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
     @ApiOperationSupport(order = 16)
@@ -314,9 +313,10 @@ public class DocController {
 //    @PreAuthorize("hasAuthority('/projectDoc/linkUserDB')")
     public Boolean linkUserDBTest(@RequestBody  @Valid DateBaseLinkParam dateBaseLinkParam) {
         if (dateBaseLinkParam.getDbType()==DateBaseType.MYSQL){
+            //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
             //String url = 'aaaaaa';
-            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort()+ "/" + dateBaseLinkParam.getDbName()  + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-            DataSourceHolder.setUniqDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),dateBaseLinkParam.getDriverClassName());
+            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort()+ "/" + dateBaseLinkParam.getDbName()+ "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            DataSourceHolder.setDB(url,dateBaseLinkParam.getDbName(),dateBaseLinkParam.getUserName(),dateBaseLinkParam.getPassword(),"com.mysql.cj.jdbc.Driver");
             //DataSourceHolder.setDB("wdscgj");
             documentService.getDBInfo(dateBaseLinkParam.getDbName());
             return  true;

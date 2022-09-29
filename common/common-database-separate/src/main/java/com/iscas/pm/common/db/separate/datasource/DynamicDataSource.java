@@ -48,12 +48,12 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        String currentDB = DataSourceHolder.getDB();
-        if (StringUtils.isNotBlank(DataSourceHolder.url)) {
-//            this.addDataSource(DataSourceHolder.);
-            this.addUniqDataSource("test",DataSourceHolder.url,DataSourceHolder.databaseName,DataSourceHolder.UserName,DataSourceHolder.password,DataSourceHolder.driverClassName);
-            return "test";
-        }
+        String currentDB = DataSourceHolder.getDB().databaseName;
+//        if () {
+////            this.addDataSource(DataSourceHolder.);
+////            this.addUniqDataSource("test",DataSourceHolder.url,DataSourceHolder.databaseName,DataSourceHolder.UserName,DataSourceHolder.password,DataSourceHolder.driverClassName);
+//            return "test";
+//        }
         if (!dataSourceMap.containsKey(currentDB)) {
             this.addDataSourceByName(currentDB);
         }
@@ -61,9 +61,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         log.info(" 切换数据库到:" + currentDB);
         return currentDB;
     }
-    //入口都在determinCurrentLook
 
-    //重写一个：
 
 
     public void addDataSourceByName(String name) {
@@ -71,10 +69,10 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     }
 
 
-    public void addUniqDataSource(String name,String url, String databaseName, String userName, String password, String driverClassName) {
-        dataSourceMap.put(name, datasourceFactory.createDataSource(name,url, databaseName, userName, password, driverClassName));
-        this.afterPropertiesSet();
-    }
+//    public void addUniqDataSource(String name,String url, String databaseName, String userName, String password, String driverClassName) {
+//        dataSourceMap.put(name, datasourceFactory.createDataSource(name,url, databaseName, userName, password, driverClassName));
+//        this.afterPropertiesSet();
+//    }
 
 
     public void addDataSource(String datasourceName, DataSource dataSource) {
