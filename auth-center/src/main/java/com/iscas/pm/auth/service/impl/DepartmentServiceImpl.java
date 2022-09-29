@@ -58,7 +58,7 @@ DepartmentMapper departmentMapper;
             }
         }
         //判断父id是否和自身id相同
-        if (parentId.equals(department.getParentId())){
+        if (parentId.equals(department.getId())){
             throw new IllegalArgumentException("不允许父id与自身id相同");
         }
 

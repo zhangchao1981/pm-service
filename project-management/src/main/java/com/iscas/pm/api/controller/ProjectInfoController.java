@@ -29,6 +29,18 @@ public class ProjectInfoController {
     @Autowired
     private ProjectInfoService projectInfoService;
 
+    @PostMapping("/projectPageList")
+    @ApiOperation(value = "项目列表（分页）", notes = "分页查询权限范围内的项目列表信息")
+    public IPage<Project> projectPageList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
+        return projectInfoService.projectPageList(projectQueryParam);
+    }
+
+    @GetMapping("/projectList")
+    @ApiOperation(value = "项目列表", notes = "查询审核通过的项目列表信息")
+    public List<Project> projectList() {
+        return projectInfoService.projectList();
+    }
+
     @PostMapping("/addProject")
     @ApiOperation(value = "添加项目", notes = "添加一个新的项目")
     @PreAuthorize("hasAuthority('/projectInfo/addProject')")
@@ -54,7 +66,6 @@ public class ProjectInfoController {
         if (projectInfoService.findProjectByNotIdAndName(project.getId(), project.getName()))
             throw new IllegalArgumentException("项目名称已经存在！");
 
-
         List<String> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions().get(project.getId());
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
         if ((systemPermissions == null || !systemPermissions.contains("/projectInfo/editProject")) && (projectPermissions == null || !projectPermissions.contains("/projectInfo/editProject")))
@@ -62,18 +73,6 @@ public class ProjectInfoController {
 
         projectInfoService.editProject(project);
         return project;
-    }
-
-    @PostMapping("/projectPageList")
-    @ApiOperation(value = "项目列表（分页）", notes = "返回符合查询条件且权限范围内的项目列表信息")
-    public IPage<Project> projectPageList(@RequestBody @Valid ProjectQueryParam projectQueryParam) {
-        return projectInfoService.projectPageList(projectQueryParam);
-    }
-
-    @GetMapping("/projectList")
-    @ApiOperation(value = "项目列表", notes = "返回所有权限范围内的项目列表信息")
-    public List<Project> projectList() {
-        return projectInfoService.projectList();
     }
 
     @PostMapping("/approveProject")
@@ -102,14 +101,13 @@ public class ProjectInfoController {
         Project project = projectInfoService.getById(id);
         if (project == null)
             throw new IllegalArgumentException("该项目不存在");
-        List<String> permissions = projectInfoService.projectPermissions(project.getId());
-        //不是本人且没有项目权限，不允许关闭
-        if (!project.getCreateUser().equals(RequestHolder.getUserInfo().getUserName()) && (permissions == null || !permissions.contains("/projectInfo/editProject"))) {
-            throw new IllegalArgumentException("您无权限关闭该项目");
-        }
+
+        List<String> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions().get(project.getId());
+        List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
+        if ((systemPermissions == null || !systemPermissions.contains("/projectInfo/closeProject")) && (projectPermissions == null || !projectPermissions.contains("/projectInfo/closeProject")))
+            throw new IllegalArgumentException("您无权限修改该项目");
 
         projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
-
         return true;
     }
 
