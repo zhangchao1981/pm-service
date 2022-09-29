@@ -33,7 +33,7 @@ public class ProjectTeamController {
     @ApiOperation(value = "批量添加团队成员", notes = "添加多个团队成员，需要传入：userId,roleId")
     @PreAuthorize("hasAuthority('/projectTeam/addMember')")
     public List<ProjectUserRole> addMember(@Valid @RequestBody List<ProjectUserRole> memberList) {
-        String projectId = DataSourceHolder.getDB();
+        String projectId = DataSourceHolder.getDB().databaseName;
         memberList.stream().forEach(member -> {
             member.setEmployeeName(null);
             member.setProjectId(projectId);

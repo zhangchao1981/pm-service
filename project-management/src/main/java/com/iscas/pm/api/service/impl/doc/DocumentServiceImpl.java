@@ -178,7 +178,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     @Override
     public HashMap<String,Object> getDocumentContext(Integer templateId){
         HashMap<String, Object> map = new HashMap<>();
-        String currentProject = DataSourceHolder.getDB();
+        String currentProject = DataSourceHolder.getDB().databaseName;
         //填充通用内容：
         map.put("研制单位", "中国科学院软件研究所");
 
@@ -202,7 +202,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             planTaskList.forEach(planTask->{
                docPlanTaskList.add(new DocPlanTask(planTask));
             });
-
 
             map.put("reviseRecordList", docReviseRecordList);
             map.put("referenceList", referenceList);
