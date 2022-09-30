@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
+import com.deepoove.poi.xwpf.NiceXWPFDocument;
 import com.iscas.pm.api.mapper.doc.ReviseRecordMapper;
 import com.iscas.pm.api.model.doc.ReviseRecord;
 import com.iscas.pm.api.model.doc.data.DocReviseRecord;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -71,6 +74,7 @@ public class WordUtil {
         data.put("项目名称","poil测试");
         data.put("reviseRecordList",reviseRecordListNew);
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
+
         Configure config = Configure.builder()
                 .bind("reviseRecordList", policy).build();
 

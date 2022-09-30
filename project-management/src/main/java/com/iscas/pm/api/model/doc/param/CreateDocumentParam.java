@@ -35,7 +35,6 @@ public class CreateDocumentParam {
     private String templatePath;
 
 
-
     @NotBlank(message = "当前项目id不能为空")
     @ApiModelProperty(value = "当前项目id", required = true)
     private String currentProjectId;

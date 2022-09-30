@@ -141,11 +141,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 //            map.put("软件负责人", createDocumentParam.getSoftwareManager());
 //            map.put("单位名称", createDocumentParam.getUnit());
 //            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
+//        new HackLoop
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
         ConfigureBuilder builder = Configure.builder();
+
         map.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
+            }else if (key.startsWith("session")){  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
+                builder.bind("tableStructureList",policy);
             }
         });
         Configure config = builder.build();
