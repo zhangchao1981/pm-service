@@ -33,7 +33,7 @@ public interface DocumentService extends IService<Document> {
 
     void createDocument(CreateDocumentParam createDocumentParam) throws IOException;
 
-    HashMap<String,Object> getDocumentContext(Integer templateId);
+    HashMap<String,Object> getDocumentContext(CreateDocumentParam templateId);
 
     void deleteTemplate(Integer templateId);
 

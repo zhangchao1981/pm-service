@@ -333,16 +333,8 @@ public class DocController {
             List<TableByDB> tableList = documentService.getDBInfo(dateBaseLinkParam.getDbName());
             HashMap<String, Object> DBStructureInfo = new HashMap<>();
             tableList.forEach(table->DBStructureInfo.put(table.getName(), documentService.getTableStructureList(table.getName())));
-
-
-
             return null;
         }
         return null;
     }
-
-
-
-
-
 }

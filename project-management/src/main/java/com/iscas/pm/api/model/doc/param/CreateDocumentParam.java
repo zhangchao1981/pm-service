@@ -1,5 +1,6 @@
 package com.iscas.pm.api.model.doc.param;
 
+import com.iscas.pm.api.model.doc.DateBaseType;
 import com.iscas.pm.api.model.doc.ReferenceDoc;
 import com.iscas.pm.api.model.doc.ReviseRecord;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,6 +45,29 @@ public class CreateDocumentParam {
 //
 //    @ApiModelProperty(value = "选中的文档修订记录", required = true)
 //    private List<ReviseRecord> reviseRecordList;
+
+    @ApiModelProperty(value = "数据库名",notes = "选择数据库文档，即模板id=2时传入")
+    private  String  dbName;
+
+    @ApiModelProperty(value = "用户名",notes = "选择数据库文档，即模板id=2时传入")
+    private  String  userName;
+
+    @ApiModelProperty(value = "密码",notes = "选择数据库文档，即模板id=2时传入")
+    private  String  password;
+
+    @ApiModelProperty(value = "数据库地址",notes = "选择数据库文档，即模板id=2时传入")
+    private  String  dbPath;
+
+    @ApiModelProperty(value = "数据库端口号",notes = "选择数据库文档，即模板id=2时传入")
+    private  String  port;
+
+    @ApiModelProperty(value = "数据库驱动名",notes = "选择数据库文档，即模板id=2时传入")
+    private  String   driverClassName;
+
+    @ApiModelProperty(value = "数据库类型",notes = "选择数据库文档，即模板id=2时传入")
+    private DateBaseType dbType;
+
+
 
 
 }
