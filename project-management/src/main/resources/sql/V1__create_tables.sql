@@ -61,7 +61,7 @@ CREATE TABLE `dev_requirement`  (
   INDEX `fk_requirement_modular`(`modular_id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   CONSTRAINT `fk_requirement_modular` FOREIGN KEY (`modular_id`) REFERENCES `dev_modular` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 100000 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '开发需求表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '开发需求表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for dev_task
@@ -82,7 +82,7 @@ CREATE TABLE `dev_task`  (
                              PRIMARY KEY (`id`) USING BTREE,
                              INDEX `fk_task_require`(`require_id`) USING BTREE,
                              CONSTRAINT `fk_task_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '开发任务表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '开发任务表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for doc_directory
@@ -215,23 +215,24 @@ DROP TABLE IF EXISTS `project_plan`;
 CREATE TABLE `project_plan`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
                                  `wbs` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'WBS编号',
-                                 `doc_path` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关联文档路径',
+                                 `doc_path` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '关联文档路径',
                                  `is_milestone` tinyint(4) UNSIGNED NOT NULL COMMENT '是否为里程碑节点，\"1\":\"是\"；\"0\":\"否\"',
                                  `is_baseline` tinyint(4) UNSIGNED NOT NULL COMMENT '是否为基线节点，\"1\":\"是\"；\"0\":\"否\"',
                                  `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
-                                 `worker_list` json NULL COMMENT '责任人',
-                                 `person_count` tinyint(4) NULL DEFAULT NULL COMMENT '人数',
-                                 `working_days` tinyint(4) NULL DEFAULT NULL COMMENT '工期(天)',
-                                 `start_date` datetime(0) NULL DEFAULT NULL COMMENT '开始日期',
-                                 `end_date` datetime(0) NULL DEFAULT NULL COMMENT '截止日期',
-                                 `schedule_hour` float(8, 0) NULL DEFAULT NULL COMMENT '计划工时',
-  `status` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '状态',
-  `progress_rate` float NULL DEFAULT NULL COMMENT '项目完成进度',
-  `actual_start_date` datetime(0) NULL DEFAULT NULL COMMENT '实际开始日期',
-  `actual_end_date` datetime(0) NULL DEFAULT NULL COMMENT '实际结束日期',
-  `position` tinyint(4) NULL DEFAULT NULL COMMENT '任务排序编号',
-  `parent_id` int(11) NULL DEFAULT NULL COMMENT '父任务id',
-  `happened_hour` double NULL DEFAULT NULL COMMENT '发生工时',
+                                 `worker_list` json COMMENT '责任人名字List',
+                                 `person_count` tinyint(4) DEFAULT NULL COMMENT '人数',
+                                 `working_days` tinyint(4) DEFAULT NULL COMMENT '工期(天)',
+                                 `start_date` datetime(0) DEFAULT NULL COMMENT '开始日期',
+                                 `end_date` datetime(0) DEFAULT NULL COMMENT '截止日期',
+                                 `schedule_hour` float(8, 0) DEFAULT NULL COMMENT '计划工时',
+  `status` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '状态',
+  `progress_rate` float DEFAULT NULL COMMENT '项目完成进度',
+  `actual_start_date` datetime(0) DEFAULT NULL COMMENT '实际开始日期',
+  `actual_end_date` datetime(0) DEFAULT NULL COMMENT '实际结束日期',
+  `position` tinyint(4) DEFAULT NULL COMMENT '任务排序编号',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父任务id',
+  `happened_hour` double DEFAULT NULL COMMENT '发生工时',
+  `worker_ids` json COMMENT '责任人IdList',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '项目计划表' ROW_FORMAT = Dynamic;
 

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
-import com.iscas.pm.api.model.doc.param.DateBaseLinkParam;
+import com.iscas.pm.api.model.doc.param.DBLinkParam;
 import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
 import com.iscas.pm.api.service.*;
 import com.iscas.pm.common.core.web.filter.RequestHolder;

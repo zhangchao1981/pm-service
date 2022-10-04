@@ -97,7 +97,9 @@ public class WordUtil {
         Assert.notNull(out, "out can not be null");
         Assert.notNull(dataMap, "dataMap can not be null");
         try {
-            XWPFTemplate.compile(in,config).render(dataMap).writeAndClose(out);
+
+            XWPFTemplate temp = XWPFTemplate.compile(in,config).render(dataMap);
+            temp.writeAndClose(out);
         } catch (IOException e) {
             throw new IORuntimeException(e);
         } finally {

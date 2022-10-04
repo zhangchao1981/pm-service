@@ -270,10 +270,8 @@ public class DateUtil {
      * @author yqwang
      * @param from
      * @param to
-     * @param exWeek
-     *            是否排除周末
-     * @param onWorks
-     *            上班时间可以定义 比如 上午 08:30 - 12:00  下午 13:00 - 17:30
+     * @param exWeek 是否排除周末
+     * @param onWorks 上班时间可以定义 比如 上午 08:30 - 12:00  下午 13:00 - 17:30
      * @return
      */
     public static long millsDiffExcluding(String from, String to, Boolean exWeek, List<Map<String, String>> onWorks) {

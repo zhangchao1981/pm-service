@@ -34,10 +34,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 66410
@@ -135,23 +132,25 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //后台获取内容
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
 
-
         //用户输入内容：
-        map.put("本文档版本号", createDocumentParam.getVersion());
+//        map.put("本文档版本号", createDocumentParam.getVersion());
 //            map.put("软件负责人", createDocumentParam.getSoftwareManager());
 //            map.put("单位名称", createDocumentParam.getUnit());
 //            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
 //        new HackLoop
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
+
+
         ConfigureBuilder builder = Configure.builder();
 
-        map.keySet().forEach(key -> {
-            if (key.endsWith("List")) {
-                builder.bind(key, policy);
-            }else if (key.startsWith("session")){  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
-                builder.bind("tableStructureList",policy);
-            }
-        });
+//        map.keySet().forEach(key -> {
+//            if (key.endsWith("List")) {
+//                builder.bind(key, policy);
+//            }else if (key.startsWith("session")){  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
+//                builder.bind("tableStructureList",policy);
+//            }
+//        });
+        builder.bind("tableStructureList",policy);
         Configure config = builder.build();
         //可优化
         WordUtil.parse(template, map, out, config);
@@ -183,7 +182,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = new HashMap<>();
         String currentProject = DataSourceHolder.getDB().databaseName;
         //填充通用内容：
-        map.put("研制单位", "中国科学院软件研究所");
+//        map.put("研制单位", "中国科学院软件研究所");
         //根据模板id填充特定内容:
         switch (templateId) {
             default:
@@ -236,13 +235,22 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             case 2: {
                 if (createDocumentParam.getDbType() == DateBaseType.MYSQL) {
                     List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
-                    //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
-                    String url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-                    DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), "com.mysql.cj.jdbc.Driver");
-                    //DataSourceHolder.setDB("wdscgj");
+                    //连接自定义数据库
+                    String dataSourceName = UUID.randomUUID().toString();
+                    String url, driverName;
+                    if (createDocumentParam.getDbType() == DateBaseType.MYSQL) {
+                        url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+                        driverName = "com.mysql.cj.jdbc.Driver";
+                    } else if (createDocumentParam.getDbType() == DateBaseType.ORACLE) {
+                        url = "jdbc:oracle:thin:@" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + ":" + createDocumentParam.getDbName();
+                        driverName = "oracle.jdbc.driver.OracleDriver";
+                    } else {
+                        throw new IllegalArgumentException("暂不支持该数据库类型！");
+                    }
+                    DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
+
                     //数据库中对应的所有表的表名()
                     List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
-                    DocDBTableTemp docDBTableTemp = new DocDBTableTemp();
                     tableList.forEach(table -> {
                         DocDBTableTemp tableTemp = new DocDBTableTemp().setTableName(table.name).setTableStructureList(getTableStructureList(table.getName()));
                         docDBTableTempList.add(tableTemp);
@@ -251,7 +259,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 //                    tableList.forEach(table -> DBStructureInfo.put(table.getName(), getTableStructureList(table.getName())));
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
                     //把这个表格实体类封装成 List集合
-                    map.put("section1", docDBTableTempList);
+                    map.put("section", docDBTableTempList);
+
 //                    map.put()
                     break;
                 }

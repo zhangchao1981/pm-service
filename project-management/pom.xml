@@ -25,6 +25,7 @@
             <version>5.2.2</version>
         </dependency>
 
+
         <!-- common组件 -->
         <dependency>
             <groupId>com.iscas.pm</groupId>
