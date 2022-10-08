@@ -4,15 +4,13 @@ import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.service.ProjectPlanService;
 import com.iscas.pm.api.service.TaskFeedbackService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiOperationSupport;
-import io.swagger.annotations.ApiSort;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -83,6 +81,15 @@ public class ProjectPlanController {
     @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
     public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空") @RequestParam Integer taskId){
         return taskFeedbackService.selectListByTaskId(new TaskFeedback().setPlanTaskId(taskId));
+    }
+
+    @GetMapping("/importTemplate")
+    @ApiOperation(value = "导入模板", notes = "导入指定类型的模板")
+    @ApiImplicitParam(name = "type", value = "模板类型，取值：RUP或waterfall", dataType = "String")
+    @ApiOperationSupport(order = 8)
+    @PreAuthorize("hasAuthority('/projectPlan/addTask')")
+    public Boolean importTemplate(@NotBlank(message = "模板类型不能为空") @RequestParam String type){
+        return projectPlanService.importTemplate(type);
     }
 
 }

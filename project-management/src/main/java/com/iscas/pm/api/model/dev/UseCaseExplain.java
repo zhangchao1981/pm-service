@@ -23,7 +23,7 @@ public class UseCaseExplain {
     @ApiModelProperty(value = "分支场景",required = true)
     private List<UseCaseLine> branchScene;
 
-    @ApiModelProperty(value = "业务规则设计约束",required = true)
+    @ApiModelProperty(value = "设计约束",required = true)
     private List<UseCaseLine> constraint;
 
 }

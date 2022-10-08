@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 @TableName(value = "dev_requirement", autoResultMap = true)
@@ -80,6 +81,17 @@ public class DevRequirement implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "结束时间",required = true)
     private Date endDate;
+
+    @ApiModelProperty(value = "实际开始日期")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone ="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date actualStartDate;
+
+    @ApiModelProperty(value = "实际结束日期")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone ="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @TableField(updateStrategy = IGNORED)
+    private Date actualEndDate;
 
     @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生")
     private Double happenedHour;

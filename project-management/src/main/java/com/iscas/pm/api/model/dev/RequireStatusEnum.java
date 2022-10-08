@@ -10,7 +10,8 @@ import lombok.Getter;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RequireStatusEnum {
-    DESIGN("DESIGN", "需求设计"),
+    DESIGN("DESIGN", "设计中"),
+    DEPLOYED("DEPLOYED", "已发布"),
     DEVELOPING("DEVELOPING", "开发中"),
     FINISHED("FINISHED","已完成"),
     DELAYED_FINISH("DELAYED_FINISH","延迟完成"),

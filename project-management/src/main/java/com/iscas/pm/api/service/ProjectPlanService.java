@@ -2,6 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 
 import java.util.List;
 
@@ -21,4 +22,8 @@ public interface ProjectPlanService extends IService<PlanTask> {
     Boolean deleteTask(Integer id);
 
     List<PlanTask> getTaskListByWbs();
+
+    void computePlanTask(PlanTask planTask, List<TaskFeedback> taskFeedbacks);
+
+    Boolean importTemplate(String type);
 }

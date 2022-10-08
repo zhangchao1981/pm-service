@@ -3,6 +3,9 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.dev.DevTask;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -12,4 +15,6 @@ import com.iscas.pm.api.model.dev.DevTask;
 public interface DevTaskService extends IService<DevTask> {
 
     Boolean addDevTask(DevTask devTask);
+
+    void computeDevTask(DevTask devTask, List<TaskFeedback> all_feedbacks);
 }

@@ -18,7 +18,7 @@ CREATE TABLE `dev_interface`  (
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `fk_interface_requirement`(`require_id`) USING BTREE,
                                   CONSTRAINT `fk_interface_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for dev_modular
@@ -38,25 +38,25 @@ CREATE TABLE `dev_modular`  (
 DROP TABLE IF EXISTS `dev_requirement`;
 CREATE TABLE `dev_requirement`  (
                                     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '需求编号  6位数',
-                                    `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '需求用例名称',
-                                    `worker` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '责任人',
-                                    `priority` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '优先级',
-                                    `requirement_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '需求类型',
-                                    `is_change` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '变更需求  0: 无变更 1:有变更',
-                                    `status` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '状态',
-                                    `dev_progress` float NULL DEFAULT NULL COMMENT '开发进度',
-                                    `schedule_hour` float(8, 0) NULL DEFAULT NULL COMMENT '计划工时',
-  `start_date` datetime(0) NULL DEFAULT NULL COMMENT '开始时间',
-  `end_date` datetime(0) NULL DEFAULT NULL COMMENT '结束时间',
-  `happend_hour` double(8, 0) NULL DEFAULT NULL COMMENT '发生工时',
-  `source` varchar(17) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '需求来源',
-  `use_case_explain` json NULL COMMENT '用例说明',
+                                    `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求用例名称',
+                                    `worker` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '责任人',
+                                    `priority` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '优先级',
+                                    `requirement_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求类型',
+                                    `is_change` tinyint(4) UNSIGNED DEFAULT NULL COMMENT '变更需求  0: 无变更 1:有变更',
+                                    `status` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '状态',
+                                    `dev_progress` float DEFAULT NULL COMMENT '开发进度',
+                                    `schedule_hour` float(8, 0) DEFAULT NULL COMMENT '计划工时',
+  `start_date` datetime(0) DEFAULT NULL COMMENT '开始时间',
+  `end_date` datetime(0) DEFAULT NULL COMMENT '结束时间',
+  `happend_hour` double(8, 0) DEFAULT NULL COMMENT '发生工时',
+  `source` varchar(17) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求来源',
+  `use_case_explain` json COMMENT '用例说明',
   `modular_id` int(10) UNSIGNED NOT NULL COMMENT '模块id',
   `prototype` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '原型设计图路径，多个用逗号隔开',
-  `update_time` datetime(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `requirement_description` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '需求描述',
-  `user_id` int(10) NULL DEFAULT NULL COMMENT '责任人的userId',
+  `update_time` datetime(0) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  `create_time` datetime(0) DEFAULT NULL COMMENT '创建时间',
+  `requirement_description` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求描述',
+  `user_id` int(10) DEFAULT NULL COMMENT '责任人的userId',
   PRIMARY KEY (`id`, `prototype`) USING BTREE,
   INDEX `fk_requirement_modular`(`modular_id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
@@ -171,7 +171,7 @@ CREATE TABLE `env_hardware`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
                                  `hardware_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '硬件名称',
                                  `min_config` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '最低配置',
-                                 `amount` tinyint(11) NOT NULL COMMENT '数量',
+                                 `amount` tinyint(4) NOT NULL COMMENT '数量',
                                  `application` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用途',
                                  `use_period` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '使用时间',
                                  `security` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '安全保密',
@@ -184,13 +184,13 @@ CREATE TABLE `env_hardware`  (
 DROP TABLE IF EXISTS `env_information`;
 CREATE TABLE `env_information`  (
                                     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-                                    `category` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类',
-                                    `server_address` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '服务器或系统地址',
-                                    `username` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-                                    `password` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
-                                    `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '说明',
+                                    `category` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类',
+                                    `server_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '服务器或系统地址',
+                                    `username` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
+                                    `password` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '密码',
+                                    `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '说明',
                                     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for env_software
@@ -198,13 +198,13 @@ CREATE TABLE `env_information`  (
 DROP TABLE IF EXISTS `env_software`;
 CREATE TABLE `env_software`  (
                                  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-                                 `category` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类',
-                                 `version_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '版本标识',
-                                 `source` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '来源',
+                                 `category` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类',
+                                 `version_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '版本标识',
+                                 `source` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '来源',
                                  `application` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用途',
                                  `medium` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '介质',
                                  `security` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '安全保密',
-                                 `soft_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '软件名称',
+                                 `soft_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '软件名称',
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
