@@ -44,9 +44,12 @@ public class UserInfo implements Serializable {
     private List<String> systemPermissions;
 
     @ApiModelProperty("项目角色对应的权限列表")
-    private Map<String,List<String> >projectPermissions;
+    private Map<String,List<String>> projectPermissions;
 
     @ApiModelProperty("当前项目id,前端忽略")
     private String currentProjectId;
+
+    @ApiModelProperty("是否非首次登录(密码是否已修改)")
+    private Boolean isModifiedPassword;
 
 }

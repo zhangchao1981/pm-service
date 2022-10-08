@@ -37,6 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 
+import static com.iscas.pm.api.model.doc.TemplateTypeEnum.DatabaseDesignNotes;
+import static com.iscas.pm.api.model.doc.TemplateTypeEnum.SoftwareDevelopment;
+
 /**
  * @author 66410
  * @description 针对表【document】的数据库操作Service实现
@@ -68,18 +71,24 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     ReferenceDocService referenceDocService;
     @Autowired
     ProjectTeamService projectTeamService;
+    @Autowired
+    DocTemplateService docTemplateService;
 
     @Override
     public Document addLocalDocument(Document document) {
-        if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
-            throw new IllegalArgumentException("所属目录不存在");
-        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
-            throw new IllegalArgumentException("该目录下已存在同名文档");
+
+        documentChecking(document);
         document.setPath(document.getPath());
         documentMapper.insert(document);
         return document;
     }
 
+    private void documentChecking(Document document) {
+        if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
+            throw new IllegalArgumentException("所属目录不存在");
+        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
+            throw new IllegalArgumentException("该目录下已存在同名文档");
+    }
 
     @Override
     public Boolean deleteDocument(Integer id) {
@@ -117,7 +126,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
+        Document autoDoc = new Document();
+        autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
+        autoDoc.setUploader(RequestHolder.getUserInfo().getEmployeeName());
+        autoDoc.setName(createDocumentParam.getDocumentName());
+        autoDoc.setType(DocumentTypeEnum.GENERATE);
+        autoDoc.setVersion(createDocumentParam.getVersion());
         Integer templateId = createDocumentParam.getTemplateId();
+        documentChecking(autoDoc);
+
         //拿到服务器中模板的存储路径
         StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
         byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
@@ -127,7 +144,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         String fileName = createDocumentParam.getDocumentName();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream template = new ByteArrayInputStream(sourceByte);
-
 
         //前端传入参数只含共用的信息，数据库查找的信息根据模板id选择性填充
         //后台获取内容
@@ -158,38 +174,30 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //输出文件的比特流
         byte[] bytes = out.toByteArray();
 
-        //测试
-//        String  localLoadFileName="D:\\中科院文档生成测试"+"\\outputFile.doc";
-//        OutputStream outTest = FileUtil.getOutputStream(FileUtil.touch(localLoadFileName));
-//        WordUtil.parse(template, map, outTest, config);
-        //
-
-
         //拿到文件内容，输出到fastDFS服务器上
         InputStream inputStream = new ByteArrayInputStream(bytes);
         String upLoadPath = fastDFSUtil.uploadByIO(inputStream, fileName + ".doc").getFullPath();
 
         //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
-        Document autoDoc = new Document();
-        autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
-        autoDoc.setCreateTime(new Date());
         autoDoc.setPath(upLoadPath);
         autoDoc.setUpdateTime(new Date());
-        autoDoc.setUploader(RequestHolder.getUserInfo().getEmployeeName());
-        autoDoc.setName(createDocumentParam.getDocumentName());
-        autoDoc.setType(DocumentTypeEnum.GENERATE);
-        autoDoc.setVersion(createDocumentParam.getVersion());
-        //如果不设置目录id会报：不符合数据库约束(外键)
+        autoDoc.setCreateTime(new Date());
         if (addLocalDocument(autoDoc) == null) {
             throw new IOException("自动上传文档失败");
         }
     }
+
+
 
     @Override
     public HashMap<String, Object> getDocumentContext(CreateDocumentParam createDocumentParam) {
         Integer templateId = createDocumentParam.getTemplateId();
         HashMap<String, Object> map = new HashMap<>();
         String currentProject = DataSourceHolder.getDB().databaseName;
+        //获取模板类型
+        TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
+
+
         //填充通用内容：
         List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
         List<ReferenceDoc> referenceList = referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
@@ -210,10 +218,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
 
         //根据模板id填充特定内容:
-        switch (templateId) {
+        switch (templateType) {
             default:
                 throw new IllegalArgumentException("未查询到该模板对应数据");
-            case 1: {
+            case SoftwareDevelopment: {
                 DataSourceHolder.setDB(currentProject);
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
                 //Software项目软件环境信息获取
@@ -233,7 +241,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 map.put("planTaskList", docPlanTaskList);
                 break;
             }
-            case 2: {
+            case DatabaseDesignNotes: {
                 if (createDocumentParam.getDbType() == DateBaseType.MYSQL) {
                     List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
                     //连接自定义数据库
