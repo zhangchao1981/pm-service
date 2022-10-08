@@ -5,66 +5,44 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
+import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.ProjectPlanService;
+import com.iscas.pm.api.service.TaskFeedbackService;
 import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.common.core.util.TreeUtil;
+import com.iscas.pm.common.core.web.exception.SimpleBaseException;
+import com.iscas.pm.common.db.separate.datasource.DynamicDataSource;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * @author lichang
- * @description 针对表【plan】的数据库操作Service实现
+ * @description 项目计划实现类
  * @createDate 2022-07-28 17:13:09
  */
 @Service
 public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanTask> implements ProjectPlanService {
     @Autowired
     ProjectPlanMapper projectPlanMapper;
-
-
-    //按wps转int的编号大小顺序查询
-    @Override
-    public List<PlanTask> getTaskListByWbs() {
-        //拿到数据库查询结果，将其转成树结构
-        //方案1. sort
-        //方案2.重写compare方法
-        List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<>());
-        if (planTasks.size() < 1) {
-            return null;
-        }
-        planTasks.sort((task1, task2) -> {
-            String[] split = task1.getWbs().split("\\.");
-            String[] split1 = task2.getWbs().split("\\.");
-
-            int length = split.length > split1.length ? split1.length : split.length;
-            for (int i = 0; i < length; i++) {
-                if (split[i].equals(split1[i])) {
-                    continue;
-                }
-                if (Integer.parseInt(split[i]) < Integer.parseInt(split1[i])) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-            //编码有位数的部分全部相同
-            return split.length > split1.length ? 1 : -1;
-        });
-        return planTasks;
-    }
-
+    @Autowired
+    TaskFeedbackService taskFeedbackService;
+    @Autowired
+    DynamicDataSource dynamicDataSource;
 
     @Override
     public List<PlanTask> getTaskList() {
-        //拿到数据库查询结果，将其转成树结构
+        //数据库查询结果转成树结构
         List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<PlanTask>().orderByAsc("parent_id", "position"));
         if (planTasks.size() < 1) {
             return null;
@@ -91,8 +69,8 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         //插入新任务到数据库
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? position.toString() : parent.getWbs() + "." + position);
-        planTask.setPersonCount(planTask.getWorkerList() == null ? 0 : planTask.getWorkerList().size());
-        planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
+        planTask.setPersonCount(planTask.getWorkerList() == null ? null : planTask.getWorkerList().size());
+        planTask.setStatus(getStatus(planTask));
         projectPlanMapper.insert(planTask);
 
         return planTask;
@@ -100,6 +78,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
     @Override
     public Boolean editTask(PlanTask planTask) {
+
         PlanTask db_task = projectPlanMapper.selectById(planTask.getId());
         if (db_task == null)
             throw new IllegalArgumentException("修改的任务不存在");
@@ -111,9 +90,17 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 throw new IllegalArgumentException("父任务不存在");
         }
 
+        //查询该计划任务的所有反馈
+        List<TaskFeedback> taskFeedbacks = taskFeedbackService.selectListByTaskId(new TaskFeedback().setPlanTaskId(planTask.getId()));
+
+        //如果已经存在反馈人，反馈人必须包含在责任人中
+        List<Integer> userIds = taskFeedbacks.stream().map(TaskFeedback::getUserId).distinct().collect(Collectors.toList());
+        if (userIds.size() > 0 && (planTask.getWorkerIds() == null || !planTask.getWorkerIds().containsAll(userIds)))
+            throw new IllegalArgumentException("已经填写了反馈的人员必须包含在责任人中");
+
         List<PlanTask> updatedPlanTasks = new ArrayList<>();
 
-        //父任务未发生变化
+        //移动任务，父任务未发生变化
         if (planTask.getParentId().equals(db_task.getParentId())) {
             //排序位置前移
             if (planTask.getPosition() < db_task.getPosition()) {
@@ -126,7 +113,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 updatedPlanTasks.addAll(movePosition(planTask.getId(), planTask.getParentId(), db_task.getPosition(), planTask.getPosition(), true));
             }
         }
-        //父任务发生变化
+        //移动任务，父任务发生变化
         else {
             //原父任务下子任务前移
             updatedPlanTasks.addAll(movePosition(planTask.getId(), db_task.getParentId(), db_task.getPosition(), null, true));
@@ -141,14 +128,15 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 parent = updatePlanTaskMap.get(parent.getId());
         }
 
-        //更新当前移动的任务
-        planTask.setPersonCount(planTask.getWorkerList() == null ? 0 : planTask.getWorkerList().size());
-        planTask.setStatus(getStatus(planTask.getStartDate(), planTask.getEndDate()));
+        //更新当前修改的任务
+        planTask.setPersonCount(planTask.getWorkerList() == null ? null : planTask.getWorkerList().size());
+        planTask.setStatus(getStatus(planTask));
         planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? planTask.getPosition().toString() : parent.getWbs() + "." + planTask.getPosition());
+        planTask.setProgressRate(db_task.getProgressRate());
         updatedPlanTasks.add(planTask);
 
-        //更新移动的任务下的所有子任务的wbs
+        //更新当前修改的任务下的所有子任务的wbs
         if (!db_task.getWbs().equals(planTask.getWbs())) {
             QueryWrapper<PlanTask> queryWrapper = new QueryWrapper<>();
             queryWrapper.likeRight("wbs", db_task.getWbs()).ne("wbs", db_task.getWbs());
@@ -163,6 +151,8 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         if (updatedPlanTasks.size() > 0)
             super.updateBatchById(updatedPlanTasks);
 
+        //重新计算任务的已发生工时、任务进度、任务实际开始时间、任务结束时间、任务状态
+        computePlanTask(planTask, taskFeedbacks);
         return true;
     }
 
@@ -179,14 +169,111 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         if (subTasks.size() > 0)
             throw new IllegalArgumentException("该任务下存在子任务，请先删除子任务");
 
-        //待删除任务以后的任务前移
+        //待删除任务之后的任务前移
         List<PlanTask> updatedPlanTasks = movePosition(id, task.getParentId(), task.getPosition(), null, true);
         if (updatedPlanTasks.size() > 0)
             super.updateBatchById(updatedPlanTasks);
 
         //删除任务
         projectPlanMapper.deleteById(id);
+        return true;
+    }
 
+    @Override
+    public List<PlanTask> getTaskListByWbs() {
+        List<PlanTask> planTasks = projectPlanMapper.selectList(new QueryWrapper<>());
+        if (planTasks.size() < 1) {
+            return null;
+        }
+        planTasks.sort((task1, task2) -> {
+            String[] split = task1.getWbs().split("\\.");
+            String[] split1 = task2.getWbs().split("\\.");
+
+            int length = split.length > split1.length ? split1.length : split.length;
+            for (int i = 0; i < length; i++) {
+                if (split[i].equals(split1[i])) {
+                    continue;
+                }
+                if (Integer.parseInt(split[i]) < Integer.parseInt(split1[i])) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            //编码有位数的部分全部相同
+            return split.length > split1.length ? 1 : -1;
+        });
+        return planTasks;
+    }
+
+    @Override
+    public void computePlanTask(PlanTask planTask, List<TaskFeedback> taskFeedbacks) {
+        if (taskFeedbacks.size() > 0) {
+            //计算任务的实际发生工时=所有反馈工时的和
+            Double happenedHour = taskFeedbacks.stream().collect(Collectors.summingDouble(TaskFeedback::getWorkingHour));
+            planTask.setHappenedHour(happenedHour);
+
+            //计算任务实际开始时间=最早反馈日期
+            planTask.setActualStartDate(taskFeedbacks.get(0).getDate());
+
+            //计算任务进度=所有人进度最大值求和/人数
+            Integer progress_total = taskFeedbacks.stream().collect(Collectors.groupingBy(TaskFeedback::getUserId, Collectors.summarizingInt(TaskFeedback::getProgress))).entrySet().stream().mapToInt(t -> t.getValue().getMax()).sum();
+            Integer progress = progress_total / planTask.getPersonCount();
+            planTask.setProgressRate(progress);
+
+            //任务完成
+            if (planTask.getProgressRate() == 100) {
+                //计算任务实际结束时间=最晚反馈日期
+                planTask.setActualEndDate(taskFeedbacks.get(taskFeedbacks.size() - 1).getDate());
+
+                //计算任务状态:计划结束日期>=实际结束时间 已完成；否则延迟完成
+                if (planTask.getEndDate() == null || planTask.getEndDate().after(planTask.getActualEndDate())) {
+                    planTask.setStatus(TaskStatusEnum.FINISHED);
+                } else {
+                    planTask.setStatus(TaskStatusEnum.DELAYED_FINISH);
+                }
+            }
+            //任务未完成
+            else {
+                planTask.setActualEndDate(null);
+                if (planTask.getEndDate() == null || new Date().before(planTask.getEndDate())) {
+                    planTask.setStatus(TaskStatusEnum.RUNNING);
+                } else {
+                    planTask.setStatus(TaskStatusEnum.DELAYED);
+                }
+            }
+
+            //更新计划任务
+            projectPlanMapper.updateById(planTask);
+
+        }
+    }
+
+    @Override
+    public Boolean importTemplate(String type) {
+        try {
+            ScriptRunner runner = new ScriptRunner(dynamicDataSource.getConnection());
+
+            //自动提交
+            runner.setAutoCommit(true);
+            runner.setFullLineDelimiter(false);
+            //每条命令间的分隔符
+            runner.setDelimiter(";");
+            runner.setSendFullScript(false);
+            runner.setStopOnError(false);
+
+            //如果有多个sql文件，可以写多个runner.runScript(xxx)
+            runner.runScript(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("template/project_plan_" + type + ".sql"), "utf-8"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SimpleBaseException(500, "sql模板文件语法错误");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new SimpleBaseException(500, "sql模板文件编码格式错误");
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new SimpleBaseException(500, "模板文件【template/project_plan_" + type + ".sql】不存在");
+        }
         return true;
     }
 
@@ -206,7 +293,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
                 .eq("parent_id", parentId)
                 .ge(startPosition != null, "position", startPosition)
                 .le(endPosition != null, "position", endPosition)
-                .ne(id != null,"id", id);
+                .ne(id != null, "id", id);
         List<PlanTask> planTasks = projectPlanMapper.selectList(queryWrapper);
 
         //查询受影响的任务列表的wbs和排序编号
@@ -237,10 +324,12 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         return updatedPlanTasks;
     }
 
-    private TaskStatusEnum getStatus(Date start, Date end) {
-        if (new Date().before(start))
+    private TaskStatusEnum getStatus(PlanTask planTask) {
+        if (planTask.getStartDate() == null || planTask.getEndDate() == null)
+            return null;
+        if (new Date().before(planTask.getStartDate()))
             return TaskStatusEnum.UN_START;
-        else if (start.before(new Date()) && new Date().before(end))
+        else if (planTask.getStartDate().before(new Date()) && new Date().before(planTask.getEndDate()))
             return TaskStatusEnum.RUNNING;
         else
             return TaskStatusEnum.DELAYED;

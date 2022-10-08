@@ -62,7 +62,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
-    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>",response=DevModular.class)
+    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>", response = DevModular.class)
     @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
@@ -70,10 +70,9 @@ public class DevController {
 
     @ApiOperationSupport(order = 14)
     @PostMapping("/devChildModularList")
-    @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>",response=DevModular.class)
-    @PreAuthorize("hasAuthority('/projectDev/devChildModularList')")
-    public List<DevModular> devChildModularList(@NotNull(message = "id不能为空")@RequestParam Integer id) {
-        return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id",id));
+    @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>", response = DevModular.class)
+    public List<DevModular> devChildModularList(@NotNull(message = "id不能为空") @RequestParam Integer id) {
+        return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id));
     }
 
     @ApiOperationSupport(order = 4)
@@ -99,16 +98,16 @@ public class DevController {
     @ApiOperation(value = "添加开发需求", notes = "开发需求允许重名")
     @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")
     public Boolean addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
-        //进行父模块Id有效校验
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
-            throw new IllegalArgumentException("父模块Id不存在");
+            throw new IllegalArgumentException("所属模块Id不存在");
         }
-        devRequirement.setWorker(RequestHolder.getUserInfo().getUserName());
+
+        devRequirement.setWorker(RequestHolder.getUserInfo().getEmployeeName());
         devRequirement.setUserId(RequestHolder.getUserInfo().getId());
         devRequirement.setChanged(false);
         devRequirement.setCreateTime(new Date());
         devRequirement.setUpdateTime(new Date());
-        devRequirement.setStatus(getStatus(devRequirement.getStartDate(), devRequirement.getEndDate()));
+        devRequirement.setStatus(RequireStatusEnum.DESIGN);
         devRequirementService.save(devRequirement);
         return true;
     }
@@ -118,28 +117,47 @@ public class DevController {
     @ApiOperation(value = "修改开发需求", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/editDevRequirement')")
     public Boolean editDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {
-        //进行父模块Id有效校验
-        if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
-            throw new IllegalArgumentException("父模块Id不存在");
+        DevRequirement db_requirement = devRequirementService.getById(devRequirement.getId());
+        if (db_requirement == null) {
+            throw new IllegalArgumentException("要修改的开发需求不存在");
         }
 
-        devRequirement.setChanged(true);
-        if (!devRequirementService.updateById(devRequirement)) {
-            throw new IllegalArgumentException("要修改的开发需求id不存在");
+        if (db_requirement.getStatus() != RequireStatusEnum.DESIGN) {
+            throw new IllegalArgumentException("已发布的需求不允许修改");
         }
-        return true;
+
+        return devRequirementService.updateById(devRequirement);
     }
+
+    @ApiOperationSupport(order = 6)
+    @GetMapping("/deployDevRequirement")
+    @ApiOperation(value = "发布开发需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/deployDevRequirement')")
+    public Boolean deployDevRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
+        DevRequirement db_requirement = devRequirementService.getById(requirementId);
+        if (db_requirement == null) {
+            throw new IllegalArgumentException("要修改的开发需求不存在");
+        }
+
+        if (db_requirement.getStatus() != RequireStatusEnum.DESIGN) {
+            throw new IllegalArgumentException("该开发需求已经发布");
+        }
+        db_requirement.setStatus(RequireStatusEnum.DEPLOYED);
+
+        return devRequirementService.updateById(db_requirement);
+    }
+
     @ApiOperationSupport(order = 7)
     @GetMapping("/devRequirementList")
     @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息,类型为")
     @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
-    public  List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
+    public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
     }
 
     @ApiOperationSupport(order = 8)
     @GetMapping("/devRequirement")
-    @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里",response=DevRequirement.class)
+    @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里", response = DevRequirement.class)
     @PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         return devRequirementService.getById(requirementId);
@@ -150,19 +168,15 @@ public class DevController {
     @ApiOperation(value = "删除开发需求", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevRequirement')")
     public boolean deleteDevRequirement(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        //如果当前开发需求下有任务，则不许删除
-        if (devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", id)).size() > 0) {
-            throw new IllegalArgumentException("当前开发需求下有任务，不许删除");
-        }
-        //如果当前开发需求下有关联接口  ，则不许删除
-        if (devTaskService.list(new QueryWrapper<DevTask>().eq("require_id", id)).size() > 0) {
-            throw new IllegalArgumentException("当前开发需求下有任务，不许删除");
+        DevRequirement db_requirement = devRequirementService.getById(id);
+        if (db_requirement == null) {
+            throw new IllegalArgumentException("要删除的开发需求不存在");
         }
 
-        if (!devRequirementService.removeById(id)) {
-            throw new IllegalArgumentException("要删除的开发需求id不存在");
+        if (db_requirement.getStatus() == RequireStatusEnum.DELAYED) {
+            throw new IllegalArgumentException("已发布的需求不允许删除");
         }
-        return true;
+        return devRequirementService.removeById(id);
     }
 
     @ApiOperationSupport(order = 10)
@@ -170,11 +184,17 @@ public class DevController {
     @ApiOperation(value = "添加开发任务", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevTask')")
     public Boolean addDevTask(@Valid @RequestBody DevTask devTask) {
-        if (devTask.getDevProgress()==null){
-            devTask.setDevProgress(0);
+        DevRequirement db_requirement = devRequirementService.getById(devTask.getRequireId());
+        if (db_requirement == null) {
+            throw new IllegalArgumentException("开发任务的所属需求不存在");
         }
-        devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), devTask.getDevProgress()));
-        return  devTaskService.addDevTask(devTask);
+
+        if (db_requirement.getStatus() == RequireStatusEnum.DESIGN) {
+            throw new IllegalArgumentException("未发布的需求不能添加任务");
+        }
+
+        devTask.setStatus(getDevStatus(devTask.getStartDate(), devTask.getEndDate()));
+        return devTaskService.addDevTask(devTask);
     }
 
     @ApiOperationSupport(order = 11)
@@ -186,14 +206,18 @@ public class DevController {
         if (db_task == null)
             throw new IllegalArgumentException("修改的任务不存在！");
 
-        devTask.setStatus(getTaskStatus(devTask.getStartDate(), devTask.getEndDate(), db_task.getDevProgress()));
+        devTask.setStatus(getDevStatus(devTask.getStartDate(), devTask.getEndDate()));
         devTaskService.updateById(devTask);
+
+        //重新计算任务的已发生工时、任务进度、任务实际开始时间、任务结束时间、任务状态
+        List<TaskFeedback> all_feedbacks = taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(devTask.getId()));
+        devTaskService.computeDevTask(devTask, all_feedbacks);
         return devTask;
     }
 
     @ApiOperationSupport(order = 12)
     @GetMapping("/devTaskList")
-    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务 返回值类型为List<DevTask>,需求id为null返回所有任务",response=DevTask.class)
+    @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务 返回值类型为List<DevTask>,需求id为null返回所有任务", response = DevTask.class)
     @PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
         return devTaskService.list(new QueryWrapper<DevTask>().eq(requireId != null, "require_id", requireId));
@@ -218,7 +242,7 @@ public class DevController {
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
-    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空")@RequestParam Integer devTaskId) {
+    public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空") @RequestParam Integer devTaskId) {
         return taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(devTaskId));
     }
 
@@ -227,15 +251,17 @@ public class DevController {
     @ApiOperation(value = "添加关联接口", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/addDevInterface')")
     public Boolean addDevInterface(@Valid @RequestBody DevInterface devInterface) {
-        //重名校验  同一个需求下的关联接口不允许同名
         if (devInterfaceService.list(
-                new QueryWrapper<DevInterface>().eq("name", devInterface.getName()).eq("require_id", devInterface.getRequireId())).size() > 0) {
+                new QueryWrapper<DevInterface>()
+                        .eq("name", devInterface.getName())
+                        .eq("require_id", devInterface.getRequireId())).size() > 0) {
             throw new IllegalArgumentException("该需求下已有同名接口存在");
         }
 
-        if (devRequirementService.list(new QueryWrapper<DevRequirement>().eq("id", devInterface.getRequireId())).size() < 1) {
-            throw new IllegalArgumentException("需求Id对应需求不存在");
+        if (devRequirementService.getById(devInterface.getRequireId()) == null) {
+            throw new IllegalArgumentException("接口所属需求不存在");
         }
+
         devInterface.setMaintainer(RequestHolder.getUserInfo().getUserName());
         devInterfaceService.save(devInterface);
         return true;
@@ -271,43 +297,24 @@ public class DevController {
         return true;
     }
 
-    private RequireStatusEnum getStatus(Date start, Date end) {
+    private TaskStatusEnum getDevStatus(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null)
+            return null;
+        if (new Date().before(startDate))
+            return TaskStatusEnum.UN_START;
+        else if (startDate.before(new Date()) && new Date().before(endDate))
+            return TaskStatusEnum.RUNNING;
+        else
+            return TaskStatusEnum.DELAYED;
+    }
+
+    private RequireStatusEnum getRequirementStatus(Date start, Date end) {
         if (new Date().before(start))
             return RequireStatusEnum.DESIGN;
         else if (start.before(new Date()) && new Date().before(end))
             return RequireStatusEnum.DEVELOPING;
         else
             return RequireStatusEnum.DELAYED;
-    }
-
-    private TaskStatusEnum getTaskStatus(Date start, Date end, float progress) {
-        //开始时间晚于当前时间
-        if (new Date().before(start)) {
-            if (progress == 0)
-                return TaskStatusEnum.UN_START;
-            if (progress > 0 && progress < 100)
-                return TaskStatusEnum.RUNNING;
-            else
-                return TaskStatusEnum.FINISHED;
-        }
-
-        //当前时间介于开始时间和结束时间
-        else if (start.before(new Date()) && new Date().before(end)) {
-            if (progress < 100)
-                return TaskStatusEnum.RUNNING;
-            else
-                return TaskStatusEnum.FINISHED;
-        }
-
-        //当前时间晚于结束时间
-        else {
-            if (progress < 100) {
-                return TaskStatusEnum.DELAYED;
-            } else {
-                return TaskStatusEnum.DELAYED_FINISH;
-            }
-        }
-
     }
 
 

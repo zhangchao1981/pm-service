@@ -2,6 +2,7 @@ package com.iscas.pm.common.db.separate.datasource;
 
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import com.iscas.pm.common.db.separate.config.DatasourceFactory;
+import com.sun.javafx.tk.TKPulseListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,4 +70,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     public void deleteDataSourceByName(String datasourceName) {
         dataSourceMap.remove(datasourceName);
     }
+
+
 }

@@ -19,6 +19,8 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
+
 
 @ApiModel(value = "开发任务", description = "开发任务表，对应project_demo库dev_requirement表")
 @TableName(value = "dev_task")
@@ -37,20 +39,24 @@ public class DevTask implements Serializable {
     @NotBlank(message = "责任人不能为空")
     @ApiModelProperty(value = "责任人,传参是人员姓名",required = true)
     @Size(max = 11,message = "责任人长度不能大于11")
+    @TableField(updateStrategy = IGNORED)
     private String worker;
 
     @NotNull(message = "责任人对应userId不能为空")
     @ApiModelProperty(value = "责任人userId",required = true)
+    @TableField(updateStrategy = IGNORED)
     private Integer workerId;
 
     @ApiModelProperty(value = "任务状态，前端无需传参，后端自动生成")
+    @TableField(updateStrategy = IGNORED)
     private TaskStatusEnum status;
 
     @ApiModelProperty(value = "开发进度")
+    @TableField(updateStrategy = IGNORED)
     private Integer devProgress;
 
-
     @ApiModelProperty(value = "计划工时",required = true)
+    @TableField(updateStrategy = IGNORED)
     private Double scheduleHour;
 
     @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生成")
@@ -59,12 +65,25 @@ public class DevTask implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "开始时间",required = true)
+    @TableField(updateStrategy = IGNORED)
     private Date startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "结束时间",required = true)
+    @TableField(updateStrategy = IGNORED)
     private Date endDate;
+
+    @ApiModelProperty(value = "实际开始日期")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone ="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date actualStartDate;
+
+    @ApiModelProperty(value = "实际结束日期")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd",timezone ="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @TableField(updateStrategy = IGNORED)
+    private Date actualEndDate;
 
     @JsonIgnore
     @ApiModelProperty(value = "开发需求id",required = true)
