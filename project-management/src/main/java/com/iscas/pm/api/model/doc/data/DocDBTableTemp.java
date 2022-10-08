@@ -19,6 +19,8 @@ public class DocDBTableTemp {
 
     private  String tableName;
 
+    private String tableComment;
+
     private List<TableStructure>  tableStructureList;
 
 }

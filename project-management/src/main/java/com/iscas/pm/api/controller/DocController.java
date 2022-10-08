@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.doc.*;
-import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
 import com.iscas.pm.api.model.doc.param.DBLinkParam;
 import com.iscas.pm.api.model.doc.param.DocumentQueryParam;
@@ -242,11 +241,11 @@ public class DocController {
     }
 
     @PostMapping("/addTemplate")
-    @ApiOperation(value = "添加文档模板", notes = "上传本地文档模板到数据库")
+    @ApiOperation(value = "添加文档模板", notes = "上传本地文档模板到服务器")
     @ApiOperationSupport(order = 25)
     @PreAuthorize("hasAuthority('/projectDoc/addTemplate')")
-    public DocTemplate addTemplate(@Valid @RequestBody AddTemplateParam addTemplateParam) throws IOException {
-        return docTemplateService.addLocalDocument(addTemplateParam);
+    public DocTemplate addTemplate(@Valid @RequestBody DocTemplate docTemplate) throws IOException {
+        return docTemplateService.uploadLocalTemplate(docTemplate);
     }
 
     @PostMapping("/editTemplate")
@@ -293,7 +292,6 @@ public class DocController {
         } else {
             throw new IllegalArgumentException("暂不支持该数据库类型！");
         }
-
         DataSourceHolder.setDB(url, dbLinkParam.getDbName(), dbLinkParam.getUserName(), dbLinkParam.getPassword(), driverName, dataSourceName);
         try {
             documentService.getDBInfo(dbLinkParam.getDbName());

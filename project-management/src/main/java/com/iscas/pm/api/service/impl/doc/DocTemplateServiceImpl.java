@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.iscas.pm.api.mapper.doc.DocTemplateMapper;
 import com.iscas.pm.api.model.doc.DocTemplate;
-import com.iscas.pm.api.model.doc.param.AddTemplateParam;
 import com.iscas.pm.api.service.DocTemplateService;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
@@ -33,12 +32,10 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     DocTemplateMapper docTemplateMapper;
 
     @Override
-    public DocTemplate addLocalDocument(AddTemplateParam addTemplateParam) throws IOException {
+    public DocTemplate uploadLocalTemplate(DocTemplate addTemplateParam) throws IOException {
         DocTemplate docTemplate= new DocTemplate();
-        docTemplate.addTemplateParam(addTemplateParam);
         if (docTemplateMapper.selectOne(new QueryWrapper<DocTemplate>().eq("name", addTemplateParam.getName())) != null) {
-            throw new IllegalArgumentException("模板名重复");
-        }
+            throw new IllegalArgumentException("模板名重复"); }
         docTemplate.setCreateTime(new Date());
         docTemplate.setUpdateTime(new Date());
         docTemplate.setPath(addTemplateParam.getPath());
@@ -50,9 +47,9 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     public String uploadTemplate(MultipartFile file) throws IOException {
         //文件存入FastDFs
         StorePath path = fastDFSUtil.upload(file);
-        redisUtil.set(path.getFullPath(),null);
-        //设置失效时间  (数值待定)
-        redisUtil.expire(path.getFullPath(),1000);
+//        redisUtil.set(path.getFullPath(),null);
+//        //设置失效时间  (数值待定)
+//        redisUtil.expire(path.getFullPath(),1000);
         return  path.getFullPath();
     }
 

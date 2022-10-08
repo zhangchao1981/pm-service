@@ -58,6 +58,9 @@ public class DocTemplate implements Serializable {
     @ApiModelProperty("模板最后更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "模板类型",required = true)
+    private TemplateTypeEnum type;
+
     public  void addTemplateParam(AddTemplateParam param){
         this.maintainer=param.getMaintainer();
         this.description=param.getDescription();
