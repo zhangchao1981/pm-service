@@ -95,7 +95,7 @@ public class DevController {
     }
 
     @ApiOperationSupport(order = 5)
-    @PostMapping("/addEnvInformation")
+    @PostMapping("/addDevRequirement")
     @ApiOperation(value = "添加开发需求", notes = "开发需求允许重名")
     @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")
     public Boolean addDevRequirement(@Valid @RequestBody DevRequirement devRequirement) {

@@ -1,5 +1,6 @@
 package com.iscas.pm.api.service.impl.doc;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -133,7 +134,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
 
         //用户输入内容：
-//        map.put("本文档版本号", createDocumentParam.getVersion());
+        map.put("本文档版本号", createDocumentParam.getVersion());
 //            map.put("软件负责人", createDocumentParam.getSoftwareManager());
 //            map.put("单位名称", createDocumentParam.getUnit());
 //            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
@@ -142,24 +143,32 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
 
         ConfigureBuilder builder = Configure.builder();
-
-//        map.keySet().forEach(key -> {
-//            if (key.endsWith("List")) {
-//                builder.bind(key, policy);
-//            }else if (key.startsWith("session")){  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
-//                builder.bind("tableStructureList",policy);
-//            }
-//        });
-        builder.bind("tableStructureList",policy);
+        map.keySet().forEach(key -> {
+            if (key.endsWith("List")) {
+                builder.bind(key, policy);
+            } else if (key.startsWith("section")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
+                //这里暂时是写死的，需要补充
+                builder.bind("tableStructureList", policy);
+            }
+        });
         Configure config = builder.build();
         //可优化
         WordUtil.parse(template, map, out, config);
         //将输出文件上传到服务器：
         //输出文件的比特流
         byte[] bytes = out.toByteArray();
+
+        //测试
+//        String  localLoadFileName="D:\\中科院文档生成测试"+"\\outputFile.doc";
+//        OutputStream outTest = FileUtil.getOutputStream(FileUtil.touch(localLoadFileName));
+//        WordUtil.parse(template, map, outTest, config);
+        //
+
+
         //拿到文件内容，输出到fastDFS服务器上
         InputStream inputStream = new ByteArrayInputStream(bytes);
         String upLoadPath = fastDFSUtil.uploadByIO(inputStream, fileName + ".doc").getFullPath();
+
         //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
         Document autoDoc = new Document();
         autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
@@ -182,54 +191,46 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = new HashMap<>();
         String currentProject = DataSourceHolder.getDB().databaseName;
         //填充通用内容：
-//        map.put("研制单位", "中国科学院软件研究所");
+        List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
+        List<ReferenceDoc> referenceList = referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
+        List<DocReviseRecord> docReviseRecordList = new ArrayList<>();
+        reviseRecordList.forEach(reviseRecord -> {
+            docReviseRecordList.add(new DocReviseRecord(reviseRecord));
+        });
+        map.put("reviseRecordList", docReviseRecordList);
+        map.put("referenceList", referenceList);
+        DataSourceHolder.setDB("default");
+        ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
+        map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
+        map.put("项目标识", projectDetailInfo.getBasicInfo().getId());
+        map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
+        map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
+        map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
+        map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
+        map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
+
         //根据模板id填充特定内容:
         switch (templateId) {
             default:
                 throw new IllegalArgumentException("未查询到该模板对应数据");
             case 1: {
-                List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
-                List<ReferenceDoc> referenceList = referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
-                //Hardware项目硬件环境信息获取
+                DataSourceHolder.setDB(currentProject);
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
                 //Software项目软件环境信息获取
                 List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
                 //项目计划信息获取
                 List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
                 List<ProjectMember> memberList = projectTeamService.memberRoleList();
-                List<DocReviseRecord> docReviseRecordList = new ArrayList<>();
                 List<DocPlanTask> docPlanTaskList = new ArrayList<>();
-                reviseRecordList.forEach(reviseRecord -> {
-                    docReviseRecordList.add(new DocReviseRecord(reviseRecord));
-                });
+
                 planTaskList.forEach(planTask -> {
                     docPlanTaskList.add(new DocPlanTask(planTask));
                 });
-
-                map.put("reviseRecordList", docReviseRecordList);
-                map.put("referenceList", referenceList);
                 map.put("memberList", memberList);
                 //project获取：
                 map.put("hardwareList", hardwareList);
                 map.put("softwareList", softwareList);
                 map.put("planTaskList", docPlanTaskList);
-
-                DataSourceHolder.setDB("default");
-                ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
-                map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
-                map.put("项目编号", projectDetailInfo.getBasicInfo().getId());
-
-//          map.put("合同编号", projectDetailInfo.getBasicInfo().getContractId());
-                map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
-                map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
-                map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel());
-                map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
-                map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
-                /**
-                 * 未知字段待填充
-                 */
-                map.put("项目标识", "未知字段");
-                DataSourceHolder.setDB(currentProject);
                 break;
             }
             case 2: {
@@ -248,19 +249,38 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                         throw new IllegalArgumentException("暂不支持该数据库类型！");
                     }
                     DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
-
                     //数据库中对应的所有表的表名()
                     List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
                     tableList.forEach(table -> {
-                        DocDBTableTemp tableTemp = new DocDBTableTemp().setTableName(table.name).setTableStructureList(getTableStructureList(table.getName()));
+                        //表结构数据处理
+                        List<TableStructure> tableStructureList = getTableStructureList(table.getName());
+                        tableStructureList.stream().forEach(tableStructure -> {
+                            // key=MUL则为外键
+                            //key=PRI 则为主键
+                            if (StringUtils.isNotBlank(tableStructure.key)) {
+                                if (tableStructure.key.equals("PRI")) {
+                                    tableStructure.setKey("是");
+                                }
+                                if (tableStructure.key.equals("MUL")) {
+                                    tableStructure.setKey("否");
+                                    tableStructure.setExtra("是");
+                                } else {
+                                    tableStructure.setExtra("否");
+                                }
+                            } else {
+                                tableStructure.setKey("否");
+                                tableStructure.setExtra("否");
+                            }
+                            tableStructure.setNull(tableStructure.Null.equals("YES") ? "是" : "否");
+                        });
+                        DocDBTableTemp tableTemp = new DocDBTableTemp().setTableName(table.name).setTableComment(table.comment).setTableStructureList(tableStructureList);
                         docDBTableTempList.add(tableTemp);
                     });
 //                    HashMap<String, Object> DBStructureInfo = new HashMap<>();
 //                    tableList.forEach(table -> DBStructureInfo.put(table.getName(), getTableStructureList(table.getName())));
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
                     //把这个表格实体类封装成 List集合
-                    map.put("section", docDBTableTempList);
-
+                    map.put("section1", docDBTableTempList);
 //                    map.put()
                     break;
                 }
@@ -320,7 +340,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
      */
     private Boolean existSameNameDoc(Integer directoryId, String name, String ops) {
         QueryWrapper<Document> documentQueryWrapper = new QueryWrapper<>();
-
         if ("add".equals(ops)) {
             documentQueryWrapper.eq(null != directoryId, "directory_id", directoryId);
         } else {
@@ -330,8 +349,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<Document> documents = documentMapper.selectList(documentQueryWrapper);
         return documents != null && documents.size() != 0;
     }
-
-
 }
 
 

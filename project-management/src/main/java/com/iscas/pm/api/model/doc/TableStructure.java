@@ -17,11 +17,11 @@ public class TableStructure {
 
     public String collaction;
 
-    public String canBeNull;
+    public String Null;
 
     public String key;
 
-    public String defaultValue;
+    public String Default;
 
     public String extra;
 

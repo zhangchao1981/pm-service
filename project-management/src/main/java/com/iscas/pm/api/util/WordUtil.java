@@ -51,33 +51,12 @@ public class WordUtil {
         });
 
 
-//
-//
-//        List< Map<String, String>> newReviseRecordList =new ArrayList<>();
-//        reviseRecordList.forEach(revise->{
-//            Map<String, String> newReviseRecord = new HashMap<String, String>();
-//            Field[] declaredFields = revise.getClass().getDeclaredFields();
-//            for (Field field : declaredFields) {
-//                field.setAccessible(true);
-//                try {
-//                    newReviseRecord.put(field.getName(), (String) field.get(revise));
-//                } catch (IllegalAccessException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//            newReviseRecordList.add(newReviseRecord);
-//        });
-//
-
-
-
         data.put("项目名称","poil测试");
         data.put("reviseRecordList",reviseRecordListNew);
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
 
         Configure config = Configure.builder()
                 .bind("reviseRecordList", policy).build();
-
         parse("F:\\POI测试\\表格文本替换测试文件.docx",config,data,
                 "F:\\POI测试\\OutPutPoi-Tl.doc");
     }
@@ -97,7 +76,6 @@ public class WordUtil {
         Assert.notNull(out, "out can not be null");
         Assert.notNull(dataMap, "dataMap can not be null");
         try {
-
             XWPFTemplate temp = XWPFTemplate.compile(in,config).render(dataMap);
             temp.writeAndClose(out);
         } catch (IOException e) {

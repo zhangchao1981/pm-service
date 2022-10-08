@@ -20,7 +20,6 @@ import java.util.List;
 public interface DocumentMapper extends BaseMapper<Document> {
 
 
-    //    @Select("select id,name "+"from  test_plan" )
     @Select("select table_name as name,table_comment as comment "
             + "from information_schema.tables "
             + "where table_schema =#{DBName}")
