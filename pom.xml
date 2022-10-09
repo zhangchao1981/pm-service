@@ -45,6 +45,7 @@
         <module>register-center</module>
         <module>auth-center</module>
         <module>auth-server</module>
+        <module>time-schedule</module>
     </modules>
 
     <dependencies>

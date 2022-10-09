@@ -155,6 +155,16 @@ public class DevController {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
     }
 
+
+    @ApiOperationSupport(order = 7)
+    @GetMapping("/devRequirementListOrTaskList")
+    @ApiOperation(value = "查询开发需求或开发任务", notes = "根据用户输入参数查询符合条件的开发需求或开发任务")
+    @PreAuthorize("hasAuthority('/projectDev/devRequirementOrList')")
+    public List<Object> devRequirementListOrTaskList(@RequestBody @NotNull(message = "modularId不能为空") DevRequirementQueryParam devRequirementOrList) {
+
+//        return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
+    }
+
     @ApiOperationSupport(order = 8)
     @GetMapping("/devRequirement")
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里", response = DevRequirement.class)
@@ -162,6 +172,9 @@ public class DevController {
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         return devRequirementService.getById(requirementId);
     }
+
+
+
 
     @ApiOperationSupport(order = 9)
     @PostMapping("/deleteDevRequirement")

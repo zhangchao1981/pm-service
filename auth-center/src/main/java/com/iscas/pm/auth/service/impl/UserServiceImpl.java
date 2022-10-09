@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.iscas.pm.auth.controller.AuthController;
 import com.iscas.pm.auth.mapper.DepartmentMapper;
 import com.iscas.pm.auth.model.AuthUserRole;
 import com.iscas.pm.auth.model.ProjectPermission;
@@ -83,6 +84,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if (Objects.equals(oldPwd, newPwd)) {
             throw new IllegalArgumentException("请不要改成旧密码");
+        }
+
+        if (BCryptUtil.checkpw(newPwd, AuthController.getDefaultPassword())) {
+            throw new IllegalArgumentException("不允许修改为初始密码");
         }
 
         //更新密码

@@ -148,6 +148,7 @@ CREATE TABLE `doc_revise_record`  (
                                       CONSTRAINT `fk_reference_template` FOREIGN KEY (`template_id`) REFERENCES `doc_template` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文档修订记录表' ROW_FORMAT = Dynamic;
 
+
 -- ----------------------------
 -- Table structure for doc_template
 -- ----------------------------
@@ -160,6 +161,7 @@ CREATE TABLE `doc_template`  (
                                  `create_time` datetime(0) NOT NULL COMMENT '模板创建时间',
                                  `update_time` datetime(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '模板最后更新时间',
                                  `maintainer` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '维护人',
+                                 `type` varchar(35) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板类型',
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文档模板表' ROW_FORMAT = Dynamic;
 
