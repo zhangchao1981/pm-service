@@ -105,4 +105,11 @@ public class EnumController {
     @PostMapping(value = "/requirementType")
     public RequirementTypeEnum[] RequirementTypeEnum() {  return RequirementTypeEnum.values(); }
 
+
+
+    @ApiOperation(value = "查询开发类型", notes = "查询开发需求或开发任务类型")
+    @PostMapping(value = "/devQueryType")
+    public DevRequirementQueryTypeEnum[] DevRequirementQueryTypeEnum() {  return DevRequirementQueryTypeEnum.values(); }
+
+
 }

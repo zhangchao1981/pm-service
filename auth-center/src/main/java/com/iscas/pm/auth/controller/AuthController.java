@@ -60,6 +60,7 @@ public class AuthController {
         if (BCryptUtil.checkpw(userLoginParam.getPassword(),defaultPassword)){
             userInfo.setIsModifiedPassword(false);
         }else {
+            userInfo.setIsModifiedPassword(true);
             userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
         }
         userInfo.setCurrentProjectId("default");
