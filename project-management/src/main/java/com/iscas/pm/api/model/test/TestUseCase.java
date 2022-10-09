@@ -46,6 +46,9 @@ public class TestUseCase implements Serializable {
     @ApiModelProperty(value = "创建人,后端自动生成，前端无需传参")
     private String creator;
 
+    @ApiModelProperty(value = "创建人id,后端自动生成，前端无需传参")
+    private String creatorId;
+
     @NotNull(message = "[需求id]不能为空")
     @ApiModelProperty(value = "需求id", required = true)
     private Integer requirementId;
