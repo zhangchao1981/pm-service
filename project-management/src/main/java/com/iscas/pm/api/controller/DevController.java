@@ -173,7 +173,7 @@ public class DevController {
             throw new IllegalArgumentException("要删除的开发需求不存在");
         }
 
-        if (db_requirement.getStatus() == RequireStatusEnum.DELAYED) {
+        if (db_requirement.getStatus() != RequireStatusEnum.DESIGN) {
             throw new IllegalArgumentException("已发布的需求不允许删除");
         }
         return devRequirementService.removeById(id);
@@ -194,7 +194,13 @@ public class DevController {
         }
 
         devTask.setStatus(getDevStatus(devTask.getStartDate(), devTask.getEndDate()));
-        return devTaskService.addDevTask(devTask);
+        devTask.setHappenedHour(0.0);
+        devTaskService.addDevTask(devTask);
+
+        //重新计算需求的已发生工时、进度、实际开始时间、实际结束时间、需求状态
+        devRequirementService.computeRequirementStatus(devTask.getRequireId());
+
+        return true;
     }
 
     @ApiOperationSupport(order = 11)
@@ -231,10 +237,15 @@ public class DevController {
         if (taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(id)).size() > 0)
             throw new IllegalArgumentException("该开发任务已填写反馈，不允许删除");
 
-        if (!devTaskService.removeById(id)) {
-            throw new IllegalArgumentException("要删除的开发任务id不存在");
+        DevTask db_task = devTaskService.getById(id);
+        if (db_task == null) {
+            throw new IllegalArgumentException("要删除的开发任务不存在");
         }
 
+        devTaskService.removeById(id);
+
+        //重新计算需求的已发生工时、进度、实际开始时间、实际结束时间、需求状态
+        devRequirementService.computeRequirementStatus(db_task.getRequireId());
         return true;
     }
 
@@ -306,15 +317,6 @@ public class DevController {
             return TaskStatusEnum.RUNNING;
         else
             return TaskStatusEnum.DELAYED;
-    }
-
-    private RequireStatusEnum getRequirementStatus(Date start, Date end) {
-        if (new Date().before(start))
-            return RequireStatusEnum.DESIGN;
-        else if (start.before(new Date()) && new Date().before(end))
-            return RequireStatusEnum.DEVELOPING;
-        else
-            return RequireStatusEnum.DELAYED;
     }
 
 

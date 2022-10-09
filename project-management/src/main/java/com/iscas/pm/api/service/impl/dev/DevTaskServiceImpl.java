@@ -73,62 +73,11 @@ public class DevTaskServiceImpl extends ServiceImpl<DevTaskMapper, DevTask> impl
 
             //更新计划任务
             devTaskMapper.updateById(devTask);
-
-            //重新计算需求的已发生工时、进度、实际开始时间、实际结束时间、需求状态
-            computeRequirementStatus(devTask.getRequireId());
-            
-           
-
         }
+        //重新计算需求的已发生工时、进度、实际开始时间、实际结束时间、需求状态
+        devRequirementService.computeRequirementStatus(devTask.getRequireId());
     }
-    private void computeRequirementStatus(Integer requireId){
-        //查询需求下所有任务
-        List<DevTask> devTasks = super.list(new QueryWrapper<DevTask>().eq("require_id", requireId));
 
-        if (devTasks.size() > 0) {
-            //查询需求信息
-            DevRequirement devRequirement = devRequirementService.getById(requireId);
-            
-            //计算需求的实际发生工时=所有任务发生工时的和
-            Double happenedHour = devTasks.stream().mapToDouble(DevTask::getHappenedHour).sum();
-            devRequirement.setHappenedHour(happenedHour);
-
-            //计算需求实际开始时间=任务的最早实际开始时间
-            Date actualStartDate = devTasks.stream().min(Comparator.comparing(DevTask::getActualStartDate)).get().getActualStartDate();
-            devRequirement.setActualStartDate(actualStartDate);
-
-            //计算需求进度=所有任务进度的平均值
-            double progress = devTasks.stream().mapToInt(DevTask::getDevProgress).average().getAsDouble();
-            devRequirement.setDevProgress(progress);
-
-            //任务完成
-            if (devRequirement.getDevProgress() == 100) {
-                //计算任务实际结束时间=最晚反馈日期
-                Date actualEndDate = devTasks.stream().max(Comparator.comparing(DevTask::getActualEndDate)).get().getActualEndDate();
-                devRequirement.setActualEndDate(actualEndDate);
-
-                //计算任务状态:计划结束日期>=实际结束时间 已完成；否则延迟完成
-                if (devRequirement.getEndDate() == null || devRequirement.getEndDate().after(devRequirement.getActualEndDate())) {
-                    devRequirement.setStatus(RequireStatusEnum.FINISHED);
-                } else {
-                    devRequirement.setStatus(RequireStatusEnum.DELAYED_FINISH);
-                }
-            }
-            //任务未完成
-            else {
-                devRequirement.setActualEndDate(null);
-                if (devRequirement.getEndDate() == null || new Date().before(devRequirement.getEndDate())) {
-                    devRequirement.setStatus(RequireStatusEnum.DEVELOPING);
-                } else {
-                    devRequirement.setStatus(RequireStatusEnum.DELAYED);
-                }
-            }
-
-            //更新计划任务
-            devRequirementService.updateById(devRequirement);
-        }
-
-    }
 }
 
 

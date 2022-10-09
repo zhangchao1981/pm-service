@@ -13,4 +13,5 @@ import java.util.List;
 * @createDate 2022-08-03 11:21:48
 */
 public interface DevRequirementService extends IService<DevRequirement> {
+    void computeRequirementStatus(Integer requireId);
 }
