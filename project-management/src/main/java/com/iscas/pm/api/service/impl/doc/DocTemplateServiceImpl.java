@@ -32,13 +32,11 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     DocTemplateMapper docTemplateMapper;
 
     @Override
-    public DocTemplate uploadLocalTemplate(DocTemplate addTemplateParam) throws IOException {
-        DocTemplate docTemplate= new DocTemplate();
-        if (docTemplateMapper.selectOne(new QueryWrapper<DocTemplate>().eq("name", addTemplateParam.getName())) != null) {
+    public DocTemplate uploadLocalTemplate(DocTemplate docTemplate) throws IOException {
+        if (docTemplateMapper.selectOne(new QueryWrapper<DocTemplate>().eq("name", docTemplate.getName())) != null) {
             throw new IllegalArgumentException("模板名重复"); }
         docTemplate.setCreateTime(new Date());
         docTemplate.setUpdateTime(new Date());
-        docTemplate.setPath(addTemplateParam.getPath());
         docTemplateMapper.insert(docTemplate);
         return docTemplate;
     }

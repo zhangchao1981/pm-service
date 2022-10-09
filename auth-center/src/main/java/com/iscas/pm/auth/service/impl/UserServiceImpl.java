@@ -88,7 +88,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //更新密码
         user.setPassword(new BCryptPasswordEncoder().encode(newPwd));
         userMapper.updateById(user);
-
         return true;
     }
 

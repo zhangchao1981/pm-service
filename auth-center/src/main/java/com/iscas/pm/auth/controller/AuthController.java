@@ -1,6 +1,7 @@
 package com.iscas.pm.auth.controller;
 
 import com.iscas.pm.auth.model.UserLoginParam;
+import com.iscas.pm.auth.utils.BCryptUtil;
 import com.iscas.pm.common.core.model.UserInfo;
 import com.iscas.pm.auth.service.AuthService;
 import com.iscas.pm.auth.service.UserService;
@@ -34,9 +35,15 @@ public class AuthController {
     @Autowired
     private RedisUtil redisUtil;
 
+    private final static String  defaultPassword="$2a$10$Vx1mFzz2NNV4t4d2aWFEhOeqIwqAWHT2Pbz.czTGUY6gNooQlHDAa";
+    public  static String  getDefaultPassword(){
+        return defaultPassword;
+    }
+
     @ApiOperation(value = "用户登录", notes = "用户名密码登录，登录后需将token放到header里，key为:Authorization，value为:bearer +token(注意bearer后面有个空格) ")
     @PostMapping(value = "/login")
     public UserInfo login(@RequestBody @Valid UserLoginParam userLoginParam) {
+        UserInfo userInfo = new UserInfo();
         //申请token令牌
         AuthToken authToken = authService.login(userLoginParam.getUserName(), userLoginParam.getPassword());
 
@@ -44,18 +51,21 @@ public class AuthController {
         UserDetailInfo userDetailInfo = userService.getUserDetails(userLoginParam.getUserName());
 
         //专为前端封装返回值，去除一些前端不用的信息
-        UserInfo userInfo = new UserInfo();
         userInfo.setId(userDetailInfo.getUserId());
         userInfo.setUserName(userDetailInfo.getUsername());
         userInfo.setEmployeeName(userDetailInfo.getEmployeeName());
         userInfo.setAccessToken(authToken.getAccess_token());
         userInfo.setSystemPermissions(userDetailInfo.getSystemPermissions());
-        userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
+        //如果用户是首次登录，只发放系统权限
+        if (BCryptUtil.checkpw(userLoginParam.getPassword(),defaultPassword)){
+            userInfo.setIsModifiedPassword(false);
+        }else {
+            userInfo.setProjectPermissions(userDetailInfo.getProjectPermissions());
+        }
         userInfo.setCurrentProjectId("default");
 
         //存入redis   key=userId  hashKey=token  value="default"
         redisUtil.hset(userInfo.getId().toString(), authToken.getAccess_token(), userInfo);
-
         return userInfo;
     }
 

@@ -135,7 +135,7 @@ public class UserController {
         if (user == null) {
             throw new IllegalArgumentException("用户不存在");
         }
-        user.setPassword(new BCryptPasswordEncoder().encode("123456"));
+        user.setPassword(AuthController.getDefaultPassword());
         userService.saveOrUpdate(user);
         return true;
     }
