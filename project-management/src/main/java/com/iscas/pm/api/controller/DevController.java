@@ -62,7 +62,7 @@ public class DevController {
 
     @ApiOperationSupport(order = 3)
     @PostMapping("/DevModularList")
-    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型),返回List<DevModular>", response = DevModular.class)
+    @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型)", response = DevModular.class)
     @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);

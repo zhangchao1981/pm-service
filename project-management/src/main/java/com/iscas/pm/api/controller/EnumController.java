@@ -8,6 +8,7 @@ import com.iscas.pm.api.model.project.ProjectTypeEnum;
 import com.iscas.pm.api.model.project.SecretLevelEnum;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.model.test.enums.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.TestTypeEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,6 +86,9 @@ public class EnumController {
     @PostMapping(value = "/useCaseType")
     public UseCaseTypeEnum[] useCaseTypeEnum() {  return UseCaseTypeEnum.values(); }
 
+    @ApiOperation(value = "测试类型", notes = "获取测试类型列表")
+    @PostMapping(value = "/testType")
+    public TestTypeEnum[] TestTypeEnum() {  return TestTypeEnum.values(); }
 
     @ApiOperation(value = "关联接口类型", notes = "获取关联接口类型列表")
     @PostMapping(value = "/interfaceType")
@@ -94,12 +98,9 @@ public class EnumController {
     @PostMapping(value = "/devType")
     public String[] devTypeEnum() {  return new String[]{Arrays.toString(DevTypeEnum.values())}; }
 
-
-
     @ApiOperation(value = "需求来源", notes = "需求开发模块中开发需求的需求来源类型")
     @PostMapping(value = "/requirementSource")
     public RequirementSourceEnum[] RequirementSourceEnum() {  return RequirementSourceEnum.values(); }
-
 
     @ApiOperation(value = "需求类型", notes = "需求开发模块中开发需求的需求类型")
     @PostMapping(value = "/requirementType")
