@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter
-public enum PriorityEnum {
+public enum UseCasePriorityEnum {
     FIRST("FIRST", "一级"),
     SECOND("SECOND", "二级"),
     THIRD("THIRD", "三级"),
@@ -19,7 +19,7 @@ public enum PriorityEnum {
     private final String code;
     private final String value;
 
-    PriorityEnum(String code, String value) {
+    UseCasePriorityEnum(String code, String value) {
         this.code = code;
         this.value = value;
     }

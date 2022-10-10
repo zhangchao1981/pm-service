@@ -10,11 +10,7 @@ import lombok.Getter;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DevTypeEnum {
-
     Modular,
     Requirement,
     Task;
-
-
-
 }

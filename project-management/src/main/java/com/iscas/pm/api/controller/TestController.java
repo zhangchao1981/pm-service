@@ -214,13 +214,13 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 15)
-    @PostMapping("/testPlanStatistic")
-    @ApiOperation(value = "测试计划统计数", notes = "查看测试计划对应统计数据")
-    @PreAuthorize("hasAuthority('/test/useCaseAmountInPlan')")
-    public TestPlanStatisticData useCaseAmountInPlan(@RequestParam Integer testPlanId) {
-        return testPlanService.statisticData(testPlanId);
-    }
+//    @ApiOperationSupport(order = 15)
+//    @PostMapping("/testPlanStatistic")
+//    @ApiOperation(value = "测试计划统计数", notes = "查看测试计划对应统计数据")
+//    @PreAuthorize("hasAuthority('/test/useCaseAmountInPlan')")
+//    public TestPlanStatisticData useCaseAmountInPlan(@RequestParam Integer testPlanId) {
+//        return testPlanService.statisticData(testPlanId);
+//    }
 
 
     @ApiOperationSupport(order = 21)

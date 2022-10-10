@@ -21,7 +21,6 @@ public class EditBatchExecuteLogParam {
     @ApiModelProperty(value = "执行记录是否通过(更改通过状态接口需要)", required = true)
     private Boolean pass;
 
-
     @ApiModelProperty(value = "测试人员(指定测试人员接口需要)", required = true)
     private String  testPerson;
 

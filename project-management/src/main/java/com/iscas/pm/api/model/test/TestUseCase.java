@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.iscas.pm.api.model.test.enums.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.UseCasePriorityEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -41,7 +41,7 @@ public class TestUseCase implements Serializable {
 
     @ApiModelProperty(value = "用例等级", required = true)
     @NotNull(message = "用例等级不能为空")
-    private PriorityEnum level;
+    private UseCasePriorityEnum level;
 
     @ApiModelProperty(value = "创建人,后端自动生成，前端无需传参")
     private String creator;

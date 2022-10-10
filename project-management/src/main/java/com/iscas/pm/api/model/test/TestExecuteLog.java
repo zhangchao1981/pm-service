@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.iscas.pm.api.model.test.enums.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.UseCasePriorityEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -59,7 +59,7 @@ public class TestExecuteLog implements Serializable {
 
     @ApiModelProperty(value = "用例等级", required = true)
     @NotNull(message = "用例等级不能为空")
-    private PriorityEnum level;
+    private UseCasePriorityEnum level;
 
     @ApiModelProperty(value = "用例关联的需求id", required = true)
     @NotNull(message = "用例关联的需求id不能为空")

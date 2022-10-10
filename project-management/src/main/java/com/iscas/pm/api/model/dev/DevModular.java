@@ -35,7 +35,7 @@ public class DevModular implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "子节点")
-    private List<Directory> children;
+    private List<DevModular> children;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")

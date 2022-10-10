@@ -49,7 +49,7 @@ public class TestBug implements Serializable {
 
     @NotNull(message = "[优先级]不能为空")
     @ApiModelProperty(value = "优先级",required = true)
-    private PriorityEnum priority;
+    private UseCasePriorityEnum priority;
 
     @NotNull(message = "[缺陷类型]不能为空")
     @ApiModelProperty(value = "缺陷类型",required = true)

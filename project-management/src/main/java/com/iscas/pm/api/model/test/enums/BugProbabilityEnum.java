@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * @Author： zhangchao
  * @Date： 2022/8/12
- * @Description：
+ * @Description： bug出现频率
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter

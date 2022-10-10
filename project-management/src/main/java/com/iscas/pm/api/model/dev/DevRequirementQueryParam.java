@@ -27,8 +27,4 @@ public class DevRequirementQueryParam {
     @ApiModelProperty(value = "开发需求状态 ",required = true)
     private RequireStatusEnum  statusEnum;
 
-    @ApiModelProperty(value = "开发需求状态 ",required = true)
-    private RequireStatusEnum  statusEnum;
-
-
 }
