@@ -13,7 +13,7 @@ public class ProgressStep {
     @ApiModelProperty("步骤序号")
     private Integer stepNumber;
 
-    @ApiModelProperty("输入说明")
+    @ApiModelProperty("步骤描述")
     private String inputExplain;
 
     @ApiModelProperty("预期结果")

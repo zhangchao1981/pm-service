@@ -47,7 +47,7 @@ public class TestUseCase implements Serializable {
     private String creator;
 
     @ApiModelProperty(value = "创建人id,后端自动生成，前端无需传参")
-    private String creatorId;
+    private Integer creatorId;
 
     @NotNull(message = "[需求id]不能为空")
     @ApiModelProperty(value = "需求id", required = true)
@@ -56,6 +56,9 @@ public class TestUseCase implements Serializable {
     @ApiModelProperty(value = "用例类型", required = true)
     @NotNull(message = "用例类型不能为空")
     private UseCaseTypeEnum type;
+
+    @ApiModelProperty(value = "前置条件")
+    private String precondition;
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     @ApiModelProperty(value = "用例执行步骤", required = true)

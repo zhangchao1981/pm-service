@@ -43,7 +43,6 @@ public class TestController {
     @Autowired
     DevRequirementService requirementService;
 
-
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseList")
     @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表")
@@ -61,13 +60,13 @@ public class TestController {
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
 
-
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
     @ApiOperation(value = "添加测试用例", notes = "添加测试用例")
     @PreAuthorize("hasAuthority('/test/addTestUseCase')")
     public TestUseCase addTestUseCase(@Valid @RequestBody TestUseCase testUseCase) {
         testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
+        testUseCase.setCreatorId(RequestHolder.getUserInfo().getId());
         testUseCase.setCreateTime(new Date());
         testUseCaseService.save(testUseCase);
         return testUseCase;
@@ -113,8 +112,10 @@ public class TestController {
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
         IPage<TestPlan> planIPage = testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
+
+        //添加测试计划的统计计算结果
         planIPage.getRecords().stream().forEach(plan -> {
-            plan.inputstatisticData(testPlanService.statisticData(plan.getId())); });
+            plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
         return   planIPage;
     }
 
@@ -166,6 +167,7 @@ public class TestController {
         if (testExecuteLogService.list(wrapper).size() > 0) {
             throw new IllegalArgumentException("该计划下已存在有效测试执行记录，不允许删除");
         }
+
         if (!testPlanService.removeById(planId)) {
             throw new IllegalArgumentException("要删除的测试计划id不存在");
         }

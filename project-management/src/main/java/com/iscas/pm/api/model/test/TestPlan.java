@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iscas.pm.api.model.test.enums.TestTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,21 +35,24 @@ public class TestPlan implements Serializable {
 
     @NotBlank(message = "[测试类型]不能为空")
     @ApiModelProperty(value = "测试类型", required = true)
-    private String testType;
+    private TestTypeEnum testType;
 
     @ApiModelProperty(value = "负责人", required = true)
     private String worker;
 
-    @ApiModelProperty("缺陷统计")
+    @ApiModelProperty(value = "负责人id", required = true)
+    private String workerId;
+
+    @ApiModelProperty("缺陷统计，后端计算，无需传参")
     private String bugStatistic;
 
-    @ApiModelProperty("已测用例统计")
+    @ApiModelProperty("已测用例统计，后端计算，无需传参")
     private String testedCase;
 
-    @ApiModelProperty("通过率")
+    @ApiModelProperty("通过率，后端计算，无需传参")
     private Double passRate;
 
-    @ApiModelProperty("执行进度")
+    @ApiModelProperty("执行进度，后端计算，无需传参")
     private Double executeProgress;
 
     @NotNull(message = "[开始时间]不能为空")
@@ -71,7 +75,7 @@ public class TestPlan implements Serializable {
     @ApiModelProperty("最后更新时间")
     private Date updateTime;
 
-    public void inputstatisticData(TestPlanStatisticData statisticData) {
+    public void inputStatisticData(TestPlanStatisticData statisticData) {
         this.setPassRate(statisticData.getPassRate());
         this.setTestedCase(statisticData.getTestedCase());
         this.setBugStatistic(statisticData.getBugStatistic());
