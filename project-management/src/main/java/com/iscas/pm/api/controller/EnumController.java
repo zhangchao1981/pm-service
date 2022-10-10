@@ -1,6 +1,7 @@
 package com.iscas.pm.api.controller;
 
 import com.iscas.pm.api.model.dev.*;
+import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
@@ -8,6 +9,7 @@ import com.iscas.pm.api.model.project.ProjectTypeEnum;
 import com.iscas.pm.api.model.project.SecretLevelEnum;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.model.test.enums.PriorityEnum;
+import com.iscas.pm.api.model.test.enums.TestTypeEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -112,13 +114,11 @@ public class EnumController {
         return RequirementTypeEnum.values();
     }
 
-
     @ApiOperation(value = "查询开发类型", notes = "查询开发需求或开发任务类型")
     @PostMapping(value = "/devQueryType")
     public DevRequirementQueryTypeEnum[] DevRequirementQueryTypeEnum() {
         return DevRequirementQueryTypeEnum.values();
     }
-
 
     @ApiOperation(value = "数据库类型", notes = "查询开发需求或开发任务类型")
     @PostMapping(value = "/dataBaseType")
