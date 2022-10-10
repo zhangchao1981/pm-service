@@ -1,14 +1,10 @@
 package com.iscas.pm.api.model.doc.param;
 
-import com.iscas.pm.api.model.doc.DateBaseType;
-import com.iscas.pm.api.model.doc.ReferenceDoc;
-import com.iscas.pm.api.model.doc.ReviseRecord;
+import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-
-import java.util.List;
 
 /**
  * @author by  lichang
@@ -60,11 +56,11 @@ public class CreateDocumentParam {
     @ApiModelProperty(value = "数据库端口号",notes = "选择数据库文档，即模板id=2时传入")
     private  String  port;
 
-    @ApiModelProperty(value = "数据库驱动名",notes = "选择数据库文档，即模板id=2时传入")
+    @ApiModelProperty(value = "数据库驱动名",notes = "选择数据库文档，即模板id=2时传入",required = false)
     private  String   driverClassName;
 
     @ApiModelProperty(value = "数据库类型",notes = "选择数据库文档，即模板id=2时传入")
-    private DateBaseType dbType;
+    private DataBaseTypeEnum dbType;
 
 
 

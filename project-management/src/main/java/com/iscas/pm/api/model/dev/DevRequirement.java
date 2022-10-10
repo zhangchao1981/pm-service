@@ -128,6 +128,11 @@ public class DevRequirement implements Serializable {
     @ApiModelProperty(value = "返回值类型")
     private String type;
 
+    @ApiModelProperty(value = "开发任务")
+    @TableField(exist = false)
+    private List<DevTask> devTasks;
+
+
     public DevRequirement() {
         type= String.valueOf(DevTypeEnum.Requirement);
     }

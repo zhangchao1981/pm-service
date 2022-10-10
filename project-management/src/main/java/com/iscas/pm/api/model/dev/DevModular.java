@@ -20,30 +20,36 @@ import java.util.List;
 @Data
 public class DevModular implements Serializable {
 
-    @ApiModelProperty(value = "id",notes = "不需前端传入")
+    @ApiModelProperty(value = "id", notes = "不需前端传入")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
 
-    @ApiModelProperty(value = "模块名称",required = true)
-    @Size(max = 25,message = "模块名称长度不能大于25")
+    @ApiModelProperty(value = "模块名称", required = true)
+    @Size(max = 25, message = "模块名称长度不能大于25")
     private String name;
 
     @NotNull(message = "父节点id不能为空")
-    @ApiModelProperty(value = "父节点id",required = true)
+    @ApiModelProperty(value = "父节点id", required = true)
     private Integer parentId;
 
     @TableField(exist = false)
-    @ApiModelProperty(value = "子节点")
-    private List<Directory> children;
+    @ApiModelProperty(value = "子模板")
+    private List<DevModular> modulars;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "子需求")
+    private List<DevRequirement> devRequirements;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")
-    @Size(max = 25,message = "返回值类型长度不能大于25")
+    @Size(max = 25, message = "返回值类型长度不能大于25")
     private String type;
 
+
     public DevModular() {
-        type= String.valueOf(DevTypeEnum.Modular);
+        type = String.valueOf(DevTypeEnum.Modular);
     }
 
     @TableField(exist = false)

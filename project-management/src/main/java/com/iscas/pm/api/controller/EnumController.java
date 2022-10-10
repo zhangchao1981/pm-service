@@ -1,6 +1,7 @@
 package com.iscas.pm.api.controller;
 
 import com.iscas.pm.api.model.dev.*;
+import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
@@ -83,33 +84,49 @@ public class EnumController {
 
     @ApiOperation(value = "测试用例类型", notes = "获取测试用例类型列表")
     @PostMapping(value = "/useCaseType")
-    public UseCaseTypeEnum[] useCaseTypeEnum() {  return UseCaseTypeEnum.values(); }
+    public UseCaseTypeEnum[] useCaseTypeEnum() {
+        return UseCaseTypeEnum.values();
+    }
 
 
     @ApiOperation(value = "关联接口类型", notes = "获取关联接口类型列表")
     @PostMapping(value = "/interfaceType")
-    public InterfaceTypeEnum[] interfaceTypeEnum() {  return InterfaceTypeEnum.values(); }
+    public InterfaceTypeEnum[] interfaceTypeEnum() {
+        return InterfaceTypeEnum.values();
+    }
 
     @ApiOperation(value = "查询开发相关接口的返回值类型", notes = "需求开发模块中项目模块列表、查询开发需求、查询开发任务三个接口的返回值类型")
     @PostMapping(value = "/devType")
-    public String[] devTypeEnum() {  return new String[]{Arrays.toString(DevTypeEnum.values())}; }
-
+    public String[] devTypeEnum() {
+        return new String[]{Arrays.toString(DevTypeEnum.values())};
+    }
 
 
     @ApiOperation(value = "需求来源", notes = "需求开发模块中开发需求的需求来源类型")
     @PostMapping(value = "/requirementSource")
-    public RequirementSourceEnum[] RequirementSourceEnum() {  return RequirementSourceEnum.values(); }
+    public RequirementSourceEnum[] RequirementSourceEnum() {
+        return RequirementSourceEnum.values();
+    }
 
 
     @ApiOperation(value = "需求类型", notes = "需求开发模块中开发需求的需求类型")
     @PostMapping(value = "/requirementType")
-    public RequirementTypeEnum[] RequirementTypeEnum() {  return RequirementTypeEnum.values(); }
-
+    public RequirementTypeEnum[] RequirementTypeEnum() {
+        return RequirementTypeEnum.values();
+    }
 
 
     @ApiOperation(value = "查询开发类型", notes = "查询开发需求或开发任务类型")
     @PostMapping(value = "/devQueryType")
-    public DevRequirementQueryTypeEnum[] DevRequirementQueryTypeEnum() {  return DevRequirementQueryTypeEnum.values(); }
+    public DevRequirementQueryTypeEnum[] DevRequirementQueryTypeEnum() {
+        return DevRequirementQueryTypeEnum.values();
+    }
 
+
+    @ApiOperation(value = "数据库类型", notes = "查询开发需求或开发任务类型")
+    @PostMapping(value = "/dataBaseType")
+    public DataBaseTypeEnum[] DateBaseTypeEnum() {
+        return DataBaseTypeEnum.values();
+    }
 
 }

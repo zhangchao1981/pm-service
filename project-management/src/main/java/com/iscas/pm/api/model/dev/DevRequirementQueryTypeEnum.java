@@ -8,7 +8,7 @@ package com.iscas.pm.api.model.dev;
  */
 public enum DevRequirementQueryTypeEnum {
 
-    DevRequirement("Requirement", "开发需求"),
+    DevRequirement("DevRequirement", "开发需求"),
     DevTask("DevTask", "开发任务");
 
     private final String code;
