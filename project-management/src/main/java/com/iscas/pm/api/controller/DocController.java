@@ -283,10 +283,10 @@ public class DocController {
     public Boolean testDB(@RequestBody @Valid DBLinkParam dbLinkParam) {
         String dataSourceName = UUID.randomUUID().toString();
         String url, driverName;
-        if (dbLinkParam.getDbType() == DateBaseType.MYSQL) {
+        if (dbLinkParam.getDbType() == DataBaseTypeEnum.MYSQL) {
             url = "jdbc:mysql://" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + "/" + dbLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
             driverName = "com.mysql.cj.jdbc.Driver";
-        } else if (dbLinkParam.getDbType() == DateBaseType.ORACLE) {
+        } else if (dbLinkParam.getDbType() == DataBaseTypeEnum.ORACLE) {
             url = "jdbc:oracle:thin:@" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + ":" + dbLinkParam.getDbName();
             driverName = "oracle.jdbc.driver.OracleDriver";
         } else {
@@ -304,9 +304,6 @@ public class DocController {
         return true;
 
     }
-
-
-
 
 
 }

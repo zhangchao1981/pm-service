@@ -1,6 +1,7 @@
 package com.iscas.pm.api.controller;
 
 import com.iscas.pm.api.model.dev.*;
+import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
@@ -50,6 +51,12 @@ public class EnumController {
         return DocumentTypeEnum.values();
     }
 
+    @ApiOperation(value = "数据库类型", notes = "查询开发需求或开发任务类型")
+    @PostMapping(value = "/dataBaseType")
+    public DataBaseTypeEnum[] DateBaseTypeEnum() {
+        return DataBaseTypeEnum.values();
+    }
+
     @ApiOperation(value = "介质类型", notes = "获取介质类型枚举项列表")
     @PostMapping(value = "/mediumType")
     public MediumEnum[] mediumTypeEnums() {
@@ -94,11 +101,14 @@ public class EnumController {
 
     @ApiOperation(value = "测试用例类型", notes = "获取测试用例类型列表")
     @PostMapping(value = "/useCaseType")
-    public UseCaseTypeEnum[] useCaseTypeEnum() {  return UseCaseTypeEnum.values(); }
+    public UseCaseTypeEnum[] useCaseTypeEnum() {
+        return UseCaseTypeEnum.values();
+    }
 
     @ApiOperation(value = "测试类型", notes = "获取测试类型列表")
     @PostMapping(value = "/testType")
     public TestTypeEnum[] TestTypeEnum() {  return TestTypeEnum.values(); }
+
 
     @ApiOperation(value = "缺陷类型", notes = "获取缺陷类型列表")
     @PostMapping(value = "/bugTypeEnums")
@@ -135,6 +145,7 @@ public class EnumController {
     @ApiOperation(value = "缺陷注入阶段", notes = "获取缺陷注入阶段列表")
     @PostMapping(value = "/bugInjectStageEnums")
     public BugInjectStageEnum[] bugInjectStageEnums() {  return BugInjectStageEnum.values(); }
+
 
 
 }

@@ -1,7 +1,9 @@
 package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
+import com.iscas.pm.api.model.dev.DevRequirementQueryParam;
 import com.iscas.pm.api.model.dev.DevTask;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 
@@ -14,4 +16,6 @@ import java.util.List;
 */
 public interface DevRequirementService extends IService<DevRequirement> {
     void computeRequirementStatus(Integer requireId);
+
+    List<DevModular> devRequirementListOrTaskList(DevRequirementQueryParam queryParam);
 }

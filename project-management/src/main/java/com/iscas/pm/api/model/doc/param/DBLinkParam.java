@@ -1,6 +1,6 @@
 package com.iscas.pm.api.model.doc.param;
 
-import com.iscas.pm.api.model.doc.DateBaseType;
+import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -36,6 +36,6 @@ public class DBLinkParam {
 
     @ApiModelProperty(value = "数据库类型", required = true)
     @NotNull(message = "数据库类型不能为空")
-    private DateBaseType dbType;
+    private DataBaseTypeEnum dbType;
 
 }

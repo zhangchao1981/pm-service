@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class DevController {
     @ApiOperation(value = "项目模块列表", notes = "返回全部项目模块(树型)", response = DevModular.class)
     @PreAuthorize("hasAuthority('/projectDev/DevModularList')")
     public List<DevModular> devModularList() {
-        return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getChildren);
+        return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getModulars);
     }
 
     @ApiOperationSupport(order = 14)
@@ -102,7 +101,6 @@ public class DevController {
         if (devModularService.list(new QueryWrapper<DevModular>().eq("id", devRequirement.getModularId())).size() < 1) {
             throw new IllegalArgumentException("所属模块Id不存在");
         }
-
         devRequirement.setWorker(RequestHolder.getUserInfo().getEmployeeName());
         devRequirement.setUserId(RequestHolder.getUserInfo().getId());
         devRequirement.setChanged(false);
@@ -126,7 +124,6 @@ public class DevController {
         if (db_requirement.getStatus() != RequireStatusEnum.DESIGN) {
             throw new IllegalArgumentException("已发布的需求不允许修改");
         }
-
         return devRequirementService.updateById(devRequirement);
     }
 
@@ -154,17 +151,14 @@ public class DevController {
     @PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
     public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
+
     }
 
-
     @ApiOperationSupport(order = 7)
-    @GetMapping("/devRequirementListOrTaskList")
+    @PostMapping("/devRequirementListOrTaskList")
     @ApiOperation(value = "查询开发需求或开发任务", notes = "根据用户输入参数查询符合条件的开发需求或开发任务")
-    @PreAuthorize("hasAuthority('/projectDev/devRequirementOrList')")
-    public List<Object> devRequirementListOrTaskList(@RequestBody @NotNull(message = "modularId不能为空") DevRequirementQueryParam devRequirementOrList) {
-
-//        return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
-        return null;
+    public List<DevModular> devRequirementListOrTaskList(@RequestBody @NotNull(message = "modularId不能为空") DevRequirementQueryParam queryParam) {
+        return devRequirementService.devRequirementListOrTaskList(queryParam);
     }
 
     @ApiOperationSupport(order = 8)
@@ -174,9 +168,6 @@ public class DevController {
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         return devRequirementService.getById(requirementId);
     }
-
-
-
 
     @ApiOperationSupport(order = 9)
     @PostMapping("/deleteDevRequirement")

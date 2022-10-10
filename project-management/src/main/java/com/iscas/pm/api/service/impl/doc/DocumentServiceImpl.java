@@ -37,8 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 
-import static com.iscas.pm.api.model.doc.TemplateTypeEnum.DatabaseDesignNotes;
-import static com.iscas.pm.api.model.doc.TemplateTypeEnum.SoftwareDevelopment;
 
 /**
  * @author 66410
@@ -145,8 +143,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream template = new ByteArrayInputStream(sourceByte);
 
-        //前端传入参数只含共用的信息，数据库查找的信息根据模板id选择性填充
-        //后台获取内容
+        //前端传入参数只含共用的信息，数据库查找的信息根据模板类型选择性填充
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
 
         //用户输入内容：
@@ -156,7 +153,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 //            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
 //        new HackLoop
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
-
 
         ConfigureBuilder builder = Configure.builder();
         map.keySet().forEach(key -> {
@@ -188,7 +184,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
 
-
     @Override
     public HashMap<String, Object> getDocumentContext(CreateDocumentParam createDocumentParam) {
         Integer templateId = createDocumentParam.getTemplateId();
@@ -196,7 +191,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         String currentProject = DataSourceHolder.getDB().databaseName;
         //获取模板类型
         TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
-
 
         //填充通用内容：
         List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
@@ -242,15 +236,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 break;
             }
             case DatabaseDesignNotes: {
-                if (createDocumentParam.getDbType() == DateBaseType.MYSQL) {
+                if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
                     List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
                     //连接自定义数据库
                     String dataSourceName = UUID.randomUUID().toString();
                     String url, driverName;
-                    if (createDocumentParam.getDbType() == DateBaseType.MYSQL) {
+                    if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
                         url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
                         driverName = "com.mysql.cj.jdbc.Driver";
-                    } else if (createDocumentParam.getDbType() == DateBaseType.ORACLE) {
+                    } else if (createDocumentParam.getDbType() == DataBaseTypeEnum.ORACLE) {
                         url = "jdbc:oracle:thin:@" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + ":" + createDocumentParam.getDbName();
                         driverName = "oracle.jdbc.driver.OracleDriver";
                     } else {

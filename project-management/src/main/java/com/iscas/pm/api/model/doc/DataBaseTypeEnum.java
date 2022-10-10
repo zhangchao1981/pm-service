@@ -9,6 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum DateBaseType {
-    MYSQL,ORACLE
+public enum DataBaseTypeEnum {
+    MYSQL,
+    ORACLE
 }

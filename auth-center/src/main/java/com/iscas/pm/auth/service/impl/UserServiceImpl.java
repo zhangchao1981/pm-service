@@ -149,8 +149,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<UserBriefInfo> selectUserBriefInfo() {
 
-        String  status="NORMAL";
-        return  userMapper.loadUserBriefInfo(status);
+        String status = "NORMAL";
+        return userMapper.loadUserBriefInfo(status);
 
     }
 
@@ -160,7 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<AuthUserRole> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         authUserRoleService.remove(wrapper);
-        if(roles==null||roles.size()<1){
+        if (roles == null || roles.size() < 1) {
             return true;
         }
         //批量插入
