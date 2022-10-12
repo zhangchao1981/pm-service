@@ -12,10 +12,7 @@ import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.config.DatasourceFactory;
 import com.iscas.pm.common.db.separate.datasource.DynamicDataSource;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiOperationSupport;
-import io.swagger.annotations.ApiSort;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -260,6 +257,12 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/editTemplate')")
     public boolean editTemplate(@Valid @RequestBody DocTemplate template) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
+        DocTemplate oldTemplate = docTemplateService.getById(template.getId());
+        if (oldTemplate==null){
+            throw new IllegalArgumentException("要修改的template不存在");
+        }
+        template.setCreateTime(oldTemplate.getCreateTime());
+        template.setUpdateTime(new Date());
         if (!docTemplateService.save(template)) {
             throw new IllegalArgumentException("要修改的template不存在");
         }

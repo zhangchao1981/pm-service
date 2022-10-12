@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -31,6 +32,10 @@ public class DocTemplate  {
     @ApiModelProperty(value = "维护人",required = true)
     @Size(max = 25,message = "维护人长度不能大于25")
     private String maintainer;
+
+    @NotNull(message = "维护人的用户id不能为空")
+    @ApiModelProperty(value = "维护人Id",required = true)
+    private Integer maintainerId;
 
     @NotBlank(message = "模板名称不能为空")
     @ApiModelProperty(value = "模板名称",required = true)

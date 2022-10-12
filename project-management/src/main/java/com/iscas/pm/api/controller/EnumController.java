@@ -3,6 +3,7 @@ package com.iscas.pm.api.controller;
 import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
+import com.iscas.pm.api.model.doc.TemplateTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
 import com.iscas.pm.api.model.project.ProjectTypeEnum;
@@ -143,6 +144,11 @@ public class EnumController {
     @ApiOperation(value = "缺陷注入阶段", notes = "获取缺陷注入阶段列表")
     @PostMapping(value = "/bugInjectStageEnums")
     public BugInjectStageEnum[] bugInjectStageEnums() {  return BugInjectStageEnum.values(); }
+
+
+    @ApiOperation(value = "文档模板类型", notes = "文档模板类型列表")
+    @PostMapping(value = "/templateTypeEnum")
+    public TemplateTypeEnum[] templateTypeEnum() {  return TemplateTypeEnum.values(); }
 
 
 
