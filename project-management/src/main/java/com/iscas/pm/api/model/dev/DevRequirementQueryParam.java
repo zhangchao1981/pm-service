@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.List;
  * @date 2022/10/9.
  */
 @Data
+@Accessors(chain = true)
 public class DevRequirementQueryParam {
     @ApiModelProperty(value = "查询类型", notes = "DevRequirement或者", required = true)
     private String queryType;

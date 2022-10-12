@@ -156,8 +156,8 @@ public class DevController {
 
     @ApiOperationSupport(order = 7)
     @PostMapping("/devRequirementListOrTaskList")
-    @ApiOperation(value = "查询开发需求或开发任务", notes = "根据用户输入参数查询符合条件的开发需求或开发任务")
-    public List<DevModular> devRequirementListOrTaskList(@RequestBody @NotNull(message = "modularId不能为空") DevRequirementQueryParam queryParam) {
+    @ApiOperation(value = "查询开发需求或开发任务", notes = "根据用户输入参数查询符合条件的开发需求或开发任务，")
+    public List<DevModular> devRequirementListOrTaskList(@RequestBody DevRequirementQueryParam queryParam) {
         return devRequirementService.devRequirementListOrTaskList(queryParam);
     }
 

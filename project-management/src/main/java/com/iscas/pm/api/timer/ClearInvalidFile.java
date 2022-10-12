@@ -36,8 +36,9 @@ public class ClearInvalidFile {
         DataSourceHolder.setDB("project_demo");
         //查询数据库全部路径，有效的路径存储时间延期  无效的略过
         List<String> documentPaths = documentService.list().stream().map(Document::getPath).collect(Collectors.toList());
-        List<String> templatePaths = docTemplateService.list().stream().map(DocTemplate::getPath).collect(Collectors.toList());
+        // template更换到主库了
+//        List<String> templatePaths = docTemplateService.list().stream().map(DocTemplate::getPath).collect(Collectors.toList());
         documentPaths.stream().forEach(documentPath-> {if (redisUtil.hasKey(documentPath)){ redisUtil.expire(documentPath,5000); }});
-        templatePaths.stream().forEach(templatePath-> {if (redisUtil.hasKey(templatePath)){ redisUtil.expire(templatePath,5000); }});
+//        templatePaths.stream().forEach(templatePath-> {if (redisUtil.hasKey(templatePath)){ redisUtil.expire(templatePath,5000); }});
     }
 }

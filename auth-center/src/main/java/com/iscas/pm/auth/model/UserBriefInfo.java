@@ -1,6 +1,5 @@
 package com.iscas.pm.auth.model;
 
-import com.iscas.pm.common.core.model.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

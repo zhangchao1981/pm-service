@@ -7,8 +7,8 @@ import lombok.Getter;
  * @author by  lichang
  * @date 2022/8/4.
  */
-@Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
 public enum RequireStatusEnum {
     DESIGN("DESIGN", "设计中"),
     DEPLOYED("DEPLOYED", "已发布"),

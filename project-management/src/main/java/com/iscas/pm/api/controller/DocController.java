@@ -12,7 +12,10 @@ import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.config.DatasourceFactory;
 import com.iscas.pm.common.db.separate.datasource.DynamicDataSource;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiOperationSupport;
+import io.swagger.annotations.ApiSort;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -151,9 +154,7 @@ public class DocController {
     @ApiOperationSupport(order = 16)
     @PreAuthorize("hasAuthority('/projectDoc/addReferenceDoc')")
     public Boolean addReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
-        if (documentService.getById(referenceDoc.getTemplateId()) == null) {
-            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
-        }
+        checkDocTemplate(referenceDoc.getTemplateId());
         return referenceDocService.save(referenceDoc);
     }
 
@@ -162,9 +163,7 @@ public class DocController {
     @ApiOperationSupport(order = 17)
     @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
-        if (documentService.getById(referenceDoc.getTemplateId()) == null) {
-            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
-        }
+        checkDocTemplate(referenceDoc.getTemplateId());
         return referenceDocService.updateById(referenceDoc);
     }
 
@@ -192,9 +191,7 @@ public class DocController {
     @ApiOperationSupport(order = 20)
     @PreAuthorize("hasAuthority('/projectDoc/addReviseRecord')")
     public Boolean addReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
-        if (documentService.getById(reviseRecord.getTemplateId()) == null) {
-            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
-        }
+        checkDocTemplate(reviseRecord.getTemplateId());
         return reviseRecordService.save(reviseRecord);
     }
 
@@ -203,9 +200,7 @@ public class DocController {
     @ApiOperationSupport(order = 21)
     @PreAuthorize("hasAuthority('/projectDoc/editReviseRecord')")
     public boolean editReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
-        if (documentService.getById(reviseRecord.getTemplateId()) == null) {
-            throw new IllegalArgumentException("引用文档templateId对应模板不存在");
-        }
+        checkDocTemplate(reviseRecord.getTemplateId());
         if (!reviseRecordService.updateById(reviseRecord)) {
             throw new IllegalArgumentException("要修改的修订记录id不存在");
         }
@@ -231,11 +226,21 @@ public class DocController {
         return true;
     }
 
+    private void checkDocTemplate(Integer templateId) {
+        String currentProject = DataSourceHolder.getDB().databaseName;
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
+        if (docTemplateService.getById(templateId) == null) {
+            throw new IllegalArgumentException("templateId对应模板不存在");
+        }
+        DataSourceHolder.setDB(currentProject);
+    }
+
     @PostMapping("/deleteTemplate")
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
     public void deleteTemplate(@NotNull(message = "模板id不能为空") Integer templateId) {
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         //是否要校验   receive_recode/ reference有记录   (目前是外键级联删)
         documentService.deleteTemplate(templateId);
     }
@@ -245,35 +250,38 @@ public class DocController {
     @ApiOperationSupport(order = 25)
     @PreAuthorize("hasAuthority('/projectDoc/addTemplate')")
     public DocTemplate addTemplate(@Valid @RequestBody DocTemplate docTemplate) throws IOException {
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         return docTemplateService.uploadLocalTemplate(docTemplate);
     }
 
     @PostMapping("/editTemplate")
     @ApiOperation(value = "修改文档模板", notes = "")
-    @ApiOperationSupport(order = 28)
+    @ApiOperationSupport(order = 26)
     @PreAuthorize("hasAuthority('/projectDoc/editTemplate')")
     public boolean editTemplate(@Valid @RequestBody DocTemplate template) {
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         if (!docTemplateService.save(template)) {
             throw new IllegalArgumentException("要修改的template不存在");
         }
         //待添加校验( 存储路径是否改变 改变则删除服务器上的旧文档模板)
-
         return true;
     }
 
     @GetMapping("/TemplateList")
     @ApiOperation(value = "查询文档模板", notes = "不带分页，用于生成文档时选择模板")
-    @ApiOperationSupport(order = 29)
+    @ApiOperationSupport(order = 27)
     @PreAuthorize("hasAuthority('/projectDoc/templateList')")
     public List<DocTemplate> templateList() {
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         return docTemplateService.list();
     }
 
     @GetMapping("/templatePageList")
     @ApiOperation(value = "分页查询文档模板", notes = "分页，用于文档模板管理界面显示,参数是当前页、每页显示记录条数")
-    @ApiOperationSupport(order = 30)
+    @ApiOperationSupport(order = 28)
     @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
     public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         return docTemplateService.page(new Page<>(pageNum, pageSize));
     }
 
@@ -296,13 +304,11 @@ public class DocController {
         try {
             documentService.getDBInfo(dbLinkParam.getDbName());
         } catch (Exception e) {
-            return false;
+           throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
         } finally {
             dynamicDataSource.deleteDataSourceByName(dataSourceName);
         }
-
         return true;
-
     }
 
 

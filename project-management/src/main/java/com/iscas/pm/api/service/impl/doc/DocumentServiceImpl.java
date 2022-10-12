@@ -1,6 +1,5 @@
 package com.iscas.pm.api.service.impl.doc;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,11 +12,16 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
+import com.iscas.pm.api.model.dev.DevModular;
+import com.iscas.pm.api.model.dev.DevRequirement;
+import com.iscas.pm.api.model.dev.DevRequirementQueryParam;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.data.DocDBTableTemp;
 import com.iscas.pm.api.model.doc.data.DocPlanTask;
 import com.iscas.pm.api.model.doc.data.DocReviseRecord;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.doc.param.DocModular;
+import com.iscas.pm.api.model.doc.param.DocRequirement;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
@@ -27,7 +31,9 @@ import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.api.util.WordUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
+import com.iscas.pm.common.core.util.TreeUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
+import com.iscas.pm.common.db.separate.datasource.DynamicDataSource;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +42,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,10 +78,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     ProjectTeamService projectTeamService;
     @Autowired
     DocTemplateService docTemplateService;
+    @Autowired
+    DynamicDataSource dynamicDataSource;
+    @Autowired
+    DevRequirementService devRequirementService;
+    @Autowired
+    DevModularService devModularService;
+
 
     @Override
     public Document addLocalDocument(Document document) {
-
         documentChecking(document);
         document.setPath(document.getPath());
         documentMapper.insert(document);
@@ -121,7 +134,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         }
     }
 
-
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
         Document autoDoc = new Document();
@@ -148,16 +160,18 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
         //用户输入内容：
         map.put("本文档版本号", createDocumentParam.getVersion());
-//            map.put("软件负责人", createDocumentParam.getSoftwareManager());
-//            map.put("单位名称", createDocumentParam.getUnit());
-//            map.put("软件开发组", createDocumentParam.getSoftwareDevTeam());
-//        new HackLoop
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
-
         ConfigureBuilder builder = Configure.builder();
         map.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
+                if (key.startsWith("modularList")) {
+                    builder.bind("modulars", policy);
+                    builder.bind("precondition", policy);
+                    builder.bind("successScene", policy);
+                    builder.bind("branchScene", policy);
+                    builder.bind("constraint", policy);
+                }
             } else if (key.startsWith("section")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
                 //这里暂时是写死的，需要补充
                 builder.bind("tableStructureList", policy);
@@ -169,11 +183,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //将输出文件上传到服务器：
         //输出文件的比特流
         byte[] bytes = out.toByteArray();
-
         //拿到文件内容，输出到fastDFS服务器上
         InputStream inputStream = new ByteArrayInputStream(bytes);
         String upLoadPath = fastDFSUtil.uploadByIO(inputStream, fileName + ".doc").getFullPath();
-
         //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
         autoDoc.setPath(upLoadPath);
         autoDoc.setUpdateTime(new Date());
@@ -189,8 +201,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         Integer templateId = createDocumentParam.getTemplateId();
         HashMap<String, Object> map = new HashMap<>();
         String currentProject = DataSourceHolder.getDB().databaseName;
-        //获取模板类型
-        TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
 
         //填充通用内容：
         List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
@@ -211,10 +221,41 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
         map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
 
+        //获取模板类型
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
+        TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
+
         //根据模板id填充特定内容:
         switch (templateType) {
             default:
                 throw new IllegalArgumentException("未查询到该模板对应数据");
+            case SoftwareRequirementsSpecification: {
+                DataSourceHolder.setDB(currentProject);
+                //所有modular (树结构)
+                List<DevModular> modularList = devModularService.list();
+                List<DocModular> docModularList = new ArrayList<>();
+                //根据开发需求查询的，所有含开发需求的modular的List集合
+                List<DevRequirement> devRequirementList = devRequirementService.list();
+                List<DocRequirement> docRequirementList = new ArrayList<>();
+                devRequirementList.forEach(devRequirement -> {
+                    docRequirementList.add(new DocRequirement(devRequirement));
+                });
+                Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
+                //用DocModular 将modular 中的开发需求属性填充上
+                modularList.forEach(modular -> {
+                    docModularList.add(new DocModular(modular));
+                });
+                docModularList.forEach(docModular -> {
+                            if (requirementMap.containsKey(docModular.getId())) {
+                                docModular.setDocRequirements(requirementMap.get(docModular.getId()));
+                            }
+                        }
+                );
+                List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
+                map.put("modularList", modularTreeList);//一级模块
+                break;
+            }
+
             case SoftwareDevelopment: {
                 DataSourceHolder.setDB(currentProject);
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
@@ -224,7 +265,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
                 List<ProjectMember> memberList = projectTeamService.memberRoleList();
                 List<DocPlanTask> docPlanTaskList = new ArrayList<>();
-
                 planTaskList.forEach(planTask -> {
                     docPlanTaskList.add(new DocPlanTask(planTask));
                 });
@@ -251,6 +291,13 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                         throw new IllegalArgumentException("暂不支持该数据库类型！");
                     }
                     DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
+                    try {
+                        getDBInfo(createDocumentParam.getDbName());
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
+                    } finally {
+                        dynamicDataSource.deleteDataSourceByName(dataSourceName);
+                    }
                     //数据库中对应的所有表的表名()
                     List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
                     tableList.forEach(table -> {
@@ -260,10 +307,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                             // key=MUL则为外键
                             //key=PRI 则为主键
                             if (StringUtils.isNotBlank(tableStructure.key)) {
-                                if (tableStructure.key.equals("PRI")) {
+                                if ("PRI".equals(tableStructure.key)) {
                                     tableStructure.setKey("是");
                                 }
-                                if (tableStructure.key.equals("MUL")) {
+                                if ("MUL".equals(tableStructure.key)) {
                                     tableStructure.setKey("否");
                                     tableStructure.setExtra("是");
                                 } else {
@@ -273,15 +320,13 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                                 tableStructure.setKey("否");
                                 tableStructure.setExtra("否");
                             }
-                            tableStructure.setNull(tableStructure.Null.equals("YES") ? "是" : "否");
+                            tableStructure.setNull("YES".equals(tableStructure.Null) ? "是" : "否");
                         });
                         DocDBTableTemp tableTemp = new DocDBTableTemp().setTableName(table.name).setTableComment(table.comment).setTableStructureList(tableStructureList);
                         docDBTableTempList.add(tableTemp);
                     });
-//                    HashMap<String, Object> DBStructureInfo = new HashMap<>();
-//                    tableList.forEach(table -> DBStructureInfo.put(table.getName(), getTableStructureList(table.getName())));
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
-                    //把这个表格实体类封装成 List集合
+                    //把表格实体类封装成 List集合
                     map.put("section1", docDBTableTempList);
 //                    map.put()
                     break;
@@ -290,25 +335,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         }
         return map;
     }
-
-
-//    @Override
-//    public HashMap<String, Object> getDocumentContext(DateBaseLinkParam dateBaseLinkParam) {
-//        if (dateBaseLinkParam.getDbType() == DateBaseType.MYSQL) {
-//            //重载  setDB方法   少参数传入时从配置文件读入  --> 后面方法统一调用build
-//            //String url = 'aaaaaa';
-//            String url = "jdbc:mysql://" + dateBaseLinkParam.getDbPath() + ":" + dateBaseLinkParam.getPort() + "/" + dateBaseLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-//            DataSourceHolder.setDB(url, dateBaseLinkParam.getDbName(), dateBaseLinkParam.getUserName(), dateBaseLinkParam.getPassword(), "com.mysql.cj.jdbc.Driver");
-//            //DataSourceHolder.setDB("wdscgj");
-//            //数据库中对应的所有表的表名()
-//            List<TableByDB> tableList = documentService.getDBInfo(dateBaseLinkParam.getDbName());
-//            HashMap<String, Object> DBStructureInfo = new HashMap<>();
-//            tableList.forEach(table -> DBStructureInfo.put(table.getName(), documentService.getTableStructureList(table.getName())));
-//            return null;
-//        }
-//        return null;
-//    }
-
 
     @Override
     public void deleteTemplate(Integer templateId) {
