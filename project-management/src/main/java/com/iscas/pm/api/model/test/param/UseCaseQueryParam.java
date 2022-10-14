@@ -25,7 +25,6 @@ public class UseCaseQueryParam {
     private Integer pageSize;
 
     @ApiModelProperty(value = "所属模块id",required = true)
-    @NotNull(message = "所属模块id不能为空")
     private Integer modularId;
 
     @ApiModelProperty(value = "要查询的用例标题")

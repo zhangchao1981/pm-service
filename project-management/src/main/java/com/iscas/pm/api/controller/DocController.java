@@ -236,10 +236,13 @@ public class DocController {
     @ApiOperation(value = "删除文档模板", notes = "待开发")
     @ApiOperationSupport(order = 24)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
-    public void deleteTemplate(@NotNull(message = "模板id不能为空") Integer templateId) {
+    public void deleteTemplate(@NotNull(message = "模板id不能为空")@RequestParam Integer templateId) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         //是否要校验   receive_recode/ reference有记录   (目前是外键级联删)
-        documentService.deleteTemplate(templateId);
+        if (docTemplateService.getById(templateId)==null){
+            throw new IllegalArgumentException("删除模板失败，要删除的模板不存在");
+        }
+        docTemplateService.removeById(templateId);
     }
 
     @PostMapping("/addTemplate")
@@ -263,7 +266,7 @@ public class DocController {
         }
         template.setCreateTime(oldTemplate.getCreateTime());
         template.setUpdateTime(new Date());
-        if (!docTemplateService.save(template)) {
+        if (!docTemplateService.updateById(template)) {
             throw new IllegalArgumentException("要修改的template不存在");
         }
         //待添加校验( 存储路径是否改变 改变则删除服务器上的旧文档模板)

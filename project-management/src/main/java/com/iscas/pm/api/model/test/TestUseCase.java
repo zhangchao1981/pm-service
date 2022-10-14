@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iscas.pm.api.model.test.enums.UseCasePriorityEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
@@ -54,7 +56,7 @@ public class TestUseCase implements Serializable {
     private Integer requirementId;
 
     @ApiModelProperty(value = "用例类型", required = true)
-    @NotNull(message = "用例类型不能为空")
+    @NotNull(message = "测试用例类型不能为空")
     private UseCaseTypeEnum type;
 
     @ApiModelProperty(value = "前置条件")
@@ -69,11 +71,13 @@ public class TestUseCase implements Serializable {
     private Integer modularId;
 
     @ApiModelProperty("创建时间")
-    @JsonIgnore
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
-    @JsonIgnore
     @ApiModelProperty("更新时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
 }

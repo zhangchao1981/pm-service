@@ -68,6 +68,7 @@ public class TestController {
         testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
         testUseCase.setCreatorId(RequestHolder.getUserInfo().getId());
         testUseCase.setCreateTime(new Date());
+        testUseCase.setUpdateTime(new Date());
         testUseCaseService.save(testUseCase);
         return testUseCase;
     }

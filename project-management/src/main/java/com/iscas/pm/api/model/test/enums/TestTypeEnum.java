@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 /**
+ * 测试计划类型
  * @Author： zhangchao
  * @Date： 2022/10/9
  * @Description：
