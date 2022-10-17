@@ -3,6 +3,7 @@ package com.iscas.pm.api.controller;
 import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import com.iscas.pm.api.model.doc.DocumentTypeEnum;
+import com.iscas.pm.api.model.doc.TemplateTypeEnum;
 import com.iscas.pm.api.model.env.MediumEnum;
 import com.iscas.pm.api.model.project.ProjectStatusEnum;
 import com.iscas.pm.api.model.project.ProjectTypeEnum;
@@ -168,6 +169,13 @@ public class EnumController {
     @PostMapping(value = "/dataTypeEnum")
     public DataTypeEnum[] dataTypeEnums() {
         return DataTypeEnum.values();
+    }
+
+
+    @ApiOperation(value = "文档模板类型", notes = "文档模板类型")
+    @PostMapping(value = "/templateTypeEnum")
+    public TemplateTypeEnum[] templateTypeEnum() {
+        return TemplateTypeEnum.values();
     }
 
 }

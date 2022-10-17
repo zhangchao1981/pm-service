@@ -99,7 +99,7 @@ public class DocController {
 
     @PostMapping("/getDocumentBatch")
     @ApiOperation(value = "查询文档", notes = "根据指定文档目录或文档名查询对应文档,没有文档名时按目录查，有文档名时查询所在目录下的文档(根目录下查询所有文档)")
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 5)
     @PreAuthorize("hasAuthority('/projectDoc/getDocumentBatch')")
     public IPage<Document> getDocumentBatch(@RequestBody @Valid DocumentQueryParam documentQueryParam) {
         IPage<Document> documentIPage = documentService.page(new Page<>(documentQueryParam.getPageNum(), documentQueryParam.getPageSize()), new QueryWrapper<Document>()
@@ -109,7 +109,7 @@ public class DocController {
 
     @PostMapping("/createDocument")
     @ApiOperation(value = "文档生成", notes = "选择指定模板，自动生成对应文档并上传到服务器上,并在数据库记录文档信息")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 6)
     @PreAuthorize("hasAuthority('/projectDoc/createDocument')")
     public void createDocument(@RequestBody CreateDocumentParam createDocumentParam) throws IOException {
         documentService.createDocument(createDocumentParam);
@@ -117,7 +117,7 @@ public class DocController {
 
     @PostMapping("/addLocalDocument")
     @ApiOperation(value = "添加本地文档", notes = "将文档信息存储到mysql(包括文档在服务器上的存储路径)")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 7)
     @PreAuthorize("hasAuthority('/projectDoc/addLocalDocument')")
     public Document addLocalDocument(@Valid @RequestBody Document document) {
         if (StringUtils.isBlank(document.getPath())) {
@@ -132,7 +132,7 @@ public class DocController {
 
     @PostMapping("/deleteDocument")
     @ApiOperation(value = "删除文档")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocument')")
     public boolean deleteDocument(@NotNull @RequestParam Integer documentId) {
         return documentService.deleteDocument(documentId);
@@ -140,7 +140,7 @@ public class DocController {
 
     @PostMapping("/deleteDocumentBatch")
     @ApiOperation(value = "批量删除文档", notes = "参数不可为空,删除参数list中所有id对应的文档")
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 9)
     @PreAuthorize("hasAuthority('/projectDoc/deleteDocumentBatch')")
     public boolean deleteDocumentBatch(@NotEmpty(message = "参数Id列表不能为空") @RequestBody List<Integer> docIdList) {
         return documentService.deleteDocumentBatch(docIdList);
@@ -148,7 +148,7 @@ public class DocController {
 
     @PostMapping("/addReferenceDoc")
     @ApiOperation(value = "添加引用文档", notes = "templateId不存在则抛出 不符合数据库约束性，导致异常 ")
-    @ApiOperationSupport(order = 16)
+    @ApiOperationSupport(order = 10)
     @PreAuthorize("hasAuthority('/projectDoc/addReferenceDoc')")
     public Boolean addReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         checkDocTemplate(referenceDoc.getTemplateId());
@@ -157,7 +157,7 @@ public class DocController {
 
     @PostMapping("/editReferenceDoc")
     @ApiOperation(value = "修改引用文档")
-    @ApiOperationSupport(order = 17)
+    @ApiOperationSupport(order = 11)
     @PreAuthorize("hasAuthority('/projectDoc/editReferenceDoc')")
     public boolean editReferenceDoc(@Valid @RequestBody ReferenceDoc referenceDoc) {
         checkDocTemplate(referenceDoc.getTemplateId());
@@ -166,7 +166,7 @@ public class DocController {
 
     @PostMapping("/referenceDocList")
     @ApiOperation(value = "查询引用文档", notes = "")
-    @ApiOperationSupport(order = 18)
+    @ApiOperationSupport(order = 12)
     @PreAuthorize("hasAuthority('/projectDoc/referenceDocList')")
     public List<ReferenceDoc> referenceDocList(@NotNull(message = "引用文档Id不能为空") @RequestParam Integer templateId) {
         return referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
@@ -174,7 +174,7 @@ public class DocController {
 
     @PostMapping("/deleteReferenceDoc")
     @ApiOperation(value = "删除引用文档", notes = "")
-    @ApiOperationSupport(order = 19)
+    @ApiOperationSupport(order = 13)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReferenceDoc')")
     public boolean deleteReferenceDoc(@NotEmpty(message = "id不能为空") @RequestParam Integer referenceId) {
         if (!referenceDocService.remove(new QueryWrapper<ReferenceDoc>().eq("id", referenceId))) {
@@ -185,7 +185,7 @@ public class DocController {
 
     @PostMapping("/addReviseRecord")
     @ApiOperation(value = "添加修订记录", notes = "")
-    @ApiOperationSupport(order = 20)
+    @ApiOperationSupport(order = 14)
     @PreAuthorize("hasAuthority('/projectDoc/addReviseRecord')")
     public Boolean addReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
         checkDocTemplate(reviseRecord.getTemplateId());
@@ -194,7 +194,7 @@ public class DocController {
 
     @PostMapping("/editReviseRecord")
     @ApiOperation(value = "修改修订记录", notes = "")
-    @ApiOperationSupport(order = 21)
+    @ApiOperationSupport(order = 15)
     @PreAuthorize("hasAuthority('/projectDoc/editReviseRecord')")
     public boolean editReviseRecord(@Valid @RequestBody ReviseRecord reviseRecord) {
         checkDocTemplate(reviseRecord.getTemplateId());
@@ -206,7 +206,7 @@ public class DocController {
 
     @PostMapping("/ReviseRecordList")
     @ApiOperation(value = "查询修订记录", notes = "")
-    @ApiOperationSupport(order = 22)
+    @ApiOperationSupport(order = 16)
     @PreAuthorize("hasAuthority('/projectDoc/ReviseRecordList')")
     public List<ReviseRecord> reviseRecordList(@NotNull(message = "templateId不能为空") @RequestParam Integer templateId) {
         return reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
@@ -214,7 +214,7 @@ public class DocController {
 
     @PostMapping("/deleteReviseRecord")
     @ApiOperation(value = "删除修订记录")
-    @ApiOperationSupport(order = 23)
+    @ApiOperationSupport(order = 17)
     @PreAuthorize("hasAuthority('/projectDoc/deleteReviseRecord')")
     public boolean deleteReviseRecord(@NotNull(message = "id不能为空") @RequestParam Integer reviseRecordId) {
         if (!reviseRecordService.remove(new QueryWrapper<ReviseRecord>().eq("id", reviseRecordId))) {
@@ -234,7 +234,7 @@ public class DocController {
 
     @PostMapping("/deleteTemplate")
     @ApiOperation(value = "删除文档模板", notes = "待开发")
-    @ApiOperationSupport(order = 24)
+    @ApiOperationSupport(order = 18)
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
     public void deleteTemplate(@NotNull(message = "模板id不能为空")@RequestParam Integer templateId) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
@@ -247,7 +247,7 @@ public class DocController {
 
     @PostMapping("/addTemplate")
     @ApiOperation(value = "添加文档模板", notes = "上传本地文档模板到服务器")
-    @ApiOperationSupport(order = 25)
+    @ApiOperationSupport(order = 19)
     @PreAuthorize("hasAuthority('/projectDoc/addTemplate')")
     public DocTemplate addTemplate(@Valid @RequestBody DocTemplate docTemplate) throws IOException {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
@@ -256,7 +256,7 @@ public class DocController {
 
     @PostMapping("/editTemplate")
     @ApiOperation(value = "修改文档模板", notes = "")
-    @ApiOperationSupport(order = 26)
+    @ApiOperationSupport(order = 20)
     @PreAuthorize("hasAuthority('/projectDoc/editTemplate')")
     public boolean editTemplate(@Valid @RequestBody DocTemplate template) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
@@ -275,7 +275,7 @@ public class DocController {
 
     @GetMapping("/TemplateList")
     @ApiOperation(value = "查询文档模板", notes = "不带分页，用于生成文档时选择模板")
-    @ApiOperationSupport(order = 27)
+    @ApiOperationSupport(order = 21)
     @PreAuthorize("hasAuthority('/projectDoc/templateList')")
     public List<DocTemplate> templateList() {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
