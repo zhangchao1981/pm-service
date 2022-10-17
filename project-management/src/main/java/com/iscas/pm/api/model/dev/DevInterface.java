@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.iscas.pm.api.service.impl.dev.InterfaceDataDescription;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.type.JdbcType;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -23,7 +21,7 @@ import java.util.List;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 
-@TableName(value ="dev_interface")
+@TableName(value ="dev_interface",autoResultMap = true)
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "关联接口表", description = "关联接口信息，对应项目库dev_interface表")

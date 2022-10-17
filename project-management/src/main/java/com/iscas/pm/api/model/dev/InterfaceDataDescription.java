@@ -1,5 +1,6 @@
-package com.iscas.pm.api.service.impl.dev;
+package com.iscas.pm.api.model.dev;
 
+import com.iscas.pm.api.model.dev.DataTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 /**
  * @author by  lichang
  * @date 2022/10/17.
+ * 开发接口数据描述
  */
 @Data
 public class InterfaceDataDescription {
@@ -18,9 +20,7 @@ public class InterfaceDataDescription {
     private String dataName;
 
     @ApiModelProperty(value = "数据类型",required = true)
-    @NotBlank(message = "数据类型名称不能为空")
-    @Size(max = 25,message = "数据类型名称长度不能大于25")
-    private String dataType;
+    private DataTypeEnum dataType;
 
     @ApiModelProperty(value = "数据描述",required = true)
     @NotBlank(message = "数据描述不能为空")

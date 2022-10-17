@@ -69,11 +69,15 @@ public class EnumController {
 
     @ApiOperation(value = "需求来源", notes = "需求开发模块中开发需求的需求来源类型")
     @PostMapping(value = "/requirementSource")
-    public RequirementSourceEnum[] RequirementSourceEnum() {  return RequirementSourceEnum.values(); }
+    public RequirementSourceEnum[] RequirementSourceEnum() {
+        return RequirementSourceEnum.values();
+    }
 
     @ApiOperation(value = "需求类型", notes = "需求开发模块中开发需求的需求类型")
     @PostMapping(value = "/requirementType")
-    public RequirementTypeEnum[] RequirementTypeEnum() {  return RequirementTypeEnum.values(); }
+    public RequirementTypeEnum[] RequirementTypeEnum() {
+        return RequirementTypeEnum.values();
+    }
 
     @ApiOperation(value = "需求状态", notes = "获取需求状态枚举项列表")
     @PostMapping(value = "/requirementStatus")
@@ -89,7 +93,9 @@ public class EnumController {
 
     @ApiOperation(value = "关联接口类型", notes = "获取关联接口类型列表")
     @PostMapping(value = "/interfaceType")
-    public InterfaceTypeEnum[] interfaceTypeEnum() {  return InterfaceTypeEnum.values(); }
+    public InterfaceTypeEnum[] interfaceTypeEnum() {
+        return InterfaceTypeEnum.values();
+    }
 
     @ApiOperation(value = "测试用例等级", notes = "获取测试用例等级列表")
     @PostMapping(value = "/useCaseLevel")
@@ -105,7 +111,9 @@ public class EnumController {
 
     @ApiOperation(value = "测试类型", notes = "获取测试计划类型列表")
     @PostMapping(value = "/testType")
-    public TestTypeEnum[] TestTypeEnum() {  return TestTypeEnum.values(); }
+    public TestTypeEnum[] TestTypeEnum() {
+        return TestTypeEnum.values();
+    }
 
 
     @ApiOperation(value = "缺陷类型", notes = "获取缺陷类型列表")
@@ -116,19 +124,27 @@ public class EnumController {
 
     @ApiOperation(value = "缺陷状态", notes = "获取缺陷状态列表")
     @PostMapping(value = "/bugStatusEnums")
-    public BugStatusEnum[] bugStatusEnums() {  return BugStatusEnum.values(); }
+    public BugStatusEnum[] bugStatusEnums() {
+        return BugStatusEnum.values();
+    }
 
     @ApiOperation(value = "缺陷来源", notes = "获取缺陷来源列表")
     @PostMapping(value = "/bugSourceEnums")
-    public BugSourceEnum[] bugSourceEnums() {  return BugSourceEnum.values(); }
+    public BugSourceEnum[] bugSourceEnums() {
+        return BugSourceEnum.values();
+    }
 
     @ApiOperation(value = "缺陷处理结果", notes = "获取测试用例类型列表")
     @PostMapping(value = "/bugSolveResultEnums")
-    public BugSolveResultEnum[] bugSolveResultEnums() {  return BugSolveResultEnum.values(); }
+    public BugSolveResultEnum[] bugSolveResultEnums() {
+        return BugSolveResultEnum.values();
+    }
 
     @ApiOperation(value = "缺陷严重程度", notes = "获取测试类型列表")
     @PostMapping(value = "/bugSeverityEnums")
-    public BugSeverityEnum[] bugSeverityEnums() {  return BugSeverityEnum.values(); }
+    public BugSeverityEnum[] bugSeverityEnums() {
+        return BugSeverityEnum.values();
+    }
 
     @ApiOperation(value = "缺陷处理动作", notes = "获取缺陷类型列表")
     @PostMapping(value = "/bugProcessActionEnums")
@@ -138,12 +154,20 @@ public class EnumController {
 
     @ApiOperation(value = "缺陷出现频率", notes = "获取缺陷状态列表")
     @PostMapping(value = "/bugProbabilityEnums")
-    public BugProbabilityEnum[] bugProbabilityEnums() {  return BugProbabilityEnum.values(); }
+    public BugProbabilityEnum[] bugProbabilityEnums() {
+        return BugProbabilityEnum.values();
+    }
 
     @ApiOperation(value = "缺陷注入阶段", notes = "获取缺陷注入阶段列表")
     @PostMapping(value = "/bugInjectStageEnums")
-    public BugInjectStageEnum[] bugInjectStageEnums() {  return BugInjectStageEnum.values(); }
+    public BugInjectStageEnum[] bugInjectStageEnums() {
+        return BugInjectStageEnum.values();
+    }
 
-
+    @ApiOperation(value = "数据类型", notes = "开发接口数据描述中的数据类型")
+    @PostMapping(value = "/dataTypeEnum")
+    public DataTypeEnum[] dataTypeEnums() {
+        return DataTypeEnum.values();
+    }
 
 }
