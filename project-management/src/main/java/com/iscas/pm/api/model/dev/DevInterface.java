@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.type.JdbcType;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -75,6 +76,7 @@ public class DevInterface implements Serializable {
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     @ApiModelProperty(value = "接口数据元素说明", required = true)
+    @Valid
     private List<InterfaceDataDescription> dataDescription;
 
     @TableField(exist = false)
