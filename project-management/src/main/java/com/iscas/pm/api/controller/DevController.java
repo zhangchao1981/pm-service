@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -332,11 +333,14 @@ public class DevController {
 
     @ApiOperationSupport(order = 10)
     @PostMapping("/addDataRequirement")
-    @ApiOperation(value = "添加数据需求", notes = "")
+    @ApiOperation(value = "添加数据需求", notes = "添加一行数据需求")
     @PreAuthorize("hasAuthority('/projectDev/addDataRequirement')")
     public Boolean addDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
         if (devRequirementService.getById(dataRequirement.getRequireId())==null){
             throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
+        }
+        if (dataRequirementService.list( new QueryWrapper<DataRequirement>().eq("requirement_name",dataRequirement.getRequirementName())).size()>0){
+            throw new IllegalArgumentException("已有同名数据需求");
         }
        dataRequirementService.save(dataRequirement);
        return true;
@@ -344,10 +348,15 @@ public class DevController {
 
     @ApiOperationSupport(order = 9)
     @PostMapping("/deleteBatchDataRequirement")
-    @ApiOperation(value = "批量删除数据需求", notes = "")
+    @ApiOperation(value = "批量删除数据需求", notes = "批量删除数据需求")
     @PreAuthorize("hasAuthority('/projectDev/deleteBatchDataRequirement')")
-    public boolean deleteBatchDataRequirement(@NotNull(message = "id不能为空") @RequestBody  List<Integer> ids) {
-        return devRequirementService.removeByIds(ids);
+    public void deleteBatchDataRequirement( @RequestBody @NotEmpty(message = "要删除的数据需求id不能为空") List<Integer> ids) {
+        if (ids.size()==0){
+            throw new IllegalArgumentException("要删除的数据需求id不能为空");
+        }
+        if (!dataRequirementService.removeByIds(ids)){
+            throw new IllegalArgumentException("要删除的数据需求中存在已删除过了的");
+        }
     }
 
     @ApiOperationSupport(order = 11)
@@ -355,8 +364,15 @@ public class DevController {
     @ApiOperation(value = "修改数据需求")
     @PreAuthorize("hasAuthority('/projectDev/editDataRequirement')")
     public DataRequirement editDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
+        if (devRequirementService.getById(dataRequirement.getRequireId())==null){
+            throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
+        }
+        DataRequirement dataRequireByName = dataRequirementService.getOne(new QueryWrapper<DataRequirement>().eq("requirement_name", dataRequirement.getRequirementName()));
+        if ( dataRequireByName!=null&&dataRequireByName.getId()!=dataRequirement.getId()){
+            throw new IllegalArgumentException("已有同名数据需求");
+        }
         if (!dataRequirementService.updateById(dataRequirement)) {
-            throw new IllegalArgumentException("要修改的关联接口不存在！");
+            throw new IllegalArgumentException("要修改的数据需求不存在");
         }
         return dataRequirement;
     }

@@ -1,6 +1,8 @@
 package com.iscas.pm.api.model.dev;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -9,8 +11,9 @@ import javax.validation.constraints.NotNull;
  * @author by  lichang
  * @date 2022/10/17.
  */
+@Data
+@ApiModel(value = "数据需求中的行数据信息")
 public class DataRequirementInfo {
-
 
     @ApiModelProperty(value = "数据名称",required = true)
     @NotBlank(message = "数据名称不能为空")

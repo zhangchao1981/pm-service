@@ -15,20 +15,20 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 
 /**
  * @TableName data_requirement
  */
-@TableName(value = "data_requirement")
+@TableName(value = "data_requirement",autoResultMap = true)
 @Data
 public class DataRequirement implements Serializable {
 
     @ApiModelProperty(value = "id", notes = "不需前端传入")
     @TableId(type = IdType.AUTO)
     private Integer id;
-
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     @ApiModelProperty(value = "数据需求集合", required = true)
