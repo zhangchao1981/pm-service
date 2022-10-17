@@ -63,6 +63,32 @@ public class DevInterface implements Serializable {
     @NotNull(message = "开发需求id不能为空")
     private Integer requireId;
 
+
+    @ApiModelProperty(value = "数据元素名称",required = true)
+    @NotBlank(message = "数据元素名称不能为空")
+    @Size(max = 25,message = "数据元素名称长度不能大于25")
+    private String dataName;
+
+    @ApiModelProperty(value = "数据类型",required = true)
+    @NotBlank(message = "数据类型名称不能为空")
+    @Size(max = 25,message = "数据类型名称长度不能大于25")
+    private String dataType;
+
+    @ApiModelProperty(value = "数据描述",required = true)
+    @NotBlank(message = "数据描述不能为空")
+    @Size(max = 100,message = "数据描述长度不能大于100")
+    private String dataDescription;
+
+    @ApiModelProperty(value = "值域范围",required = true)
+    @NotBlank(message = "值域范围不能为空")
+    @Size(max = 100,message = "值域范围长度不能大于100")
+    private String valueRange;
+
+    @ApiModelProperty(value = "备注",required = true)
+    @NotBlank(message = "备注不能为空")
+    @Size(max = 100,message = "备注长度不能大于100")
+    private String note;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

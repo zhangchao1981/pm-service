@@ -14,12 +14,13 @@ import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
 import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
-import com.iscas.pm.api.model.dev.DevRequirementQueryParam;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.data.DocDBTableTemp;
 import com.iscas.pm.api.model.doc.data.DocPlanTask;
 import com.iscas.pm.api.model.doc.data.DocReviseRecord;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.doc.param.DocModular;
+import com.iscas.pm.api.model.doc.param.DocRequirement;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
@@ -163,7 +164,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
-                if (key.startsWith("modularList")){
+                if (key.startsWith("modularList")) {
                     builder.bind("modulars", policy);
                     builder.bind("precondition", policy);
                     builder.bind("successScene", policy);
@@ -171,7 +172,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     builder.bind("constraint", policy);
                 }
             } else if (key.startsWith("section")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
-                //这里暂时是写死的，需要补充
+                //这里暂时写死的，需要补充
                 builder.bind("tableStructureList", policy);
             }
         });
@@ -231,16 +232,28 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 DataSourceHolder.setDB(currentProject);
                 //所有modular (树结构)
                 List<DevModular> modularList = devModularService.list();
+                List<DocModular> docModularList = new ArrayList<>();
                 //根据开发需求查询的，所有含开发需求的modular的List集合
-                Map<Integer, List<DevRequirement>> requirementMap = devRequirementService.list().stream().collect(Collectors.groupingBy(DevRequirement::getModularId));
-                //将modular 中的开发需求属性填充上
-                modularList.forEach(modular->{
-                    if (requirementMap.containsKey(modular.getId())){
-                        modular.setDevRequirements(requirementMap.get(modular.getId()));
-                    }
+
+                // devRequirement替换为docRequirement
+                List<DevRequirement> devRequirementList = devRequirementService.list();
+                List<DocRequirement> docRequirementList = new ArrayList<>();
+                devRequirementList.forEach(devRequirement -> {
+                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("项目标识").toString()));
                 });
-                List<DevModular>  modularTreeList= TreeUtil.treeOut(modularList, DevModular::getId, DevModular::getParentId, DevModular::getModulars);
-                map.put("modularList",modularTreeList);//一级模块
+                Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
+                //用DocModular 将modular 中的开发需求属性填充上
+                modularList.forEach(modular -> {
+                    docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
+                });
+                docModularList.forEach(docModular -> {
+                            if (requirementMap.containsKey(docModular.getId())) {
+                                docModular.setDocRequirements(requirementMap.get(docModular.getId()));
+                            }
+                        }
+                );
+                List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
+                map.put("modularList", modularTreeList);//一级模块
                 break;
             }
 

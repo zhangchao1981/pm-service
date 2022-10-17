@@ -22,7 +22,6 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
-import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 /**
@@ -32,15 +31,12 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
  */
 
 
-@TableName(value = "dev_requirement", autoResultMap = true)
 @Accessors(chain = true)
-@ApiModel(value = "开发需求表", description = "开发需求表板，对应项目库dev_requirement表")
-@CheckTimeInterval(beginTime = {"startDate"}, endTime = {"endDate"}, message = "项目开始日期不能大于项目结束日期")
+@ApiModel(value = "文档填充开发需求信息", description = "开发需求")
 @Data
 public class DocRequirement {
 
     @ApiModelProperty(value = "需求编号，系统自动生成，添加接口无需传参")
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
     public DocRequirement(DevRequirement devRequirement) {
@@ -64,12 +60,9 @@ public class DocRequirement {
     }
 
     @ApiModelProperty(value = "需求用例名称", required = true)
-    @Size(max = 25, message = "需求用例名称长度不能大于25")
-    @NotBlank
     private String name;
 
     @ApiModelProperty(value = "需求描述", required = true)
-    @Size(max = 150, message = "需求描述长度不能大于150")
     private String requirementDescription;
 
     @ApiModelProperty(value = "责任人，前端无需传参")
@@ -79,14 +72,11 @@ public class DocRequirement {
     private Integer userId;
 
     @ApiModelProperty(value = "优先级", required = true)
-    @NotNull
     private PriorityEnum priority;
 
     @ApiModelProperty(value = "需求类型", required = true)
-    @NotNull
     private RequirementTypeEnum requirementType;
 
-    @TableField("is_change")
     @ApiModelProperty(value = "是否是变更需求")
     private Boolean changed;
 
@@ -117,7 +107,6 @@ public class DocRequirement {
     @ApiModelProperty(value = "实际结束日期")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @TableField(updateStrategy = IGNORED)
     private Date actualEndDate;
 
     @ApiModelProperty(value = "发生工时，前端无需传参，后端自动生")
@@ -126,17 +115,17 @@ public class DocRequirement {
     @ApiModelProperty(value = "需求来源", required = true)
     private RequirementSourceEnum source;
 
-    @ApiModelProperty(value = "用例说明", required = true)
-    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-    private UseCaseExplain useCaseExplain;
-
     @ApiModelProperty(value = "模块id", required = true)
-    @NotNull
     private Integer modularId;
+
+
+    @ApiModelProperty(value = "项目标识")
+    private String projectId;
 
     @ApiModelProperty(value = "原型设计图路径，多个用逗号隔开")
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private List<String> prototype;
+
 
     @JsonIgnore
     @ApiModelProperty(value = "更新时间")

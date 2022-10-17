@@ -51,12 +51,10 @@ public class TestController {
         Integer modularId = useCaseQueryParam.getModularId();
         String useCaseId = useCaseQueryParam.getId();
         String useCaseTitle = useCaseQueryParam.getTitle();
-
         QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
                 .eq(modularId != null, "modular_id", modularId)
                 .like(StringUtils.isNotBlank(useCaseId), "id", useCaseId)
                 .like(StringUtils.isNotBlank(useCaseTitle), "title", useCaseTitle);
-
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
 
@@ -68,7 +66,6 @@ public class TestController {
         testUseCase.setCreator(RequestHolder.getUserInfo().getEmployeeName());
         testUseCase.setCreatorId(RequestHolder.getUserInfo().getId());
         testUseCase.setCreateTime(new Date());
-        testUseCase.setUpdateTime(new Date());
         testUseCaseService.save(testUseCase);
         return testUseCase;
     }

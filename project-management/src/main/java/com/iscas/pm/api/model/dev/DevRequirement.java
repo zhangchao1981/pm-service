@@ -41,7 +41,7 @@ public class DevRequirement implements Serializable {
     @NotBlank
     private String name;
 
-    @ApiModelProperty(value = "需求描述",required = true)
+    @ApiModelProperty(value = "需求描述/性能需求描述",required = true)
     @Size(max = 150,message = "需求描述长度不能大于150")
     private String requirementDescription;
 

@@ -1,0 +1,41 @@
+spring:
+  # 文件上传
+  application:
+    name: time-schedule
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: root
+    password: iscas654321
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+  # 控制台输出sql语句
+  type-enums-package: com.iscas.pm.api.model.project
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启下划线转驼峰
+    map-underscore-to-camel-case: true
+server:
+  port: 7007
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:7001/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+logging:
+  level:
+    root: info
+  file: logs/${spring.application.name}.log
+
+
