@@ -26,7 +26,6 @@ public class DevModular implements Serializable {
 
     @ApiModelProperty(value = "模块名称", required = true)
     @Size(max = 25, message = "模块名称长度不能大于25")
-
     private String name;
 
     @NotNull(message = "父节点id不能为空")
@@ -46,7 +45,9 @@ public class DevModular implements Serializable {
     @Size(max = 25, message = "返回值类型长度不能大于25")
     private String type;
 
-
+    @ApiModelProperty(value = "模块描述", required = true)
+    @Size(max = 100, message = "模块描述长度不能大于100")
+    private String description;
 
     public DevModular() {
         type = String.valueOf(DevTypeEnum.Modular);

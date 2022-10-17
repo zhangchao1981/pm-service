@@ -29,6 +29,9 @@ public class DocModular {
     @ApiModelProperty(value = "模块名称", required = true)
     private String name;
 
+    @ApiModelProperty(value = "项目标识")
+    private String projectId;
+
     @ApiModelProperty(value = "父节点id", required = true)
     private Integer parentId;
 
@@ -38,16 +41,17 @@ public class DocModular {
     @ApiModelProperty(value = "子需求(输出文档用)")
     private List<DocRequirement> docRequirements;
 
-    @ApiModelProperty(value = "项目标识")
-    private String projectId;
+    @ApiModelProperty(value = "模块描述")
+    private String description;
 
 
     public DocModular(DevModular devModular) {
         this.id = devModular.getId();
         this.name = devModular.getName();
+        this.description = devModular.getDescription();
         this.parentId = devModular.getParentId();
         this.modulars = devModular.getModulars();
-        if (devModular.getDevRequirements()!=null){
+        if (devModular.getDevRequirements() != null) {
             List<DocRequirement> docRequirements = new ArrayList<>();
             devModular.getDevRequirements().forEach(devRequirement -> docRequirements.add(new DocRequirement(devRequirement)));
             this.docRequirements = docRequirements;

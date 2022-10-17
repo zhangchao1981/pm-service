@@ -11,7 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -73,14 +72,14 @@ public class DevController {
         return TreeUtil.treeOut(devModularService.list(), DevModular::getId, DevModular::getParentId, DevModular::getModulars);
     }
 
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 4)
     @PostMapping("/devChildModularList")
     @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>", response = DevModular.class)
     public List<DevModular> devChildModularList(@NotNull(message = "id不能为空") @RequestParam Integer id) {
         return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id));
     }
 
-    @ApiOperationSupport(order = 4)
+    @ApiOperationSupport(order = 5)
     @PostMapping("/deleteDevModular")
     @ApiOperation(value = "删除项目模块", notes = "")
     @PreAuthorize("hasAuthority('/projectDev/deleteDevModular')")
@@ -98,7 +97,7 @@ public class DevController {
         return true;
     }
 
-    @ApiOperationSupport(order = 5)
+    @ApiOperationSupport(order = 6)
     @PostMapping("/addDevRequirement")
     @ApiOperation(value = "添加开发需求", notes = "开发需求允许重名")
     @PreAuthorize("hasAuthority('/projectDev/addDevRequirement')")

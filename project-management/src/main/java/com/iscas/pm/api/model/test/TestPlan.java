@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iscas.pm.api.model.test.enums.TestTypeEnum;
+import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Accessors(chain = true)
 @ApiModel(value = "测试计划", description = " 测试计划，对应test_plan表")
+@CheckTimeInterval(beginTime = {"startTime"}, endTime = {"endTime"}, message = "测试计划开始日期不能大于结束日期")
 @TableName(value = "test_plan")
 @Data
 public class TestPlan implements Serializable {

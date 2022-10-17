@@ -31,7 +31,7 @@ public class DevModularServiceImpl extends ServiceImpl<DevModularMapper, DevModu
             }
         }
         //同级不能重名  添加重名校验
-        if (devModularMapper.selectList(new QueryWrapper<DevModular>().eq("parent_id", parentId).eq("name", devModular.getName())).size() > 0) {
+        if (devModularMapper.selectList(new QueryWrapper<DevModular>().eq("parent_id", parentId).eq("name", devModular.getName()).ne("id",devModular.getId())).size() > 0) {
             throw new IllegalArgumentException("模块名重复");
         }
         return devModular;
