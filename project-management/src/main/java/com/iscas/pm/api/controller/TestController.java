@@ -110,7 +110,6 @@ public class TestController {
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
         IPage<TestPlan> planIPage = testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
-
         //添加测试计划的统计计算结果
         planIPage.getRecords().stream().forEach(plan -> {
             plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });

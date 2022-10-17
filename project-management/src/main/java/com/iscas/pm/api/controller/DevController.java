@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiOperationSupport;
 import io.swagger.annotations.ApiSort;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,9 @@ public class DevController {
     TaskFeedbackService taskFeedbackService;
     @Autowired
     DevInterfaceService devInterfaceService;
+
+    @Autowired
+    DataRequirementService dataRequirementService;
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/addDevModular")
@@ -215,8 +219,9 @@ public class DevController {
     @PreAuthorize("hasAuthority('/projectDev/editDevTask')")
     public DevTask editDevTask(@Valid @RequestBody DevTask devTask) {
         DevTask db_task = devTaskService.getById(devTask.getId());
-        if (db_task == null)
+        if (db_task == null) {
             throw new IllegalArgumentException("修改的任务不存在！");
+        }
 
         devTask.setStatus(getDevStatus(devTask.getStartDate(), devTask.getEndDate()));
         devTaskService.updateById(devTask);
@@ -324,6 +329,47 @@ public class DevController {
         else
             return TaskStatusEnum.DELAYED;
     }
+
+    @ApiOperationSupport(order = 10)
+    @PostMapping("/addDataRequirement")
+    @ApiOperation(value = "添加数据需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/addDataRequirement')")
+    public Boolean addDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
+        if (devRequirementService.getById(dataRequirement.getRequireId())==null){
+            throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
+        }
+       dataRequirementService.save(dataRequirement);
+       return true;
+    }
+
+    @ApiOperationSupport(order = 9)
+    @PostMapping("/deleteBatchDataRequirement")
+    @ApiOperation(value = "批量删除数据需求", notes = "")
+    @PreAuthorize("hasAuthority('/projectDev/deleteBatchDataRequirement')")
+    public boolean deleteBatchDataRequirement(@NotNull(message = "id不能为空") @RequestBody  List<Integer> ids) {
+        return devRequirementService.removeByIds(ids);
+    }
+
+    @ApiOperationSupport(order = 11)
+    @PostMapping("/editDataRequirement")
+    @ApiOperation(value = "修改数据需求")
+    @PreAuthorize("hasAuthority('/projectDev/editDataRequirement')")
+    public DataRequirement editDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
+        if (!dataRequirementService.updateById(dataRequirement)) {
+            throw new IllegalArgumentException("要修改的关联接口不存在！");
+        }
+        return dataRequirement;
+    }
+
+    @ApiOperationSupport(order = 12)
+    @GetMapping("/DataRequirementList")
+    @ApiOperation(value = "查询数据需求列表", notes = "返回当前项目全部的数据需求")
+    @PreAuthorize("hasAuthority('/projectDev/DataRequirementList')")
+    public List<DataRequirement> dataRequirementList() {
+        return dataRequirementService.list();
+    }
+
+
 
 
 }

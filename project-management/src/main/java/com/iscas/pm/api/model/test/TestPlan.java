@@ -33,7 +33,6 @@ public class TestPlan implements Serializable {
     @ApiModelProperty(value = "测试计划名称", required = true)
     private String name;
 
-    @NotBlank(message = "[测试类型]不能为空")
     @ApiModelProperty(value = "测试计划类型", required = true)
     private TestTypeEnum testType;
 
