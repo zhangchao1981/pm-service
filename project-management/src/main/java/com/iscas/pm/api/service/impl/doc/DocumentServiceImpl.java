@@ -39,7 +39,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -232,18 +235,19 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 throw new IllegalArgumentException("未查询到该模板对应数据");
             case SoftwareRequirementsSpecification: {
                 DataSourceHolder.setDB(currentProject);
+
                 //所有modular (树结构)
                 List<DevModular> modularList = devModularService.list();
                 List<DocModular> docModularList = new ArrayList<>();
-                //根据开发需求查询的，所有含开发需求的modular的List集合
 
-                // devRequirement替换为docRequirement
+                //根据开发需求查询:所有含开发需求的modular的List集合, devRequirement替换为docRequirement
                 List<DevRequirement> devRequirementList = devRequirementService.list();
                 List<DocRequirement> docRequirementList = new ArrayList<>();
                 devRequirementList.forEach(devRequirement -> {
                     docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("项目标识").toString()));
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
+
                 //用DocModular 将modular 中的开发需求属性填充上
                 modularList.forEach(modular -> {
                     docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
@@ -255,15 +259,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                         }
                 );
                 List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
-                map.put("modularList", modularTreeList);//一级模块
+                map.put("modularList", modularTreeList);
                 break;
             }
 
             case SoftwareDevelopment: {
                 DataSourceHolder.setDB(currentProject);
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-                //Software项目软件环境信息获取
                 List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+
                 //项目计划信息获取
                 List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
                 List<ProjectMember> memberList = projectTeamService.memberRoleList();
@@ -272,7 +276,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     docPlanTaskList.add(new DocPlanTask(planTask));
                 });
                 map.put("memberList", memberList);
-                //project获取：
                 map.put("hardwareList", hardwareList);
                 map.put("softwareList", softwareList);
                 map.put("planTaskList", docPlanTaskList);
@@ -301,6 +304,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     } finally {
                         dynamicDataSource.deleteDataSourceByName(dataSourceName);
                     }
+
                     //数据库中对应的所有表的表名()
                     List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
                     tableList.forEach(table -> {

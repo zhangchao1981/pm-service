@@ -2,6 +2,22 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+
+-- ----------------------------
+-- Table structure for data_requirement
+-- ----------------------------
+DROP TABLE IF EXISTS `data_requirement`;
+CREATE TABLE `data_requirement`  (
+                                     `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+                                     `data_info` json NULL COMMENT '数据需求集合',
+                                     `requirement_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '数据需求名称',
+                                     `require_id` int(10) UNSIGNED NOT NULL COMMENT '开发需求id',
+                                     PRIMARY KEY (`id`) USING BTREE,
+                                     INDEX `fk_dev_require_data`(`require_id`) USING BTREE,
+                                     CONSTRAINT `fk_dev_require_data` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据需求表' ROW_FORMAT = Dynamic;
+
+
 -- ----------------------------
 -- Table structure for dev_interface
 -- ----------------------------
@@ -13,12 +29,14 @@ CREATE TABLE `dev_interface`  (
                                   `maintainer` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '维护人',
                                   `sender` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '发送方',
                                   `acceptor` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接收方',
-                                  `priority` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '优先级',
+                                  `priority` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'MIN' COMMENT '优先级',
                                   `require_id` int(6) UNSIGNED ZEROFILL NOT NULL COMMENT '需求id',
+                                  `data_description` json NULL COMMENT '接口数据元素说明',
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `fk_interface_requirement`(`require_id`) USING BTREE,
                                   CONSTRAINT `fk_interface_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
+
 
 -- ----------------------------
 -- Table structure for dev_modular
@@ -28,6 +46,7 @@ CREATE TABLE `dev_modular`  (
                                 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
                                 `name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模块名称',
                                 `parent_id` int(10) NOT NULL COMMENT '父节点id',
+                                `description` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模块描述',
                                 PRIMARY KEY (`id`) USING BTREE,
                                 INDEX `name`(`name`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '项目模块表' ROW_FORMAT = Dynamic;
@@ -114,6 +133,7 @@ CREATE TABLE `doc_document`  (
                                  CONSTRAINT `fk_directory_document` FOREIGN KEY (`directory_id`) REFERENCES `doc_directory` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文档记录表' ROW_FORMAT = Dynamic;
 
+
 -- ----------------------------
 -- Table structure for doc_reference
 -- ----------------------------
@@ -127,8 +147,7 @@ CREATE TABLE `doc_reference`  (
                                   `source` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '来源',
                                   `notes` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '备注',
                                   PRIMARY KEY (`id`) USING BTREE,
-                                  INDEX `fk_template`(`template_id`) USING BTREE,
-                                  CONSTRAINT `fk_template` FOREIGN KEY (`template_id`) REFERENCES `doc_template` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+                                  INDEX `fk_template`(`template_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '模板对应的引用文档表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -144,26 +163,8 @@ CREATE TABLE `doc_revise_record`  (
                                       `mender` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '修改人',
                                       `approver` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '批准人',
                                       PRIMARY KEY (`id`) USING BTREE,
-                                      INDEX `fk_reference_template`(`template_id`) USING BTREE,
-                                      CONSTRAINT `fk_reference_template` FOREIGN KEY (`template_id`) REFERENCES `doc_template` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+                                      INDEX `fk_reference_template`(`template_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文档修订记录表' ROW_FORMAT = Dynamic;
-
-
--- ----------------------------
--- Table structure for doc_template
--- ----------------------------
-DROP TABLE IF EXISTS `doc_template`;
-CREATE TABLE `doc_template`  (
-                                 `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-                                 `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '模板名称',
-                                 `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板描述',
-                                 `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '模板文件路径',
-                                 `create_time` datetime(0) NOT NULL COMMENT '模板创建时间',
-                                 `update_time` datetime(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '模板最后更新时间',
-                                 `maintainer` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '维护人',
-                                 `type` varchar(35) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板类型',
-                                 PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文档模板表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for env_hardware
