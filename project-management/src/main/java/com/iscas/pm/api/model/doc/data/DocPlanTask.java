@@ -59,12 +59,13 @@ public class DocPlanTask {
         this.wbs = planTask.getWbs();
         this.docPath = planTask.getDocPath();
         this.name = planTask.getName();
-        planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE);
-        this.workingDays = planTask.getWorkingDays();
-
+        if( planTask.getWorkerList()!=null){
+            planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE);
+            this.workingDays = planTask.getWorkingDays();
+        }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        this.startDate = formatter.format(planTask.getStartDate());
-        this.endDate = formatter.format(planTask.getEndDate());
+        this.startDate = planTask.getStartDate()!=null?formatter.format(planTask.getStartDate()):null;
+        this.endDate = planTask.getEndDate()!=null?formatter.format(planTask.getEndDate()):null;
         this.happenedHour = planTask.getHappenedHour();
         this.status = planTask.getStatus().getValue();
     }

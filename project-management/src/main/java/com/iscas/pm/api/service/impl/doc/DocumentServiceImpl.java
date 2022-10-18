@@ -135,6 +135,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
+        String currentProject = DataSourceHolder.getDB().databaseName;
         Document autoDoc = new Document();
         autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
         autoDoc.setUploader(RequestHolder.getUserInfo().getEmployeeName());
@@ -189,6 +190,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         autoDoc.setPath(upLoadPath);
         autoDoc.setUpdateTime(new Date());
         autoDoc.setCreateTime(new Date());
+        //切回当前项目
+        DataSourceHolder.setDB(currentProject);
         if (addLocalDocument(autoDoc) == null) {
             throw new IOException("自动上传文档失败");
         }
@@ -210,7 +213,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         });
         map.put("reviseRecordList", docReviseRecordList);
         map.put("referenceList", referenceList);
-        DataSourceHolder.setDB("default");
+        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
         map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
         map.put("项目标识", projectDetailInfo.getBasicInfo().getId());
@@ -221,7 +224,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
 
         //获取模板类型
-        DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
 
         //根据模板id填充特定内容:
@@ -329,7 +331,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
                     //把表格实体类封装成 List集合
                     map.put("section1", docDBTableTempList);
-//                    map.put()
                     break;
                 }
             }

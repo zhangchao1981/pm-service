@@ -26,10 +26,21 @@ public class DataRequirementInfo {
     @ApiModelProperty(value = "是否可编辑，true可编辑",required = true)
     private Boolean canEdite;
 
+    @ApiModelProperty(value = "是否非空，true非空",required = true)
+    private Boolean notNull;
+
     @ApiModelProperty(value = "范围枚举",required = true)
     @NotBlank(message = "范围枚举不能为空")
     private String rangeEnumeration;
 
+    @ApiModelProperty(value = "数据类型",required = true)
+    private DataTypeEnum dataType;
+
+
     @ApiModelProperty(value = "备注，可填可不填",required = true)
     private String note;
+
+
+
+
 }
