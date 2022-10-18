@@ -388,8 +388,8 @@ public class DevController {
     @GetMapping("/dataRequirementListByDevRequire")
     @ApiOperation(value = "查询开发需求对应的数据需求列表", notes = "根据开发需求id查询对应数据需求")
     @PreAuthorize("hasAuthority('/projectDev/dataRequirementListByDevRequire')")
-    public List<DataRequirement> dataRequirementListByDevRequire(@NotNull(message = "开发需求id不能为空") Integer requirementId) {
-        return dataRequirementService.list(new QueryWrapper<DataRequirement>().eq("require_id",requirementId));
+    public List<DataRequirement> dataRequirementListByDevRequire(Integer requirementId) {
+        return dataRequirementService.list(new QueryWrapper<DataRequirement>().eq(requirementId!=null,"require_id",requirementId));
     }
 
 
