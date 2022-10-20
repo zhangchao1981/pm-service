@@ -1,12 +1,15 @@
 package com.iscas.pm.api.service.impl.test;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestExecuteLogMapper;
 import com.iscas.pm.api.mapper.test.TestPlanMapper;
 import com.iscas.pm.api.mapper.test.TestUseCaseMapper;
 import com.iscas.pm.api.model.test.*;
 import com.iscas.pm.api.model.test.param.EditBatchExecuteLogParam;
+import com.iscas.pm.api.model.test.param.TestExecuteLogParam;
 import com.iscas.pm.api.service.TestExecuteLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.StringUtils.isNumeric;
 
 
 /**
@@ -37,8 +42,8 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         //是否需要校验 planId+测试用例id对应的执行记录重复？
 
         //校验planId是否有效
-        if (testPlanMapper.selectById(planId)==null){
-                throw new IllegalArgumentException("planId不存在");
+        if (testPlanMapper.selectById(planId) == null) {
+            throw new IllegalArgumentException("planId不存在");
         }
         //去重，查询useCaseList
         List<Integer> caseIdList = idList.stream().distinct().collect(Collectors.toList());
@@ -59,7 +64,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         Boolean pass = editBatchExecuteLogParam.getPass();
         String testPerson = editBatchExecuteLogParam.getTestPerson();
         List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
-        if(localList.size()<1){
+        if (localList.size() < 1) {
             throw new IllegalArgumentException("要修改的执行记录id不存在");
         }
         if (pass == null && StringUtils.isEmpty(testPerson)) {
@@ -77,6 +82,18 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
             }
         });
         return true;
+    }
+
+    @Override
+    public IPage<TestExecuteLog> testExecuteLogList(TestExecuteLogParam testExecuteLogParam) {
+        String logIdOrTitle = testExecuteLogParam.getLogIdOrTitle();
+
+        Page<TestExecuteLog> page = new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize());
+        QueryWrapper<TestExecuteLog> executeLogQueryWrapper = new QueryWrapper<TestExecuteLog>()
+                .eq(testExecuteLogParam.getPlanId() != null, "plan_id", testExecuteLogParam.getPlanId())
+                .eq(isNumeric(logIdOrTitle), "use_case_id",logIdOrTitle==null?null:Integer.valueOf(logIdOrTitle))
+                .or().like(logIdOrTitle != null, "title", logIdOrTitle);
+        return testExecuteLogMapper.selectPage(page, executeLogQueryWrapper);
     }
 }
 

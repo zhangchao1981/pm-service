@@ -125,14 +125,6 @@ public class TestController {
             return  testPlanService.list();
     }
 
-    @ApiOperationSupport(order = 7)
-    @PostMapping("/testPlan")
-    @ApiOperation(value = "测试计划详情", notes = "查看测试计划对应的测试用例及执行情况")
-    @PreAuthorize("hasAuthority('/test/testPlan')")
-    public IPage<TestExecuteLog> testPlan(@RequestBody TestExecuteQueryParam executeQueryParam) {
-        return testExecuteLogService.page(new Page<>(executeQueryParam.getPageNum(), executeQueryParam.getPageSize()),
-                new QueryWrapper<TestExecuteLog>().eq("plan_id", executeQueryParam.getPlanId()));
-    }
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/addTestPlan")
@@ -187,16 +179,17 @@ public class TestController {
     public List<TestExecuteLog> addTestExecuteLog(@Valid @RequestBody AddTestExecultLogParam addTestExecultLogParam) {
         return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
     }
-
+    //和查询测试计划详情接口合并，增加查询条件
     @ApiOperationSupport(order = 12)
     @PostMapping("/testExecuteLogList")
-    @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表")
+    @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
     @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
-        Integer planId = testExecuteLogParam.getPlanId();
-        return testExecuteLogService.page(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()),
-                new QueryWrapper<TestExecuteLog>().eq(planId != null, "plan_id", planId));
+        return  testExecuteLogService.testExecuteLogList(testExecuteLogParam);
     }
+
+
+
 
     @ApiOperationSupport(order = 13)
     @PostMapping("/editBatchTestExecuteLog")
