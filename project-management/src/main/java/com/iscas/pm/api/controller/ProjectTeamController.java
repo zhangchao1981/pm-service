@@ -1,6 +1,5 @@
 package com.iscas.pm.api.controller;
 
-import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.project.ProjectUserRole;
 import com.iscas.pm.api.service.ProjectTeamService;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
@@ -12,9 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao

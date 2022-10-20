@@ -102,7 +102,7 @@ public class TestController {
 
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
-    @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表")
+    @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表(分页)")
     @PreAuthorize("hasAuthority('/test/testPlanList')")
     public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
@@ -114,6 +114,15 @@ public class TestController {
         planIPage.getRecords().stream().forEach(plan -> {
             plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
         return   planIPage;
+    }
+
+
+    @ApiOperationSupport(order = 7)
+    @GetMapping("/allTestPlanList")
+    @ApiOperation(value = "查询全部测试计划", notes = "查询当前项目下全部的测试计划列表(不分页)")
+    @PreAuthorize("hasAuthority('/test/allTestPlanList')")
+    public List<TestPlan> allTestPlanList() {
+            return  testPlanService.list();
     }
 
     @ApiOperationSupport(order = 7)

@@ -34,6 +34,7 @@ public class DataRequirementInfo {
     private String rangeEnumeration;
 
     @ApiModelProperty(value = "数据类型",required = true)
+    @NotNull(message = "数据类型不能为空")
     private DataTypeEnum dataType;
 
 

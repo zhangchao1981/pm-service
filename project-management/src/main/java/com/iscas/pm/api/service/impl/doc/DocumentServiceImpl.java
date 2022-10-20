@@ -175,7 +175,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     builder.bind("branchScene", policy);
                     builder.bind("constraint", policy);
                 }
-            } else if (key.startsWith("section")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
+            } else if (key.startsWith("docDBTableTemps")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
                 //这里暂时写死的，需要补充
                 builder.bind("tableStructureList", policy);
             }
@@ -334,7 +334,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     });
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
                     //把表格实体类封装成 List集合
-                    map.put("section1", docDBTableTempList);
+                    map.put("docDBTableTemps", docDBTableTempList);
                     break;
                 }
             }
