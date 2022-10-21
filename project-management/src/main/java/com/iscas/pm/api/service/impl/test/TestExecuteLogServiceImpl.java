@@ -87,13 +87,12 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
     @Override
     public IPage<TestExecuteLog> testExecuteLogList(TestExecuteLogParam testExecuteLogParam) {
         String logIdOrTitle = testExecuteLogParam.getLogIdOrTitle();
-
         Page<TestExecuteLog> page = new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize());
         QueryWrapper<TestExecuteLog> executeLogQueryWrapper = new QueryWrapper<TestExecuteLog>()
                 .eq(testExecuteLogParam.getPlanId() != null, "plan_id", testExecuteLogParam.getPlanId())
                 .eq(testExecuteLogParam.getModularId()!=null,"modular_id",testExecuteLogParam.getModularId())
-                .eq(isNumeric(logIdOrTitle), "use_case_id",StringUtils.isEmpty(logIdOrTitle)?null:Integer.valueOf(logIdOrTitle))
-                .or().like(logIdOrTitle != null, "title", logIdOrTitle);
+                .and(logIdOrTitle != null,a->a.eq(isNumeric(logIdOrTitle), "use_case_id",StringUtils.isEmpty(logIdOrTitle)?null:Integer.valueOf(logIdOrTitle))
+                        .or().like("title", logIdOrTitle));
         return testExecuteLogMapper.selectPage(page, executeLogQueryWrapper);
     }
 }

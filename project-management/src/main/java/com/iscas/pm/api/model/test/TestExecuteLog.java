@@ -81,7 +81,7 @@ public class TestExecuteLog implements Serializable {
 
     @ApiModelProperty(value = "用例所属模块名",required = true)
     @NotNull(message = "用例所属模块名不能为空")
-    private Integer modularName;
+    private String modularName;
 
     @ApiModelProperty(value = "缺陷数量",required = false)
     private Integer defaultCount;
