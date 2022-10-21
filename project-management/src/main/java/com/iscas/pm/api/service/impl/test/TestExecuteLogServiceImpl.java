@@ -91,7 +91,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         QueryWrapper<TestExecuteLog> executeLogQueryWrapper = new QueryWrapper<TestExecuteLog>()
                 .eq(testExecuteLogParam.getPlanId() != null, "plan_id", testExecuteLogParam.getPlanId())
                 .eq(testExecuteLogParam.getModularId()!=null,"modular_id",testExecuteLogParam.getModularId())
-                .and(logIdOrTitle != null,a->a.eq(isNumeric(logIdOrTitle), "use_case_id",StringUtils.isEmpty(logIdOrTitle)?null:Integer.valueOf(logIdOrTitle))
+                .and(logIdOrTitle != null,a->a.eq(isNumeric(logIdOrTitle), "use_case_id",StringUtils.isEmpty(logIdOrTitle)||!isNumeric(logIdOrTitle)?null:Integer.valueOf(logIdOrTitle))
                         .or().like("title", logIdOrTitle));
         return testExecuteLogMapper.selectPage(page, executeLogQueryWrapper);
     }
