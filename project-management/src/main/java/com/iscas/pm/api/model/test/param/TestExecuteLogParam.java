@@ -30,11 +30,7 @@ public class TestExecuteLogParam {
     @ApiModelProperty(value = "用例所属模块id", required = true)
     private Integer modularId;
 
-
     @ApiModelProperty(value = "用例编号或标题", required = true)
     private String  logIdOrTitle;
-
-
-
 
 }

@@ -232,7 +232,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         //根据模板id填充特定内容:
         switch (templateType) {
             default:
-                throw new IllegalArgumentException("未查询到该模板对应数据");
+                break;
             case SoftwareRequirementsSpecification: {
                 DataSourceHolder.setDB(currentProject);
 

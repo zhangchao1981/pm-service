@@ -119,10 +119,10 @@ public class TestBug implements Serializable {
 
 
     @NotNull(message = "[关联计划id]不能为空")
-    @ApiModelProperty(value = "关联计划id",required = true)
+    @ApiModelProperty(value = "关联的测试计划id",required = true)
     private Integer planId;
 
-    @ApiModelProperty(value = "关联计划名称，无需传参，显示用")
+    @ApiModelProperty(value = "关联的测试计划名称，无需传参，显示用")
     @TableField(exist = false)
     private String planName;
 
