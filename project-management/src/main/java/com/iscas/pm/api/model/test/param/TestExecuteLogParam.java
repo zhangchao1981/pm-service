@@ -27,8 +27,7 @@ public class TestExecuteLogParam {
     @NotNull(message = "测试计划id不能为空")
     private Integer planId;
 
-    @ApiModelProperty(value = "测试计划id", required = true)
-    @NotNull(message = "测试计划id不能为空")
+    @ApiModelProperty(value = "用例所属模块id", required = true)
     private Integer modularId;
 
 
