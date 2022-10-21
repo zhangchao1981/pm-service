@@ -74,9 +74,13 @@ public class DevController {
 
     @ApiOperationSupport(order = 4)
     @PostMapping("/devChildModularList")
-    @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>", response = DevModular.class)
+    @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>,输入-1返回全部", response = DevModular.class)
     public List<DevModular> devChildModularList(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id));
+        if (id==-1){
+            return  devModularService.list();
+        }else {
+            return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id));
+        }
     }
 
     @ApiOperationSupport(order = 5)
