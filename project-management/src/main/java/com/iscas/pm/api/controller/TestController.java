@@ -58,6 +58,17 @@ public class TestController {
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
 
+
+    @ApiOperationSupport(order = 1)
+    @PostMapping("/testUseCaseListForPlan")
+    @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
+    @PreAuthorize("hasAuthority('/test/testUseCaseListForPlan')")
+    public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
+        return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
+    }
+
+
+
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
     @ApiOperation(value = "添加测试用例", notes = "添加测试用例")

@@ -86,7 +86,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
             }
         });
         return true;
-
+//       在修改执行记录状态时更新测试人员
 //        Boolean newPass = editBatchExecuteLogParam.getPass();
 //        String testPerson = editBatchExecuteLogParam.getTestPerson();
 //        Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
@@ -118,7 +118,6 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
 //        passList.forEach(pass->{
 //
 //        });
-//
 //        return true;
     }
 

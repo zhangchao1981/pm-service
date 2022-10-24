@@ -2,6 +2,9 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.test.TestUseCase;
+import com.iscas.pm.api.model.test.param.UseCaseForPlanQueryParam;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -10,4 +13,5 @@ import com.iscas.pm.api.model.test.TestUseCase;
 */
 public interface TestUseCaseService extends IService<TestUseCase> {
 
+    List<TestUseCase> testUseCaseListForPlan(UseCaseForPlanQueryParam useCaseForPlanQueryParam);
 }

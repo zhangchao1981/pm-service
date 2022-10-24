@@ -1,12 +1,19 @@
 package com.iscas.pm.api.service.impl.test;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestUseCaseMapper;
 import com.iscas.pm.api.model.test.TestUseCase;
+import com.iscas.pm.api.model.test.param.UseCaseForPlanQueryParam;
 import com.iscas.pm.api.service.TestUseCaseService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Scanner;
+
+import static org.apache.commons.lang.StringUtils.isNumeric;
 
 
 /**
@@ -17,8 +24,22 @@ import java.util.Scanner;
 @Service
 public class TestUseCaseServiceImpl extends ServiceImpl<TestUseCaseMapper, TestUseCase>
         implements TestUseCaseService {
+    @Autowired  TestUseCaseMapper testUseCaseMapper;
 
 
+    @Override
+    public List<TestUseCase> testUseCaseListForPlan(UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
+        List<Integer> modularList = useCaseForPlanQueryParam.getModularList();
+        String titleOrId = useCaseForPlanQueryParam.getTitleOrId();
+        Integer creatorId = useCaseForPlanQueryParam.getCreatorId();
+        QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
+                .in(modularList.size()>0, "modular_id", modularList)
+                .eq(creatorId !=null,"creator_id",creatorId)
+                .eq(useCaseForPlanQueryParam.getUseCaseType()!=null,"type",useCaseForPlanQueryParam.getUseCaseType())
+                .and(titleOrId!=null,q->q.eq(isNumeric(titleOrId), "id", org.springframework.util.StringUtils.isEmpty(titleOrId)||!isNumeric(titleOrId)?null:Integer.valueOf(titleOrId))
+                        .or().like("title", titleOrId));
+        return testUseCaseMapper.selectList(wrapper);
+    }
 }
 
 
