@@ -74,8 +74,6 @@ public class TestBug implements Serializable {
     @ApiModelProperty(value = "缺陷详细说明",required = true)
     private String detail;
 
-
-
     @ApiModelProperty("提出人姓名，前端无需传参")
     private String creator;
 
@@ -115,7 +113,6 @@ public class TestBug implements Serializable {
 
     @ApiModelProperty(value = "回归时长，小时，后端计算，前端无需传参")
     private Long regressionHours;
-
 
 
     @NotNull(message = "[关联计划id]不能为空")

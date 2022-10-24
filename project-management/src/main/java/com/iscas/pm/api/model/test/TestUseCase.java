@@ -72,7 +72,7 @@ public class TestUseCase implements Serializable {
 
     @ApiModelProperty(value = "所属模块名", required = true )
     @TableField(exist = false)
-    private Integer modularName;
+    private String modularName;
 
     @ApiModelProperty("创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
