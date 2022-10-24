@@ -29,16 +29,17 @@ public class TestUseCaseServiceImpl extends ServiceImpl<TestUseCaseMapper, TestU
 
     @Override
     public List<TestUseCase> testUseCaseListForPlan(UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
-        List<Integer> modularList = useCaseForPlanQueryParam.getModularList();
-        String titleOrId = useCaseForPlanQueryParam.getTitleOrId();
-        Integer creatorId = useCaseForPlanQueryParam.getCreatorId();
-        QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
-                .in(modularList.size()>0, "modular_id", modularList)
-                .eq(creatorId !=null,"creator_id",creatorId)
-                .eq(StringUtils.isNotBlank(useCaseForPlanQueryParam.getUseCaseType()),"type",useCaseForPlanQueryParam.getUseCaseType())
-                .and(StringUtils.isNotBlank(titleOrId),q->q.eq(isNumeric(titleOrId), "id", org.springframework.util.StringUtils.isEmpty(titleOrId)||!isNumeric(titleOrId)?null:Integer.valueOf(titleOrId))
-                        .or().like("title", titleOrId));
-        return testUseCaseMapper.selectList(wrapper);
+        return  testUseCaseMapper.testUseCaseListForPlan(useCaseForPlanQueryParam);
+//        List<Integer> modularList = useCaseForPlanQueryParam.getModularList();
+//        String titleOrId = useCaseForPlanQueryParam.getTitleOrId();
+//        Integer creatorId = useCaseForPlanQueryParam.getCreatorId();
+//        QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
+//                .in(modularList.size()>0, "modular_id", modularList)
+//                .eq(creatorId !=null,"creator_id",creatorId)
+//                .eq(StringUtils.isNotBlank(useCaseForPlanQueryParam.getUseCaseType()),"type",useCaseForPlanQueryParam.getUseCaseType())
+//                .and(StringUtils.isNotBlank(titleOrId),q->q.eq(isNumeric(titleOrId), "id", org.springframework.util.StringUtils.isEmpty(titleOrId)||!isNumeric(titleOrId)?null:Integer.valueOf(titleOrId))
+//                        .or().like("title", titleOrId));
+//        return testUseCaseMapper.selectList(wrapper);
     }
 }
 

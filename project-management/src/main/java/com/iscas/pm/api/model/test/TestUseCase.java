@@ -70,6 +70,10 @@ public class TestUseCase implements Serializable {
     @NotNull(message = "所属模块id不能为空")
     private Integer modularId;
 
+    @ApiModelProperty(value = "所属模块名", required = true )
+    @TableField(exist = false)
+    private Integer modularName;
+
     @ApiModelProperty("创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

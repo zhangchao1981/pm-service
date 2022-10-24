@@ -46,7 +46,7 @@
         <if test="param.requirementId !=null">
             and requirement_id=#{param.requirementId}
         </if>
-
+            and test_bug.create_time  BETWEEN  #{param.minCreateTime} and #{param.maxCreateTime}
     </select>
 
 </mapper>
