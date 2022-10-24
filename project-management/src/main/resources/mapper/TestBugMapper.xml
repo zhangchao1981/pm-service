@@ -40,9 +40,13 @@
         <if test="param.moduleId !=null">
             and module_id=#{param.moduleId}
         </if>
+        <if test="param.moduleId !=null">
+            and inject_stage=#{param.injectStage}
+        </if>
         <if test="param.requirementId !=null">
             and requirement_id=#{param.requirementId}
         </if>
+
     </select>
 
 </mapper>

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static org.apache.commons.lang.StringUtils.isNumeric;
+
 
 /**
  * @author lichang
@@ -53,6 +55,11 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public IPage<TestBug> bugList(TestBugQueryParam param) {
+        String titleOrId = param.getTitleOrId();
+        if (titleOrId !=null&&isNumeric(titleOrId)){
+            param.setId(Integer.valueOf(titleOrId));
+        }
+        param.setTitle(param.getTitleOrId());
         return testBugMapper.getTestBugList(new Page<>(param.getPageNum(), param.getPageSize()), param);
     }
 

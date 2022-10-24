@@ -35,8 +35,8 @@ public class TestUseCaseServiceImpl extends ServiceImpl<TestUseCaseMapper, TestU
         QueryWrapper<TestUseCase> wrapper = new QueryWrapper<TestUseCase>()
                 .in(modularList.size()>0, "modular_id", modularList)
                 .eq(creatorId !=null,"creator_id",creatorId)
-                .eq(useCaseForPlanQueryParam.getUseCaseType()!=null,"type",useCaseForPlanQueryParam.getUseCaseType())
-                .and(titleOrId!=null,q->q.eq(isNumeric(titleOrId), "id", org.springframework.util.StringUtils.isEmpty(titleOrId)||!isNumeric(titleOrId)?null:Integer.valueOf(titleOrId))
+                .eq(StringUtils.isNotBlank(useCaseForPlanQueryParam.getUseCaseType()),"type",useCaseForPlanQueryParam.getUseCaseType())
+                .and(StringUtils.isNotBlank(titleOrId),q->q.eq(isNumeric(titleOrId), "id", org.springframework.util.StringUtils.isEmpty(titleOrId)||!isNumeric(titleOrId)?null:Integer.valueOf(titleOrId))
                         .or().like("title", titleOrId));
         return testUseCaseMapper.selectList(wrapper);
     }
