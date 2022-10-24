@@ -23,8 +23,14 @@
             and current_processor=#{param.currentProcessor}
         </if>
         <if test="param.modularList !=null and param.modularList.size()>0 ">
-            and modular_id in #{param.modularList}
+            and modular_id in
+            <foreach item="modularId" index="index" collection="modularList"
+                     open="(" separator="," close=")">
+                #{param.modularList}
+            </foreach>
         </if>
+
+
         <if test="param.titleOrId !=null ">
             and (title = #{param.titleOrId} or convert(id,char)=  #{param.titleOrId})
         </if>
