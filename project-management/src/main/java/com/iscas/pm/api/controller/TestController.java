@@ -46,7 +46,7 @@ public class TestController {
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseList")
     @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表")
-    @PreAuthorize("hasAuthority('/test/testUseCaseList')")
+//    @PreAuthorize("hasAuthority('/test/testUseCaseList')")
     public IPage<TestUseCase> testUseCaseList(@Valid @RequestBody UseCaseQueryParam useCaseQueryParam) {
         Integer modularId = useCaseQueryParam.getModularId();
         String useCaseId = useCaseQueryParam.getId();
@@ -62,7 +62,7 @@ public class TestController {
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseListForPlan")
     @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
-    @PreAuthorize("hasAuthority('/test/testUseCaseListForPlan')")
+//    @PreAuthorize("hasAuthority('/test/testUseCaseListForPlan')")
     public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
         return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
     }
@@ -114,7 +114,7 @@ public class TestController {
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
     @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表(分页)")
-    @PreAuthorize("hasAuthority('/test/testPlanList')")
+//    @PreAuthorize("hasAuthority('/test/testPlanList')")
     public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
         QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
@@ -131,7 +131,7 @@ public class TestController {
     @ApiOperationSupport(order = 7)
     @GetMapping("/allTestPlanList")
     @ApiOperation(value = "查询全部测试计划", notes = "查询当前项目下全部的测试计划列表(不分页)")
-    @PreAuthorize("hasAuthority('/test/allTestPlanList')")
+//    @PreAuthorize("hasAuthority('/test/allTestPlanList')")
     public List<TestPlan> allTestPlanList() {
             return  testPlanService.list();
     }
@@ -194,7 +194,7 @@ public class TestController {
     @ApiOperationSupport(order = 12)
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
-    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
+//    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
         return  testExecuteLogService.testExecuteLogList(testExecuteLogParam);
     }

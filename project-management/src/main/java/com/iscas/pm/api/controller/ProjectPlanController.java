@@ -78,7 +78,7 @@ public class ProjectPlanController {
     @GetMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 7)
-    @PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
+    //@PreAuthorize("hasAuthority('/projectPlan/getTaskFeedbacks')")
     public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空") @RequestParam Integer taskId){
         return taskFeedbackService.selectListByTaskId(new TaskFeedback().setPlanTaskId(taskId));
     }
