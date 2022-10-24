@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static org.apache.commons.lang.StringUtils.isNumeric;
+
 
 /**
  * @author lichang
@@ -53,6 +55,18 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public IPage<TestBug> bugList(TestBugQueryParam param) {
+        String titleOrId = param.getTitleOrId();
+        if (titleOrId !=null&&isNumeric(titleOrId)){
+            param.setId(Integer.valueOf(titleOrId));
+        }
+        //设置时间区间初始值
+        if (param.getMinCreateTime()==null){
+            param.setMinCreateTime(new Date(1,1,1));
+        }
+        if (param.getMaxCreateTime()==null){
+            param.setMaxCreateTime(new Date(2199,1,1));
+        }
+        param.setTitle(param.getTitleOrId());
         return testBugMapper.getTestBugList(new Page<>(param.getPageNum(), param.getPageSize()), param);
     }
 
