@@ -28,8 +28,8 @@ public class TestUseCaseServiceImpl extends ServiceImpl<TestUseCaseMapper, TestU
 
 
     @Override
-    public List<TestUseCase> testUseCaseListForPlan(UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
-        return  testUseCaseMapper.testUseCaseListForPlan(useCaseForPlanQueryParam);
+    public List<TestUseCase> testUseCaseListForPlan(UseCaseForPlanQueryParam param) {
+        return  testUseCaseMapper.testUseCaseListForPlan(param);
 //        List<Integer> modularList = useCaseForPlanQueryParam.getModularList();
 //        String titleOrId = useCaseForPlanQueryParam.getTitleOrId();
 //        Integer creatorId = useCaseForPlanQueryParam.getCreatorId();
