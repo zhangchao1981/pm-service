@@ -52,6 +52,10 @@ public class TestExecuteLog implements Serializable {
     @ApiModelProperty(value = "测试人员姓名", required = true)
     private String testPerson;
 
+    @NotNull(message = "测试人员的用户id不能为空")
+    @ApiModelProperty(value = "测试人员的用户id", required = true)
+    private Integer testPersonId;
+
     @Size(max = 100, message = "编码长度不能超过100")
     @NotBlank(message = "用例标题不能为空")
     @ApiModelProperty(value = "用例标题", required = true)

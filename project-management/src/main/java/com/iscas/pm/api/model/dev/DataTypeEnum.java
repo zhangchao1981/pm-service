@@ -21,7 +21,14 @@ public enum DataTypeEnum {
 //    枚举（enum）
 //    集合（set）
     INT("INT","整型"),
-    FLOAT("FLOAT","浮点型");
+
+    FLOAT("FLOAT","浮点型"),
+
+    STRING("STRING","字符串"),
+
+    DATE("DATE","日期时间类型"),
+
+    JSON("JSON","json字符串类型");
 
 
     private final String code;

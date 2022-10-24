@@ -61,8 +61,10 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
 
     @Override
     public Boolean updateBatchTestExecute(EditBatchExecuteLogParam editBatchExecuteLogParam) {
+
         Boolean pass = editBatchExecuteLogParam.getPass();
         String testPerson = editBatchExecuteLogParam.getTestPerson();
+        Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
         List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
         if (localList.size() < 1) {
             throw new IllegalArgumentException("要修改的执行记录id不存在");
@@ -73,7 +75,9 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         if (pass != null) {
             localList.stream().forEach(e -> e.setPass(pass));
         } else {
-            localList.stream().forEach(e -> e.setTestPerson(testPerson));
+            localList.stream().forEach(e ->{e.setTestPerson(testPerson);
+                e.setTestPersonId(testPersonId);
+            } );
         }
         //更新对应记录：
         localList.forEach(e -> {
@@ -82,6 +86,40 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
             }
         });
         return true;
+
+//        Boolean newPass = editBatchExecuteLogParam.getPass();
+//        String testPerson = editBatchExecuteLogParam.getTestPerson();
+//        Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
+//        List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
+//        if (localList.size() < 1) {
+//            throw new IllegalArgumentException("要修改的执行记录id不存在");
+//        }
+//        if (newPass == null && StringUtils.isEmpty(testPerson)) {
+//            throw new IllegalArgumentException("无需要修改为的目标值，请求无效");
+//        }
+//        localList.forEach(localTestExecute->{
+//            Boolean pass = localTestExecute.getPass();
+//            if (newPass != null) {
+//                localTestExecute.setPass(newPass);
+//            } else {
+//                localList.stream().forEach(e ->{e.setTestPerson(testPerson);
+//                    e.setTestPersonId(testPersonId);
+//                } );
+//            }
+//            //更新对应记录：
+//            localList.forEach(e -> {
+//                if (testExecuteLogMapper.updateById(e) < 1) {
+//                    throw new IllegalArgumentException("要修改的执行记录id不存在");
+//                }
+//            });
+//
+//        });
+//
+//        passList.forEach(pass->{
+//
+//        });
+//
+//        return true;
     }
 
     @Override
