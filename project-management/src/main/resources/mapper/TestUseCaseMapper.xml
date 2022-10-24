@@ -12,27 +12,23 @@
     <select id="testUseCaseListForPlan" resultType="com.iscas.pm.api.model.test.TestUseCase">
         SELECT <include refid="Base_Column_List" />
         FROM test_use_case ,dev_modular
-        WHERE test_use_case.module_id=dev_modular.id
+        WHERE test_use_case.modular_id=dev_modular.id
         <if test="param.creatorId !=null">
-            and test_use_case.creatorId=#{param.creatorId}
+            and test_use_case.creator_id=#{param.creatorId}
         </if>
         <if test="param.useCaseType !=null and param.useCaseType != ''">
             and type =#{param.useCaseType}
         </if>
-        <if test="param.currentProcessor !=null and param.currentProcessor != ''">
-            and current_processor=#{param.currentProcessor}
-        </if>
         <if test="param.modularList !=null and param.modularList.size()>0 ">
             and modular_id in
-            <foreach item="modularId" index="index" collection="modularList"
+            <foreach item="modularId" index="index" collection="param.modularList"
                      open="(" separator="," close=")">
-                #{param.modularList}
+                #{modularId}
             </foreach>
         </if>
 
-
         <if test="param.titleOrId !=null ">
-            and (title = #{param.titleOrId} or convert(id,char)=  #{param.titleOrId})
+            and (title like CONCAT(CONCAT('%',#{param.titleOrId,jdbcType=VARCHAR}),'%') or convert(test_use_case.id,char)=  #{param.titleOrId})
         </if>
     </select>
 
