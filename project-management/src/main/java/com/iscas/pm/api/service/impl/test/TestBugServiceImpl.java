@@ -56,7 +56,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
     @Override
     public IPage<TestBug> bugList(TestBugQueryParam param) {
         String titleOrId = param.getTitleOrId();
-        if (titleOrId !=null&&isNumeric(titleOrId)){
+        if (!StringUtils.isBlank(titleOrId)&&isNumeric(titleOrId)){
             param.setId(Integer.valueOf(titleOrId));
         }
         //设置时间区间初始值

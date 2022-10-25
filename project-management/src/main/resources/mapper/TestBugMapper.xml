@@ -13,11 +13,12 @@
         <include refid="Base_Column_List" />
         FROM test_bug ,dev_modular,test_plan
         WHERE test_bug.module_id=dev_modular.id and test_bug.plan_id=test_plan.id
-        <if test="param.id !=null">
-            and test_bug.id like concat('%',#{param.id},'%')
-        </if>
         <if test="param.title !=null and param.title != ''">
-            and title like concat('%',#{param.title},'%')
+            and( title like concat('%',#{param.title},'%')
+            <if test="param.id !=null">
+                OR test_bug.id like concat('%',#{param.id},'%')
+            </if>
+            )
         </if>
         <if test="param.currentProcessor !=null and param.currentProcessor != ''">
             and current_processor=#{param.currentProcessor}
@@ -40,7 +41,7 @@
         <if test="param.moduleId !=null">
             and module_id=#{param.moduleId}
         </if>
-        <if test="param.moduleId !=null">
+        <if test="param.injectStage !=null and param.injectStage != ''">
             and inject_stage=#{param.injectStage}
         </if>
         <if test="param.requirementId !=null">

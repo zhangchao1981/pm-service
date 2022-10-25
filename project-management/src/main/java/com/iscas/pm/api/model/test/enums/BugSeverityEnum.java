@@ -14,7 +14,7 @@ public enum BugSeverityEnum {
 
     DEADLY("DEADLY", "致命"),
     CRITICAL("CRITICAL", "严重"),
-    NORMAL("MIN", "一般"),
+    NORMAL("NORMAL", "一般"),
     SLIGHT("SLIGHT", "轻微");
 
     private final String code;

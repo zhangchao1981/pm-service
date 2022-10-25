@@ -66,12 +66,17 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         String testPerson = editBatchExecuteLogParam.getTestPerson();
         Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
         List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
+        //查询记录，判断数据是否存在
         if (localList.size() < 1) {
             throw new IllegalArgumentException("要修改的执行记录id不存在");
         }
+
+        //拒绝无效更改
         if (pass == null && StringUtils.isEmpty(testPerson)) {
             throw new IllegalArgumentException("无需要修改为的目标值，请求无效");
         }
+
+        //
         if (pass != null) {
             localList.stream().forEach(e -> e.setPass(pass));
         } else {

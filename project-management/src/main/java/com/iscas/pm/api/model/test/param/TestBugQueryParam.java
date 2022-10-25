@@ -1,6 +1,7 @@
 package com.iscas.pm.api.model.test.param;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,9 +28,11 @@ public class TestBugQueryParam {
     private Integer pageSize;
 
     @ApiModelProperty(value = "缺陷编号，前端无需传参",required = false)
+    @JsonIgnore
     private Integer id;
 
     @ApiModelProperty(value = "缺陷标题，前端无需传参",required = false)
+    @JsonIgnore
     private String title;
 
     @ApiModelProperty(value = "缺陷标题或编号")
