@@ -12,8 +12,10 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
+import com.iscas.pm.api.model.dev.DevInterface;
 import com.iscas.pm.api.model.dev.DevModular;
 import com.iscas.pm.api.model.dev.DevRequirement;
+import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.data.DocDBTableTemp;
 import com.iscas.pm.api.model.doc.data.DocPlanTask;
@@ -26,6 +28,7 @@ import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.*;
+import com.iscas.pm.api.service.impl.dev.DevInterfaceServiceImpl;
 import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.api.util.WordUtil;
@@ -86,6 +89,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     DevRequirementService devRequirementService;
     @Autowired
     DevModularService devModularService;
+    @Autowired
+    DevInterfaceService devInterfaceService;
 
 
     @Override
@@ -169,11 +174,14 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
                 if (key.startsWith("modularList")) {
-                    builder.bind("modulars", policy);
-                    builder.bind("precondition", policy);
-                    builder.bind("successScene", policy);
-                    builder.bind("branchScene", policy);
-                    builder.bind("constraint", policy);
+                    //软需
+                    builder.bind("modulars", policy)
+                            .bind("precondition", policy)
+                            .bind("successScene", policy)
+                            .bind("branchScene", policy)
+                            .bind("constraint", policy)
+                            .bind("dataDescription", policy)
+                            .useSpringEL();
                 }
             } else if (key.startsWith("docDBTableTemps")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
                 //这里暂时写死的，需要补充
@@ -249,6 +257,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
+                //性能需求
+                List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getStatus().equals("PERFORMANCE")).collect(Collectors.toList());
+
                 //用DocModular 将modular 中的开发需求属性填充上
                 modularList.forEach(modular -> {
                     docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
@@ -260,7 +271,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                         }
                 );
                 List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
+
+                List<DevInterface> externalInterfaceList = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
                 map.put("modularList", modularTreeList);
+                map.put("performanceReqList", performanceReqList);
+                map.put("externalInterfaceList", externalInterfaceList);
                 break;
             }
 

@@ -94,7 +94,7 @@ public class TestBug implements Serializable {
     private String currentProcessor;
 
     @ApiModelProperty(value = "当前处理人用户名",required = true)
-//    @NotBlank(message = "[当前处理人用户名]不能为空")
+    @NotBlank(message = "[当前处理人用户名]不能为空")
     private String currentProcessorUserName;
 
     @ApiModelProperty(value = "当前处理人id",required = true)

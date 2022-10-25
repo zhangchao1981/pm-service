@@ -4,6 +4,8 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.dev.DevInterface;
 
+import java.util.List;
+
 /**
 * @author 66410
 * @description 针对表【dev_interface(关联接口表)】的数据库操作Service
@@ -11,4 +13,5 @@ import com.iscas.pm.api.model.dev.DevInterface;
 */
 public interface DevInterfaceService extends IService<DevInterface> {
 
+    List<DevInterface> devInterfaceListByType(String type);
 }
