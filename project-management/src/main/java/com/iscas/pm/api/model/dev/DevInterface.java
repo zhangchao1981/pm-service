@@ -38,9 +38,17 @@ public class DevInterface implements Serializable {
     private String name;
 
 
-    @ApiModelProperty(value = "接口类型",required = true)
+    @ApiModelProperty(value = "接口类型",required = true,notes = "内部或外部接口")
     @NotNull(message = "接口类型不能为空")
     private InterfaceTypeEnum type;
+
+    @ApiModelProperty(value = "接口种类",notes = "API接口",required = true)
+    @Size(max = 25,message = "接口种类长度不能大于25")
+    private String category;
+
+
+    @ApiModelProperty(value = "接口描述",notes = "API接口",required = true)
+    private String description;
 
 
     @ApiModelProperty(value = "维护人，即新建接口的用户")
@@ -67,6 +75,8 @@ public class DevInterface implements Serializable {
     @ApiModelProperty(value = "开发需求id",required = true)
     @NotNull(message = "开发需求id不能为空")
     private Integer requireId;
+
+
 
 //
 //    @ApiModelProperty(value = "接口数据元素说明",required = true)

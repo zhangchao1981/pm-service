@@ -125,7 +125,7 @@ public class TestBug implements Serializable {
     private Long regressionHours;
 
 
-    @NotNull(message = "[关联计划id]不能为空")
+//    @NotNull(message = "[关联计划id]不能为空")
     @ApiModelProperty(value = "关联的测试计划id",required = true)
     private Integer planId;
 

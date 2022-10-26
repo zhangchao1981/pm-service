@@ -1,4 +1,4 @@
-package com.iscas.pm.api.model.doc.param;
+package com.iscas.pm.api.model.doc.data;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

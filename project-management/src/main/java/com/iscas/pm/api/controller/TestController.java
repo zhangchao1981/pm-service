@@ -16,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -194,9 +195,18 @@ public class TestController {
     @ApiOperationSupport(order = 12)
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
-//    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
+    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
         return  testExecuteLogService.testExecuteLogList(testExecuteLogParam);
+    }
+
+    //和查询测试计划详情接口合并，增加查询条件
+    @ApiOperationSupport(order = 12)
+    @GetMapping("/testExecuteLogListForSelect")
+    @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
+    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
+    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam  Integer modularId) {
+        return  testExecuteLogService.list( new QueryWrapper<TestExecuteLog>().eq(modularId!=null,"modular_id",modularId));
     }
 
 

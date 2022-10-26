@@ -12,23 +12,20 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.iscas.pm.api.mapper.doc.DocumentMapper;
 import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
-import com.iscas.pm.api.model.dev.DevInterface;
-import com.iscas.pm.api.model.dev.DevModular;
-import com.iscas.pm.api.model.dev.DevRequirement;
-import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
+import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.data.DocDBTableTemp;
+import com.iscas.pm.api.model.doc.data.DocInterface;
 import com.iscas.pm.api.model.doc.data.DocPlanTask;
 import com.iscas.pm.api.model.doc.data.DocReviseRecord;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
-import com.iscas.pm.api.model.doc.param.DocModular;
-import com.iscas.pm.api.model.doc.param.DocRequirement;
+import com.iscas.pm.api.model.doc.data.DocModular;
+import com.iscas.pm.api.model.doc.data.DocRequirement;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.*;
-import com.iscas.pm.api.service.impl.dev.DevInterfaceServiceImpl;
 import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.api.util.WordUtil;
@@ -91,6 +88,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     DevModularService devModularService;
     @Autowired
     DevInterfaceService devInterfaceService;
+    @Autowired
+    DataRequirementService dataRequirementService;
 
 
     @Override
@@ -173,18 +172,23 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
+
+                //不以list结尾的特殊列表,单独进行关联
                 if (key.startsWith("modularList")) {
-                    //软需
+
+                    //软需列表
                     builder.bind("modulars", policy)
                             .bind("precondition", policy)
                             .bind("successScene", policy)
                             .bind("branchScene", policy)
                             .bind("constraint", policy)
                             .bind("dataDescription", policy)
-                            .useSpringEL();
+                            .bind("dataInfo",policy);
                 }
-            } else if (key.startsWith("docDBTableTemps")) {  //session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
-                //这里暂时写死的，需要补充
+            } else if (key.startsWith("docDBTableTemps")) {
+
+                //数据库列表 :
+                // session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
                 builder.bind("tableStructureList", policy);
             }
         });
@@ -258,8 +262,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
                 //性能需求
-                List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getStatus().equals("PERFORMANCE")).collect(Collectors.toList());
-
+                List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
                 //用DocModular 将modular 中的开发需求属性填充上
                 modularList.forEach(modular -> {
                     docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
@@ -272,10 +275,30 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 );
                 List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
 
-                List<DevInterface> externalInterfaceList = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
+                //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
+                //如果用新建实体类  需要加属性和构造器   此处采用方案2
+                List<DocInterface> externalInterfaceList =new ArrayList<>();
+                List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
+                if (devInterfaces.size()>0){
+                    devInterfaces.forEach(devInterface->externalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                }
+                List<DocInterface> internalInterfaceList =new ArrayList<>();
+                List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
+                if (devInterfaces2.size()>0){
+                    devInterfaces2.forEach(devInterface->internalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                }
+                List<DataRequirement> dataRequirementList = dataRequirementService.list();
+                List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+                List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+
                 map.put("modularList", modularTreeList);
                 map.put("performanceReqList", performanceReqList);
-                map.put("externalInterfaceList", externalInterfaceList);
+                map.put("externalInterfaceList",externalInterfaceList);
+                map.put("internalInterfaceList",internalInterfaceList);
+                map.put("dataRequirementList",dataRequirementList);
+                map.put("hardwareList", hardwareList);
+                map.put("softwareList", softwareList);
+                map.put("docRequirementList",docRequirementList);
                 break;
             }
 
