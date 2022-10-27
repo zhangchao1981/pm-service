@@ -47,7 +47,7 @@ public class DevInterface implements Serializable {
     private String category;
 
 
-    @ApiModelProperty(value = "接口描述",notes = "API接口",required = true)
+    @ApiModelProperty(value = "接口描述",required = true)
     private String description;
 
 
@@ -75,8 +75,6 @@ public class DevInterface implements Serializable {
     @ApiModelProperty(value = "开发需求id",required = true)
     @NotNull(message = "开发需求id不能为空")
     private Integer requireId;
-
-
 
 //
 //    @ApiModelProperty(value = "接口数据元素说明",required = true)

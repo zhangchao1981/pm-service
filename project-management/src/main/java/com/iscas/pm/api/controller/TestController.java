@@ -60,6 +60,8 @@ public class TestController {
     }
 
 
+
+
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseListForPlan")
     @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
@@ -181,6 +183,9 @@ public class TestController {
         if (!testPlanService.removeById(planId)) {
             throw new IllegalArgumentException("要删除的测试计划id不存在");
         }
+
+        //级联删除该测试计划下导入的测试用例
+        testExecuteLogService.remove(new QueryWrapper<TestExecuteLog>().eq("plan_id", planId));
         return true;
     }
 

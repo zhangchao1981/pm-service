@@ -37,11 +37,18 @@ public class DataRequirementInfo {
     @NotNull(message = "数据类型不能为空")
     private DataTypeEnum dataType;
 
-
     @ApiModelProperty(value = "备注，可填可不填",required = true)
     private String note;
 
+    public String getCanEdite() {
+        return canEdite?"是":"否";
+    }
 
+    public String getNotNull() {
+        return notNull?"是":"否" ;
+    }
 
-
+    public String getDataType() {
+        return dataType.getValue();
+    }
 }

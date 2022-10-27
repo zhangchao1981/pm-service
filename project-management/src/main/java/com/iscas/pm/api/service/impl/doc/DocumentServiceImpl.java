@@ -43,6 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -166,7 +167,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
 
         //用户输入内容：
-        map.put("本文档版本号", createDocumentParam.getVersion());
+        map.put("version", createDocumentParam.getVersion());
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
         ConfigureBuilder builder = Configure.builder();
         map.keySet().forEach(key -> {
@@ -175,15 +176,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
                 //不以list结尾的特殊列表,单独进行关联
                 if (key.startsWith("modularList")) {
-
                     //软需列表
                     builder.bind("modulars", policy)
                             .bind("precondition", policy)
                             .bind("successScene", policy)
                             .bind("branchScene", policy)
                             .bind("constraint", policy)
-                            .bind("dataDescription", policy)
-                            .bind("dataInfo",policy);
+                            .bind("dataInfo",policy)
+                            .bind("dataDescriptionList",policy)
+                            .useSpringEL(false);
                 }
             } else if (key.startsWith("docDBTableTemps")) {
 
@@ -230,14 +231,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("referenceList", referenceList);
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
-        map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
-        map.put("项目标识", projectDetailInfo.getBasicInfo().getId());
-        map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
-        map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
-        map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
-        map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
-        map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
-
+        map.put("projectName", projectDetailInfo.getBasicInfo().getName());
+        map.put("projectId", projectDetailInfo.getBasicInfo().getId());
+//        map.put("projectStage", projectDetailInfo.getBasicInfo().getStatus());
+        map.put("requirementProvider", projectDetailInfo.getBasicInfo().getRequirementProvider());
+        map.put("projectSecret", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
+        map.put("manufacture", projectDetailInfo.getBasicInfo().getManufacture());
+        map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        map.put("currentDate",calendar.get(Calendar.YEAR)+"年"+ (calendar.get(Calendar.MONTH)+1)+"月");
         //获取模板类型
         TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
 
@@ -257,7 +260,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DevRequirement> devRequirementList = devRequirementService.list();
                 List<DocRequirement> docRequirementList = new ArrayList<>();
                 devRequirementList.forEach(devRequirement -> {
-                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("项目标识").toString()));
+                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()));
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
@@ -265,7 +268,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
                 //用DocModular 将modular 中的开发需求属性填充上
                 modularList.forEach(modular -> {
-                    docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
+                    docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
                 });
                 docModularList.forEach(docModular -> {
                             if (requirementMap.containsKey(docModular.getId())) {
@@ -280,17 +283,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DocInterface> externalInterfaceList =new ArrayList<>();
                 List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
                 if (devInterfaces.size()>0){
-                    devInterfaces.forEach(devInterface->externalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                    devInterfaces.forEach(devInterface->externalInterfaceList.add(new DocInterface(devInterface,map.get("projectId").toString(),map.get("projectName").toString())));
                 }
                 List<DocInterface> internalInterfaceList =new ArrayList<>();
                 List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
                 if (devInterfaces2.size()>0){
-                    devInterfaces2.forEach(devInterface->internalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                    devInterfaces2.forEach(devInterface->internalInterfaceList.add(new DocInterface(devInterface,map.get("projectId").toString(),map.get("projectName").toString())));
                 }
                 List<DataRequirement> dataRequirementList = dataRequirementService.list();
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
                 List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-
                 map.put("modularList", modularTreeList);
                 map.put("performanceReqList", performanceReqList);
                 map.put("externalInterfaceList",externalInterfaceList);

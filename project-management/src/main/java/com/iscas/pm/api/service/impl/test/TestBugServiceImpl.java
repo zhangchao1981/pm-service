@@ -102,6 +102,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
             throw new IllegalArgumentException("您没有处理该缺陷的权限");
 
+
+        db_testBug.setStatus(BugStatusEnum.RUNNING);
        super.updateById(db_testBug);
 
         //添加缺陷处理日志
