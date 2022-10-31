@@ -56,15 +56,15 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
     @Override
     public IPage<TestBug> bugList(TestBugQueryParam param) {
         String titleOrId = param.getTitleOrId();
-        if (!StringUtils.isBlank(titleOrId)&&isNumeric(titleOrId)){
+        if (!StringUtils.isBlank(titleOrId) && isNumeric(titleOrId)) {
             param.setId(Integer.valueOf(titleOrId));
         }
         //设置时间区间初始值
-        if (param.getMinCreateTime()==null){
-            param.setMinCreateTime(new Date(1,1,1));
+        if (param.getMinCreateTime() == null) {
+            param.setMinCreateTime(new Date(1, 1, 1));
         }
-        if (param.getMaxCreateTime()==null){
-            param.setMaxCreateTime(new Date(2199,1,1));
+        if (param.getMaxCreateTime() == null) {
+            param.setMaxCreateTime(new Date(2199, 1, 1));
         }
         param.setTitle(param.getTitleOrId());
         return testBugMapper.getTestBugList(new Page<>(param.getPageNum(), param.getPageSize()), param);
@@ -104,7 +104,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
 
         db_testBug.setStatus(BugStatusEnum.RUNNING);
-       super.updateById(db_testBug);
+        super.updateById(db_testBug);
 
         //添加缺陷处理日志
         TestBugProcessLog processLog = new TestBugProcessLog(bugId, BugProcessActionEnum.START, "");
@@ -126,7 +126,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
             throw new IllegalArgumentException("缺陷id不存在");
 
         //添加缺陷处理日志
-        String description = "给" + param.getTransferName() + ",指派说明：" + param.getExplain();
+        String description = "给" + param.getTransferName() + ",转办说明：" + param.getExplain();
         TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.TRANSFER, description);
         testBugProcessLogMapper.insert(processLog);
     }
@@ -145,7 +145,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
             throw new IllegalArgumentException("缺陷id不存在");
 
         //添加缺陷处理日志
-        String description = "给" + param.getTransferName() + ",转办说明：" + param.getExplain();
+        String description = "给" + param.getTransferName() + ",指派说明：" + param.getExplain();
         TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.DISPATCH, description);
         testBugProcessLogMapper.insert(processLog);
     }
@@ -155,7 +155,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug testBug = super.getById(param.getBugId());
         if (testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
-        if (testBug.getStatus()!=BugStatusEnum.RUNNING)
+        if (testBug.getStatus() != BugStatusEnum.RUNNING)
             throw new IllegalArgumentException("【进行中】状态的缺陷才能执行【已解决】操作");
         if (!testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
             throw new IllegalArgumentException("您没有处理该缺陷的权限");
@@ -186,7 +186,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug db_testBug = super.getById(bugId);
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
-        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.RUNNING)
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.RUNNING && db_testBug.getStatus() != BugStatusEnum.REOPEN)
             throw new IllegalArgumentException("缺陷状态为新建或运行中时，才可执行【延迟解决】操作");
         if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
             throw new IllegalArgumentException("您没有处理该缺陷的权限");

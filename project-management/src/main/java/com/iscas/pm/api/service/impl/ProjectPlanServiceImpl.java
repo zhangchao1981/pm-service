@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
+import com.iscas.pm.api.mapper.projectPlan.TaskFeedbackMapper;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
@@ -37,6 +38,8 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     ProjectPlanMapper projectPlanMapper;
     @Autowired
     TaskFeedbackService taskFeedbackService;
+    @Autowired
+    TaskFeedbackMapper taskFeedbackMapper;
     @Autowired
     DynamicDataSource dynamicDataSource;
 
@@ -251,6 +254,11 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
 
     @Override
     public Boolean importTemplate(String type) {
+        //若计划任务已经存在任务反馈，不允许导入模板
+        if (taskFeedbackMapper.selectList(new QueryWrapper<TaskFeedback>().isNotNull("plan_task_id")).size() > 0){
+            throw new IllegalArgumentException("当前计划已经填写过反馈，不允许通过模板导入计划");
+        }
+
         try {
             ScriptRunner runner = new ScriptRunner(dynamicDataSource.getConnection());
 

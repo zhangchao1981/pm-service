@@ -1,8 +1,6 @@
 package com.iscas.pm.api.model.doc.data;
 
-import com.iscas.pm.api.model.doc.TableByDB;
-import com.iscas.pm.api.model.doc.TableStructure;
-import lombok.Builder;
+import com.iscas.pm.api.model.doc.TableFieldInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,10 +15,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class DocDBTableTemp {
 
-    private  String tableName;
+    private  String dBTableName;
 
-    private String tableComment;
+    private String dBTableComment;
 
-    private List<TableStructure>  tableStructureList;
+    private List<TableFieldInfo> dBTableStructList;
 
 }

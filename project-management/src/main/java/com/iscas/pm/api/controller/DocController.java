@@ -279,7 +279,7 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/templateList')")
     public List<DocTemplate> templateList() {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
-        return docTemplateService.list();
+        return docTemplateService.list(new QueryWrapper<DocTemplate>().orderByAsc("type"));
     }
 
     @GetMapping("/templatePageList")
@@ -288,7 +288,7 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/templatePageList')")
     public IPage<DocTemplate> templatePageList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
-        return docTemplateService.page(new Page<>(pageNum, pageSize));
+        return docTemplateService.page(new Page<>(pageNum, pageSize),new QueryWrapper<DocTemplate>().orderByAsc("type"));
     }
 
     @PostMapping("/testDB")

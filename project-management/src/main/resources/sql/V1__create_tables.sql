@@ -25,17 +25,19 @@ DROP TABLE IF EXISTS `dev_interface`;
 CREATE TABLE `dev_interface`  (
                                   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '接口编号',
                                   `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接口名称',
-                                  `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接口类型',
-                                  `maintainer` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '维护人',
+                                  `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接口类型(内部/外部)',
+                                  `maintainer` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '维护人',
                                   `sender` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '发送方',
                                   `acceptor` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '接收方',
-                                  `priority` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'MIN' COMMENT '优先级',
+                                  `priority` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'MIN' COMMENT '优先级',
                                   `require_id` int(6) UNSIGNED ZEROFILL NOT NULL COMMENT '需求id',
-                                  `data_description` json NULL COMMENT '接口数据元素说明',
+                                  `data_description` json COMMENT '接口数据元素说明',
+                                  `category` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '接口种类(API)',
+                                  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '接口说明',
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `fk_interface_requirement`(`require_id`) USING BTREE,
                                   CONSTRAINT `fk_interface_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 10001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
 
 
 -- ----------------------------
@@ -56,18 +58,18 @@ CREATE TABLE `dev_modular`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `dev_requirement`;
 CREATE TABLE `dev_requirement`  (
-                                    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '需求编号  6位数',
-                                    `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求用例名称',
-                                    `worker` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '责任人',
-                                    `priority` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '优先级',
-                                    `requirement_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求类型',
-                                    `is_change` tinyint(4) UNSIGNED DEFAULT NULL COMMENT '变更需求  0: 无变更 1:有变更',
-                                    `status` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '状态',
-                                    `dev_progress` float DEFAULT NULL COMMENT '开发进度',
-                                    `schedule_hour` float(8, 0) DEFAULT NULL COMMENT '计划工时',
+                                     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '需求编号  6位数',
+                                     `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求用例名称',
+                                     `worker` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '责任人',
+                                     `priority` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '优先级',
+                                     `requirement_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求类型',
+                                     `is_change` tinyint(4) UNSIGNED DEFAULT NULL COMMENT '变更需求  0: 无变更 1:有变更',
+                                     `status` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '状态',
+                                     `dev_progress` float DEFAULT NULL COMMENT '开发进度',
+                                     `schedule_hour` float(8, 0) DEFAULT NULL COMMENT '计划工时',
   `start_date` datetime(0) DEFAULT NULL COMMENT '开始时间',
   `end_date` datetime(0) DEFAULT NULL COMMENT '结束时间',
-  `happend_hour` double(8, 0) DEFAULT NULL COMMENT '发生工时',
+  `happened_hour` double(8, 0) DEFAULT NULL COMMENT '发生工时',
   `source` varchar(17) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求来源',
   `use_case_explain` json COMMENT '用例说明',
   `modular_id` int(10) UNSIGNED NOT NULL COMMENT '模块id',
@@ -76,7 +78,9 @@ CREATE TABLE `dev_requirement`  (
   `create_time` datetime(0) DEFAULT NULL COMMENT '创建时间',
   `requirement_description` varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '需求描述',
   `user_id` int(10) DEFAULT NULL COMMENT '责任人的userId',
-  PRIMARY KEY (`id`, `prototype`) USING BTREE,
+  `actual_end_date` datetime(0) DEFAULT NULL COMMENT '实际结束时间',
+  `actual_start_date` datetime(0) DEFAULT NULL COMMENT '实际开始时间',
+  PRIMARY KEY (`id`) USING BTREE,
   INDEX `fk_requirement_modular`(`modular_id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   CONSTRAINT `fk_requirement_modular` FOREIGN KEY (`modular_id`) REFERENCES `dev_modular` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -89,15 +93,17 @@ DROP TABLE IF EXISTS `dev_task`;
 CREATE TABLE `dev_task`  (
                              `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
                              `name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
-                             `worker` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '责任人',
-                             `status` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务状态',
+                             `worker` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '责任人',
+                             `status` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '任务状态',
                              `schedule_hour` float NOT NULL COMMENT '计划工时',
-                             `happened_hour` float NULL DEFAULT NULL COMMENT '发生工时',
+                             `happened_hour` float DEFAULT 0 COMMENT '发生工时',
                              `start_date` datetime(0) NOT NULL COMMENT '开始时间',
                              `end_date` datetime(0) NOT NULL COMMENT '结束时间',
                              `require_id` int(6) UNSIGNED ZEROFILL NOT NULL COMMENT '开发需求id',
-                             `dev_progress` float NULL DEFAULT NULL COMMENT '开发进度',
-                             `worker_id` int(10) NULL DEFAULT NULL COMMENT '责任人id',
+                             `dev_progress` float DEFAULT 0 COMMENT '开发进度',
+                             `worker_id` int(10) DEFAULT NULL COMMENT '责任人id',
+                             `actual_start_date` datetime(0) DEFAULT NULL COMMENT '实际开始日期',
+                             `actual_end_date` datetime(0) DEFAULT NULL COMMENT '实际结束日期',
                              PRIMARY KEY (`id`) USING BTREE,
                              INDEX `fk_task_require`(`require_id`) USING BTREE,
                              CONSTRAINT `fk_task_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -355,18 +361,20 @@ CREATE TABLE `test_plan`  (
 DROP TABLE IF EXISTS `test_use_case`;
 CREATE TABLE `test_use_case`  (
                                   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '用例编号',
-                                  `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用例标题',
-                                  `level` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '等级',
-                                  `creator` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-                                  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                                  `update_time` datetime(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+                                  `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例标题',
+                                  `level` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '等级',
+                                  `creator_id` int(10) DEFAULT NULL COMMENT '创建人id',
+                                  `creator` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+                                  `create_time` datetime(0) DEFAULT NULL COMMENT '创建时间',
+                                  `update_time` datetime(0) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
                                   `requirement_id` int(10) UNSIGNED NOT NULL COMMENT '需求 id   外键',
-                                  `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用例类型',
-                                  `process_step` json NULL COMMENT '处理步骤(记录)',
-                                  `modular_id` int(10) NULL DEFAULT NULL COMMENT '所属模块id',
+                                  `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例类型',
+                                  `process_step` json COMMENT '处理步骤(记录)',
+                                  `modular_id` int(10) DEFAULT NULL COMMENT '所属模块id',
+                                  `precondition` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '前置条件',
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `fk_case_requirement`(`requirement_id`) USING BTREE,
                                   CONSTRAINT `fk_case_requirement` FOREIGN KEY (`requirement_id`) REFERENCES `dev_requirement` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE = InnoDB AUTO_INCREMENT = 100000 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '测试用例表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '测试用例表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

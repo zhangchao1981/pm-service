@@ -16,7 +16,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -47,7 +46,6 @@ public class TestController {
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseList")
     @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表")
-//    @PreAuthorize("hasAuthority('/test/testUseCaseList')")
     public IPage<TestUseCase> testUseCaseList(@Valid @RequestBody UseCaseQueryParam useCaseQueryParam) {
         Integer modularId = useCaseQueryParam.getModularId();
         String useCaseId = useCaseQueryParam.getId();
@@ -59,18 +57,12 @@ public class TestController {
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
 
-
-
-
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseListForPlan")
     @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
-//    @PreAuthorize("hasAuthority('/test/testUseCaseListForPlan')")
     public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
         return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
     }
-
-
 
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
@@ -117,7 +109,6 @@ public class TestController {
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
     @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表(分页)")
-//    @PreAuthorize("hasAuthority('/test/testPlanList')")
     public IPage<TestPlan> testPlanList(@Valid @RequestBody TestPlanQueryParam planQueryParam) {
         String titleOrWorker = planQueryParam.getTitleOrWorker();
         QueryWrapper<TestPlan> wrapper = new QueryWrapper<TestPlan>()
@@ -130,15 +121,12 @@ public class TestController {
         return   planIPage;
     }
 
-
     @ApiOperationSupport(order = 7)
     @GetMapping("/allTestPlanList")
     @ApiOperation(value = "查询全部测试计划", notes = "查询当前项目下全部的测试计划列表(不分页)")
-//    @PreAuthorize("hasAuthority('/test/allTestPlanList')")
     public List<TestPlan> allTestPlanList() {
             return  testPlanService.list();
     }
-
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/addTestPlan")
@@ -196,11 +184,10 @@ public class TestController {
     public List<TestExecuteLog> addTestExecuteLog(@Valid @RequestBody AddTestExecultLogParam addTestExecultLogParam) {
         return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
     }
-    //和查询测试计划详情接口合并，增加查询条件
+
     @ApiOperationSupport(order = 12)
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
-    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
         return  testExecuteLogService.testExecuteLogList(testExecuteLogParam);
     }
@@ -209,13 +196,9 @@ public class TestController {
     @ApiOperationSupport(order = 12)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
-    @PreAuthorize("hasAuthority('/test/testExecuteLogList')")
     public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam  Integer modularId) {
         return  testExecuteLogService.list( new QueryWrapper<TestExecuteLog>().eq(modularId!=null,"modular_id",modularId));
     }
-
-
-
 
     @ApiOperationSupport(order = 13)
     @PostMapping("/editBatchTestExecuteLog")
@@ -238,15 +221,6 @@ public class TestController {
         }
         return true;
     }
-
-//    @ApiOperationSupport(order = 15)
-//    @PostMapping("/testPlanStatistic")
-//    @ApiOperation(value = "测试计划统计数", notes = "查看测试计划对应统计数据")
-//    @PreAuthorize("hasAuthority('/test/useCaseAmountInPlan')")
-//    public TestPlanStatisticData useCaseAmountInPlan(@RequestParam Integer testPlanId) {
-//        return testPlanService.statisticData(testPlanId);
-//    }
-
 
     @ApiOperationSupport(order = 21)
     @PostMapping("/bugList")
@@ -342,8 +316,5 @@ public class TestController {
     public List<TestBugProcessLog> bugProgressLog(Integer bugId) {
         return testBugProcessLogService.list(new QueryWrapper<TestBugProcessLog>().eq("bug_id", bugId));
     }
-
-
-
 
 }
