@@ -57,12 +57,6 @@ public class TestController {
         return testUseCaseService.page(new Page<>(useCaseQueryParam.getPageNum(), useCaseQueryParam.getPageSize()), wrapper);
     }
 
-    @ApiOperationSupport(order = 1)
-    @PostMapping("/testUseCaseListForPlan")
-    @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
-    public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
-        return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
-    }
 
     @ApiOperationSupport(order = 2)
     @PostMapping("/addTestUseCase")
@@ -106,6 +100,8 @@ public class TestController {
         return true;
     }
 
+
+
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
     @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表(分页)")
@@ -127,6 +123,7 @@ public class TestController {
     public List<TestPlan> allTestPlanList() {
             return  testPlanService.list();
     }
+
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/addTestPlan")
@@ -178,6 +175,13 @@ public class TestController {
     }
 
     @ApiOperationSupport(order = 11)
+    @PostMapping("/testUseCaseListForPlan")
+    @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
+    public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
+        return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
+    }
+
+    @ApiOperationSupport(order = 12)
     @PostMapping("/addTestExecuteLog")
     @ApiOperation(value = "导入用例", notes = "批量导入测试用例到目标测试计划的用例执行记录表里")
     @PreAuthorize("hasAuthority('/test/addTestExecuteLog')")
@@ -185,7 +189,7 @@ public class TestController {
         return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
     }
 
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 13)
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
@@ -193,14 +197,14 @@ public class TestController {
     }
 
     //和查询测试计划详情接口合并，增加查询条件
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 14)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
     public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam  Integer modularId) {
         return  testExecuteLogService.list( new QueryWrapper<TestExecuteLog>().eq(modularId!=null,"modular_id",modularId));
     }
 
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 15)
     @PostMapping("/editBatchTestExecuteLog")
     @ApiOperation(value = "批量更改执行记录状态", notes = "批量完善执行记录是否通过及指定测试人员信息")
     @PreAuthorize("hasAuthority('/test/editBatchTestExecuteLog')")
@@ -208,7 +212,7 @@ public class TestController {
         return testExecuteLogService.updateBatchTestExecute(editBatchExecuteLogParam);
     }
 
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 16)
     @PostMapping("/deleteBatchTestExecuteLog")
     @ApiOperation(value = "批量删除用例执行记录", notes = "批量删除指定用例执行记录")
     @PreAuthorize("hasAuthority('/test/deleteBatchTestExecuteLog')")
@@ -222,14 +226,14 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 21)
+    @ApiOperationSupport(order = 17)
     @PostMapping("/bugList")
     @ApiOperation(value = "缺陷列表", notes = "返回符合条件的缺陷列表")
     public IPage<TestBug> bugList(@Valid @RequestBody TestBugQueryParam param) {
         return testBugService.bugList(param);
     }
 
-    @ApiOperationSupport(order = 22)
+    @ApiOperationSupport(order = 18)
     @PostMapping("/addBug")
     @ApiOperation(value = "新建缺陷", notes = "添加新缺陷")
     @PreAuthorize("hasAuthority('/test/addBug')")
@@ -238,7 +242,7 @@ public class TestController {
         return testBug;
     }
 
-    @ApiOperationSupport(order = 22)
+    @ApiOperationSupport(order = 19)
     @PostMapping("/editBug")
     @ApiOperation(value = "编辑缺陷", notes = "编辑缺陷，只能编辑部分信息")
     @PreAuthorize("hasAuthority('/test/editBug')")
@@ -247,7 +251,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 23)
+    @ApiOperationSupport(order = 20)
     @PostMapping("/transferBug")
     @ApiOperation(value = "转办缺陷", notes = "将缺陷转给其他人处理,缺陷归属人也一并转移")
     @PreAuthorize("hasAuthority('/test/transferBug')")
@@ -256,7 +260,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 24)
+    @ApiOperationSupport(order = 21)
     @PostMapping("/dispatchBug")
     @ApiOperation(value = "指派缺陷", notes = "将缺陷指派给其他人处理,缺陷归属人不变")
     @PreAuthorize("hasAuthority('/test/dispatchBug')")
@@ -265,7 +269,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 25)
+    @ApiOperationSupport(order = 22)
     @GetMapping("/startProcessBug")
     @ApiOperation(value = "开始处理缺陷", notes = "开始处理缺陷，更改缺陷状态为进行中")
     @PreAuthorize("hasAuthority('/test/startProcessBug')")
@@ -274,7 +278,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 26)
+    @ApiOperationSupport(order = 23)
     @PostMapping("/solveBug")
     @ApiOperation(value = "已解决缺陷", notes = "成功解决缺陷，填写解决反馈")
     @PreAuthorize("hasAuthority('/test/solveBug')")
@@ -283,7 +287,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 27)
+    @ApiOperationSupport(order = 24)
     @GetMapping("/delayedSolveBug")
     @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
     @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
@@ -292,7 +296,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 28)
+    @ApiOperationSupport(order = 25)
     @GetMapping("/reopenBug")
     @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
     @PreAuthorize("hasAuthority('/test/reopenBug')")
@@ -301,7 +305,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 29)
+    @ApiOperationSupport(order = 26)
     @PostMapping("/closeBug")
     @ApiOperation(value = "关闭缺陷", notes = "关闭缺陷")
     @PreAuthorize("hasAuthority('/test/closeBug')")
@@ -310,7 +314,7 @@ public class TestController {
         return true;
     }
 
-    @ApiOperationSupport(order = 30)
+    @ApiOperationSupport(order = 27)
     @GetMapping("/bugProgressLog")
     @ApiOperation(value = "缺陷处理日志", notes = "查询指定缺陷的处理日志")
     public List<TestBugProcessLog> bugProgressLog(Integer bugId) {

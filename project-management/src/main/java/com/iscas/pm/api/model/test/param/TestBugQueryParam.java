@@ -40,13 +40,13 @@ public class TestBugQueryParam {
     private String titleOrId;
 
     @ApiModelProperty(value = "当前处理人")
-    private String currentProcessor;
+    private List<String> currentProcessorList;
 
     @ApiModelProperty(value = "缺陷状态")
-    private String status;
+    private List<String> statusList;
 
     @ApiModelProperty("提出人")
-    private String creator;
+    private List<String> creatorList;
 
     @ApiModelProperty(value = "查询提出时间最小值")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -59,19 +59,19 @@ public class TestBugQueryParam {
     private Date maxCreateTime;
 
     @ApiModelProperty(value = "优先级")
-    private String priority;
+    private List<String> priorityList;
 
     @ApiModelProperty(value = "缺陷类型")
-    private String type;
+    private List<String> typeList;
 
     @ApiModelProperty(value = "关联计划id")
     private List<Integer> planIdList;
 
     @ApiModelProperty(value = "所属模块id")
-    private Integer moduleId;
+    private List<Integer> moduleIdList;
 
     @ApiModelProperty(value = "缺陷注入阶段")
-    private String injectStage;
+    private List<String> injectStageList;
 
     @ApiModelProperty(value = "关联需求id")
     private Integer requirementId;
