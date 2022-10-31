@@ -175,7 +175,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
                 //不以list结尾的特殊列表,单独进行关联
                 if (key.startsWith("modularList")) {
-
                     //软需列表
                     builder.bind("modulars", policy)
                             .bind("precondition", policy)
@@ -186,7 +185,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                             .bind("dataInfo",policy);
                 }
             } else if (key.startsWith("docDBTableTemps")) {
-
                 //数据库列表 :
                 // session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
                 builder.bind("tableStructureList", policy);
@@ -237,7 +235,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
         map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
         map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
-
         //获取模板类型
         TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
 

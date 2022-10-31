@@ -35,8 +35,12 @@
         <if test="param.type !=null and param.type != ''">
             and type=#{param.type}
         </if>
-        <if test="param.planId !=null">
-            and plan_id=#{param.planId}
+        <if test="param.planIdList !=null and param.planIdList.size()>0">
+            and plan_id in
+                <foreach item="planId" index="index" collection="param.planIdList"
+                    open="(" separator="," close=")">
+                    #{planId}
+                </foreach>
         </if>
         <if test="param.moduleId !=null">
             and module_id=#{param.moduleId}
