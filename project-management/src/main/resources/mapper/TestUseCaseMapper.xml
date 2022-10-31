@@ -16,6 +16,9 @@
         <if test="param.creatorId !=null">
             and test_use_case.creator_id=#{param.creatorId}
         </if>
+        <if test="param.requirementId !=null">
+            and requirement_id =#{param.requirementId}
+        </if>
         <if test="param.useCaseType !=null and param.useCaseType != ''">
             and type =#{param.useCaseType}
         </if>

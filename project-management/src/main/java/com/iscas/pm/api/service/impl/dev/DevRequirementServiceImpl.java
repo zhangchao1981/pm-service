@@ -52,21 +52,21 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             double progress = devTasks.stream().mapToInt(DevTask::getDevProgress).average().getAsDouble();
             devRequirement.setDevProgress(progress);
 
-            //任务完成
+            //需求完成
             if (devRequirement.getDevProgress() == 100) {
-                //计算任务实际结束时间=最晚反馈日期
+                //计算需求实际结束时间=最晚反馈日期
                 Optional<DevTask> max = devTasks.stream().filter(devTask -> devTask.getActualStartDate() != null).max(Comparator.comparing(DevTask::getActualEndDate));
                 Date actualEndDate = max.isPresent() ? max.get().getActualEndDate() : null;
                 devRequirement.setActualEndDate(actualEndDate);
 
-                //计算任务状态:计划结束日期>=实际结束时间 已完成；否则延迟完成
+                //计算需求状态:计划结束日期>=实际结束时间 已完成；否则延迟完成
                 if (devRequirement.getEndDate() == null || devRequirement.getEndDate().after(devRequirement.getActualEndDate())) {
                     devRequirement.setStatus(RequireStatusEnum.FINISHED);
                 } else {
                     devRequirement.setStatus(RequireStatusEnum.DELAYED_FINISH);
                 }
             }
-            //任务未完成
+            //需求未完成
             else {
                 devRequirement.setActualEndDate(null);
                 if (devRequirement.getEndDate() == null || new Date().before(devRequirement.getEndDate())) {
@@ -76,7 +76,7 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
                 }
             }
 
-            //更新计划任务
+            //更新需求
             super.updateById(devRequirement);
         }
 

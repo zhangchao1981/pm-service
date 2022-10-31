@@ -112,8 +112,15 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         Document document = documentMapper.selectById(id);
         if (document == null)
             throw new IllegalArgumentException("待删除的文档不存在");
-        if (StringUtils.isNotBlank(document.getPath()) && document.getType() != DocumentTypeEnum.LINK)
-            fastDFSUtil.delete(document.getPath());
+
+        try {
+            if (StringUtils.isNotBlank(document.getPath()) && document.getType() != DocumentTypeEnum.LINK)
+                fastDFSUtil.delete(document.getPath());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } finally {
+            documentMapper.deleteById(id);
+        }
         return true;
     }
 
@@ -122,7 +129,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         ids.forEach(id -> {
             deleteDocument(id);
         });
-        return null;
+        return true;
     }
 
     @Override
@@ -135,7 +142,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             try {
                 fastDFSUtil.download(document.getPath(), document.getName(), response);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("该文档存储路径已失效");
             }
         }
     }
@@ -166,30 +173,33 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
 
         //用户输入内容：
-        map.put("本文档版本号", createDocumentParam.getVersion());
+        map.put("version", createDocumentParam.getVersion());
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
-        ConfigureBuilder builder = Configure.builder();
+        //开启useSpringEL校验  不支持中文标签
+        ConfigureBuilder builder = Configure.builder().useSpringEL(false);
         map.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
+            }
 
-                //不以list结尾的特殊列表,单独进行关联
-                if (key.startsWith("modularList")) {
-                    //软需列表
-                    builder.bind("modulars", policy)
-                            .bind("precondition", policy)
-                            .bind("successScene", policy)
-                            .bind("branchScene", policy)
-                            .bind("constraint", policy)
-                            .bind("dataDescription", policy)
-                            .bind("dataInfo",policy);
-                }
-            } else if (key.startsWith("docDBTableTemps")) {
+            //不以list结尾的特殊列表,单独进行关联
+            if (key.contains("modularList")) {
+                //软需列表
+                builder.bind("modulars", policy)
+                        .bind("precondition", policy)
+                        .bind("successScene", policy)
+                        .bind("branchScene", policy)
+                        .bind("constraint", policy)
+                        .bind("dataInfo", policy)
+                        .bind("dataDescriptionList", policy);
+            }
+
+            if (key.contains("docDBTableTemps")) {
                 //数据库列表 :
-                // session底下的DocDBTableTemp(tableName=dev_interface, tableStructureList=
-                builder.bind("tableStructureList", policy);
+                builder.bind("dBTableStructList", policy);
             }
         });
+
         Configure config = builder.build();
         //可优化
         WordUtil.parse(template, map, out, config);
@@ -224,17 +234,22 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         reviseRecordList.forEach(reviseRecord -> {
             docReviseRecordList.add(new DocReviseRecord(reviseRecord));
         });
+        List<ProjectMember> memberList = projectTeamService.memberRoleList();
+        map.put("memberList", memberList);
         map.put("reviseRecordList", docReviseRecordList);
         map.put("referenceList", referenceList);
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
-        map.put("项目名称", projectDetailInfo.getBasicInfo().getName());
-        map.put("项目标识", projectDetailInfo.getBasicInfo().getId());
-        map.put("项目阶段", projectDetailInfo.getBasicInfo().getStatus());
-        map.put("需求提出方", projectDetailInfo.getBasicInfo().getRequirementProvider());
-        map.put("项目密级", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
-        map.put("研制单位", projectDetailInfo.getBasicInfo().getManufacture());
-        map.put("项目提出方", projectDetailInfo.getBasicInfo().getProjectProvider());
+        map.put("projectName", projectDetailInfo.getBasicInfo().getName());
+        map.put("projectId", projectDetailInfo.getBasicInfo().getId());
+//        map.put("projectStage", projectDetailInfo.getBasicInfo().getStatus());
+        map.put("requirementProvider", projectDetailInfo.getBasicInfo().getRequirementProvider());
+        map.put("projectSecret", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
+        map.put("manufacture", projectDetailInfo.getBasicInfo().getManufacture());
+        map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        map.put("currentDate", calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
         //获取模板类型
         TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
 
@@ -254,7 +269,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DevRequirement> devRequirementList = devRequirementService.list();
                 List<DocRequirement> docRequirementList = new ArrayList<>();
                 devRequirementList.forEach(devRequirement -> {
-                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("项目标识").toString()));
+                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()));
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
@@ -262,7 +277,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
                 //用DocModular 将modular 中的开发需求属性填充上
                 modularList.forEach(modular -> {
-                    docModularList.add(new DocModular(modular).setProjectId(map.get("项目标识").toString()));
+                    docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
                 });
                 docModularList.forEach(docModular -> {
                             if (requirementMap.containsKey(docModular.getId())) {
@@ -274,28 +289,27 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
                 //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
                 //如果用新建实体类  需要加属性和构造器   此处采用方案2
-                List<DocInterface> externalInterfaceList =new ArrayList<>();
+                List<DocInterface> externalInterfaceList = new ArrayList<>();
                 List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
-                if (devInterfaces.size()>0){
-                    devInterfaces.forEach(devInterface->externalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                if (devInterfaces.size() > 0) {
+                    devInterfaces.forEach(devInterface -> externalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
                 }
-                List<DocInterface> internalInterfaceList =new ArrayList<>();
+                List<DocInterface> internalInterfaceList = new ArrayList<>();
                 List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
-                if (devInterfaces2.size()>0){
-                    devInterfaces2.forEach(devInterface->internalInterfaceList.add(new DocInterface(devInterface,map.get("项目标识").toString())));
+                if (devInterfaces2.size() > 0) {
+                    devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
                 }
                 List<DataRequirement> dataRequirementList = dataRequirementService.list();
                 List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
                 List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-
                 map.put("modularList", modularTreeList);
                 map.put("performanceReqList", performanceReqList);
-                map.put("externalInterfaceList",externalInterfaceList);
-                map.put("internalInterfaceList",internalInterfaceList);
-                map.put("dataRequirementList",dataRequirementList);
+                map.put("externalInterfaceList", externalInterfaceList);
+                map.put("internalInterfaceList", internalInterfaceList);
+                map.put("dataRequirementList", dataRequirementList);
                 map.put("hardwareList", hardwareList);
                 map.put("softwareList", softwareList);
-                map.put("docRequirementList",docRequirementList);
+                map.put("docRequirementList", docRequirementList);
                 break;
             }
 
@@ -306,16 +320,19 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
                 //项目计划信息获取
                 List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
-                List<ProjectMember> memberList = projectTeamService.memberRoleList();
                 List<DocPlanTask> docPlanTaskList = new ArrayList<>();
                 planTaskList.forEach(planTask -> {
                     docPlanTaskList.add(new DocPlanTask(planTask));
                 });
-                map.put("memberList", memberList);
                 map.put("hardwareList", hardwareList);
                 map.put("softwareList", softwareList);
                 map.put("planTaskList", docPlanTaskList);
                 break;
+            }
+            case ConfigurationManagementPlan:{
+                DataSourceHolder.setDB(currentProject);
+                List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+                map.put("softwareList", softwareList);
             }
             case DatabaseDesignNotes: {
                 if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
@@ -345,32 +362,33 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                     List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
                     tableList.forEach(table -> {
                         //表结构数据处理
-                        List<TableStructure> tableStructureList = getTableStructureList(table.getName());
-                        tableStructureList.stream().forEach(tableStructure -> {
+                        List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(table.getName());
+                        tableFieldInfoList.stream().forEach(tableFieldInfo -> {
                             // key=MUL则为外键
                             //key=PRI 则为主键
-                            if (StringUtils.isNotBlank(tableStructure.key)) {
-                                if ("PRI".equals(tableStructure.key)) {
-                                    tableStructure.setKey("是");
+                            if (StringUtils.isNotBlank(tableFieldInfo.fieldKey)) {
+                                if ("PRI".equals(tableFieldInfo.fieldKey)) {
+                                    tableFieldInfo.setFieldKey("是");
                                 }
-                                if ("MUL".equals(tableStructure.key)) {
-                                    tableStructure.setKey("否");
-                                    tableStructure.setExtra("是");
+                                if ("MUL".equals(tableFieldInfo.fieldKey)) {
+                                    tableFieldInfo.setFieldKey("否");
+                                    tableFieldInfo.setFieldExtra("是");
                                 } else {
-                                    tableStructure.setExtra("否");
+                                    tableFieldInfo.setFieldExtra("否");
                                 }
                             } else {
-                                tableStructure.setKey("否");
-                                tableStructure.setExtra("否");
+                                tableFieldInfo.setFieldKey("否");
+                                tableFieldInfo.setFieldExtra("否");
                             }
-                            tableStructure.setNull("YES".equals(tableStructure.Null) ? "是" : "否");
+                            tableFieldInfo.setFieldNull("YES".equals(tableFieldInfo.fieldNull) ? "是" : "否");
                         });
-                        DocDBTableTemp tableTemp = new DocDBTableTemp().setTableName(table.name).setTableComment(table.comment).setTableStructureList(tableStructureList);
+                        DocDBTableTemp tableTemp = new DocDBTableTemp().setDBTableName(table.name).setDBTableComment(table.comment).setDBTableStructList(tableFieldInfoList);
                         docDBTableTempList.add(tableTemp);
                     });
                     //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
                     //把表格实体类封装成 List集合
                     map.put("docDBTableTemps", docDBTableTempList);
+                    map.put("DBName", createDocumentParam.getDbName());
                     break;
                 }
             }
@@ -394,7 +412,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
     @Override
-    public List<TableStructure> getTableStructureList(String tableName) {
+    public List<TableFieldInfo> getTableFieldInfoList(String tableName) {
         return documentMapper.getTableStructureList(tableName);
     }
 

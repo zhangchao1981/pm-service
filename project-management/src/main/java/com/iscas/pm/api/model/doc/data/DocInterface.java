@@ -65,12 +65,14 @@ public class DocInterface {
     private String description;
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-    private List<InterfaceDataDescription> dataDescription;
+    private List<InterfaceDataDescription> dataDescriptionList;
 
 
     private String projectId;
 
-    public DocInterface(DevInterface devInterface,String projectId) {
+    private String projectName;
+
+    public DocInterface(DevInterface devInterface,String projectId,String projectName) {
         this.id = devInterface.getId();
         this.name = devInterface.getName();
         this.type = devInterface.getType();
@@ -79,7 +81,10 @@ public class DocInterface {
         this.acceptor = devInterface.getAcceptor();
         this.priority = devInterface.getPriority();
         this.requireId = devInterface.getRequireId();
-        this.dataDescription = devInterface.getDataDescription();
+        this.dataDescriptionList = devInterface.getDataDescription();
         this.projectId = projectId;
+        this.projectName=projectName;
+        this.category=devInterface.getCategory();
+        this.description=devInterface.getDescription();
     }
 }

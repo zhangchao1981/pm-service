@@ -32,6 +32,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(!StringUtils.isEmpty(name), "name", name);
         queryWrapper.eq(!StringUtils.isEmpty(type), "type", type);
+        queryWrapper.orderByDesc("type");
         return roleMapper.selectList(queryWrapper);
     }
 
