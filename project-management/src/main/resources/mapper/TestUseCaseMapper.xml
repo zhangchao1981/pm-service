@@ -31,7 +31,7 @@
         </if>
 
         <if test="param.titleOrId !=null ">
-            and (title like CONCAT(CONCAT('%',#{param.titleOrId,jdbcType=VARCHAR}),'%') or convert(test_use_case.id,char)=  #{param.titleOrId})
+            and (title like CONCAT(CONCAT('%',#{param.titleOrId,jdbcType=VARCHAR}),'%') or convert(test_use_case.id,char) like CONCAT(CONCAT('%',#{param.titleOrId,jdbcType=VARCHAR}),'%') )
         </if>
     </select>
 

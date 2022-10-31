@@ -92,8 +92,8 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
                     .le(queryParam.getEndDate() != null, "end_date", queryParam.getEndDate())
                     .in(queryParam.getWorkerList() != null && queryParam.getWorkerList().size() > 0, "worker", queryParam.getWorkerList())
                     .eq(queryParam.getRequireStatus() != null, "status", queryParam.getRequireStatus())
-                    .and(queryParam.getNameOrCode() != null,wapper -> wapper.like( "id", queryParam.getNameOrCode())
-                            .or().like( "name", queryParam.getNameOrCode()));
+                    .and(queryParam.getNameOrCode() != null, wapper -> wapper.like("id", queryParam.getNameOrCode())
+                            .or().like("name", queryParam.getNameOrCode()));
             List<DevRequirement> devRequirementList = list(requirementQueryWrapper);
             if (devRequirementList.size() < 1) {
                 return null;
@@ -116,9 +116,9 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             taskQueryWrapper.ge(queryParam.getStartDate() != null, "start_date", queryParam.getStartDate())
                     .le(queryParam.getEndDate() != null, "end_date", queryParam.getEndDate())
                     .in(queryParam.getWorkerList() != null && queryParam.getWorkerList().size() > 0, "worker", queryParam.getWorkerList())
-                    .eq(queryParam.getRequireStatus() != null, "status", queryParam.getTaskStatus())
-                    .like(queryParam.getNameOrCode() != null, "id", queryParam.getNameOrCode())
-                    .or().like(queryParam.getNameOrCode() != null, "name", queryParam.getNameOrCode());
+                    .eq(queryParam.getTaskStatus() != null, "status", queryParam.getTaskStatus())
+                    .and(queryParam.getNameOrCode() != null,wrapper -> wrapper.like( "id", queryParam.getNameOrCode())
+                            .or().like( "name", queryParam.getNameOrCode()));
             List<DevTask> devTaskList = devTaskService.list(taskQueryWrapper);
             if (devTaskList.size() < 1) {
                 return null;
