@@ -20,20 +20,41 @@
             </if>
             )
         </if>
-        <if test="param.currentProcessor !=null and param.currentProcessor != ''">
-            and current_processor=#{param.currentProcessor}
+        <if test="param.currentProcessorList !=null and param.currentProcessorList.size()>0 ">
+            and current_processor in
+            <foreach item="currentProcessor" index="index" collection="param.currentProcessorList"
+                     open="(" separator="," close=")">
+                #{currentProcessor}
+            </foreach>
         </if>
-        <if test="param.status !=null and param.status != ''">
-            and status=#{param.status}
+        <if test="param.statusList !=null and param.statusList.size()>0">
+            and status in
+            <foreach item="status" index="index" collection="param.statusList"
+                     open="(" separator="," close=")">
+                #{status}
+            </foreach>
         </if>
-        <if test="param.creator !=null and param.creator != ''">
-            and creator=#{param.creator}
+        <if test="param.creatorList !=null and param.creatorList.size()>0">
+            and creator in
+                <foreach item="creator" collection="param.creatorList"
+                            open="(" separator="," close=")">
+                    #{creator}
+                </foreach>
         </if>
-        <if test="param.priority !=null and param.priority != ''">
-            and priority=#{param.priority}
+        <if test="param.priorityList !=null and param.priorityList.size()>0 ">
+            and priority in
+            <foreach item="priority" collection="param.priorityList"
+                     open="(" separator="," close=")">
+                #{priority}
+            </foreach>
         </if>
-        <if test="param.type !=null and param.type != ''">
-            and type=#{param.type}
+        <if test="param.typeList !=null and param.typeList.size()>0 ">
+            and type in
+            <foreach item="type" index="index" collection="param.typeList"
+                     open="(" separator="," close=")">
+                #{type}
+            </foreach>
+
         </if>
         <if test="param.planIdList !=null and param.planIdList.size()>0">
             and plan_id in
@@ -42,11 +63,19 @@
                     #{planId}
                 </foreach>
         </if>
-        <if test="param.moduleId !=null">
-            and module_id=#{param.moduleId}
+        <if test="param.moduleIdList !=null and param.moduleIdList.size()>0">
+            and module_id in
+            <foreach item="moduleId" index="index" collection="param.moduleIdList"
+                     open="(" separator="," close=")">
+                #{moduleId}
+            </foreach>
         </if>
-        <if test="param.injectStage !=null and param.injectStage != ''">
-            and inject_stage=#{param.injectStage}
+        <if test="param.injectStageList !=null and param.injectStageList.size()>0 ">
+            and inject_stage in
+            <foreach item="injectStage" index="index" collection="param.injectStageList"
+                     open="(" separator="," close=")">
+                #{injectStage}
+            </foreach>
         </if>
         <if test="param.requirementId !=null">
             and requirement_id=#{param.requirementId}
