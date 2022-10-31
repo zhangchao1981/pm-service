@@ -321,16 +321,19 @@ CREATE TABLE `test_bug_process_log`  (
 DROP TABLE IF EXISTS `test_execute_log`;
 CREATE TABLE `test_execute_log`  (
                                      `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'id',
-                                     `pass` tinyint(4) NULL DEFAULT NULL COMMENT '是否通过  :1 .通过  0 未通过  null  未执行 ',
-                                     `plan_id` int(10) NULL DEFAULT NULL COMMENT '测试计划id',
-                                     `test_person` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '测试人员姓名',
-                                     `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用例标题',
-                                     `level` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用例等级',
-                                     `requirement_id` int(10) NULL DEFAULT NULL COMMENT '用例关联的需求id',
-                                     `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用例类型',
-                                     `process_step` json NULL COMMENT '用例执行步骤',
-                                     `modular_id` int(10) NULL DEFAULT NULL COMMENT '用例所属模块id',
-                                     `use_case_id` int(10) NULL DEFAULT NULL COMMENT '导入的测试用例id',
+                                     `pass` tinyint(4) DEFAULT NULL COMMENT '是否通过  :1 .通过  0 未通过  null  未执行 ',
+                                     `plan_id` int(10) DEFAULT NULL COMMENT '测试计划id',
+                                     `test_person` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '测试人员姓名',
+                                     `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例标题',
+                                     `level` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例等级',
+                                     `requirement_id` int(10) DEFAULT NULL COMMENT '用例关联的需求id',
+                                     `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例类型',
+                                     `process_step` json COMMENT '用例执行步骤',
+                                     `modular_id` int(10) DEFAULT NULL COMMENT '用例所属模块id',
+                                     `use_case_id` int(10) DEFAULT NULL COMMENT '导入的测试用例id',
+                                     `default_count` int(10) DEFAULT NULL COMMENT '缺陷数量',
+                                     `modular_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用例所属模块的模块名',
+                                     `test_person_id` int(10) DEFAULT NULL COMMENT '测试人员的用户id',
                                      PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '测试用例执行记录表' ROW_FORMAT = Dynamic;
 
