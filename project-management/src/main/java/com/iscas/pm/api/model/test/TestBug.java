@@ -78,7 +78,7 @@ public class TestBug implements Serializable {
     private String creator;
 
     @ApiModelProperty("提出人用户id，前端无需传参")
-    private String creatorId;
+    private Integer creatorId;
 
     @ApiModelProperty("提出人用户名")
     @JsonIgnore

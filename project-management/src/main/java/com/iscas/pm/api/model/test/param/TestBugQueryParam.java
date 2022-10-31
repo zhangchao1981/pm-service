@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author by  lichang
@@ -64,7 +65,7 @@ public class TestBugQueryParam {
     private String type;
 
     @ApiModelProperty(value = "关联计划id")
-    private Integer planId;
+    private List<Integer> planIdList;
 
     @ApiModelProperty(value = "所属模块id")
     private Integer moduleId;

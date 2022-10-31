@@ -28,7 +28,11 @@ public enum DataTypeEnum {
 
     DATE("DATE","日期时间类型"),
 
-    JSON("JSON","json字符串类型");
+    JSON("JSON","json字符串类型"),
+
+    OBJECT("OBJECT","对象类型"),
+
+    ARRAYLIST("ARRAYLIST","数组类型");
 
 
     private final String code;

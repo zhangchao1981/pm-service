@@ -42,6 +42,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
     public void addBug(TestBug testBug) {
         //补全信息，添加缺陷
         testBug.setCreator(RequestHolder.getUserInfo().getEmployeeName());
+        testBug.setCreatorId(RequestHolder.getUserInfo().getId());
         testBug.setCreatorUserName(RequestHolder.getUserInfo().getUserName());
         testBug.setCreateTime(new Date());
         testBug.setOwner(testBug.getCurrentProcessor());
