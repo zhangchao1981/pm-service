@@ -241,6 +241,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         map.put("projectSecret", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
         map.put("manufacture", projectDetailInfo.getBasicInfo().getManufacture());
         map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
+        map.put("projectDescription", projectDetailInfo.getBasicInfo().getDescription());
+        map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         map.put("currentDate", calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
@@ -262,7 +265,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DevRequirement> devRequirementList = devRequirementService.list();
                 List<DocRequirement> docRequirementList = new ArrayList<>();
                 devRequirementList.forEach(devRequirement -> {
-                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(),devRequirement.getName())));
+                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
@@ -322,7 +325,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 map.put("planTaskList", docPlanTaskList);
                 break;
             }
-            case ConfigurationManagementPlan:{
+            case ConfigurationManagementPlan: {
                 DataSourceHolder.setDB(currentProject);
                 List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
                 map.put("softwareList", softwareList);
@@ -390,7 +393,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
 
-
     @Override
     public void deleteTemplate(Integer templateId) {
         Document document = documentMapper.selectById(templateId);
@@ -433,8 +435,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         return documents != null && documents.size() != 0;
     }
 
-    private  List<PoitlPicture> creatPictureRenderDataList(List<String> prototype, String requireName){
-        if (prototype==null||prototype.size()<1){
+    private List<PoitlPicture> creatPictureRenderDataList(List<String> prototype, String requireName) {
+        if (prototype == null || prototype.size() < 1) {
             return null;
         }
         //用数据库存储的路径获取对应的图像输入流
@@ -442,21 +444,21 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         try {
             for (int i = 0; i < prototype.size(); i++) {
                 String eachPrototype = prototype.get(i);
-                if (StringUtils.isBlank(eachPrototype)){
+                if (StringUtils.isBlank(eachPrototype)) {
                     continue;
                 }
                 StorePath storePath = StorePath.parseFromUrl(eachPrototype);
                 byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
                 InputStream streamImg = new ByteArrayInputStream(sourceByte);
-                Integer numbers=prototype.size()>1?(i+1):null;
+                Integer numbers = prototype.size() > 1 ? (i + 1) : null;
                 //图片尺寸设置
                 pictureList.add(new PoitlPicture().setStreamImg(Pictures.ofStream(streamImg, PictureType.JPEG)
-                        .size(585, 305).create()).setPictureName(requireName+"原型设计图"+numbers.toString()));
+                        .size(585, 305).create()).setPictureName(requireName + "原型设计图" + numbers.toString()));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  pictureList;
+        return pictureList;
     }
 
 }
