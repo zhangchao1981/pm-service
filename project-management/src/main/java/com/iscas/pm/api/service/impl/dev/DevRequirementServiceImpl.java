@@ -101,14 +101,28 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             Map<Integer, List<DevRequirement>> requirementGroup = devRequirementList.stream()
                     .collect(Collectors.groupingBy(DevRequirement::getModularId));
             List<Integer> modularIds = devRequirementList.stream().map(DevRequirement::getModularId).collect(Collectors.toList());
+
             //查询目标开发需求所在模块
             QueryWrapper<DevModular> modularQueryWrapper = new QueryWrapper<>();
             //需求A，B C-->模块 1 2   映射关系在require里面存的有
-            modularQueryWrapper.in(modularIds.size() > 0, "id", modularIds).orderByAsc("id");
-            List<DevModular> modularList = devModularService.list(modularQueryWrapper);
-            modularList.forEach(modular -> {
-                modular.setDevRequirements(requirementGroup.get(modular.getId()));
+
+            List<DevModular> allModular = devModularService.list();
+
+            List<DevModular> modularList=new ArrayList<>();
+            allModular.forEach(eachModular->{
+                if (modularIds.contains(eachModular.getId())){
+                    addModularTree(eachModular.getParentId(),modularList,allModular);
+                    modularList.add(eachModular.setDevRequirements(requirementGroup.get(eachModular.getId())));
+                }
             });
+//            modularQueryWrapper.in(modularIds.size() > 0, "id", modularIds).orderByAsc("id");
+//            List<DevModular> modularList = devModularService.list(modularQueryWrapper);
+
+//            modularList.forEach(modular -> {
+////                if ()
+////                modularList.add()
+//                modular.setDevRequirements(requirementGroup.get(modular.getId()));
+//            });
             devModulars = TreeUtil.treeOut(modularList, DevModular::getId, DevModular::getParentId, DevModular::getModulars);
         } else {
             //查询开发任务
@@ -139,14 +153,41 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             //查询目标开发需求所在模块
             QueryWrapper<DevModular> modularQueryWrapper = new QueryWrapper<>();
             //需求A，B C-->模块 1 2   映射关系在require里面存的有
-            modularQueryWrapper.in(modularIds.size() > 0, "id", modularIds).orderByAsc("id");
-            List<DevModular> modularList = devModularService.list(modularQueryWrapper);
-            modularList.forEach(devModular -> {
-                devModular.setDevRequirements(requirementGroup.get(devModular.getId()));
+            List<DevModular> allModular = devModularService.list();
+
+            List<DevModular> modularList=new ArrayList<>();
+            allModular.forEach(eachModular->{
+                if (modularIds.contains(eachModular.getId())){
+                    addModularTree(eachModular.getParentId(),modularList,allModular);
+                    modularList.add(eachModular.setDevRequirements(requirementGroup.get(eachModular.getId())));
+                }
             });
             devModulars = TreeUtil.treeOut(modularList, DevModular::getId, DevModular::getParentId, DevModular::getModulars);
         }
         return devModulars;
+    }
+
+    private void addModularTree(Integer parentId, List<DevModular> modularList, List<DevModular> allModular) {
+
+        //有父节点
+        if (parentId!=null && parentId!=0){
+
+            //找到父节点对象
+            DevModular modular=null ;
+            for (DevModular devModular : allModular) {
+                if (parentId.equals(devModular.getId())) {
+                    modular=devModular;
+                    break;}
+            }
+            addModularTree(modular.getParentId(),modularList,allModular);
+            if (modularList.contains(modular)){
+                return;
+            }
+            modularList.add(modular);
+        }
+
+        //没有父节点
+        return;
     }
 }
 

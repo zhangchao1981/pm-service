@@ -256,140 +256,159 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 break;
 //                throw new IllegalArgumentException("未查询到该模板对应数据");
             case SoftwareRequirementsSpecification: {
-                DataSourceHolder.setDB(currentProject);
-                //所有modular (树结构)
-                List<DevModular> modularList = devModularService.list();
-                List<DocModular> docModularList = new ArrayList<>();
-
-                //根据开发需求查询:所有含开发需求的modular的List集合, devRequirement替换为docRequirement
-                List<DevRequirement> devRequirementList = devRequirementService.list();
-                List<DocRequirement> docRequirementList = new ArrayList<>();
-                devRequirementList.forEach(devRequirement -> {
-                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
-                });
-                Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
-
-                //性能需求
-                List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
-                //用DocModular 将modular 中的开发需求属性填充上
-                modularList.forEach(modular -> {
-                    docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
-                });
-                docModularList.forEach(docModular -> {
-                            if (requirementMap.containsKey(docModular.getId())) {
-                                docModular.setDocRequirements(requirementMap.get(docModular.getId()));
-                            }
-                        }
-                );
-                List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
-
-                //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
-                //如果用新建实体类  需要加属性和构造器   此处采用方案2
-                List<DocInterface> externalInterfaceList = new ArrayList<>();
-                List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
-                if (devInterfaces.size() > 0) {
-                    devInterfaces.forEach(devInterface -> externalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
-                }
-                List<DocInterface> internalInterfaceList = new ArrayList<>();
-                List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
-                if (devInterfaces2.size() > 0) {
-                    devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
-                }
-                List<DataRequirement> dataRequirementList = dataRequirementService.list();
-                List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-                List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-                map.put("modularList", modularTreeList);
-                map.put("performanceReqList", performanceReqList);
-                map.put("externalInterfaceList", externalInterfaceList);
-                map.put("internalInterfaceList", internalInterfaceList);
-                map.put("dataRequirementList", dataRequirementList);
-                map.put("hardwareList", hardwareList);
-                map.put("softwareList", softwareList);
-                map.put("docRequirementList", docRequirementList);
+                softwareRequirementsSpecificationContext(map, currentProject);
                 break;
             }
 
             case SoftwareDevelopment: {
-                DataSourceHolder.setDB(currentProject);
-                List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-                List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-
-                //项目计划信息获取
-                List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
-                List<DocPlanTask> docPlanTaskList = new ArrayList<>();
-                planTaskList.forEach(planTask -> {
-                    docPlanTaskList.add(new DocPlanTask(planTask));
-                });
-                map.put("hardwareList", hardwareList);
-                map.put("softwareList", softwareList);
-                map.put("planTaskList", docPlanTaskList);
+                softwareDevelopmentContext(map, currentProject);
                 break;
             }
             case ConfigurationManagementPlan: {
-                DataSourceHolder.setDB(currentProject);
-                List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-                map.put("softwareList", softwareList);
+                configurationManagementPlanContext(map, currentProject);
             }
             case DatabaseDesignNotes: {
-                if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
-                    List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
-                    //连接自定义数据库
-                    String dataSourceName = UUID.randomUUID().toString();
-                    String url, driverName;
-                    if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
-                        url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-                        driverName = "com.mysql.cj.jdbc.Driver";
-                    } else if (createDocumentParam.getDbType() == DataBaseTypeEnum.ORACLE) {
-                        url = "jdbc:oracle:thin:@" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + ":" + createDocumentParam.getDbName();
-                        driverName = "oracle.jdbc.driver.OracleDriver";
-                    } else {
-                        throw new IllegalArgumentException("暂不支持该数据库类型！");
-                    }
-                    DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
-                    try {
-                        getDBInfo(createDocumentParam.getDbName());
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
-                    } finally {
-                        dynamicDataSource.deleteDataSourceByName(dataSourceName);
-                    }
-
-                    //数据库中对应的所有表的表名()
-                    List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
-                    tableList.forEach(table -> {
-                        //表结构数据处理
-                        List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(table.getName());
-                        tableFieldInfoList.stream().forEach(tableFieldInfo -> {
-                            // key=MUL则为外键
-                            //key=PRI 则为主键
-                            if (StringUtils.isNotBlank(tableFieldInfo.fieldKey)) {
-                                if ("PRI".equals(tableFieldInfo.fieldKey)) {
-                                    tableFieldInfo.setFieldKey("是");
-                                }
-                                if ("MUL".equals(tableFieldInfo.fieldKey)) {
-                                    tableFieldInfo.setFieldKey("否");
-                                    tableFieldInfo.setFieldExtra("是");
-                                } else {
-                                    tableFieldInfo.setFieldExtra("否");
-                                }
-                            } else {
-                                tableFieldInfo.setFieldKey("否");
-                                tableFieldInfo.setFieldExtra("否");
-                            }
-                            tableFieldInfo.setFieldNull("YES".equals(tableFieldInfo.fieldNull) ? "是" : "否");
-                        });
-                        DocDBTableTemp tableTemp = new DocDBTableTemp().setDBTableName(table.name).setDBTableComment(table.comment).setDBTableStructList(tableFieldInfoList);
-                        docDBTableTempList.add(tableTemp);
-                    });
-                    //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
-                    //把表格实体类封装成 List集合
-                    map.put("docDBTableTemps", docDBTableTempList);
-                    map.put("DBName", createDocumentParam.getDbName());
-                    break;
-                }
+                databaseDesignNotesContext(createDocumentParam, map);
+                break;
             }
         }
         return map;
+    }
+
+    private void configurationManagementPlanContext(HashMap<String, Object> map, String currentProject) {
+        DataSourceHolder.setDB(currentProject);
+        List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+        map.put("softwareList", softwareList);
+    }
+
+    private void databaseDesignNotesContext(CreateDocumentParam createDocumentParam, HashMap<String, Object> map) {
+        if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
+            List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
+            //连接自定义数据库
+            String dataSourceName = UUID.randomUUID().toString();
+            String url, driverName;
+            if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
+                url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+                driverName = "com.mysql.cj.jdbc.Driver";
+            } else if (createDocumentParam.getDbType() == DataBaseTypeEnum.ORACLE) {
+                url = "jdbc:oracle:thin:@" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + ":" + createDocumentParam.getDbName();
+                driverName = "oracle.jdbc.driver.OracleDriver";
+            } else {
+                throw new IllegalArgumentException("暂不支持该数据库类型！");
+            }
+            DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
+            try {
+                getDBInfo(createDocumentParam.getDbName());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
+            } finally {
+                dynamicDataSource.deleteDataSourceByName(dataSourceName);
+            }
+
+            //数据库中对应的所有表的表名()
+            List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
+            tableList.forEach(table -> {
+                //表结构数据处理
+                List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(table.getName());
+                tableFieldInfoList.stream().forEach(tableFieldInfo -> {
+                    // key=MUL则为外键
+                    //key=PRI 则为主键
+                    if (StringUtils.isNotBlank(tableFieldInfo.fieldKey)) {
+                        if ("PRI".equals(tableFieldInfo.fieldKey)) {
+                            tableFieldInfo.setFieldKey("是");
+                        }
+                        if ("MUL".equals(tableFieldInfo.fieldKey)) {
+                            tableFieldInfo.setFieldKey("否");
+                            tableFieldInfo.setFieldExtra("是");
+                        } else {
+                            tableFieldInfo.setFieldExtra("否");
+                        }
+                    } else {
+                        tableFieldInfo.setFieldKey("否");
+                        tableFieldInfo.setFieldExtra("否");
+                    }
+                    tableFieldInfo.setFieldNull("YES".equals(tableFieldInfo.fieldNull) ? "是" : "否");
+                });
+                DocDBTableTemp tableTemp = new DocDBTableTemp().setDBTableName(table.name).setDBTableComment(table.comment).setDBTableStructList(tableFieldInfoList);
+                docDBTableTempList.add(tableTemp);
+            });
+            //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
+            //把表格实体类封装成 List集合
+            map.put("docDBTableTemps", docDBTableTempList);
+            map.put("DBName", createDocumentParam.getDbName());
+            return;
+        }
+    }
+
+    private void softwareRequirementsSpecificationContext(HashMap<String, Object> map, String currentProject) {
+        DataSourceHolder.setDB(currentProject);
+        //所有modular (树结构)
+        List<DevModular> modularList = devModularService.list();
+        List<DocModular> docModularList = new ArrayList<>();
+
+        //根据开发需求查询:所有含开发需求的modular的List集合, devRequirement替换为docRequirement
+        List<DevRequirement> devRequirementList = devRequirementService.list();
+        List<DocRequirement> docRequirementList = new ArrayList<>();
+        devRequirementList.forEach(devRequirement -> {
+            docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
+        });
+        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
+
+        //性能需求
+        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+        //用DocModular 将modular 中的开发需求属性填充上
+        modularList.forEach(modular -> {
+            docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
+        });
+        docModularList.forEach(docModular -> {
+                    if (requirementMap.containsKey(docModular.getId())) {
+                        docModular.setDocRequirements(requirementMap.get(docModular.getId()));
+                    }
+                }
+        );
+        List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
+
+        //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
+        //如果用新建实体类  需要加属性和构造器   此处采用方案2
+        List<DocInterface> externalInterfaceList = new ArrayList<>();
+        List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
+        if (devInterfaces.size() > 0) {
+            devInterfaces.forEach(devInterface -> externalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
+        }
+        List<DocInterface> internalInterfaceList = new ArrayList<>();
+        List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
+        if (devInterfaces2.size() > 0) {
+            devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
+        }
+        List<DataRequirement> dataRequirementList = dataRequirementService.list();
+        List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+        List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+        map.put("modularList", modularTreeList);
+        map.put("performanceReqList", performanceReqList);
+        map.put("externalInterfaceList", externalInterfaceList);
+        map.put("internalInterfaceList", internalInterfaceList);
+        map.put("dataRequirementList", dataRequirementList);
+        map.put("hardwareList", hardwareList);
+        map.put("softwareList", softwareList);
+        map.put("docRequirementList", docRequirementList);
+        return;
+    }
+
+    private void softwareDevelopmentContext(HashMap<String, Object> map, String currentProject) {
+        DataSourceHolder.setDB(currentProject);
+        List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+        List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+
+        //项目计划信息获取
+        List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
+        List<DocPlanTask> docPlanTaskList = new ArrayList<>();
+        planTaskList.forEach(planTask -> {
+            docPlanTaskList.add(new DocPlanTask(planTask));
+        });
+        map.put("hardwareList", hardwareList);
+        map.put("softwareList", softwareList);
+        map.put("planTaskList", docPlanTaskList);
+        return;
     }
 
 
