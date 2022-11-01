@@ -28,7 +28,7 @@ import java.util.Date;
 @TableName("pm_project")
 public class Project implements Serializable {
 
-    @ApiModelProperty(value = "项目编号,不允许修改", notes = "对应数据库名，小写英文.", required = true)
+    @ApiModelProperty(value = "项目编号,不允许修改", notes = "对应数据库名，大写英文.", required = true)
     @NotBlank(message = "项目编号不能为空")
     @Size(max = 10,message = "项目编号长度不能大于10")
     private String id;
@@ -75,19 +75,19 @@ public class Project implements Serializable {
     private String description;
 
     @ApiModelProperty(value = "研制单位")
-    @Size(max = 255,message = "研制单位长度不能大于255")
+    @Size(max = 100,message = "研制单位长度不能大于100")
     private String manufacture;
 
     @ApiModelProperty(value = "项目提出方")
-    @Size(max = 255,message = "项目提出方长度不能大于255")
+    @Size(max = 100,message = "项目提出方长度不能大于100")
     private String projectProvider;
 
     @ApiModelProperty(value = "需求提出方")
-    @Size(max = 255,message = "需求提出方长度不能大于255")
+    @Size(max = 100,message = "需求提出方长度不能大于100")
     private String requirementProvider;
 
     @ApiModelProperty(value = "合同编号")
-    @Size(max = 255,message = "合同编号长度不能大于255")
+    @Size(max = 50,message = "合同编号长度不能大于50")
     private String contractId;
 
     @ApiModelProperty(value = "合同金额")
@@ -95,7 +95,7 @@ public class Project implements Serializable {
     private BigDecimal contractAmount;
 
     @ApiModelProperty(value = "创建人的用户名")
-    @Size(max = 255,message = "创建人的用户名不能大于255")
+    @Size(max = 25,message = "创建人的用户名不能大于25")
     private String createUser;
 
     @JsonIgnore

@@ -12,6 +12,7 @@ import org.apache.ibatis.type.JdbcType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class DataRequirement implements Serializable {
 
     @ApiModelProperty(value = "数据需求名称",required = true)
     @NotBlank(message = "数据需求名称不能为空")
+    @Size(max = 50,message = "数据需求名称长度不能大于50")
     private String requirementName;
 
     @ApiModelProperty(value = "开发需求id",required = true)

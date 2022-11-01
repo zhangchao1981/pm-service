@@ -11,28 +11,25 @@ import lombok.Getter;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DataTypeEnum {
-//    整型（xxxint）
-//    位类型(bit)
-//    浮点型（float和double、real）
-//    定点数（decimal,numeric）
-//    日期时间类型（date,time,datetime,year）
-//    字符串（char,varchar,xxxtext）
-//    二进制数据（xxxBlob、xxbinary）
-//    枚举（enum）
-//    集合（set）
     INT("INT","整型"),
 
     FLOAT("FLOAT","浮点型"),
 
-    STRING("STRING","字符串"),
+    STRING("STRING","字符串类型"),
 
-    DATE("DATE","日期时间类型"),
+    DATE("DATE","日期类型"),
 
-    JSON("JSON","json字符串类型"),
+    DATETIME("DATETIME","日期时间类型"),
+
+    ENUM("ENUM","枚举类型"),
+
+    BOOLEAN("BOOLEAN","布尔类型"),
 
     OBJECT("OBJECT","对象类型"),
 
-    ARRAYLIST("ARRAYLIST","数组类型");
+    ARRAYLIST("ARRAYLIST","数组类型"),
+
+    FILE("FILE","文件类型");
 
 
     private final String code;

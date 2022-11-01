@@ -36,9 +36,9 @@ public class TestUseCase implements Serializable {
     @ApiModelProperty(value = "用例编号，后端自动生成")
     private Integer id;
 
-    @Size(max = 100, message = "用例标题长度不能超过100")
     @ApiModelProperty(value = "用例标题", required = true)
     @NotBlank(message = "用例标题不能为空")
+    @Size(max = 100, message = "用例标题长度不能超过100")
     private String title;
 
     @ApiModelProperty(value = "用例等级", required = true)
@@ -60,6 +60,7 @@ public class TestUseCase implements Serializable {
     private UseCaseTypeEnum type;
 
     @ApiModelProperty(value = "前置条件")
+    @Size(max = 500, message = "用例标题长度不能超过500")
     private String precondition;
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)

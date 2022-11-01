@@ -22,6 +22,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
@@ -59,6 +60,7 @@ public class PlanTask implements Serializable {
 
     @ApiModelProperty(value = "任务名称", required = true)
     @NotBlank(message = "任务名称不能为空")
+    @Size(max = 25,message = "任务名称长度不能大于25")
     private String name;
 
     @ApiModelProperty(value = "责任人名字List ", required = true)

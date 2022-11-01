@@ -20,6 +20,8 @@ import java.util.Date;
 public class Permission implements Serializable {
 
     @ApiModelProperty(value = "权限标识", required = true)
+    @NotBlank(message = "权限标识不能为空")
+    @Size(max = 100, message = "权限标识长度不能大于100")
     private String id;
 
     @ApiModelProperty(value = "权限名称", required = true)

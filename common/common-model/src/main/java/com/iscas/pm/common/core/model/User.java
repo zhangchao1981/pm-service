@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,15 +31,18 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "人员姓名，不允许修改",required = true)
     @NotBlank(message = "人员姓名不能为空")
+    @Size(max = 32, message = "人员姓名长度不能大于32")
     private String employeeName;
 
     @ApiModelProperty(value = "人员所在部门id",required = true)
     private Integer departmentId;
 
     @ApiModelProperty(value = "手机号")
+    @Size(max = 20, message = "手机号长度不能大于32")
     private String phone;
 
     @ApiModelProperty(value = "邮箱")
+    @Size(max = 32, message = "邮箱长度不能大于32")
     private String email;
 
     @JsonIgnore
