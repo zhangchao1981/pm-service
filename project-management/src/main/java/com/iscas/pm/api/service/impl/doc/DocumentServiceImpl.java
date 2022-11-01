@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.config.ConfigureBuilder;
+import com.deepoove.poi.data.PictureType;
+import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
@@ -14,13 +16,8 @@ import com.iscas.pm.api.mapper.env.EnvHardwareMapper;
 import com.iscas.pm.api.mapper.env.EnvSoftwareMapper;
 import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.*;
-import com.iscas.pm.api.model.doc.data.DocDBTableTemp;
-import com.iscas.pm.api.model.doc.data.DocInterface;
-import com.iscas.pm.api.model.doc.data.DocPlanTask;
-import com.iscas.pm.api.model.doc.data.DocReviseRecord;
+import com.iscas.pm.api.model.doc.data.*;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
-import com.iscas.pm.api.model.doc.data.DocModular;
-import com.iscas.pm.api.model.doc.data.DocRequirement;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
@@ -39,10 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -260,7 +254,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 //                throw new IllegalArgumentException("未查询到该模板对应数据");
             case SoftwareRequirementsSpecification: {
                 DataSourceHolder.setDB(currentProject);
-
                 //所有modular (树结构)
                 List<DevModular> modularList = devModularService.list();
                 List<DocModular> docModularList = new ArrayList<>();
@@ -269,7 +262,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 List<DevRequirement> devRequirementList = devRequirementService.list();
                 List<DocRequirement> docRequirementList = new ArrayList<>();
                 devRequirementList.forEach(devRequirement -> {
-                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()));
+                    docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(),devRequirement.getName())));
                 });
                 Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
@@ -396,6 +389,8 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         return map;
     }
 
+
+
     @Override
     public void deleteTemplate(Integer templateId) {
         Document document = documentMapper.selectById(templateId);
@@ -437,6 +432,33 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<Document> documents = documentMapper.selectList(documentQueryWrapper);
         return documents != null && documents.size() != 0;
     }
+
+    private  List<PoitlPicture> creatPictureRenderDataList(List<String> prototype, String requireName){
+        if (prototype==null||prototype.size()<1){
+            return null;
+        }
+        //用数据库存储的路径获取对应的图像输入流
+        List<PoitlPicture> pictureList = new ArrayList<>();
+        try {
+            for (int i = 0; i < prototype.size(); i++) {
+                String eachPrototype = prototype.get(i);
+                if (StringUtils.isBlank(eachPrototype)){
+                    continue;
+                }
+                StorePath storePath = StorePath.parseFromUrl(eachPrototype);
+                byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
+                InputStream streamImg = new ByteArrayInputStream(sourceByte);
+                Integer numbers=prototype.size()>1?(i+1):null;
+                //图片尺寸设置
+                pictureList.add(new PoitlPicture().setStreamImg(Pictures.ofStream(streamImg, PictureType.JPEG)
+                        .size(585, 305).create()).setPictureName(requireName+"原型设计图"+numbers.toString()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  pictureList;
+    }
+
 }
 
 

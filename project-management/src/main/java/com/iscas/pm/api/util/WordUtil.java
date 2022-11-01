@@ -5,14 +5,15 @@ import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.lang.Assert;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.data.PictureType;
+import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.iscas.pm.api.model.Family;
 import com.iscas.pm.api.model.TestChild;
 import com.iscas.pm.api.model.TestPerson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,19 +26,10 @@ public class WordUtil {
     public static void main(String[] args) throws IOException, IllegalAccessException {
 //      MapUtil.of("title", "Hello poi-tl模版引擎")
         HashMap<String, Object> data = new HashMap<>();
-        TestPerson testPerson1 = new TestPerson();
-        TestPerson testPerson2 = new TestPerson();
-        ArrayList<TestChild> childList = new ArrayList<>();
-        childList.add(new TestChild().setId(100));
-        childList.add(new TestChild().setId(200));
-        Family family1 = new Family();
-        family1.setChildList(childList);
-        testPerson1.setFamily(family1);
-        testPerson2.setFamily(family1);
-        List<TestPerson> persons = new ArrayList<>();
-        persons.add(testPerson1);
-        persons.add(testPerson2);
-        data.put("persons",persons);
+        PictureRenderData renderData = Pictures.ofStream(new FileInputStream(new File("D:\\中科院资料\\图片测试.jpg")), PictureType.JPEG)
+                .size(600, 720).create();
+        data.put("streamImg",renderData);
+
 //        List<ReviseRecord> reviseRecordList =new ArrayList<>();
 //        //新建一个类  把日期属性改成String类型，并用  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");转换后存储过来
 //
@@ -65,8 +57,7 @@ public class WordUtil {
 
         Configure config = Configure.builder()
                 .bind("childList", policy).build();
-        parse("D:\\Poitl测试\\测试.docx",config,data,
-                "D:\\Poitl测试\\测试输出.docx");
+        parse("D:\\中科院资料\\10月18日目标文档\\图片插入测试.docx",config,data,"D:\\中科院资料\\10月18日目标文档\\图片插入测试输出.docx");
     }
 
 

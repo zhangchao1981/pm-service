@@ -1,28 +1,17 @@
 package com.iscas.pm.api.model.doc.data;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iscas.pm.api.model.dev.*;
-import com.iscas.pm.common.core.util.validation.CheckTimeInterval;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.type.JdbcType;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
-
-import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
 
 /**
  * @author by  lichang
@@ -50,7 +39,6 @@ public class DocRequirement {
         this.scheduleHour = devRequirement.getScheduleHour();
         this.source = devRequirement.getSource();
         this.modularId = devRequirement.getModularId();
-        this.prototype = devRequirement.getPrototype();
         this.devTasks = devRequirement.getDevTasks();
         this.role = devRequirement.getUseCaseExplain().getRole();
         this.precondition = devRequirement.getUseCaseExplain().getPrecondition();
@@ -58,6 +46,8 @@ public class DocRequirement {
         this.branchScene = devRequirement.getUseCaseExplain().getBranchScene();
         this.constraint = devRequirement.getUseCaseExplain().getConstraint();
     }
+
+
 
     @ApiModelProperty(value = "需求用例名称", required = true)
     private String name;
@@ -122,10 +112,7 @@ public class DocRequirement {
     @ApiModelProperty(value = "项目标识")
     private String projectId;
 
-    @ApiModelProperty(value = "原型设计图路径，多个用逗号隔开")
-    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
-    private List<String> prototype;
-
+    private List<PoitlPicture> prototype;
 
     @JsonIgnore
     @ApiModelProperty(value = "更新时间")
