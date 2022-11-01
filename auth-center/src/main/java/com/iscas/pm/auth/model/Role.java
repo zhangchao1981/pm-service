@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -21,6 +22,7 @@ public class Role implements Serializable {
     private Integer id;
 
     @ApiModelProperty(value = "角色名称",required = true)
+    @NotBlank(message = "角色名称不能为空")
     @Size(max = 20,message = "角色名称长度不能大于20")
     private String name;
 

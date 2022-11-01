@@ -15,6 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -52,6 +53,7 @@ public class TaskFeedback implements Serializable {
     private float workingHour;
 
     @ApiModelProperty("工作内容说明")
+    @Size(max = 255,message = "工作内容长度不能大于255")
     private String workingContent;
 
     @ApiModelProperty("关联的计划任务id")

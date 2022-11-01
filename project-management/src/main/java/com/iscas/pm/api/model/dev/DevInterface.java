@@ -48,6 +48,7 @@ public class DevInterface implements Serializable {
 
 
     @ApiModelProperty(value = "接口描述",required = true)
+    @Size(max = 255,message = "接口描述长度不能大于255")
     private String description;
 
 
