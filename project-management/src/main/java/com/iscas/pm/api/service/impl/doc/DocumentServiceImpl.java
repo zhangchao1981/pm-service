@@ -346,17 +346,17 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<DevModular> modularList = devModularService.list();
         List<DocModular> docModularList = new ArrayList<>();
 
-        //根据开发需求查询:所有含开发需求的modular的List集合, devRequirement替换为docRequirement
+        //全部开发需求 :所有含开发需求的modular的List集合, devRequirement替换为docRequirement
         List<DevRequirement> devRequirementList = devRequirementService.list();
         List<DocRequirement> docRequirementList = new ArrayList<>();
         devRequirementList.forEach(devRequirement -> {
             docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
         });
-        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
-        //性能需求
-        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
-        //用DocModular 将modular 中的开发需求属性填充上
+        //功能需求
+        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.FUNCTION)).collect(Collectors.groupingBy(DocRequirement::getModularId));
+
+        //用DocModular 将modular中的开发需求属性补充上
         modularList.forEach(modular -> {
             docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
         });
@@ -368,8 +368,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         );
         List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
 
+        //性能需求
+        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+
         //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
-        //如果用新建实体类  需要加属性和构造器   此处采用方案2
+        //如果用新建实体类 ，需要加属性和构造器 ，此处采用方案2
         List<DocInterface> externalInterfaceList = new ArrayList<>();
         List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
         if (devInterfaces.size() > 0) {
@@ -383,6 +386,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<DataRequirement> dataRequirementList = dataRequirementService.list();
         List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
         List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+
         map.put("modularList", modularTreeList);
         map.put("performanceReqList", performanceReqList);
         map.put("externalInterfaceList", externalInterfaceList);
