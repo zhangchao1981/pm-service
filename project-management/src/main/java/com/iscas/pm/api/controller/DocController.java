@@ -276,7 +276,6 @@ public class DocController {
     @GetMapping("/TemplateList")
     @ApiOperation(value = "查询文档模板", notes = "不带分页，用于生成文档时选择模板")
     @ApiOperationSupport(order = 21)
-    @PreAuthorize("hasAuthority('/projectDoc/templateList')")
     public List<DocTemplate> templateList() {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
         return docTemplateService.list(new QueryWrapper<DocTemplate>().orderByAsc("type"));

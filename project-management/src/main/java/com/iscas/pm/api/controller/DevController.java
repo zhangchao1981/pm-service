@@ -288,7 +288,7 @@ public class DevController {
             throw new IllegalArgumentException("接口所属需求不存在");
         }
 
-        devInterface.setMaintainer(RequestHolder.getUserInfo().getUserName());
+        devInterface.setMaintainer(RequestHolder.getUserInfo().getEmployeeName());
         devInterfaceService.save(devInterface);
         return true;
     }
