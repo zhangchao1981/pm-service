@@ -1,7 +1,10 @@
 package com.iscas.pm.api.mapper.test;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.test.TestExecuteLog;
+import com.iscas.pm.api.model.test.param.TestExecuteLogParam;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TestExecuteLogMapper extends BaseMapper<TestExecuteLog> {
 
+    IPage<TestExecuteLog> testExecuteLogList(Page<TestExecuteLog> objectPage, TestExecuteLogParam testExecuteLogParam);
 }
 
 

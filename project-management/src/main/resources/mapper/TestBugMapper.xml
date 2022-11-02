@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.iscas.pm.api.mapper.test.TestBugMapper">
 
+
     <sql id="Base_Column_List">
         test_bug.*,test_plan.name as planName,dev_modular.name as moduleName,test_bug.create_time as create_time
     </sql>

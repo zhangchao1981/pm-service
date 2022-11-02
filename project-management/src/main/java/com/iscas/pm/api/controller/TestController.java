@@ -45,7 +45,7 @@ public class TestController {
 
     @ApiOperationSupport(order = 1)
     @PostMapping("/testUseCaseList")
-    @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表")
+    @ApiOperation(value = "查询测试用例", notes = "查询指定模块下符合条件的测试用例表,返回分页对象")
     public IPage<TestUseCase> testUseCaseList(@Valid @RequestBody UseCaseQueryParam useCaseQueryParam) {
         Integer modularId = useCaseQueryParam.getModularId();
         String useCaseId = useCaseQueryParam.getId();
