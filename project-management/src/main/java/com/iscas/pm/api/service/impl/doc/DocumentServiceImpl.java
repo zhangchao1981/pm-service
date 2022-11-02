@@ -165,7 +165,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
         //前端传入参数只含共用的信息，数据库查找的信息根据模板类型选择性填充
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
-
         //用户输入内容：
         map.put("version", createDocumentParam.getVersion());
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
@@ -383,7 +382,13 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         if (devInterfaces2.size() > 0) {
             devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
         }
-        List<DataRequirement> dataRequirementList = dataRequirementService.list();
+        List<DataRequirement> requirementList = dataRequirementService.list();
+        List<DocDataRequirement>  dataRequirementList=new ArrayList<>();
+        if (requirementList.size()>0){
+            requirementList.forEach(requirement->{
+                    dataRequirementList.add(new DocDataRequirement(requirement));
+            });
+        }
         List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
         List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
 
@@ -473,10 +478,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 StorePath storePath = StorePath.parseFromUrl(eachPrototype);
                 byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
                 InputStream streamImg = new ByteArrayInputStream(sourceByte);
-                Integer numbers = prototype.size() > 1 ? (i + 1) : null;
                 //图片尺寸设置
+                String pictureName=prototype.size()>1?requireName + "原型设计图" + (i + 1):requireName + "原型设计图";
                 pictureList.add(new PoitlPicture().setStreamImg(Pictures.ofStream(streamImg, PictureType.JPEG)
-                        .size(585, 305).create()).setPictureName(requireName + "原型设计图" + numbers.toString()));
+                        .size(585, 305).create()).setPictureName(pictureName));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,6 +12,9 @@ import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.iscas.pm.api.model.Family;
 import com.iscas.pm.api.model.TestChild;
 import com.iscas.pm.api.model.TestPerson;
+import com.iscas.pm.api.model.dev.DataRequirement;
+import com.iscas.pm.api.model.dev.DataRequirementInfo;
+import com.iscas.pm.api.model.dev.DataTypeEnum;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,6 +32,11 @@ public class WordUtil {
         PictureRenderData renderData = Pictures.ofStream(new FileInputStream(new File("D:\\中科院资料\\图片测试.jpg")), PictureType.JPEG)
                 .size(600, 720).create();
         data.put("streamImg",renderData);
+        List<DataRequirementInfo> dataRequirementInfoList = new ArrayList<>();
+        DataRequirementInfo dataRequirementInfo = new DataRequirementInfo();
+        dataRequirementInfo.setDataType(DataTypeEnum.ARRAYLIST);
+        dataRequirementInfoList.add(dataRequirementInfo);
+        data.put("dataRequirementInfoList",dataRequirementInfoList);
 
 //        List<ReviseRecord> reviseRecordList =new ArrayList<>();
 //        //新建一个类  把日期属性改成String类型，并用  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");转换后存储过来
@@ -55,8 +63,8 @@ public class WordUtil {
 //        data.put("reviseRecordList",reviseRecordListNew);
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
 
-        Configure config = Configure.builder()
-                .bind("childList", policy).build();
+        Configure config = Configure.builder().useSpringEL(false)
+                .bind("dataRequirementInfoList", policy).build();
         parse("D:\\中科院资料\\10月18日目标文档\\图片插入测试.docx",config,data,"D:\\中科院资料\\10月18日目标文档\\图片插入测试输出.docx");
     }
 
