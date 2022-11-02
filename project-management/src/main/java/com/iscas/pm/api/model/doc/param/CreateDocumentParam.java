@@ -13,8 +13,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CreateDocumentParam {
 
-    //软件开发计划需要的参数
-
     @ApiModelProperty(value = "目录id", required = true)
     private Integer directoryId;
 
@@ -30,16 +28,9 @@ public class CreateDocumentParam {
     @ApiModelProperty(value = "模板存储路径", required = true)
     private String templatePath;
 
-
     @NotBlank(message = "当前项目id不能为空")
     @ApiModelProperty(value = "当前项目id", required = true)
     private String currentProjectId;
-
-//    @ApiModelProperty(value = "选中的引用文档", required = true)
-//    private List<ReferenceDoc> referenceDocList;
-//
-//    @ApiModelProperty(value = "选中的文档修订记录", required = true)
-//    private List<ReviseRecord> reviseRecordList;
 
     @ApiModelProperty(value = "数据库名",notes = "选择数据库文档，即模板id=2时传入")
     private  String  dbName;
@@ -61,8 +52,5 @@ public class CreateDocumentParam {
 
     @ApiModelProperty(value = "数据库类型",notes = "选择数据库文档，即模板id=2时传入")
     private DataBaseTypeEnum dbType;
-
-
-
 
 }

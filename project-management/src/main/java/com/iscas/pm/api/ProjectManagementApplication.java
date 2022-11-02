@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.iscas.pm.api.mapper")
 @EnableDataBaseSeparate
 @EnableFeignClients
-@EnableScheduling//启用任务    使得 任务注解能生效
+@EnableScheduling
 public class ProjectManagementApplication { public static void main(String[] args) {
         SpringApplication.run(ProjectManagementApplication.class,args);
     }

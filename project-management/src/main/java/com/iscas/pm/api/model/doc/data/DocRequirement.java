@@ -47,8 +47,6 @@ public class DocRequirement {
         this.constraint = devRequirement.getUseCaseExplain().getConstraint();
     }
 
-
-
     @ApiModelProperty(value = "需求用例名称", required = true)
     private String name;
 
@@ -108,7 +106,6 @@ public class DocRequirement {
     @ApiModelProperty(value = "模块id", required = true)
     private Integer modularId;
 
-
     @ApiModelProperty(value = "项目标识")
     private String projectId;
 
@@ -125,7 +122,6 @@ public class DocRequirement {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
-
 
     @TableField(exist = false)
     @ApiModelProperty(value = "返回值类型")

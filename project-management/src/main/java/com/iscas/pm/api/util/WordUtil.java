@@ -9,26 +9,19 @@ import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
-import com.iscas.pm.api.model.Family;
-import com.iscas.pm.api.model.TestChild;
-import com.iscas.pm.api.model.TestPerson;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class WordUtil {
-//@Autowired
-//DevRequirementService devRequirementService;
-//
+
     public static void main(String[] args) throws IOException, IllegalAccessException {
 //      MapUtil.of("title", "Hello poi-tl模版引擎")
         HashMap<String, Object> data = new HashMap<>();
         PictureRenderData renderData = Pictures.ofStream(new FileInputStream(new File("D:\\中科院资料\\图片测试.jpg")), PictureType.JPEG)
                 .size(600, 720).create();
-        data.put("streamImg",renderData);
+        data.put("streamImg", renderData);
 
 //        List<ReviseRecord> reviseRecordList =new ArrayList<>();
 //        //新建一个类  把日期属性改成String类型，并用  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");转换后存储过来
@@ -55,11 +48,9 @@ public class WordUtil {
 //        data.put("reviseRecordList",reviseRecordListNew);
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
 
-        Configure config = Configure.builder()
-                .bind("childList", policy).build();
-        parse("D:\\中科院资料\\10月18日目标文档\\图片插入测试.docx",config,data,"D:\\中科院资料\\10月18日目标文档\\图片插入测试输出.docx");
+        Configure config = Configure.builder().bind("childList", policy).build();
+        parse("D:\\中科院资料\\10月18日目标文档\\图片插入测试.docx", config, data, "D:\\中科院资料\\10月18日目标文档\\图片插入测试输出.docx");
     }
-
 
     /**
      * 解析word文件并将结果输出到OutputStream(含表格)
@@ -70,12 +61,12 @@ public class WordUtil {
      */
     public static void parse(InputStream in,
                              Map<String, Object> dataMap,
-                             OutputStream out,Configure config) {
+                             OutputStream out, Configure config) {
         Assert.notNull(in, "in can not be null");
         Assert.notNull(out, "out can not be null");
         Assert.notNull(dataMap, "dataMap can not be null");
         try {
-            XWPFTemplate temp = XWPFTemplate.compile(in,config).render(dataMap);
+            XWPFTemplate temp = XWPFTemplate.compile(in, config).render(dataMap);
             temp.writeAndClose(out);
         } catch (IOException e) {
             throw new IORuntimeException(e);
@@ -118,11 +109,6 @@ public class WordUtil {
         }
     }
 
-
-
-
-
-
     /**
      * 解析word文件并将结果输出到OutputStream
      *
@@ -138,8 +124,6 @@ public class WordUtil {
         parse(inputStream, dataMap, out);
     }
 
-
-
     /**
      * 解析word文件(含表格)并将结果输出到OutputStream
      *
@@ -148,12 +132,12 @@ public class WordUtil {
      * @param outFilePath      输出文件路径。不存在该文件会自动创建
      */
     public static void parse(String templateFilePath,
-                             Configure config ,
+                             Configure config,
                              Map<String, Object> dataMap,
                              String outFilePath) {
         InputStream inputStream = FileUtil.getInputStream(templateFilePath);
         OutputStream out = FileUtil.getOutputStream(FileUtil.touch(outFilePath));
-        parse(inputStream, dataMap, out,config);
+        parse(inputStream, dataMap, out, config);
     }
 
 }

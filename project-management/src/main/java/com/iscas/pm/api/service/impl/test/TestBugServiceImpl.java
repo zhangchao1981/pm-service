@@ -28,7 +28,6 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
-
 /**
  * @author lichang
  * @description 针对表【test_bug(测试缺陷表)】的数据库操作Service实现

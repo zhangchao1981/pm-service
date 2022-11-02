@@ -15,7 +15,6 @@ public class PoitlPicture {
    @ApiModelProperty(value = "图片输入流")
    private PictureRenderData streamImg;
 
-
    @ApiModelProperty(value = "图片名称")
    private String pictureName;
 }

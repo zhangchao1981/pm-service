@@ -27,7 +27,6 @@ public class ProjectUserRole implements Serializable {
     @ApiModelProperty("id")
     private Integer id;
 
-
     @ApiModelProperty(value = "用户id",required = true)
     @NotNull
     @Size(max = 11,message = "用户id不能大于11")
@@ -44,7 +43,6 @@ public class ProjectUserRole implements Serializable {
     @JsonIgnore
     @ApiModelProperty(value = "项目id",required = true)
     private String projectId;
-
 
     @TableField(exist = false)
     @ApiModelProperty(value = "用户名",required = true)

@@ -1,6 +1,5 @@
 package com.iscas.pm.api.model.env;
 
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -15,7 +14,6 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
 
 /**
  * @Author：lichang
@@ -49,14 +47,11 @@ public class EnvInformation implements Serializable {
 
     @ApiModelProperty(value = "密码")
     @Size(max = 25,message = "密码长度不能大于25")
-    //数据库需修改
     private String password;
 
     @ApiModelProperty(value = "说明")
     @Size(max = 255,message = "说明长度不能大于255")
     private String description;
-
-
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

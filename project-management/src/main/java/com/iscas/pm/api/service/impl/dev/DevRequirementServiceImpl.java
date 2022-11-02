@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【dev_requirement(开发需求表)】的数据库操作Service实现
  * @createDate 2022-08-03 11:21:48
  */
@@ -79,7 +79,6 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             //更新需求
             super.updateById(devRequirement);
         }
-
     }
 
     @Override
@@ -98,6 +97,7 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             if (devRequirementList.size() < 1) {
                 return null;
             }
+
             Map<Integer, List<DevRequirement>> requirementGroup = devRequirementList.stream()
                     .collect(Collectors.groupingBy(DevRequirement::getModularId));
             List<Integer> modularIds = devRequirementList.stream().map(DevRequirement::getModularId).collect(Collectors.toList());
@@ -115,17 +115,12 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
                     modularList.add(eachModular.setDevRequirements(requirementGroup.get(eachModular.getId())));
                 }
             });
-//            modularQueryWrapper.in(modularIds.size() > 0, "id", modularIds).orderByAsc("id");
-//            List<DevModular> modularList = devModularService.list(modularQueryWrapper);
 
-//            modularList.forEach(modular -> {
-////                if ()
-////                modularList.add()
-//                modular.setDevRequirements(requirementGroup.get(modular.getId()));
-//            });
             devModulars = TreeUtil.treeOut(modularList, DevModular::getId, DevModular::getParentId, DevModular::getModulars);
-        } else {
-            //查询开发任务
+        }
+
+        //查询开发任务
+        else {
             QueryWrapper<DevTask> taskQueryWrapper = new QueryWrapper<>();
             taskQueryWrapper.ge(queryParam.getStartDate() != null, "start_date", queryParam.getStartDate())
                     .le(queryParam.getEndDate() != null, "end_date", queryParam.getEndDate())
@@ -151,7 +146,7 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             //查询需求所在模块
             List<Integer> modularIds = requirementList.stream().map(DevRequirement::getModularId).distinct().collect(Collectors.toList());
             //查询目标开发需求所在模块
-            QueryWrapper<DevModular> modularQueryWrapper = new QueryWrapper<>();
+
             //需求A，B C-->模块 1 2   映射关系在require里面存的有
             List<DevModular> allModular = devModularService.list();
 
@@ -168,7 +163,6 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
     }
 
     private void addModularTree(Integer parentId, List<DevModular> modularList, List<DevModular> allModular) {
-
         //有父节点
         if (parentId!=null && parentId!=0){
 
@@ -186,7 +180,6 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             modularList.add(modular);
         }
 
-        //没有父节点
         return;
     }
 }

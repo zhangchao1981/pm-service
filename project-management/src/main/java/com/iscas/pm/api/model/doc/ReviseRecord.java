@@ -19,27 +19,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-
 @Accessors(chain = true)
 @ApiModel(value = "文档修订记录", description = "文档修订记录基本信息，对应project_demo库doc_revise_record表")
 @TableName(value ="doc_revise_record")
 @Data
 public class ReviseRecord implements Serializable {
 
-
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
     @ApiModelProperty(value = "外键：模板id",required = true)
     private Integer templateId;
-
 
     @ApiModelProperty(value = "修订记录版本编号",required = true)
     @Size(max = 10,message = "版本编号长度不能大于10")
     private String version;
-
 
     @ApiModelProperty(value = "简要说明(变更内容和范围)")
     @Size(max = 25,message = "简要说明长度不能大于25")
@@ -55,13 +50,11 @@ public class ReviseRecord implements Serializable {
     @Size(max = 11,message = "修改人长度不能大于11")
     private String mender;
 
-
     @ApiModelProperty(value = "批准人")
     @Size(max = 11,message = "批准人长度不能大于11")
     private String approver;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
-
 
 }

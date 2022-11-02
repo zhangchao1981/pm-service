@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【document】的数据库操作Mapper
  * @createDate 2022-07-28 18:20:53
  * @Entity .model/project.Document

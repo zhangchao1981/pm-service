@@ -16,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 @Accessors(chain = true)
 @ApiModel(value = "项目文档目录", description = "项目文档目录信息，对应项目库doc_directory表")
 @TableName(value ="doc_directory")
@@ -36,7 +35,6 @@ public class Directory implements Serializable {
     @ApiModelProperty(value = "父节点id",required = true)
     @NotNull
     private Integer parentId;
-
 
     @TableField(exist = false)
     @ApiModelProperty(value = "子节点", notes = "前端不需要")

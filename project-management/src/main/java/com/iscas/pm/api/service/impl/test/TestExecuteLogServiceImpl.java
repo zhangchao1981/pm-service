@@ -11,6 +11,7 @@ import com.iscas.pm.api.model.test.*;
 import com.iscas.pm.api.model.test.param.EditBatchExecuteLogParam;
 import com.iscas.pm.api.model.test.param.TestExecuteLogParam;
 import com.iscas.pm.api.service.TestExecuteLogService;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,15 +21,13 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
-
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【test_execute_log(测试用例执行记录表)】的数据库操作Service实现
  * @createDate 2022-08-10 10:25:50
  */
 @Service
-public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper, TestExecuteLog>
-        implements TestExecuteLogService {
+public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper, TestExecuteLog> implements TestExecuteLogService {
     @Autowired
     TestUseCaseMapper testUseCaseMapper;
     @Autowired
@@ -38,92 +37,65 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
 
     @Override
     public List<TestExecuteLog> addTestExecuteLog(List<Integer> idList, Integer planId) {
-        //前端维护一个测试人员表，内容调接口查询user-role表，查到角色是测试员的就加到这个表里，然后导入用例时选中表中的人员name 传过来
-        //是否需要校验 planId+测试用例id对应的执行记录重复？
-
-        //校验planId是否有效
         if (testPlanMapper.selectById(planId) == null) {
             throw new IllegalArgumentException("planId不存在");
         }
-        //去重，查询useCaseList
+
+        //查询该计划已经导入的用例
+        List<TestExecuteLog> testExecuteLogs = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().eq("plan_id", planId));
+        List<Integer> existing_ids = testExecuteLogs.stream().map(TestExecuteLog::getUseCaseId).collect(Collectors.toList());
+
+        //去除已经导入的用例
         List<Integer> caseIdList = idList.stream().distinct().collect(Collectors.toList());
-        List<TestUseCase> useCaseList = testUseCaseMapper.selectBatchIds(idList);
+        caseIdList.removeAll(existing_ids);
 
+        //查询真正要导入的测试用例
+        List<TestUseCase> useCaseList = testUseCaseMapper.selectBatchIds(caseIdList);
 
-        //若传入的id部分有效  是否需要返回异常？
         if (useCaseList.size() < 1) {
-            throw new IllegalArgumentException("未查询到指定测试用例");
+            throw new IllegalArgumentException("要导入的用例已经全部存在，或用例已经被删除");
         }
-        List<TestExecuteLog> executeLogList = useCaseList.stream().map(e -> new TestExecuteLog(e, planId)).collect(Collectors.toList());
-        executeLogList.forEach(e -> testExecuteLogMapper.insert(e));
+
+        List<TestExecuteLog> executeLogList = useCaseList.stream().map(useCase -> new TestExecuteLog(useCase, planId)).collect(Collectors.toList());
+        super.saveBatch(executeLogList);
+
         return executeLogList;
     }
 
     @Override
     public Boolean updateBatchTestExecute(EditBatchExecuteLogParam editBatchExecuteLogParam) {
-
         Boolean pass = editBatchExecuteLogParam.getPass();
         String testPerson = editBatchExecuteLogParam.getTestPerson();
         Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
+
+        if (pass == null && StringUtils.isEmpty(testPerson)) {
+            throw new IllegalArgumentException("执行结果和替换测试人员不能同时为空！");
+        }
+
         List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
-        //查询记录，判断数据是否存在
         if (localList.size() < 1) {
             throw new IllegalArgumentException("要修改的执行记录id不存在");
         }
 
-        //拒绝无效更改
-        if (pass == null && StringUtils.isEmpty(testPerson)) {
-            throw new IllegalArgumentException("无需要修改为的目标值，请求无效");
+        //填写执行记录
+        if (pass != null) {
+            localList.stream().forEach(executeLog -> {
+                executeLog.setPass(pass);
+                executeLog.setTestPerson(RequestHolder.getUserInfo().getEmployeeName());
+                executeLog.setTestPersonId(RequestHolder.getUserInfo().getId());
+            });
         }
 
-        //
-        if (pass != null) {
-            localList.stream().forEach(e -> e.setPass(pass));
-        } else {
-            localList.stream().forEach(e ->{e.setTestPerson(testPerson);
+        //替换测试人员
+        else {
+            localList.stream().forEach(e -> {
+                e.setTestPerson(testPerson);
                 e.setTestPersonId(testPersonId);
-            } );
+            });
         }
-        //更新对应记录：
-        localList.forEach(e -> {
-            if (testExecuteLogMapper.updateById(e) < 1) {
-                throw new IllegalArgumentException("要修改的执行记录id不存在");
-            }
-        });
+
+        super.updateBatchById(localList);
         return true;
-//       在修改执行记录状态时更新测试人员
-//        Boolean newPass = editBatchExecuteLogParam.getPass();
-//        String testPerson = editBatchExecuteLogParam.getTestPerson();
-//        Integer testPersonId = editBatchExecuteLogParam.getTestPersonId();
-//        List<TestExecuteLog> localList = testExecuteLogMapper.selectList(new QueryWrapper<TestExecuteLog>().in("id", editBatchExecuteLogParam.getIdList()));
-//        if (localList.size() < 1) {
-//            throw new IllegalArgumentException("要修改的执行记录id不存在");
-//        }
-//        if (newPass == null && StringUtils.isEmpty(testPerson)) {
-//            throw new IllegalArgumentException("无需要修改为的目标值，请求无效");
-//        }
-//        localList.forEach(localTestExecute->{
-//            Boolean pass = localTestExecute.getPass();
-//            if (newPass != null) {
-//                localTestExecute.setPass(newPass);
-//            } else {
-//                localList.stream().forEach(e ->{e.setTestPerson(testPerson);
-//                    e.setTestPersonId(testPersonId);
-//                } );
-//            }
-//            //更新对应记录：
-//            localList.forEach(e -> {
-//                if (testExecuteLogMapper.updateById(e) < 1) {
-//                    throw new IllegalArgumentException("要修改的执行记录id不存在");
-//                }
-//            });
-//
-//        });
-//
-//        passList.forEach(pass->{
-//
-//        });
-//        return true;
     }
 
     @Override
@@ -132,13 +104,9 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         Page<TestExecuteLog> page = new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize());
         QueryWrapper<TestExecuteLog> executeLogQueryWrapper = new QueryWrapper<TestExecuteLog>()
                 .eq(testExecuteLogParam.getPlanId() != null, "plan_id", testExecuteLogParam.getPlanId())
-                .eq(testExecuteLogParam.getModularId()!=null,"modular_id",testExecuteLogParam.getModularId())
-                .and(logIdOrTitle != null,a->a.eq(isNumeric(logIdOrTitle), "use_case_id",StringUtils.isEmpty(logIdOrTitle)||!isNumeric(logIdOrTitle)?null:Integer.valueOf(logIdOrTitle))
+                .eq(testExecuteLogParam.getModularId() != null, "modular_id", testExecuteLogParam.getModularId())
+                .and(logIdOrTitle != null, a -> a.eq(isNumeric(logIdOrTitle), "use_case_id", StringUtils.isEmpty(logIdOrTitle) || !isNumeric(logIdOrTitle) ? null : Integer.valueOf(logIdOrTitle))
                         .or().like("title", logIdOrTitle));
         return testExecuteLogMapper.selectPage(page, executeLogQueryWrapper);
     }
 }
-
-
-
-

@@ -40,7 +40,6 @@ public class DevController {
     TaskFeedbackService taskFeedbackService;
     @Autowired
     DevInterfaceService devInterfaceService;
-
     @Autowired
     DataRequirementService dataRequirementService;
 
@@ -156,7 +155,6 @@ public class DevController {
     @ApiOperationSupport(order = 7)
     @GetMapping("/devRequirementList")
     @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息,类型为")
-    //@PreAuthorize("hasAuthority('/projectDev/devRequirementList')")
     public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
 
@@ -172,7 +170,6 @@ public class DevController {
     @ApiOperationSupport(order = 8)
     @GetMapping("/devRequirement")
     @ApiOperation(value = "查询开发需求详情", notes = "基本信息及原型设计图在devRequirement里面,用例说明在useCase里", response = DevRequirement.class)
-    //@PreAuthorize("hasAuthority('/projectDev/devRequirement')")
     public DevRequirement devRequirement(@RequestParam @NotNull(message = "requirementId不能为空") Integer requirementId) {
         return devRequirementService.getById(requirementId);
     }
@@ -239,7 +236,6 @@ public class DevController {
     @ApiOperationSupport(order = 12)
     @GetMapping("/devTaskList")
     @ApiOperation(value = "查询开发任务", notes = "返回需求id对应的全部任务 返回值类型为List<DevTask>,需求id为null返回所有任务", response = DevTask.class)
-    //@PreAuthorize("hasAuthority('/projectDev/devTaskList')")
     public List<DevTask> devTaskList(@RequestParam Integer requireId) {
         return devTaskService.list(new QueryWrapper<DevTask>().eq(requireId != null, "require_id", requireId));
     }
@@ -267,7 +263,6 @@ public class DevController {
     @GetMapping("/getTaskFeedbacks")
     @ApiOperation(value = "查询任务反馈", notes = "查询指定任务的反馈列表")
     @ApiOperationSupport(order = 15)
-    //@PreAuthorize("hasAuthority('/projectDev/getTaskFeedbacks')")
     public List<TaskFeedback> getTaskFeedbacks(@NotNull(message = "id不能为空") @RequestParam Integer devTaskId) {
         return taskFeedbackService.selectListByTaskId(new TaskFeedback().setDevTaskId(devTaskId));
     }
@@ -307,11 +302,9 @@ public class DevController {
     @ApiOperationSupport(order = 12)
     @GetMapping("/DevInterfaceList")
     @ApiOperation(value = "查询关联接口", notes = "返回需求id对应的关联接口,参数为空则查询全部关联接口")
-    //@PreAuthorize("hasAuthority('/projectDev/DevInterfaceList')")
     public List<DevInterface> devInterfaceList(@RequestParam Integer requireId) {
         return devInterfaceService.list(new QueryWrapper<DevInterface>().eq(requireId != null, "require_id", requireId));
     }
-
 
     @ApiOperationSupport(order = 13)
     @PostMapping("/deleteDevInterface")
@@ -322,17 +315,6 @@ public class DevController {
             throw new IllegalArgumentException("要删除的关联接口id不存在");
         }
         return true;
-    }
-
-    private TaskStatusEnum getDevStatus(Date startDate, Date endDate) {
-        if (startDate == null || endDate == null)
-            return null;
-        if (new Date().before(startDate))
-            return TaskStatusEnum.UN_START;
-        else if (startDate.before(new Date()) && new Date().before(endDate))
-            return TaskStatusEnum.RUNNING;
-        else
-            return TaskStatusEnum.DELAYED;
     }
 
     @ApiOperationSupport(order = 10)
@@ -384,7 +366,6 @@ public class DevController {
     @ApiOperationSupport(order = 12)
     @GetMapping("/dataRequirementList")
     @ApiOperation(value = "查询数据需求列表", notes = "返回当前项目全部的数据需求")
-    //@PreAuthorize("hasAuthority('/projectDev/dataRequirementList')")
     public List<DataRequirement> dataRequirementList() {
         return dataRequirementService.list();
     }
@@ -392,12 +373,20 @@ public class DevController {
     @ApiOperationSupport(order = 12)
     @GetMapping("/dataRequirementListByDevRequire")
     @ApiOperation(value = "查询开发需求对应的数据需求列表", notes = "根据开发需求id查询对应数据需求")
-    //@PreAuthorize("hasAuthority('/projectDev/dataRequirementListByDevRequire')")
     public List<DataRequirement> dataRequirementListByDevRequire(Integer requirementId) {
         return dataRequirementService.list(new QueryWrapper<DataRequirement>().eq(requirementId!=null,"require_id",requirementId));
     }
 
-
+    private TaskStatusEnum getDevStatus(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null)
+            return null;
+        if (new Date().before(startDate))
+            return TaskStatusEnum.UN_START;
+        else if (startDate.before(new Date()) && new Date().before(endDate))
+            return TaskStatusEnum.RUNNING;
+        else
+            return TaskStatusEnum.DELAYED;
+    }
 
 
 }

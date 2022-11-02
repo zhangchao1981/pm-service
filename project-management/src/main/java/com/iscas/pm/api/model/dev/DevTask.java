@@ -20,7 +20,6 @@ import java.util.Date;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.IGNORED;
 
-
 @ApiModel(value = "开发任务", description = "开发任务表，对应project_demo库dev_requirement表")
 @TableName(value = "dev_task")
 @Data

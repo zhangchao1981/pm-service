@@ -1,6 +1,5 @@
 package com.iscas.pm.api.model.project;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -67,8 +66,6 @@ public class Project implements Serializable {
     @ApiModelProperty(value = "项目负责人的userId", required = true)
     @NotNull(message = "负责人用户ID不能为空")
     private Integer userId;
-
-
 
     @ApiModelProperty(value = "项目概述")
     @Size(max = 5000,message = "项目概述长度不能大于5000")

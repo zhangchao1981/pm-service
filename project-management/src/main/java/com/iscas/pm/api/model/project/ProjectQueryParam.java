@@ -3,7 +3,6 @@ package com.iscas.pm.api.model.project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.bouncycastle.cms.PasswordRecipientId;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

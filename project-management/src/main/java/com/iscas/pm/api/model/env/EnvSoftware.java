@@ -27,7 +27,6 @@ import java.io.Serializable;
 @ApiModel(value = "软件资源表", description = "软件环境需求表，对应项目环境页面子表")
 public class EnvSoftware implements Serializable {
 
-
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)
     private Integer id;

@@ -18,8 +18,4 @@ public interface ProjectTeamService extends IService<ProjectUserRole> {
 
     List<ProjectMember> memberRoleList();
 
-
-//    List<ProjectUserRole> getMemberByRole(@NotNull(message = "角色ID不能为空") Integer roleId);
-//
-//    List<String> getRoleList();
 }

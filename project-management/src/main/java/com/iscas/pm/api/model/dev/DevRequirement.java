@@ -132,7 +132,6 @@ public class DevRequirement implements Serializable {
     @TableField(exist = false)
     private List<DevTask> devTasks;
 
-
     public DevRequirement() {
         type= String.valueOf(DevTypeEnum.Requirement);
     }

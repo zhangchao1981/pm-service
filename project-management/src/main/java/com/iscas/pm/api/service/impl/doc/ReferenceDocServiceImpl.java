@@ -7,7 +7,7 @@ import com.iscas.pm.api.service.ReferenceDocService;
 import org.springframework.stereotype.Service;
 
 /**
-* @author 66410
+* @author lichagn
 * @description 针对表【reference_doc】的数据库操作Service实现
 * @createDate 2022-07-28 17:26:03
 */

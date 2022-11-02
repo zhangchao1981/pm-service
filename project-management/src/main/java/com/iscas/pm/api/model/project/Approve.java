@@ -25,5 +25,4 @@ public class Approve {
     @ApiModelProperty(value = "审核意见")
     private String approveComments;
 
-
 }

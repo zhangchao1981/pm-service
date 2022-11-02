@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
  */
 @Data
 public class DocPlanTask {
-//    @ApiModelProperty(value = "任务id")
-//    private Integer id;
 
     @ApiModelProperty(value = "WBS编号,前端无需传参，后端自动生成")
     private String wbs;
@@ -27,9 +25,6 @@ public class DocPlanTask {
 
     @ApiModelProperty(value = "责任人，人员姓名，多个人用逗号隔开")
     private String worker;
-
-//    @ApiModelProperty(value = "人数,前端无需传参，后端自动根据责任人计算")
-//    private Integer personCount;
 
     @ApiModelProperty(value = "工期(天),前端无需传参，后端自动根据开始日期和结束日期计算")
     private Integer workingDays;
@@ -45,15 +40,6 @@ public class DocPlanTask {
 
     @ApiModelProperty(value = "任务状态，前端无需传参")
     private String status;
-
-//    @ApiModelProperty(value = "项目完成进度，前端无需传参")
-//    private Integer progressRate;
-////
-//    @ApiModelProperty(value = "实际开始日期")
-//    private Date actualStartDate;
-//
-//    @ApiModelProperty(value = "实际结束日期")
-//    private Date actualEndDate;
 
     public DocPlanTask(PlanTask planTask) {
         this.wbs = planTask.getWbs();

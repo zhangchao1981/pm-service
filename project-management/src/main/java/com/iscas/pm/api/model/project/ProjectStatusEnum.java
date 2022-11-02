@@ -19,7 +19,6 @@ public enum ProjectStatusEnum {
     private final String code;
     private final String value;
 
-
     ProjectStatusEnum(String code, String value) {
 
         this.code = code;

@@ -8,9 +8,8 @@ import com.iscas.pm.api.service.DevModularService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【dev_modular(项目模块表)】的数据库操作Service实现
  * @createDate 2022-08-03 16:10:22
  */
@@ -19,7 +18,6 @@ public class DevModularServiceImpl extends ServiceImpl<DevModularMapper, DevModu
         implements DevModularService {
     @Autowired
     DevModularMapper devModularMapper;
-
 
     @Override
     public DevModular modularValidCheck(DevModular devModular) {

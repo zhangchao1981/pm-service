@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
-* @author 66410
+* @author lichang
 * @description 针对表【template】的数据库操作Service实现
 * @createDate 2022-07-28 18:18:33
 */
@@ -43,9 +43,6 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     public String uploadTemplate(MultipartFile file) throws IOException {
         //文件存入FastDFs
         StorePath path = fastDFSUtil.upload(file);
-//        redisUtil.set(path.getFullPath(),null);
-//        //设置失效时间  (数值待定)
-//        redisUtil.expire(path.getFullPath(),1000);
         return  path.getFullPath();
     }
 

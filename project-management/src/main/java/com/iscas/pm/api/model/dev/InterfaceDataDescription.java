@@ -1,6 +1,5 @@
 package com.iscas.pm.api.model.dev;
 
-import com.iscas.pm.api.model.dev.DataTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -34,7 +33,5 @@ public class InterfaceDataDescription {
     @ApiModelProperty(value = "备注",required = true)
     @Size(max = 100,message = "备注长度不能大于100")
     private String note;
-
-
 
 }

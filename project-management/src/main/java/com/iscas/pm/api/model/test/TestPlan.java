@@ -20,7 +20,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
 @Accessors(chain = true)
 @ApiModel(value = "测试计划", description = " 测试计划，对应test_plan表")
 @CheckTimeInterval(beginTime = {"startTime"}, endTime = {"endTime"}, message = "测试计划开始日期不能大于结束日期")

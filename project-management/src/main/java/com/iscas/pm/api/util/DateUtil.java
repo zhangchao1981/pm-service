@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 日期工具类
  */
 public class DateUtil {
     public static String PATTERN_HH_MM_SS = "HH:mm:ss";

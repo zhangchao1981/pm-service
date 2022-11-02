@@ -36,7 +36,6 @@ public class DocModular {
     @ApiModelProperty(value = "模块描述")
     private String description;
 
-
     public DocModular(DevModular devModular) {
         this.id = devModular.getId();
         this.name = devModular.getName();

@@ -4,22 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.dev.DevTaskMapper;
 import com.iscas.pm.api.mapper.projectPlan.ProjectPlanMapper;
+import com.iscas.pm.api.mapper.projectPlan.TaskFeedbackMapper;
 import com.iscas.pm.api.model.dev.DevTask;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
-import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
-import com.iscas.pm.api.service.DevRequirementService;
 import com.iscas.pm.api.service.DevTaskService;
 import com.iscas.pm.api.service.ProjectPlanService;
 import com.iscas.pm.api.service.TaskFeedbackService;
-import com.iscas.pm.api.mapper.projectPlan.TaskFeedbackMapper;
-import com.iscas.pm.api.service.impl.dev.DevTaskServiceImpl;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author zhangchao
@@ -114,8 +111,6 @@ public class TaskFeedbackServiceImpl extends ServiceImpl<TaskFeedbackMapper, Tas
         devTaskService.computeDevTask(devTask, all_feedbacks);
 
     }
-
-
 
     private void checkProgress(TaskFeedback taskFeedback, List<TaskFeedback> my_feedbacks) {
         //计算本次反馈可填写的进度区间

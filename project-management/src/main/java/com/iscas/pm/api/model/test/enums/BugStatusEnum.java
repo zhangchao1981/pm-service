@@ -3,7 +3,6 @@ package com.iscas.pm.api.model.test.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
-
 /**
  * @Author： zhangchao
  * @Date： 2022/8/11

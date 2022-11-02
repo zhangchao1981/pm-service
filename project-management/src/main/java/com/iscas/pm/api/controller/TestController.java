@@ -100,8 +100,6 @@ public class TestController {
         return true;
     }
 
-
-
     @ApiOperationSupport(order = 6)
     @PostMapping("/testPlanList")
     @ApiOperation(value = "测试计划列表", notes = "查询符合条件的测试计划列表(分页)")
@@ -123,7 +121,6 @@ public class TestController {
     public List<TestPlan> allTestPlanList() {
             return  testPlanService.list();
     }
-
 
     @ApiOperationSupport(order = 8)
     @PostMapping("/addTestPlan")
@@ -196,7 +193,6 @@ public class TestController {
         return  testExecuteLogService.testExecuteLogList(testExecuteLogParam);
     }
 
-    //和查询测试计划详情接口合并，增加查询条件
     @ApiOperationSupport(order = 14)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
@@ -221,7 +217,7 @@ public class TestController {
             throw new IllegalArgumentException("要删除的执行记录id不能为空");
         }
         if (!testExecuteLogService.removeByIds(ids)) {
-            throw new IllegalArgumentException("要删除的用例执行记录id不存在");
+            throw new IllegalArgumentException("要删除的用例执行记录id不存在，可能已经被删除");
         }
         return true;
     }

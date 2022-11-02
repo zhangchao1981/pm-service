@@ -29,5 +29,4 @@ public class EditBatchExecuteLogParam {
     @ApiModelProperty(value = "测试人员的用户id(指定测试人员接口需要)", required = true)
     private Integer  testPersonId;
 
-
 }
