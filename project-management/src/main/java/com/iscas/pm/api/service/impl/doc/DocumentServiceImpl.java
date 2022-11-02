@@ -161,7 +161,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
         //前端传入参数只含共用的信息，数据库查找的信息根据模板类型选择性填充
         HashMap<String, Object> map = getDocumentContext(createDocumentParam);
-
         //用户输入内容：
         map.put("version", createDocumentParam.getVersion());
         LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
@@ -341,17 +340,17 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<DevModular> modularList = devModularService.list();
         List<DocModular> docModularList = new ArrayList<>();
 
-        //根据开发需求查询:所有含开发需求的modular的List集合, devRequirement替换为docRequirement
+        //全部开发需求 :所有含开发需求的modular的List集合, devRequirement替换为docRequirement
         List<DevRequirement> devRequirementList = devRequirementService.list();
         List<DocRequirement> docRequirementList = new ArrayList<>();
         devRequirementList.forEach(devRequirement -> {
             docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
         });
-        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().collect(Collectors.groupingBy(DocRequirement::getModularId));
 
-        //性能需求
-        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
-        //用DocModular 将modular 中的开发需求属性填充上
+        //功能需求
+        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.FUNCTION)).collect(Collectors.groupingBy(DocRequirement::getModularId));
+
+        //用DocModular 将modular中的开发需求属性补充上
         modularList.forEach(modular -> {
             docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
         });
@@ -363,8 +362,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         );
         List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
 
+        //性能需求
+        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+
         //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
-        //如果用新建实体类  需要加属性和构造器   此处采用方案2
+        //如果用新建实体类 ，需要加属性和构造器 ，此处采用方案2
         List<DocInterface> externalInterfaceList = new ArrayList<>();
         List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
         if (devInterfaces.size() > 0) {
@@ -375,9 +377,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         if (devInterfaces2.size() > 0) {
             devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
         }
-        List<DataRequirement> dataRequirementList = dataRequirementService.list();
+        List<DataRequirement> requirementList = dataRequirementService.list();
+        List<DocDataRequirement>  dataRequirementList=new ArrayList<>();
+        if (requirementList.size()>0){
+            requirementList.forEach(requirement->{
+                    dataRequirementList.add(new DocDataRequirement(requirement));
+            });
+        }
         List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
         List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+
         map.put("modularList", modularTreeList);
         map.put("performanceReqList", performanceReqList);
         map.put("externalInterfaceList", externalInterfaceList);
@@ -464,10 +473,10 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 StorePath storePath = StorePath.parseFromUrl(eachPrototype);
                 byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
                 InputStream streamImg = new ByteArrayInputStream(sourceByte);
-                Integer numbers = prototype.size() > 1 ? (i + 1) : null;
                 //图片尺寸设置
+                String pictureName=prototype.size()>1?requireName + "原型设计图" + (i + 1):requireName + "原型设计图";
                 pictureList.add(new PoitlPicture().setStreamImg(Pictures.ofStream(streamImg, PictureType.JPEG)
-                        .size(585, 305).create()).setPictureName(requireName + "原型设计图" + numbers.toString()));
+                        .size(585, 305).create()).setPictureName(pictureName));
             }
         } catch (Exception e) {
             e.printStackTrace();
