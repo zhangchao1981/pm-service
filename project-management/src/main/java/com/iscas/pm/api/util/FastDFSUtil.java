@@ -87,11 +87,6 @@ public class FastDFSUtil {
         fastFileStorageClient.deleteFile(group, path);
     }
 
-
-
-    // data   filename:  文件名.dox    带扩展名的0
-        //文件流放到 data下面
-
     /**
      * 文件下载
      *
@@ -108,30 +103,7 @@ public class FastDFSUtil {
         byte[] bytes = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         response.reset();
         return  fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
-//        response.setContentType("application/octet-stream");
-//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, DEFAULT_CHARSET));
-//
-//        // 设置强制下载不打开
-////        response.setContentType("application/force-download");
-//        ServletOutputStream outputStream = null;
-//        try {
-//            outputStream = response.getOutputStream();
-//            outputStream.write(bytes);
-//            outputStream.flush();
-//        } catch (IOException e) {
-//            System.out.println("");
-//        } finally {
-//            try {
-//                outputStream.close();
-//            } catch (IOException e) {
-//                System.out.println("");
-//            }
-//        }
     }
-
-
-    //直接让前端下载并
-
 
     /**
      * 将传入的inputStream转换成MultipartFile并上传fastDFS

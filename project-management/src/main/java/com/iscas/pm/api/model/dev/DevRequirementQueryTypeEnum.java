@@ -19,5 +19,4 @@ public enum DevRequirementQueryTypeEnum {
         this.value = value;
     }
 
-
 }

@@ -108,7 +108,6 @@ public class TestBug implements Serializable {
     private String solver;
 
     @ApiModelProperty(value = "缺陷解决时间，无需传参")
-    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date solveTime;
@@ -117,15 +116,11 @@ public class TestBug implements Serializable {
     private BugSolveResultEnum solveResult;
 
     @ApiModelProperty(value = "解决时长，小时，后端计算，前端无需传参")
-    @JsonIgnore
     private Long solveHours;
 
     @ApiModelProperty(value = "回归时长，小时，后端计算，前端无需传参")
-    @JsonIgnore
     private Long regressionHours;
 
-
-//    @NotNull(message = "[关联计划id]不能为空")
     @ApiModelProperty(value = "关联的测试计划id",required = true)
     private Integer planId;
 

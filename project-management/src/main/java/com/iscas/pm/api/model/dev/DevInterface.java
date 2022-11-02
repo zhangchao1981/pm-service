@@ -31,12 +31,10 @@ public class DevInterface implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
     @ApiModelProperty(value = "接口名称",required = true)
     @NotBlank(message = "接口名称不能为空")
     @Size(max = 25,message = "接口名称长度不能大于25")
     private String name;
-
 
     @ApiModelProperty(value = "接口类型",required = true,notes = "内部或外部接口")
     @NotNull(message = "接口类型不能为空")
@@ -46,22 +44,18 @@ public class DevInterface implements Serializable {
     @Size(max = 25,message = "接口种类长度不能大于25")
     private String category;
 
-
     @ApiModelProperty(value = "接口描述",required = true)
     @Size(max = 255,message = "接口描述长度不能大于255")
     private String description;
-
 
     @ApiModelProperty(value = "维护人，即新建接口的用户")
     @Size(max = 12,message = "维护人长度不能大于12")
     private String maintainer;
 
-
     @ApiModelProperty(value = "发送方",required = true)
     @NotBlank(message = "发送方不能为空")
     @Size(max = 25,message = "发送方长度不能大于25")
     private String sender;
-
 
     @ApiModelProperty(value = "接收方",required = true)
     @NotBlank(message = "接收方不能为空")
@@ -72,14 +66,9 @@ public class DevInterface implements Serializable {
     @NotNull(message = "优先级不能为空")
     private PriorityEnum priority;
 
-
     @ApiModelProperty(value = "开发需求id",required = true)
     @NotNull(message = "开发需求id不能为空")
     private Integer requireId;
-
-//
-//    @ApiModelProperty(value = "接口数据元素说明",required = true)
-//    @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     @ApiModelProperty(value = "接口数据元素说明", required = true)

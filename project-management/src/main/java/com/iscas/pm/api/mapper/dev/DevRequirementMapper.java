@@ -5,7 +5,7 @@ import com.iscas.pm.api.model.dev.DevRequirement;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
-* @author 66410
+* @author lichang
 * @description 针对表【dev_requirement(开发需求表)】的数据库操作Mapper
 * @createDate 2022-08-03 11:21:48
 * @Entity test.DevRequirement

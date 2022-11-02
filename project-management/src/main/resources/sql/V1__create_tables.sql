@@ -37,7 +37,7 @@ CREATE TABLE `dev_interface`  (
                                   PRIMARY KEY (`id`) USING BTREE,
                                   INDEX `fk_interface_requirement`(`require_id`) USING BTREE,
                                   CONSTRAINT `fk_interface_requirement` FOREIGN KEY (`require_id`) REFERENCES `dev_requirement` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '关联接口表' ROW_FORMAT = Dynamic;
 
 
 -- ----------------------------

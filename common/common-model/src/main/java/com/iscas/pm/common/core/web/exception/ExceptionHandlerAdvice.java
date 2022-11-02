@@ -55,7 +55,7 @@ public class ExceptionHandlerAdvice {
     public BaseResponse handleAccessDeniedException(AccessDeniedException ex) {
         BaseResponse response = new BaseResponse();
         response.setCode(HttpStatus.FORBIDDEN.value());
-        response.setMessage(ex.getMessage());
+        response.setMessage("您无权访问该资源，请联系系统管理员或项目负责人分配权限！");
         return response;
     }
 

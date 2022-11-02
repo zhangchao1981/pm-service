@@ -19,7 +19,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
-
 @TableName(value ="task_feedback")
 @ApiModel("任务反馈")
 @Data

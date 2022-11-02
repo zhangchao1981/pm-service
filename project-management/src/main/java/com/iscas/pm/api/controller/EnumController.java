@@ -171,7 +171,6 @@ public class EnumController {
         return DataTypeEnum.values();
     }
 
-
     @ApiOperation(value = "文档模板类型", notes = "文档模板类型")
     @PostMapping(value = "/templateTypeEnum")
     public TemplateTypeEnum[] templateTypeEnum() {

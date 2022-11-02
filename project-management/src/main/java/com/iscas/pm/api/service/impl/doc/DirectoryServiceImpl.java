@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【doc_directory】的数据库操作Service实现
  * @createDate 2022-07-28 18:21:01
  */
@@ -44,8 +44,6 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         return directory;
     }
 
-
-
     @Override
     public Directory editDirectory(Directory directory) {
         if (directory.getId()==null){
@@ -62,8 +60,6 @@ public class DirectoryServiceImpl extends ServiceImpl<DirectoryMapper, Directory
         if (parentId.equals(directory.getId())){
             throw new IllegalArgumentException("父id与自身id相同，死循环");
         }
-
-
 
         //进行更新，更新失败(id不存在)抛出异常
         if (1 > directoryMapper.updateById(directory)) {

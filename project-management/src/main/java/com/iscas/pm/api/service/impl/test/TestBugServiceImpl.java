@@ -17,14 +17,16 @@ import com.iscas.pm.api.model.test.param.TransferBugParam;
 import com.iscas.pm.api.service.TestBugService;
 import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
+import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isNumeric;
-
 
 /**
  * @author lichang
@@ -79,6 +81,9 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         if (db_testBug.getStatus() == BugStatusEnum.CLOSE)
             throw new IllegalArgumentException("缺陷已经关闭，不能修改");
 
+        if (!db_testBug.getCreatorUserName().equals(RequestHolder.getUserInfo().getUserName()))
+            throw new IllegalArgumentException("只有缺陷提出人才能编辑缺陷");
+
         //获取变化字段
         TestBug bug = getChangeInfo(testBug, db_testBug);
 
@@ -97,8 +102,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
 
-        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.REOPEN)
-            throw new IllegalArgumentException("缺陷状态为新建或重新打开时，才可执行【开始】操作");
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.REOPEN && db_testBug.getStatus() != BugStatusEnum.DELAYED_SOLVED)
+            throw new IllegalArgumentException("缺陷状态为新建/重新打开/延时解决时，才可执行【开始】操作");
 
         if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
             throw new IllegalArgumentException("您没有处理该缺陷的权限");
@@ -114,7 +119,14 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void transferBug(TransferBugParam param) {
-        //当前处理人或技术经理可以转办缺陷
+        TestBug db_testBug = super.getById(param.getBugId());
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.REOPEN && db_testBug.getStatus() != BugStatusEnum.DELAYED_SOLVED && db_testBug.getStatus() != BugStatusEnum.RUNNING)
+            throw new IllegalArgumentException("缺陷状态为新建/进行中/重新打开/延时解决时，才可执行【转办】操作");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()) &&
+                (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/projectDev/addDevTask")))
+            throw new IllegalArgumentException("只有当前处理人和技术经理才能转办缺陷");
 
         //更新缺陷信息
         UpdateWrapper<TestBug> wrapper = Wrappers.update();
@@ -134,7 +146,13 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
 
     @Override
     public void dispatchBug(TransferBugParam param) {
-        //当前处理人或技术经理可以转办缺陷
+        TestBug db_testBug = super.getById(param.getBugId());
+        if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.REOPEN && db_testBug.getStatus() != BugStatusEnum.DELAYED_SOLVED && db_testBug.getStatus() != BugStatusEnum.RUNNING)
+            throw new IllegalArgumentException("缺陷状态为新建/进行中/重新打开/延时解决时，才可执行【指派】操作");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/projectDev/addDevTask"))
+            throw new IllegalArgumentException("只有技术经理才能指派缺陷");
 
         //更新缺陷信息
         UpdateWrapper<TestBug> wrapper = Wrappers.update();
@@ -156,10 +174,14 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug testBug = super.getById(param.getBugId());
         if (testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
         if (testBug.getStatus() != BugStatusEnum.RUNNING)
             throw new IllegalArgumentException("【进行中】状态的缺陷才能执行【已解决】操作");
-        if (!testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
-            throw new IllegalArgumentException("您没有处理该缺陷的权限");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (!testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()) &&
+                (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/projectDev/addDevTask")))
+            throw new IllegalArgumentException("只有当前处理人和技术经理才能解决缺陷");
 
         //补全信息，更新缺陷信息
         testBug.setSolver(RequestHolder.getUserInfo().getEmployeeName());
@@ -187,10 +209,14 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug db_testBug = super.getById(bugId);
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
         if (db_testBug.getStatus() != BugStatusEnum.NEW && db_testBug.getStatus() != BugStatusEnum.RUNNING && db_testBug.getStatus() != BugStatusEnum.REOPEN)
-            throw new IllegalArgumentException("缺陷状态为新建或运行中时，才可执行【延迟解决】操作");
-        if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()))
-            throw new IllegalArgumentException("您没有处理该缺陷的权限");
+            throw new IllegalArgumentException("缺陷状态为新建/进行中/重新打开时，才可执行【延迟解决】操作");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (!db_testBug.getCurrentProcessorUserName().equals(RequestHolder.getUserInfo().getUserName()) &&
+                (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/projectDev/addDevTask")))
+            throw new IllegalArgumentException("只有当前处理人和技术经理才能延时解决缺陷");
 
         db_testBug.setStatus(BugStatusEnum.DELAYED_SOLVED);
 
@@ -208,8 +234,14 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug db_testBug = super.getById(bugId);
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
         if (db_testBug.getStatus() != BugStatusEnum.SOLVED)
             throw new IllegalArgumentException("缺陷状态为已解决时，才可执行【重新打开】操作");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (!db_testBug.getCreatorUserName().equals(RequestHolder.getUserInfo().getUserName()) &&
+                (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/test/addTestUseCase")))
+            throw new IllegalArgumentException("只有缺陷提出人/测试经理/测试人员角色才能重新打开缺陷");
 
         db_testBug.setStatus(BugStatusEnum.REOPEN);
 
@@ -227,8 +259,14 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug testBug = super.getById(param.getBugId());
         if (testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
         if (testBug.getStatus() != BugStatusEnum.SOLVED)
             throw new IllegalArgumentException("缺陷状态为已解决时，才可执行【关闭】操作");
+
+        Map<String, List<String>> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions();
+        if (!testBug.getCreatorUserName().equals(RequestHolder.getUserInfo().getUserName()) &&
+                (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB()) == null || !projectPermissions.get(DataSourceHolder.getDB()).contains("/test/addTestUseCase")))
+            throw new IllegalArgumentException("只有缺陷提出人/测试经理/测试人员角色才能关闭缺陷");
 
         //补全信息，更新缺陷信息
         testBug.setSolveResult(param.getSolveResult());

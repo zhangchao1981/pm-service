@@ -1,8 +1,6 @@
 package com.iscas.pm.api.model.doc.data;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.iscas.pm.api.model.dev.DevInterface;
 import com.iscas.pm.api.model.dev.InterfaceDataDescription;
@@ -12,10 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.NOT_NULL;
@@ -31,29 +25,23 @@ public class DocInterface {
     @ApiModelProperty(value = "接口编号，系统自动生成，添加接口无需传参")
     private Integer id;
 
-
     @ApiModelProperty(value = "接口名称",required = true)
     private String name;
-
 
     @ApiModelProperty(value = "接口类型",required = true)
     private InterfaceTypeEnum type;
 
-
     @ApiModelProperty(value = "维护人，即新建接口的用户")
     private String maintainer;
 
-
     @ApiModelProperty(value = "发送方",required = true)
     private String sender;
-
 
     @ApiModelProperty(value = "接收方",required = true)
     private String acceptor;
 
     @ApiModelProperty(value = "优先级",required = true)
     private PriorityEnum priority;
-
 
     @ApiModelProperty(value = "开发需求id",required = true)
     private Integer requireId;
@@ -66,7 +54,6 @@ public class DocInterface {
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
     private List<InterfaceDataDescription> dataDescriptionList;
-
 
     private String projectId;
 

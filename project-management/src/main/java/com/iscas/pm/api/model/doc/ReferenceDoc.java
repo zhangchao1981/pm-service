@@ -15,13 +15,11 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-
 @Accessors(chain = true)
 @ApiModel(value = "引用文档表", description = "引用文档基本信息，对应project_demo库doc_reference表")
 @TableName(value ="doc_reference")
 @Data
 public class ReferenceDoc implements Serializable {
-
 
     @ApiModelProperty(value = "id")
     @TableId(type = IdType.AUTO)

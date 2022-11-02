@@ -1,8 +1,6 @@
 package com.iscas.pm.api.model.doc;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import org.apache.ibatis.annotations.ResultMap;
 
 /**
  * @author by  lichang

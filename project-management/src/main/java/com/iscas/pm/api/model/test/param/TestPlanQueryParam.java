@@ -23,9 +23,7 @@ public class TestPlanQueryParam {
     @Min(value = 1, message = "每页显示的条数不能小于1")
     private Integer pageSize;
 
-
     @ApiModelProperty(value = "测试计划名称或负责人姓名", notes = "填入测试计划名称或者负责人姓名，二选一")
     private String titleOrWorker;
-
 
 }

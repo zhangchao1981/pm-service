@@ -5,7 +5,7 @@ import com.iscas.pm.api.model.env.EnvHardware;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
-* @author 66410
+* @author lichang
 * @description 针对表【env_hardware(硬件环境需求表)】的数据库操作Mapper
 * @createDate 2022-08-02 14:07:07
 * @Entity test.model/project.EnvHardware

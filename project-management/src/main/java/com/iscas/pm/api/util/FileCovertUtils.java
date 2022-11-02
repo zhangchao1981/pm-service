@@ -13,7 +13,6 @@ import java.io.OutputStream;
 
 /**
  * 创建时间：2019年3月8日 下午4:25:55
- * 项目名称：shsc-batchUpload-server
  * 类说明：File流转为MultipartFile流
  * @author guobinhui
  * @since JDK 1.8.0_51

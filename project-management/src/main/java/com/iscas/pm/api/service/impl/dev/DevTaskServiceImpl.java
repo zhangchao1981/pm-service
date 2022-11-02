@@ -1,11 +1,8 @@
 package com.iscas.pm.api.service.impl.dev;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.dev.DevTaskMapper;
-import com.iscas.pm.api.model.dev.DevRequirement;
 import com.iscas.pm.api.model.dev.DevTask;
-import com.iscas.pm.api.model.dev.RequireStatusEnum;
 import com.iscas.pm.api.model.projectPlan.TaskFeedback;
 import com.iscas.pm.api.model.projectPlan.TaskStatusEnum;
 import com.iscas.pm.api.service.DevRequirementService;
@@ -17,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【dev_task(开发任务表)】的数据库操作Service实现
  * @createDate 2022-08-03 16:12:07
  */

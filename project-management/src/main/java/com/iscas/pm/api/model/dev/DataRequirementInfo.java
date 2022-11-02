@@ -20,7 +20,6 @@ public class DataRequirementInfo {
     private String name;
 
     @ApiModelProperty(value = "默认值",required = true)
-    @NotBlank(message = "默认值不能为空")
     private String defaultValue;
 
     @ApiModelProperty(value = "是否可编辑，true可编辑",required = true)
@@ -30,7 +29,6 @@ public class DataRequirementInfo {
     private Boolean notNull;
 
     @ApiModelProperty(value = "范围枚举",required = true)
-    @NotBlank(message = "范围枚举不能为空")
     private String rangeEnumeration;
 
     @ApiModelProperty(value = "数据类型",required = true)

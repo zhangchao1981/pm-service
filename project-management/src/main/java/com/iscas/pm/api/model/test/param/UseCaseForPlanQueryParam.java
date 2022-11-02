@@ -32,6 +32,4 @@ public class UseCaseForPlanQueryParam {
     @ApiModelProperty(value = "所属开发需求")
     private Integer requirementId;
 
-
-
 }

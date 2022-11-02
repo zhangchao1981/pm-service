@@ -1,6 +1,5 @@
 package com.iscas.pm.api.model.dev;
 
-import com.iscas.pm.api.model.dev.DataTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -28,15 +27,11 @@ public class InterfaceDataDescription {
     private String dataDescription;
 
     @ApiModelProperty(value = "值域范围",required = true)
-    @NotBlank(message = "值域范围不能为空")
-    @Size(max = 100,message = "值域范围长度不能大于100")
+    @Size(max = 500,message = "值域范围长度不能大于500")
     private String valueRange;
 
     @ApiModelProperty(value = "备注",required = true)
-    @NotBlank(message = "备注不能为空")
     @Size(max = 100,message = "备注长度不能大于100")
     private String note;
-
-
 
 }

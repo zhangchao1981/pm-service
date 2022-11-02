@@ -23,7 +23,6 @@ import com.iscas.pm.api.model.env.EnvSoftware;
 import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
 import com.iscas.pm.api.service.*;
-import com.iscas.pm.api.util.DocumentHandler;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.api.util.WordUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author 66410
+ * @author lichang
  * @description 针对表【document】的数据库操作Service实现
  * @createDate 2022-07-28 18:20:53
  */
@@ -58,8 +57,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     private FastFileStorageClient fastFileStorageClient;
     @Autowired
     private ProjectInfoService projectInfoService;
-    @Autowired
-    DocumentHandler documentHandler;
     @Autowired
     EnvHardwareMapper hardwareMapper;
     @Autowired
@@ -84,7 +81,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     DevInterfaceService devInterfaceService;
     @Autowired
     DataRequirementService dataRequirementService;
-
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -212,7 +208,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             throw new IOException("自动上传文档失败");
         }
     }
-
 
     @Override
     public HashMap<String, Object> getDocumentContext(CreateDocumentParam createDocumentParam) {

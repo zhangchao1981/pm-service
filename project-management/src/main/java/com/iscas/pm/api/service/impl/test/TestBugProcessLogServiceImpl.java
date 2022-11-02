@@ -6,10 +6,8 @@ import com.iscas.pm.api.model.test.TestBugProcessLog;
 import com.iscas.pm.api.service.TestBugProcessLogService;
 import org.springframework.stereotype.Service;
 
-
-
 /**
-* @author 66410
+* @author lichang
 * @description 针对表【test_bug_process_log】的数据库操作Service实现
 * @createDate 2022-08-10 10:34:40
 */

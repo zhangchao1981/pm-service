@@ -1,6 +1,5 @@
 package com.iscas.pm.api.mapper.test;
 
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.iscas.pm.api.model.test.TestExecuteLog;
 import org.apache.ibatis.annotations.Mapper;

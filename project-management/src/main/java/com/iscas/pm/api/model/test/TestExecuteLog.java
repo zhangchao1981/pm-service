@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.iscas.pm.api.model.test.enums.UseCasePriorityEnum;
 import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
+import com.iscas.pm.common.core.web.filter.RequestHolder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -102,6 +103,8 @@ public class TestExecuteLog implements Serializable {
         this.setPlanId(planId);
         this.setUseCaseId(useCase.getId());
         this.setModularId(useCase.getModularId());
+        this.setTestPerson(RequestHolder.getUserInfo().getEmployeeName());
+        this.setTestPersonId(RequestHolder.getUserInfo().getId());
     }
 
 }
