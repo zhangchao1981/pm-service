@@ -17,5 +17,5 @@ public interface TestPlanService extends IService<TestPlan> {
 
     TestPlanStatisticData statisticData(Integer testPlanId);
 
-    List<TestPlan> updateBugStatistic(IPage<TestPlan> planIdList);
+    List<TestPlan> getBugStatistic(IPage<TestPlan> planIdList);
 }

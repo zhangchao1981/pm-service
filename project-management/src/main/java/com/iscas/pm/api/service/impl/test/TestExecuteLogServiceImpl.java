@@ -106,7 +106,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         IPage<TestExecuteLog> testExecuteLogIPage = testExecuteLogMapper.testExecuteLogPage(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()), testExecuteLogParam);
 
         //全表刷新时，更新缺陷统计信息
-        if (testExecuteLogIPage!=null&&testExecuteLogIPage.getSize()>0 && testExecuteLogParam.getLogIdOrTitle()==null&&testExecuteLogParam.getModularId()==null){
+        if (testExecuteLogIPage!=null&&testExecuteLogIPage.getSize()>0){
             List<TestExecuteLog> records = testExecuteLogIPage.getRecords();
             List<Integer> executeIdList = records.stream().map(TestExecuteLog::getId).collect(Collectors.toList());
             HashMap<Integer,Integer> bugAmountList= (HashMap<Integer, Integer>) testBugService.countTestBugByExecute(executeIdList).stream().collect(Collectors.toMap(
@@ -117,7 +117,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
                 testExecuteLog.setBugCount(bugAmountList.get(testExecuteLog.getId()));
             });
             testExecuteLogIPage.setRecords(records);
-            super.updateBatchById(records);
+//            super.updateBatchById(records);
         }
         return testExecuteLogIPage;
     }

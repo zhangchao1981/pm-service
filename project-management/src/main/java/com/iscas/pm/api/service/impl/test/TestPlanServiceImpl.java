@@ -63,7 +63,7 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
     }
 
     @Override
-    public List<TestPlan> updateBugStatistic(IPage<TestPlan> planIPage) {
+    public List<TestPlan> getBugStatistic(IPage<TestPlan> planIPage) {
         List<TestPlan> records = planIPage.getRecords();
 
         //添加测试计划的缺陷统计情况
@@ -83,7 +83,7 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
             records.forEach(plan -> {
                 plan.setBugStatistic(bugClosedAmountList.get(plan.getId())+"/"+bugAllAmountList.get(plan.getId()));
             });
-            super.updateBatchById(records);
+//            super.updateBatchById(records);
         }
         return records;
     }

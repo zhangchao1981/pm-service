@@ -19,7 +19,6 @@ import javax.validation.Valid;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -115,7 +114,7 @@ public class TestController {
         //添加测试计划的统计计算结果
         records.stream().forEach(plan -> {
             plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
-        planIPage.setRecords(testPlanService.updateBugStatistic(planIPage));
+        planIPage.setRecords(testPlanService.getBugStatistic(planIPage));
         return   planIPage;
     }
 
