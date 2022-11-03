@@ -19,8 +19,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang.StringUtils.isNumeric;
-
 /**
  * @author lichang
  * @description 针对表【test_execute_log(测试用例执行记录表)】的数据库操作Service实现
@@ -99,14 +97,12 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
     }
 
     @Override
-    public IPage<TestExecuteLog> testExecuteLogList(TestExecuteLogParam testExecuteLogParam) {
-        String logIdOrTitle = testExecuteLogParam.getLogIdOrTitle();
-        Page<TestExecuteLog> page = new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize());
-        QueryWrapper<TestExecuteLog> executeLogQueryWrapper = new QueryWrapper<TestExecuteLog>()
-                .eq(testExecuteLogParam.getPlanId() != null, "plan_id", testExecuteLogParam.getPlanId())
-                .eq(testExecuteLogParam.getModularId() != null, "modular_id", testExecuteLogParam.getModularId())
-                .and(logIdOrTitle != null, a -> a.eq(isNumeric(logIdOrTitle), "use_case_id", StringUtils.isEmpty(logIdOrTitle) || !isNumeric(logIdOrTitle) ? null : Integer.valueOf(logIdOrTitle))
-                        .or().like("title", logIdOrTitle));
-        return testExecuteLogMapper.selectPage(page, executeLogQueryWrapper);
+    public IPage<TestExecuteLog> testExecuteLogPage(TestExecuteLogParam testExecuteLogParam) {
+        return testExecuteLogMapper.testExecuteLogPage(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()),testExecuteLogParam);
+    }
+
+    @Override
+    public List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId) {
+        return testExecuteLogMapper.testExecuteLogList(modularId,executeId);
     }
 }

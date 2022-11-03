@@ -4,12 +4,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.iscas.pm.api.mapper.test.TestUseCaseMapper">
 
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.test.TestUseCase">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_id" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="requirementId" column="requirement_id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="processStep" column="process_step" jdbcType="VARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+        <result property="modularId" column="modular_id" jdbcType="INTEGER"/>
+        <result property="precondition" column="precondition" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+
     <sql id="Base_Column_List">
         test_use_case.*,dev_modular.name as modularName
     </sql>
 
 
-    <select id="testUseCaseListForPlan" resultType="com.iscas.pm.api.model.test.TestUseCase">
+    <select id="testUseCaseListForPlan" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List" />
         FROM test_use_case ,dev_modular
         WHERE test_use_case.modular_id=dev_modular.id
@@ -36,3 +53,4 @@
     </select>
 
 </mapper>
+

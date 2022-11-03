@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iscas.pm.api.mapper.test.TestExecuteLogMapper">
+    <resultMap id="BaseResultMap" type="com.iscas.pm.api.model.test.TestExecuteLog">
+        <result property="processStep" column="process_step" jdbcType="VARCHAR"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+    </resultMap>
+
+
+    <!--    <sql id="Base_Column_List">-->
+    <!--        id,pass,plan_id,-->
+    <!--        test_person,title,level,-->
+    <!--        requirement_id,type,process_step,-->
+    <!--        modular_id,use_case_id-->
+    <!--    </sql>-->
+
+
+    <sql id="Base_Column_List">
+        test_execute_log.*,dev_modular.name as modularName
+    </sql>
+
+
+
+
+    <select id="testExecuteLogPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM test_execute_log ,dev_modular
+        WHERE test_execute_log.modular_id=dev_modular.id
+        <if test="testExecuteLogParam.planId !=null">
+            and test_execute_log.plan_id=#{testExecuteLogParam.planId}
+        </if>
+        <if test="testExecuteLogParam.modularId !=null">
+            and modular_id=#{testExecuteLogParam.modularId}
+        </if>
+        <if test="testExecuteLogParam.logIdOrTitle !=null ">
+            and (title like CONCAT(CONCAT('%',#{testExecuteLogParam.logIdOrTitle,jdbcType=VARCHAR}),'%') or
+            convert(use_case_id,char) like CONCAT(CONCAT('%',#{testExecuteLogParam.logIdOrTitle,jdbcType=VARCHAR}),'%')
+            )
+        </if>
+    </select>
+
+    <select id="testExecuteLogList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM test_execute_log ,dev_modular
+        WHERE test_execute_log.modular_id=dev_modular.id
+        <if test="modularId !=null">
+            and modular_id=#{modularId}
+        </if>
+        <if test="executeId !=null">
+            and test_execute_log.id=#{executeId}
+        </if>
+    </select>
+
+</mapper>
