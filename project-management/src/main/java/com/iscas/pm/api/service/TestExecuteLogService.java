@@ -19,5 +19,8 @@ public interface TestExecuteLogService extends IService<TestExecuteLog> {
 
     Boolean updateBatchTestExecute(EditBatchExecuteLogParam editBatchExecuteLogParam);
 
-    IPage<TestExecuteLog> testExecuteLogList(TestExecuteLogParam testExecuteLogParam);
+    IPage<TestExecuteLog> testExecuteLogPage(TestExecuteLogParam testExecuteLogParam);
+
+
+    List<TestExecuteLog> testExecuteLogList(Integer modularId);
 }
