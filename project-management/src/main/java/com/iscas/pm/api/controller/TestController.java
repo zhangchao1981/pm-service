@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author： zhangchao
@@ -109,9 +110,16 @@ public class TestController {
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
         IPage<TestPlan> planIPage = testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
+
         //添加测试计划的统计计算结果
-        planIPage.getRecords().stream().forEach(plan -> {
+        List<TestPlan> records = planIPage.getRecords();
+        records.stream().forEach(plan -> {
             plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
+
+        //添加测试计划的缺陷统计情况
+        List<Integer> planIdList = records.stream().map(TestPlan::getId).collect(Collectors.toList());
+        planIPage.setRecords(testPlanService.updateBugStatistic(planIdList)) ;
+
         return   planIPage;
     }
 
@@ -197,6 +205,7 @@ public class TestController {
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
     public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false)  Integer modularId, @RequestParam(required = false) Integer executeId) {
+
         return  testExecuteLogService.testExecuteLogList(modularId,executeId);
     }
     @ApiOperationSupport(order = 15)

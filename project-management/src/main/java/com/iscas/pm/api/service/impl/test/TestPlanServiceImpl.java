@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author 66410
@@ -48,6 +49,11 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
         //缺陷情况待完成
         //data.setBugStatistic()
         return data;
+    }
+
+    @Override
+    public List<TestPlan> updateBugStatistic(List<Integer> planIdList) {
+        return null;
     }
 }
 

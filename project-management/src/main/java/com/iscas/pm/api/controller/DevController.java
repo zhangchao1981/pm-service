@@ -157,7 +157,6 @@ public class DevController {
     @ApiOperation(value = "查询开发需求", notes = "返回开发需求页面的略缩信息,类型为")
     public List<DevRequirement> devRequirementList(@RequestParam @NotNull(message = "modularId不能为空") Integer modularId) {
         return devRequirementService.list(new QueryWrapper<DevRequirement>().eq("modular_id", modularId));
-
     }
 
     @ApiOperationSupport(order = 7)

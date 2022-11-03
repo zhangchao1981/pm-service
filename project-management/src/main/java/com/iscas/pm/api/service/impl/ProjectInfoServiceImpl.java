@@ -36,7 +36,7 @@ public class ProjectInfoServiceImpl extends ServiceImpl<ProjectMapper, Project> 
     @Autowired
     private ProjectUserRoleMapper projectUserRoleMapper;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Override
     public IPage<Project> projectPageList(ProjectQueryParam param) {
