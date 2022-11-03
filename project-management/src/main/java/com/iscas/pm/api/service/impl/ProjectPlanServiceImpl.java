@@ -70,9 +70,9 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
             super.updateBatchById(updatedPlanTasks);
 
         //插入新任务到数据库
-        planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
+        planTask.setWorkingDays(DateUtil.getWorkDays(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? position.toString() : parent.getWbs() + "." + position);
-        planTask.setPersonCount(planTask.getWorkerList() == null ? null : planTask.getWorkerList().size());
+        planTask.setPersonCount(planTask.getWorkerList() == null || planTask.getWorkerList().size() == 0 ? null : planTask.getWorkerList().size());
         planTask.setStatus(getStatus(planTask));
         projectPlanMapper.insert(planTask);
 
@@ -132,9 +132,9 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         }
 
         //更新当前修改的任务
-        planTask.setPersonCount(planTask.getWorkerList() == null ? null : planTask.getWorkerList().size());
+        planTask.setPersonCount(planTask.getWorkerList() == null || planTask.getWorkerList().size() == 0 ? null : planTask.getWorkerList().size());
         planTask.setStatus(getStatus(planTask));
-        planTask.setWorkingDays(DateUtil.daysBetween(planTask.getStartDate(), planTask.getEndDate()));
+        planTask.setWorkingDays(DateUtil.getWorkDays(planTask.getStartDate(), planTask.getEndDate()));
         planTask.setWbs(parent == null ? planTask.getPosition().toString() : parent.getWbs() + "." + planTask.getPosition());
         planTask.setProgressRate(db_task.getProgressRate());
         updatedPlanTasks.add(planTask);
@@ -255,7 +255,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
     @Override
     public Boolean importTemplate(String type) {
         //若计划任务已经存在任务反馈，不允许导入模板
-        if (taskFeedbackMapper.selectList(new QueryWrapper<TaskFeedback>().isNotNull("plan_task_id")).size() > 0){
+        if (taskFeedbackMapper.selectList(new QueryWrapper<TaskFeedback>().isNotNull("plan_task_id")).size() > 0) {
             throw new IllegalArgumentException("当前计划已经填写过反馈，不允许通过模板导入计划");
         }
 
@@ -278,7 +278,7 @@ public class ProjectPlanServiceImpl extends ServiceImpl<ProjectPlanMapper, PlanT
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new SimpleBaseException(500, "sql模板文件编码格式错误");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new SimpleBaseException(500, "模板文件【template/project_plan_" + type + ".sql】不存在");
         }

@@ -1,5 +1,6 @@
 package com.iscas.pm.api.util;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,16 +47,34 @@ public class DateUtil {
     }
 
     /**
+     * 计算两个日期之间的工作日数
+     * @param from  开始时间
+     * @param to  结束时间
+     * @return  工作日数
+     */
+    public static Integer getWorkDays(Date from,Date to){
+        if (from == null || to == null)
+            return null;
+
+        List<Map<String, String>> onWorks = getOnWorkTimes();
+        boolean exWeek = true;
+        long mills = millsDiffExcluding(date2String(from,PATTERN_FULL), date2String(to,PATTERN_FULL), exWeek, onWorks);
+        return (int)(mills/1000/60/60/7);
+    }
+
+
+    /**
      * 计算两个日期之间的工作小时数
      * @param from  开始时间
      * @param to  结束时间
      * @return  小时数
      */
-    public static long getWorkHours(Date from,Date to){
+    public static double getWorkHours(Date from,Date to){
         List<Map<String, String>> onWorks = getOnWorkTimes();
         boolean exWeek = true;
-        long mills = millsDiffExcluding(date2String(from,PATTERN_FULL), date2String(to,PATTERN_FULL), exWeek, onWorks);
-        return mills/1000/60/60;
+        Long mills = millsDiffExcluding(date2String(from,PATTERN_FULL), date2String(to,PATTERN_FULL), exWeek, onWorks);
+        double rate = new BigDecimal((mills.doubleValue()/1000/60/60)).setScale(1, BigDecimal.ROUND_DOWN).doubleValue();
+        return rate;
     }
 
     /**
@@ -346,7 +365,7 @@ public class DateUtil {
         Map<String, String> work2 = new HashMap<String, String>(2);
         work1.put("begin", "08:30:00");
         work1.put("end", "11:30:00");
-        work2.put("begin", "13:00:00");
+        work2.put("begin", "13:30:00");
         work2.put("end", "17:30:00");
         onWorks.add(work1);
         onWorks.add(work2);

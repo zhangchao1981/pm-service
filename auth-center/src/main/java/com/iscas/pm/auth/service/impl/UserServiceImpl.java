@@ -148,9 +148,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<UserBriefInfo> selectUserBriefInfo() {
-
         String status = "NORMAL";
-        return userMapper.loadUserBriefInfo(status);
+        List<UserBriefInfo> userBriefInfos = userMapper.loadUserBriefInfo(status);
+        return userBriefInfos.stream().filter(item -> !item.getUserName().equals("system")).collect(Collectors.toList());
 
     }
 
