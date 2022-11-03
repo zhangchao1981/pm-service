@@ -84,6 +84,7 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         TestBug db_testBug = super.getById(testBug.getId());
         if (db_testBug == null)
             throw new IllegalArgumentException("缺陷id不存在");
+
         if (db_testBug.getStatus() == BugStatusEnum.CLOSE)
             throw new IllegalArgumentException("缺陷已经关闭，不能修改");
 
@@ -350,6 +351,12 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         if (db_testBug.getType() != testBug.getType()) {
             flag = true;
             bug.setType(testBug.getType());
+        }
+        if (db_testBug.getCurrentProcessorId() != testBug.getCurrentProcessorId()){
+            flag = true;
+            bug.setCurrentProcessorId(testBug.getCurrentProcessorId());
+            bug.setCurrentProcessorUserName(testBug.getCurrentProcessorUserName());
+            bug.setCurrentProcessor(testBug.getCurrentProcessor());
         }
         if (!flag) {
             return null;

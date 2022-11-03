@@ -14,7 +14,7 @@ public enum BugProcessActionEnum {
 
     NEW("NEW", "新建缺陷"),
     EDIT("EDIT", "编辑缺陷"),
-    START("START", "开始解决缺陷"),
+    START("START", "开始处理缺陷"),
     SOLVED("SOLVED", "解决缺陷"),
     TRANSFER("TRANSFER", "转办缺陷"),
     DISPATCH("DISPATCH", "指派缺陷"),
