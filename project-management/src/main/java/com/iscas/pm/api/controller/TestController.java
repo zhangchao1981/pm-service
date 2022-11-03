@@ -172,7 +172,7 @@ public class TestController {
     }
 
 
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 11)
     @PostMapping("/addTestExecuteLog")
     @ApiOperation(value = "导入用例", notes = "批量导入测试用例到目标测试计划的用例执行记录表里")
     @PreAuthorize("hasAuthority('/test/addTestExecuteLog')")
@@ -180,15 +180,14 @@ public class TestController {
         return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
     }
 
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 12)
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
         return  testExecuteLogService.testExecuteLogPage(testExecuteLogParam);
     }
 
-
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 13)
     @PostMapping("/testUseCaseListForPlan")
     @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
     public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
@@ -197,8 +196,8 @@ public class TestController {
     @ApiOperationSupport(order = 14)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
-    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam  Integer modularId) {
-        return  testExecuteLogService.testExecuteLogList(modularId);
+    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false)  Integer modularId, @RequestParam(required = false) Integer executeId) {
+        return  testExecuteLogService.testExecuteLogList(modularId,executeId);
     }
     @ApiOperationSupport(order = 15)
     @PostMapping("/editBatchTestExecuteLog")

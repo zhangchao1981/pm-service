@@ -102,8 +102,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
     }
 
     @Override
-    public List<TestExecuteLog> testExecuteLogList(Integer modularId) {
-
-        return testExecuteLogMapper.testExecuteLogList(modularId);
+    public List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId) {
+        return testExecuteLogMapper.testExecuteLogList(modularId,executeId);
     }
 }
