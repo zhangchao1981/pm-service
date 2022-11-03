@@ -15,6 +15,7 @@ import com.iscas.pm.api.model.test.param.SolveBugParam;
 import com.iscas.pm.api.model.test.param.TestBugQueryParam;
 import com.iscas.pm.api.model.test.param.TransferBugParam;
 import com.iscas.pm.api.service.TestBugService;
+import com.iscas.pm.api.service.TestExecuteLogService;
 import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import com.iscas.pm.common.db.separate.holder.DataSourceHolder;
@@ -40,6 +41,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
     private TestBugMapper testBugMapper;
     @Autowired
     private TestBugProcessLogMapper testBugProcessLogMapper;
+    @Autowired
+    private TestExecuteLogService testExecuteLogService;
 
     @Override
     public void addBug(TestBug testBug) {
@@ -54,6 +57,9 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         //添加缺陷处理日志
         TestBugProcessLog processLog = new TestBugProcessLog(testBug.getId(), BugProcessActionEnum.NEW, JSON.toJSONString(testBug));
         testBugProcessLogMapper.insert(processLog);
+
+//        //更新对应测试用例执行记录的缺陷数统计信息
+//        testExecuteLogService.update()
     }
 
     @Override
@@ -281,6 +287,11 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         String description = StringUtils.isBlank(param.getExplain()) ? "" : "说明：" + param.getExplain();
         TestBugProcessLog processLog = new TestBugProcessLog(param.getBugId(), BugProcessActionEnum.CLOSE, description);
         testBugProcessLogMapper.insert(processLog);
+    }
+
+    @Override
+    public List<TestExecuteLog> countTestBugByExecute(List<Integer> executeIdList) {
+        return testBugMapper.countTestBugByExecute(executeIdList);
     }
 
     private TestBug getChangeInfo(TestBug testBug, TestBug db_testBug) {

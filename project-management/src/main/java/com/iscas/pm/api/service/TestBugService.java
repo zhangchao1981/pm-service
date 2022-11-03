@@ -3,9 +3,12 @@ package com.iscas.pm.api.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.test.TestBug;
+import com.iscas.pm.api.model.test.TestExecuteLog;
 import com.iscas.pm.api.model.test.param.SolveBugParam;
 import com.iscas.pm.api.model.test.param.TestBugQueryParam;
 import com.iscas.pm.api.model.test.param.TransferBugParam;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -33,4 +36,6 @@ public interface TestBugService extends IService<TestBug> {
     void reopenBug(Integer bugId, String explain);
 
     void closeBug(SolveBugParam param);
+
+    List<TestExecuteLog> countTestBugByExecute(List<Integer> executeIdList);
 }

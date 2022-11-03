@@ -83,5 +83,31 @@
         </if>
             and test_bug.create_time  BETWEEN  #{param.minCreateTime} and #{param.maxCreateTime}
     </select>
+    
+    
+    
+    <select id="countTestBugByExecute" resultType="com.iscas.pm.api.model.test.TestExecuteLog">
+        SELECT  COUNT(id)as bugCount, execute_log_id as id  FROM `test_bug`
+        where execute_log_id in
+        <foreach item="executeId" index="index" collection="executeIdList"
+                 open="(" separator="," close=")">
+            #{executeId}
+        </foreach>
+        GROUP BY execute_log_id
+    </select>
+
+
+    <select id="countTestBugByPlan" resultType="com.iscas.pm.api.model.test.param.PlanBugStatisticParam">
+        SELECT  COUNT(id) as  bugAmount, plan_id as id   FROM `test_bug`
+        where  plan_id in
+        <foreach item="planId" index="index" collection="planIdList"
+                 open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+        <if test="status !=null">
+            and  status = #{status}
+        </if>
+        GROUP BY plan_id
+    </select>
 
 </mapper>

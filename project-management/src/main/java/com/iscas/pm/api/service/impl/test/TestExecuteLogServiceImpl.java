@@ -1,5 +1,6 @@
 package com.iscas.pm.api.service.impl.test;
 
+import cn.hutool.core.lang.hash.Hash;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,12 +11,14 @@ import com.iscas.pm.api.mapper.test.TestUseCaseMapper;
 import com.iscas.pm.api.model.test.*;
 import com.iscas.pm.api.model.test.param.EditBatchExecuteLogParam;
 import com.iscas.pm.api.model.test.param.TestExecuteLogParam;
+import com.iscas.pm.api.service.TestBugService;
 import com.iscas.pm.api.service.TestExecuteLogService;
 import com.iscas.pm.common.core.web.filter.RequestHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,11 +30,13 @@ import java.util.stream.Collectors;
 @Service
 public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper, TestExecuteLog> implements TestExecuteLogService {
     @Autowired
-    TestUseCaseMapper testUseCaseMapper;
+    private  TestUseCaseMapper testUseCaseMapper;
     @Autowired
-    TestExecuteLogMapper testExecuteLogMapper;
+    private  TestExecuteLogMapper testExecuteLogMapper;
     @Autowired
-    TestPlanMapper testPlanMapper;
+    private TestPlanMapper testPlanMapper;
+    @Autowired
+    private TestBugService testBugService;
 
     @Override
     public List<TestExecuteLog> addTestExecuteLog(List<Integer> idList, Integer planId) {
@@ -98,7 +103,23 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
 
     @Override
     public IPage<TestExecuteLog> testExecuteLogPage(TestExecuteLogParam testExecuteLogParam) {
-        return testExecuteLogMapper.testExecuteLogPage(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()),testExecuteLogParam);
+        IPage<TestExecuteLog> testExecuteLogIPage = testExecuteLogMapper.testExecuteLogPage(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()), testExecuteLogParam);
+
+        //全表刷新时，更新缺陷统计信息
+        if (testExecuteLogIPage!=null&&testExecuteLogIPage.getSize()>0 && testExecuteLogParam.getLogIdOrTitle()==null&&testExecuteLogParam.getModularId()==null){
+            List<TestExecuteLog> records = testExecuteLogIPage.getRecords();
+            List<Integer> executeIdList = records.stream().map(TestExecuteLog::getId).collect(Collectors.toList());
+            HashMap<Integer,Integer> bugAmountList= (HashMap<Integer, Integer>) testBugService.countTestBugByExecute(executeIdList).stream().collect(Collectors.toMap(
+                    TestExecuteLog::getId,
+                    TestExecuteLog::getBugCount
+            ));;
+            records.forEach(testExecuteLog -> {
+                testExecuteLog.setBugCount(bugAmountList.get(testExecuteLog.getId()));
+            });
+            testExecuteLogIPage.setRecords(records);
+            super.updateBatchById(records);
+        }
+        return testExecuteLogIPage;
     }
 
     @Override

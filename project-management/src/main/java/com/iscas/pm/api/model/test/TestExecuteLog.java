@@ -89,7 +89,7 @@ public class TestExecuteLog implements Serializable {
     private String modularName;
 
     @ApiModelProperty(value = "缺陷数量",required = false)
-    private Integer defaultCount;
+    private Integer bugCount;
 
     public TestExecuteLog() {
     }

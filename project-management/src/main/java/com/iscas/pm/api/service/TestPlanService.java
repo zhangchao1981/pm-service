@@ -1,9 +1,12 @@
 package com.iscas.pm.api.service;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.iscas.pm.api.model.test.TestPlan;
 import com.iscas.pm.api.model.test.TestPlanStatisticData;
+
+import java.util.List;
 
 /**
 * @author 66410
@@ -13,4 +16,6 @@ import com.iscas.pm.api.model.test.TestPlanStatisticData;
 public interface TestPlanService extends IService<TestPlan> {
 
     TestPlanStatisticData statisticData(Integer testPlanId);
+
+    List<TestPlan> updateBugStatistic(IPage<TestPlan> planIdList);
 }
