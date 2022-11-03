@@ -110,16 +110,12 @@ public class TestController {
                 .like(StringUtils.isNotBlank(titleOrWorker), "name", titleOrWorker).or()
                 .like(StringUtils.isNotBlank(titleOrWorker), "worker", titleOrWorker);
         IPage<TestPlan> planIPage = testPlanService.page(new Page<>(planQueryParam.getPageNum(), planQueryParam.getPageSize()), wrapper);
+        List<TestPlan> records = planIPage.getRecords();
 
         //添加测试计划的统计计算结果
-        List<TestPlan> records = planIPage.getRecords();
         records.stream().forEach(plan -> {
             plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
-
-        //添加测试计划的缺陷统计情况
-        List<Integer> planIdList = records.stream().map(TestPlan::getId).collect(Collectors.toList());
-        planIPage.setRecords(testPlanService.updateBugStatistic(planIdList)) ;
-
+        planIPage.setRecords(testPlanService.updateBugStatistic(planIPage));
         return   planIPage;
     }
 

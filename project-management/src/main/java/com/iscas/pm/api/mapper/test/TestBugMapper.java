@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iscas.pm.api.model.test.TestBug;
 import com.iscas.pm.api.model.test.TestExecuteLog;
+import com.iscas.pm.api.model.test.param.PlanBugStatisticParam;
 import com.iscas.pm.api.model.test.param.TestBugQueryParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,6 +23,8 @@ public interface TestBugMapper extends BaseMapper<TestBug> {
     Page<TestBug> getTestBugList(Page<TestBug> page, @Param("param") TestBugQueryParam param);
 
     List<TestExecuteLog> countTestBugByExecute(@Param("executeIdList") List<Integer> executeIdList);
+
+    List<PlanBugStatisticParam> countTestBugByPlan(@Param("planIdList") List<Integer> planIdList, @Param("status") String status);
 }
 
 
