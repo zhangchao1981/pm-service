@@ -60,7 +60,7 @@ public class PlanTask implements Serializable {
 
     @ApiModelProperty(value = "任务名称", required = true)
     @NotBlank(message = "任务名称不能为空")
-    @Size(max = 25,message = "任务名称长度不能大于25")
+    @Size(max = 100,message = "任务名称长度不能大于100")
     private String name;
 
     @ApiModelProperty(value = "责任人名字List ", required = true)

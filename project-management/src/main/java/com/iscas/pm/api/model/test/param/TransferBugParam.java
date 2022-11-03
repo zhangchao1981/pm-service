@@ -23,9 +23,9 @@ public class TransferBugParam {
     @NotBlank(message = "转办人姓名不能为空")
     private String transferName;
 
-    @ApiModelProperty(value = "转办人用户名",required = true)
-    @NotBlank(message = "转办人用户名不能为空")
-    private String transferUserName;
+    @ApiModelProperty(value = "转办人id",required = true)
+    @NotBlank(message = "转办人id不能为空")
+    private String transferId;
 
     @ApiModelProperty(value = "转办说明")
     private String explain;

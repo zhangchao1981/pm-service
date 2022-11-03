@@ -80,10 +80,6 @@ public class TestBug implements Serializable {
     @ApiModelProperty("提出人用户id，前端无需传参")
     private Integer creatorId;
 
-    @ApiModelProperty("提出人用户名")
-    @JsonIgnore
-    private String creatorUserName;
-
     @ApiModelProperty(value = "提出时间，前端无需传参")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -92,10 +88,6 @@ public class TestBug implements Serializable {
     @ApiModelProperty(value = "当前处理人姓名",required = true)
     @NotBlank(message = "[当前处理人姓名]不能为空")
     private String currentProcessor;
-
-    @ApiModelProperty(value = "当前处理人用户名",required = true)
-    @NotBlank(message = "[当前处理人用户名]不能为空")
-    private String currentProcessorUserName;
 
     @ApiModelProperty(value = "当前处理人id",required = true)
     @NotNull(message = "[当前处理人id]不能为空")
@@ -116,10 +108,10 @@ public class TestBug implements Serializable {
     private BugSolveResultEnum solveResult;
 
     @ApiModelProperty(value = "解决时长，小时，后端计算，前端无需传参")
-    private Long solveHours;
+    private Double solveHours;
 
     @ApiModelProperty(value = "回归时长，小时，后端计算，前端无需传参")
-    private Long regressionHours;
+    private Double regressionHours;
 
     @ApiModelProperty(value = "关联的测试计划id",required = true)
     private Integer planId;
@@ -129,7 +121,6 @@ public class TestBug implements Serializable {
     @JsonIgnore
     private String planName;
 
-    @NotNull(message = "[关联执行记录id]不能为空")
     @ApiModelProperty( value = "关联执行记录id",required = true)
     private Integer executeLogId;
 
@@ -141,7 +132,6 @@ public class TestBug implements Serializable {
     @TableField(exist = false)
     private String moduleName;
 
-    @NotNull(message = "[关联需求id]不能为空")
     @ApiModelProperty(value = "关联需求id",required = true)
     private Integer requirementId;
 

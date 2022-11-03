@@ -227,7 +227,7 @@ CREATE TABLE `project_plan`  (
                                  `doc_path` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '关联文档路径',
                                  `is_milestone` tinyint(4) UNSIGNED NOT NULL COMMENT '是否为里程碑节点，\"1\":\"是\"；\"0\":\"否\"',
                                  `is_baseline` tinyint(4) UNSIGNED NOT NULL COMMENT '是否为基线节点，\"1\":\"是\"；\"0\":\"否\"',
-                                 `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
+                                 `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
                                  `worker_list` json COMMENT '责任人名字List',
                                  `person_count` tinyint(4) DEFAULT NULL COMMENT '人数',
                                  `working_days` tinyint(4) DEFAULT NULL COMMENT '工期(天)',
@@ -266,7 +266,6 @@ CREATE TABLE `task_feedback`  (
 -- ----------------------------
 -- Table structure for test_bug
 -- ----------------------------
-DROP TABLE IF EXISTS `test_bug`;
 CREATE TABLE `test_bug`  (
                              `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '缺陷编号',
                              `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缺陷标题',
@@ -280,27 +279,25 @@ CREATE TABLE `test_bug`  (
                              `files` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '附件文件路径，多个用逗号隔开',
                              `detail` longtext CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '缺陷详细说明，富文本存储',
                              `creator` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '提出人姓名',
-                             `creator_user_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '提出人用户名',
+                             `creator_id` int(10) DEFAULT NULL COMMENT '提出人用户id\r\n',
                              `create_time` datetime(0) NOT NULL COMMENT '创建时间',
                              `current_processor` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '当前处理人姓名',
-                             `current_processor_user_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '当前处理人用户名',
+                             `current_processor_id` int(10) DEFAULT NULL COMMENT '当前处理人用户id',
                              `owner` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '缺陷归属人',
                              `solver` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '缺陷解决人',
                              `solve_time` datetime(0) DEFAULT NULL COMMENT '缺陷解决时间',
                              `solve_result` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '缺陷解决结果',
-                             `solve_hours` tinyint(4) DEFAULT NULL COMMENT '解决时长',
-                             `regression_hours` tinyint(4) DEFAULT NULL COMMENT '回归时长',
-                             `plan_id` int(10) NOT NULL COMMENT '关联测试计划id',
-                             `execute_log_id` int(10) NOT NULL COMMENT '关联用例执行记录id',
-                             `module_id` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '所属项目模块id',
-                             `requirement_id` int(10) UNSIGNED ZEROFILL NOT NULL COMMENT '关联开发需求id',
-                             `current_processor_id` int(10) DEFAULT NULL COMMENT '当前处理人用户id',
-                             `creator_id` int(10) DEFAULT NULL COMMENT '提出人用户id\r\n',
-                             PRIMARY KEY (`id`) USING BTREE,
-                             INDEX `fk_bug_module`(`module_id`) USING BTREE,
-                             INDEX `fk_bug_plan`(`plan_id`) USING BTREE,
-                             INDEX `fk_bug_requirement`(`requirement_id`) USING BTREE,
-                             INDEX `fk_bug_case`(`execute_log_id`) USING BTREE
+                             `solve_hours` double(10, 1) DEFAULT NULL COMMENT '解决时长',
+  `regression_hours` double(10, 1) DEFAULT NULL COMMENT '回归时长',
+  `plan_id` int(10) NOT NULL COMMENT '关联测试计划id',
+  `execute_log_id` int(10) DEFAULT NULL COMMENT '关联用例执行记录id',
+  `module_id` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '所属项目模块id',
+  `requirement_id` int(10) UNSIGNED ZEROFILL DEFAULT NULL COMMENT '关联开发需求id',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `fk_bug_module`(`module_id`) USING BTREE,
+  INDEX `fk_bug_plan`(`plan_id`) USING BTREE,
+  INDEX `fk_bug_requirement`(`requirement_id`) USING BTREE,
+  INDEX `fk_bug_case`(`execute_log_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '测试缺陷表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
