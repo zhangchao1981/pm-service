@@ -1,10 +1,11 @@
 package com.iscas.pm.api.model.doc.data;
 
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.iscas.pm.api.model.dev.DevInterface;
-import com.iscas.pm.api.model.dev.InterfaceTypeEnum;
-import com.iscas.pm.api.model.dev.PriorityEnum;
+import com.iscas.pm.api.model.dev.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
@@ -70,7 +71,8 @@ public class DocInterface {
         this.requireId = devInterface.getRequireId();
         if (devInterface.getDataDescription() != null && devInterface.getDataDescription().size() > 0) {
             List<DocInterfaceDataDescription> docInterfaceDataDescription = new ArrayList<>();
-            devInterface.getDataDescription().forEach(dataDescription -> {
+            List<InterfaceDataDescription> dataDescriptionList = JSONArray.parseArray(devInterface.getDataDescription().toString()).toJavaList(InterfaceDataDescription.class);
+            dataDescriptionList.forEach(dataDescription -> {
                 docInterfaceDataDescription.add(new DocInterfaceDataDescription(dataDescription));
             });
             this.dataDescriptionList = docInterfaceDataDescription;
