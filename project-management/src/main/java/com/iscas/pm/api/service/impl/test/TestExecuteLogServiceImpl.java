@@ -52,17 +52,23 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         List<Integer> caseIdList = idList.stream().distinct().collect(Collectors.toList());
         caseIdList.removeAll(existing_ids);
 
+        //没有新的用例要导入
+        if (caseIdList.size()<1){
+            return null;
+        }
         //查询真正要导入的测试用例
         List<TestUseCase> useCaseList = testUseCaseMapper.selectBatchIds(caseIdList);
 
+        //输入的用例id不正确
         if (useCaseList.size() < 1) {
-            throw new IllegalArgumentException("要导入的用例已经全部存在，或用例已经被删除");
+          return  null;
         }
 
         List<TestExecuteLog> executeLogList = useCaseList.stream().map(useCase -> new TestExecuteLog(useCase, planId)).collect(Collectors.toList());
         super.saveBatch(executeLogList);
 
         return executeLogList;
+//        45	0	2	张超	错误用户名密码登录系统	THIRD	100001	FUNCTION	[{"stepNumber": 0, "inputExplain": "浏览器输入网址", "expectedResult": "系统显示登录页面"}, {"stepNumber": 1, "inputExplain": "输入错误的用户名密码", "expectedResult": "系统提示用户名密码错误，不进入系统"}]	9	100002			1041
     }
 
     @Override
