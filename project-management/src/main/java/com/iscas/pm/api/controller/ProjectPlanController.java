@@ -69,7 +69,6 @@ public class ProjectPlanController {
     @PostMapping("/addTaskFeedback")
     @ApiOperation(value = "添加或修改任务反馈", notes = "添加或修改任务完成情况的反馈信息")
     @ApiOperationSupport(order = 6)
-    @PreAuthorize("hasAuthority('/projectPlan/addTaskFeedback')")
     public TaskFeedback addTaskFeedback(@Valid @RequestBody TaskFeedback taskFeedback){
         taskFeedbackService.saveTaskFeedback(taskFeedback);
         return  taskFeedback;

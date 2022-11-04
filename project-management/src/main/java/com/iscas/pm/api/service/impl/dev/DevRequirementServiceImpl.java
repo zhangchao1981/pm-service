@@ -49,8 +49,11 @@ public class DevRequirementServiceImpl extends ServiceImpl<DevRequirementMapper,
             devRequirement.setActualStartDate(actualStartDate);
 
             //计算需求进度=所有任务进度的平均值
-            double progress = devTasks.stream().mapToInt(DevTask::getDevProgress).average().getAsDouble();
-            devRequirement.setDevProgress(progress);
+            List<DevTask> tasks = devTasks.stream().filter(devTask -> devTask.getDevProgress() != null).collect(Collectors.toList());
+            if (tasks.size() >0) {
+                double progress = tasks.stream().mapToInt(DevTask::getDevProgress).average().getAsDouble();
+                devRequirement.setDevProgress(progress);
+            }
 
             //需求完成
             if (devRequirement.getDevProgress() == 100) {

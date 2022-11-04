@@ -195,6 +195,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
         testBug.setSolveTime(new Date());
         testBug.setSolveResult(param.getSolveResult());
         testBug.setSolveHours(DateUtil.getWorkHours(testBug.getCreateTime(), new Date()));
+        testBug.setCurrentProcessor(testBug.getCreator());
+        testBug.setCurrentProcessorId(testBug.getCreatorId());
 
         testBug.setInjectStage(param.getInjectStage());
         testBug.setType(param.getType());
