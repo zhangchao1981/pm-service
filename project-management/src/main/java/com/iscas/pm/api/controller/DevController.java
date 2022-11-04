@@ -75,9 +75,9 @@ public class DevController {
     @PostMapping("/devChildModularList")
     @ApiOperation(value = "子项目模块列表", notes = "返回模块id下面的子模块集合(只递进一层),返回List<DevModular>,输入-1返回全部", response = DevModular.class)
     public List<DevModular> devChildModularList(@NotNull(message = "id不能为空") @RequestParam Integer id) {
-        if (id==-1){
-            return  devModularService.list();
-        }else {
+        if (id == -1) {
+            return devModularService.list();
+        } else {
             return devModularService.list(new QueryWrapper<DevModular>().eq("parent_id", id));
         }
     }
@@ -320,25 +320,25 @@ public class DevController {
     @ApiOperation(value = "添加数据需求", notes = "添加一行数据需求")
     @PreAuthorize("hasAuthority('/projectDev/addDataRequirement')")
     public Boolean addDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
-        if (devRequirementService.getById(dataRequirement.getRequireId())==null){
+        if (devRequirementService.getById(dataRequirement.getRequireId()) == null) {
             throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
         }
-        if (dataRequirementService.list( new QueryWrapper<DataRequirement>().eq("requirement_name",dataRequirement.getRequirementName())).size()>0){
+        if (dataRequirementService.list(new QueryWrapper<DataRequirement>().eq("requirement_name", dataRequirement.getRequirementName())).size() > 0) {
             throw new IllegalArgumentException("已有同名数据需求");
         }
-       dataRequirementService.save(dataRequirement);
-       return true;
+        dataRequirementService.save(dataRequirement);
+        return true;
     }
 
     @ApiOperationSupport(order = 9)
     @PostMapping("/deleteBatchDataRequirement")
     @ApiOperation(value = "批量删除数据需求", notes = "批量删除数据需求")
     @PreAuthorize("hasAuthority('/projectDev/deleteBatchDataRequirement')")
-    public void deleteBatchDataRequirement( @RequestBody @NotEmpty(message = "要删除的数据需求id不能为空") List<Integer> ids) {
-        if (ids.size()==0){
+    public void deleteBatchDataRequirement(@RequestBody @NotEmpty(message = "要删除的数据需求id不能为空") List<Integer> ids) {
+        if (ids.size() == 0) {
             throw new IllegalArgumentException("要删除的数据需求id不能为空");
         }
-        if (!dataRequirementService.removeByIds(ids)){
+        if (!dataRequirementService.removeByIds(ids)) {
             throw new IllegalArgumentException("要删除的数据需求中存在已删除过了的");
         }
     }
@@ -348,11 +348,11 @@ public class DevController {
     @ApiOperation(value = "修改数据需求")
     @PreAuthorize("hasAuthority('/projectDev/editDataRequirement')")
     public DataRequirement editDataRequirement(@Valid @RequestBody DataRequirement dataRequirement) {
-        if (devRequirementService.getById(dataRequirement.getRequireId())==null){
+        if (devRequirementService.getById(dataRequirement.getRequireId()) == null) {
             throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
         }
         DataRequirement dataRequireByName = dataRequirementService.getOne(new QueryWrapper<DataRequirement>().eq("requirement_name", dataRequirement.getRequirementName()));
-        if ( dataRequireByName!=null&&dataRequireByName.getId().equals(dataRequirement.getId())){
+        if (dataRequireByName != null && dataRequireByName.getId().equals(dataRequirement.getId())) {
             throw new IllegalArgumentException("已有同名数据需求");
         }
         if (!dataRequirementService.updateById(dataRequirement)) {
@@ -372,7 +372,7 @@ public class DevController {
     @GetMapping("/dataRequirementListByDevRequire")
     @ApiOperation(value = "查询开发需求对应的数据需求列表", notes = "根据开发需求id查询对应数据需求")
     public List<DataRequirement> dataRequirementListByDevRequire(Integer requirementId) {
-        return dataRequirementService.list(new QueryWrapper<DataRequirement>().eq(requirementId!=null,"require_id",requirementId));
+        return dataRequirementService.list(new QueryWrapper<DataRequirement>().eq(requirementId != null, "require_id", requirementId));
     }
 
     private TaskStatusEnum getDevStatus(Date startDate, Date endDate) {
