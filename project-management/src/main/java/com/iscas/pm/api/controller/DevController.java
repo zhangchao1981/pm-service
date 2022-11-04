@@ -281,7 +281,6 @@ public class DevController {
         if (devRequirementService.getById(devInterface.getRequireId()) == null) {
             throw new IllegalArgumentException("接口所属需求不存在");
         }
-
         devInterface.setMaintainer(RequestHolder.getUserInfo().getEmployeeName());
         devInterfaceService.save(devInterface);
         return true;
@@ -353,7 +352,7 @@ public class DevController {
             throw new IllegalArgumentException("该数据需求对应的开发需求不存在");
         }
         DataRequirement dataRequireByName = dataRequirementService.getOne(new QueryWrapper<DataRequirement>().eq("requirement_name", dataRequirement.getRequirementName()));
-        if ( dataRequireByName!=null&&dataRequireByName.getId()!=dataRequirement.getId()){
+        if ( dataRequireByName!=null&&dataRequireByName.getId().equals(dataRequirement.getId())){
             throw new IllegalArgumentException("已有同名数据需求");
         }
         if (!dataRequirementService.updateById(dataRequirement)) {
