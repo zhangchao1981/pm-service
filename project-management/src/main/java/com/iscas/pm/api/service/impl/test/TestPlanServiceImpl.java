@@ -57,8 +57,7 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
         BigDecimal executeProgress = new BigDecimal((double) testedUseCase / totalUseCase);
         // 保留两位小数，不四舍五入(可选舍入模式)
         data.setExecuteProgress(executeProgress.setScale(2, BigDecimal.ROUND_DOWN).doubleValue());
-        //缺陷情况待完成
-        //data.setBugStatistic()
+
         return data;
     }
 
@@ -68,22 +67,24 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
 
         //添加测试计划的缺陷统计情况
         List<Integer> planIdList = records.stream().map(TestPlan::getId).collect(Collectors.toList());
-        if (records.size()>0){
+        if (records.size() > 0) {
             HashMap<Integer, Integer> bugClosedAmountList = (HashMap<Integer, Integer>) testBugMapper.countTestBugByPlan(planIdList, BugStatusEnum.CLOSE.getCode())
                     .stream()
                     .collect(Collectors.toMap(
                             PlanBugStatisticParam::getId,
                             PlanBugStatisticParam::getBugAmount));
             HashMap<Integer, Integer> bugAllAmountList = (HashMap<Integer, Integer>) testBugMapper
-                    .countTestBugByPlan(planIdList,null)
+                    .countTestBugByPlan(planIdList, null)
                     .stream()
                     .collect(Collectors.toMap(
                             PlanBugStatisticParam::getId,
                             PlanBugStatisticParam::getBugAmount));
             records.forEach(plan -> {
-                plan.setBugStatistic(bugClosedAmountList.get(plan.getId())+"/"+bugAllAmountList.get(plan.getId()));
+                Integer closedBugCount = bugClosedAmountList.get(plan.getId()) == null ? 0 : bugClosedAmountList.get(plan.getId());
+                Integer allBugCount = bugAllAmountList.get(plan.getId()) == null ? 0 : bugAllAmountList.get(plan.getId());
+                plan.setBugStatistic(closedBugCount + "/" + allBugCount);
             });
-//            super.updateBatchById(records);
+
         }
         return records;
     }

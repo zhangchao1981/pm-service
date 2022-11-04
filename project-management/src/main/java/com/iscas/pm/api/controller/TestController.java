@@ -113,16 +113,18 @@ public class TestController {
 
         //添加测试计划的统计计算结果
         records.stream().forEach(plan -> {
-            plan.inputStatisticData(testPlanService.statisticData(plan.getId())); });
+            plan.inputStatisticData(testPlanService.statisticData(plan.getId()));
+        });
+
         planIPage.setRecords(testPlanService.getBugStatistic(planIPage));
-        return   planIPage;
+        return planIPage;
     }
 
     @ApiOperationSupport(order = 7)
     @GetMapping("/allTestPlanList")
     @ApiOperation(value = "查询全部测试计划", notes = "查询当前项目下全部的测试计划列表(不分页)")
     public List<TestPlan> allTestPlanList() {
-            return  testPlanService.list();
+        return testPlanService.list();
     }
 
     @ApiOperationSupport(order = 8)
@@ -160,7 +162,7 @@ public class TestController {
 
         QueryWrapper<TestExecuteLog> wrapper = new QueryWrapper<TestExecuteLog>()
                 .eq("plan_id", planId)
-                .ne("pass",null);
+                .ne("pass", null);
         if (testExecuteLogService.list(wrapper).size() > 0) {
             throw new IllegalArgumentException("该计划下已存在有效测试执行记录，不允许删除");
         }
@@ -187,22 +189,24 @@ public class TestController {
     @PostMapping("/testExecuteLogList")
     @ApiOperation(value = "查询用例执行记录", notes = "查询指定模块下符合条件的用例执行记录表,对应测试计划详情")
     public IPage<TestExecuteLog> testExecuteLogList(@Valid @RequestBody TestExecuteLogParam testExecuteLogParam) {
-        return  testExecuteLogService.testExecuteLogPage(testExecuteLogParam);
+        return testExecuteLogService.testExecuteLogPage(testExecuteLogParam);
     }
 
     @ApiOperationSupport(order = 13)
     @PostMapping("/testUseCaseListForPlan")
     @ApiOperation(value = "查询要导入计划的测试用例", notes = "查询要导入测试计划的测试用例")
     public List<TestUseCase> testUseCaseListForPlan(@Valid @RequestBody UseCaseForPlanQueryParam useCaseForPlanQueryParam) {
-        return  testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
+        return testUseCaseService.testUseCaseListForPlan(useCaseForPlanQueryParam);
     }
+
     @ApiOperationSupport(order = 14)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
-    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false)  Integer modularId, @RequestParam(required = false) Integer executeId) {
+    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false) Integer modularId, @RequestParam(required = false) Integer executeId) {
 
-        return  testExecuteLogService.testExecuteLogList(modularId,executeId);
+        return testExecuteLogService.testExecuteLogList(modularId, executeId);
     }
+
     @ApiOperationSupport(order = 15)
     @PostMapping("/editBatchTestExecuteLog")
     @ApiOperation(value = "批量更改执行记录状态", notes = "批量完善执行记录是否通过及指定测试人员信息")
@@ -290,8 +294,8 @@ public class TestController {
     @GetMapping("/delayedSolveBug")
     @ApiOperation(value = "延迟解决缺陷", notes = "暂不解决，后面版本在解决")
     @PreAuthorize("hasAuthority('/test/delayedSolveBug')")
-    public Boolean delayedSolveBug(Integer bugId,String explain) {
-        testBugService.delayedSolveBug(bugId,explain);
+    public Boolean delayedSolveBug(Integer bugId, String explain) {
+        testBugService.delayedSolveBug(bugId, explain);
         return true;
     }
 
@@ -299,8 +303,8 @@ public class TestController {
     @GetMapping("/reopenBug")
     @ApiOperation(value = "重新打开缺陷", notes = "重新打开缺陷")
     @PreAuthorize("hasAuthority('/test/reopenBug')")
-    public Boolean reopenBug(Integer bugId,String explain) {
-        testBugService.reopenBug(bugId,explain);
+    public Boolean reopenBug(Integer bugId, String explain) {
+        testBugService.reopenBug(bugId, explain);
         return true;
     }
 

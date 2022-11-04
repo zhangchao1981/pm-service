@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 @Service
 public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper, TestExecuteLog> implements TestExecuteLogService {
     @Autowired
-    private  TestUseCaseMapper testUseCaseMapper;
+    private TestUseCaseMapper testUseCaseMapper;
     @Autowired
-    private  TestExecuteLogMapper testExecuteLogMapper;
+    private TestExecuteLogMapper testExecuteLogMapper;
     @Autowired
     private TestPlanMapper testPlanMapper;
     @Autowired
@@ -53,7 +53,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         caseIdList.removeAll(existing_ids);
 
         //没有新的用例要导入
-        if (caseIdList.size()<1){
+        if (caseIdList.size() < 1) {
             return null;
         }
         //查询真正要导入的测试用例
@@ -61,7 +61,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
 
         //输入的用例id不正确
         if (useCaseList.size() < 1) {
-          return  null;
+            return null;
         }
 
         List<TestExecuteLog> executeLogList = useCaseList.stream().map(useCase -> new TestExecuteLog(useCase, planId)).collect(Collectors.toList());
@@ -112,24 +112,24 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
         IPage<TestExecuteLog> testExecuteLogIPage = testExecuteLogMapper.testExecuteLogPage(new Page<>(testExecuteLogParam.getPageNum(), testExecuteLogParam.getPageSize()), testExecuteLogParam);
 
         //全表刷新时，更新缺陷统计信息
-        if (testExecuteLogIPage!=null&&testExecuteLogIPage.getSize()>0){
+        if (testExecuteLogIPage != null && testExecuteLogIPage.getRecords().size() > 0) {
             List<TestExecuteLog> records = testExecuteLogIPage.getRecords();
             List<Integer> executeIdList = records.stream().map(TestExecuteLog::getId).collect(Collectors.toList());
-            HashMap<Integer,Integer> bugAmountList= (HashMap<Integer, Integer>) testBugService.countTestBugByExecute(executeIdList).stream().collect(Collectors.toMap(
+            HashMap<Integer, Integer> bugAmountList = (HashMap<Integer, Integer>) testBugService.countTestBugByExecute(executeIdList).stream().collect(Collectors.toMap(
                     TestExecuteLog::getId,
                     TestExecuteLog::getBugCount
-            ));;
+            ));
+            ;
             records.forEach(testExecuteLog -> {
                 testExecuteLog.setBugCount(bugAmountList.get(testExecuteLog.getId()));
             });
             testExecuteLogIPage.setRecords(records);
-//            super.updateBatchById(records);
         }
         return testExecuteLogIPage;
     }
 
     @Override
     public List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId) {
-        return testExecuteLogMapper.testExecuteLogList(modularId,executeId);
+        return testExecuteLogMapper.testExecuteLogList(modularId, executeId);
     }
 }

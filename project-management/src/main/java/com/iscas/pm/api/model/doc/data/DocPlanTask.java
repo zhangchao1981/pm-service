@@ -20,7 +20,7 @@ public class DocPlanTask {
     @ApiModelProperty(value = "关联文档路径")
     private String docPath;
 
-    @ApiModelProperty(value = "任务名称",required = true)
+    @ApiModelProperty(value = "任务名称", required = true)
     private String name;
 
     @ApiModelProperty(value = "责任人，人员姓名，多个人用逗号隔开")
@@ -45,14 +45,14 @@ public class DocPlanTask {
         this.wbs = planTask.getWbs();
         this.docPath = planTask.getDocPath();
         this.name = planTask.getName();
-        if( planTask.getWorkerList()!=null){
-            planTask.getWorkerList().forEach(workerE->this.worker+=','+workerE);
+        if (planTask.getWorkerList() != null) {
+            planTask.getWorkerList().forEach(workerE -> this.worker += ',' + workerE);
             this.workingDays = planTask.getWorkingDays();
         }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        this.startDate = planTask.getStartDate()!=null?formatter.format(planTask.getStartDate()):null;
-        this.endDate = planTask.getEndDate()!=null?formatter.format(planTask.getEndDate()):null;
+        this.startDate = planTask.getStartDate() != null ? formatter.format(planTask.getStartDate()) : null;
+        this.endDate = planTask.getEndDate() != null ? formatter.format(planTask.getEndDate()) : null;
         this.happenedHour = planTask.getHappenedHour();
-        this.status = planTask.getStatus().getValue();
+        this.status = planTask.getStatus() == null ? null : planTask.getStatus().getValue();
     }
 }

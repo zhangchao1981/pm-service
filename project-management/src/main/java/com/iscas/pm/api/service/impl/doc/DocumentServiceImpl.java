@@ -146,7 +146,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         autoDoc.setName(createDocumentParam.getDocumentName());
         autoDoc.setType(DocumentTypeEnum.GENERATE);
         autoDoc.setVersion(createDocumentParam.getVersion());
-        Integer templateId = createDocumentParam.getTemplateId();
         documentChecking(autoDoc);
 
         //拿到服务器中模板的存储路径
