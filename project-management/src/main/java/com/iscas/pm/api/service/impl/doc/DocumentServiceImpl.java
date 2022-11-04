@@ -400,9 +400,16 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
 
     private void softwareDevelopmentContext(HashMap<String, Object> map, String currentProject) {
         DataSourceHolder.setDB(currentProject);
-        List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-        List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
-
+        List<EnvHardware> docHardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+        List<EnvSoftware> docSoftwareList = softwareMapper.selectList(new QueryWrapper<>());
+        List<DocEnvHardware> hardwareList=new ArrayList<>();
+        List<DocEnvSoftware> softwareList=new ArrayList<>();
+        if (docHardwareList.size()>0){
+            docHardwareList.forEach(hardware -> {hardwareList.add(new DocEnvHardware(hardware));});
+        }
+        if (docSoftwareList.size()>0){
+            docSoftwareList.forEach(software -> {softwareList.add(new DocEnvSoftware(software));});
+        }
         //项目计划信息获取
         List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
         List<DocPlanTask> docPlanTaskList = new ArrayList<>();
