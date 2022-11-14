@@ -104,8 +104,8 @@ public class ProjectInfoController {
 
         List<String> projectPermissions = RequestHolder.getUserInfo().getProjectPermissions().get(project.getId());
         List<String> systemPermissions = RequestHolder.getUserInfo().getSystemPermissions();
-        if ((systemPermissions == null || !systemPermissions.contains("/projectInfo/closeProject")) && (projectPermissions == null || !projectPermissions.contains("/projectInfo/closeProject")))
-            throw new IllegalArgumentException("您无权限修改该项目");
+        if ((projectPermissions == null || !projectPermissions.contains("/projectInfo/closeProject")))
+            throw new IllegalArgumentException("您无权限关闭该项目");
 
         projectInfoService.saveOrUpdate(project.setStatus(ProjectStatusEnum.CLOSED));
         return true;

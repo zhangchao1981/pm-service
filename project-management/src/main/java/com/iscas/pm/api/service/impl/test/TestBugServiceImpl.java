@@ -251,6 +251,8 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
                 (projectPermissions == null || projectPermissions.get(DataSourceHolder.getDB().getDatabaseName()) == null || !projectPermissions.get(DataSourceHolder.getDB().getDatabaseName()).contains("/test/addTestUseCase")))
             throw new IllegalArgumentException("只有缺陷提出人/测试经理/测试人员角色才能重新打开缺陷");
 
+        db_testBug.setCurrentProcessor(db_testBug.getSolver());
+        db_testBug.setCurrentProcessorId(db_testBug.getSolverId());
         db_testBug.setStatus(BugStatusEnum.REOPEN);
 
         //更新缺陷信息

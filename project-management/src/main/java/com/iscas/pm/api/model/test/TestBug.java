@@ -99,6 +99,9 @@ public class TestBug implements Serializable {
     @ApiModelProperty(value = "缺陷解决人")
     private String solver;
 
+    @ApiModelProperty(value = "缺陷解决人id")
+    private Integer solverId;
+
     @ApiModelProperty(value = "缺陷解决时间，无需传参")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
