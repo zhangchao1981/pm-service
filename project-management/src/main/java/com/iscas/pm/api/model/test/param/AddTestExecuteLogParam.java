@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "添加测试计划执行记录所需参数")
-public class AddTestExecultLogParam {
+public class AddTestExecuteLogParam {
 
         @ApiModelProperty(value = "导入测试用例idList", required = true)
         @NotEmpty(message = "要导入的测试用例id为空")

@@ -181,8 +181,8 @@ public class TestController {
     @PostMapping("/addTestExecuteLog")
     @ApiOperation(value = "导入用例", notes = "批量导入测试用例到目标测试计划的用例执行记录表里")
     @PreAuthorize("hasAuthority('/test/addTestExecuteLog')")
-    public List<TestExecuteLog> addTestExecuteLog(@Valid @RequestBody AddTestExecultLogParam addTestExecultLogParam) {
-        return testExecuteLogService.addTestExecuteLog(addTestExecultLogParam.getIdList(), addTestExecultLogParam.getPlanId());
+    public List<TestExecuteLog> addTestExecuteLog(@Valid @RequestBody AddTestExecuteLogParam addTestExecuteLogParam) {
+        return testExecuteLogService.addTestExecuteLog(addTestExecuteLogParam.getIdList(), addTestExecuteLogParam.getPlanId());
     }
 
     @ApiOperationSupport(order = 12)
