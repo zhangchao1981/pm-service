@@ -2,6 +2,7 @@ package com.iscas.pm.api.service.impl.doc;
 
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.config.ConfigureBuilder;
@@ -18,11 +19,18 @@ import com.iscas.pm.api.model.dev.*;
 import com.iscas.pm.api.model.doc.*;
 import com.iscas.pm.api.model.doc.data.*;
 import com.iscas.pm.api.model.doc.param.CreateDocumentParam;
+import com.iscas.pm.api.model.doc.param.DBLinkParam;
 import com.iscas.pm.api.model.env.EnvHardware;
 import com.iscas.pm.api.model.env.EnvSoftware;
+import com.iscas.pm.api.model.project.Project;
 import com.iscas.pm.api.model.project.ProjectMember;
 import com.iscas.pm.api.model.projectPlan.PlanTask;
+import com.iscas.pm.api.model.test.BugStatistics;
+import com.iscas.pm.api.model.test.TestPlan;
+import com.iscas.pm.api.model.test.TestUseCase;
+import com.iscas.pm.api.model.test.enums.UseCaseTypeEnum;
 import com.iscas.pm.api.service.*;
+import com.iscas.pm.api.util.DateUtil;
 import com.iscas.pm.api.util.FastDFSUtil;
 import com.iscas.pm.api.util.WordUtil;
 import com.iscas.pm.common.core.util.RedisUtil;
@@ -36,6 +44,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,9 +63,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     @Autowired
     RedisUtil redisUtil;
     @Autowired
-    private FastFileStorageClient fastFileStorageClient;
+    FastFileStorageClient fastFileStorageClient;
     @Autowired
-    private ProjectInfoService projectInfoService;
+    ProjectInfoService projectInfoService;
     @Autowired
     EnvHardwareMapper hardwareMapper;
     @Autowired
@@ -81,6 +90,12 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     DevInterfaceService devInterfaceService;
     @Autowired
     DataRequirementService dataRequirementService;
+    @Autowired
+    TestPlanService testPlanService;
+    @Autowired
+    TestBugService testBugService ;
+    @Autowired
+    TestUseCaseService testUseCaseService;
 
     @Override
     public Document addLocalDocument(Document document) {
@@ -88,13 +103,6 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         document.setPath(document.getPath());
         documentMapper.insert(document);
         return document;
-    }
-
-    private void documentChecking(Document document) {
-        if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
-            throw new IllegalArgumentException("所属目录不存在");
-        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
-            throw new IllegalArgumentException("该目录下已存在同名文档");
     }
 
     @Override
@@ -140,39 +148,35 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     @Override
     public void createDocument(CreateDocumentParam createDocumentParam) throws IOException {
         String currentProject = DataSourceHolder.getDB().databaseName;
-        Document autoDoc = new Document();
-        autoDoc.setDirectoryId(createDocumentParam.getDirectoryId());
-        autoDoc.setUploader(RequestHolder.getUserInfo().getEmployeeName());
-        autoDoc.setName(createDocumentParam.getDocumentName());
-        autoDoc.setType(DocumentTypeEnum.GENERATE);
-        autoDoc.setVersion(createDocumentParam.getVersion());
-        documentChecking(autoDoc);
 
-        //拿到服务器中模板的存储路径
+        Document document = new Document();
+        document.setDirectoryId(createDocumentParam.getDirectoryId());
+        document.setUploader(RequestHolder.getUserInfo().getEmployeeName());
+        document.setName(createDocumentParam.getDocumentName());
+        document.setType(DocumentTypeEnum.GENERATE);
+        document.setVersion(createDocumentParam.getVersion());
+        documentChecking(document);
+
+        //从FastDFS服务器获取模板文件
         StorePath storePath = StorePath.parseFromUrl(createDocumentParam.getTemplatePath());
         byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
         if (null == sourceByte) {
             throw new IllegalArgumentException("模板路径错误，服务器读取不到该文件");
         }
-        String fileName = createDocumentParam.getDocumentName();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        InputStream template = new ByteArrayInputStream(sourceByte);
 
-        //前端传入参数只含共用的信息，数据库查找的信息根据模板类型选择性填充
-        HashMap<String, Object> map = getDocumentContext(createDocumentParam);
-        //用户输入内容：
-        map.put("version", createDocumentParam.getVersion());
-        LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
-        //开启useSpringEL校验  不支持中文标签
+        //封装数据到map
+        HashMap<String, Object> data = getDocumentContext(createDocumentParam);
+
+        //开启useSpringEL校验
         ConfigureBuilder builder = Configure.builder().useSpringEL(false);
-        map.keySet().forEach(key -> {
+        //绑定行循环的key
+        LoopRowTableRenderPolicy policy = new LoopRowTableRenderPolicy();
+        data.keySet().forEach(key -> {
             if (key.endsWith("List")) {
                 builder.bind(key, policy);
             }
-
-            //不以list结尾的特殊列表,单独进行关联
+            //软需列表
             if (key.contains("modularList")) {
-                //软需列表
                 builder.bind("modulars", policy)
                         .bind("precondition", policy)
                         .bind("successScene", policy)
@@ -181,246 +185,382 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                         .bind("dataInfo", policy)
                         .bind("dataDescriptionList", policy);
             }
-
+            //数据库列表
             if (key.contains("docDBTableTemps")) {
-                //数据库列表 :
                 builder.bind("dBTableStructList", policy);
+            }
+            if (key.contains("functionUseCaseList")) {
+                builder.bind("processStep", policy);
             }
         });
 
-        Configure config = builder.build();
-        //可优化
-        WordUtil.parse(template, map, out, config);
-        //将输出文件上传到服务器：
-        //输出文件的比特流
+        //解析word模板并将结果输出到OutputStream
+        InputStream template = new ByteArrayInputStream(sourceByte);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        WordUtil.parse(template, data, out, builder.build());
+
+        //将生成的word文件上传到服务器
         byte[] bytes = out.toByteArray();
-        //拿到文件内容，输出到fastDFS服务器上
         InputStream inputStream = new ByteArrayInputStream(bytes);
-        String upLoadPath = fastDFSUtil.uploadByIO(inputStream, fileName + ".doc").getFullPath();
-        //生成的文档上传到fastDfs  返回存储路径存储到mysql里（存储到document表里）
-        autoDoc.setPath(upLoadPath);
-        autoDoc.setUpdateTime(new Date());
-        autoDoc.setCreateTime(new Date());
-        //切回当前项目
+        String upLoadPath = fastDFSUtil.uploadByIO(inputStream, createDocumentParam.getDocumentName() + ".doc").getFullPath();
+
+        //保存文档信息
         DataSourceHolder.setDB(currentProject);
-        if (addLocalDocument(autoDoc) == null) {
-            throw new IOException("自动上传文档失败");
-        }
+        document.setPath(upLoadPath);
+        document.setUpdateTime(new Date());
+        document.setCreateTime(new Date());
+        documentMapper.insert(document);
     }
 
     @Override
     public HashMap<String, Object> getDocumentContext(CreateDocumentParam createDocumentParam) {
-        Integer templateId = createDocumentParam.getTemplateId();
-        HashMap<String, Object> map = new HashMap<>();
         String currentProject = DataSourceHolder.getDB().databaseName;
+        Integer templateId = createDocumentParam.getTemplateId();
 
-        //填充通用内容：
+        //获取模板关联的修订记录，并将日期类型转换成字符串
         List<ReviseRecord> reviseRecordList = reviseRecordService.list(new QueryWrapper<ReviseRecord>().eq("template_id", templateId));
-        List<ReferenceDoc> referenceList = referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
         List<DocReviseRecord> docReviseRecordList = new ArrayList<>();
         reviseRecordList.forEach(reviseRecord -> {
             docReviseRecordList.add(new DocReviseRecord(reviseRecord));
         });
-        List<ProjectMember> memberList = projectTeamService.memberRoleList();
-        map.put("memberList", memberList);
-        map.put("reviseRecordList", docReviseRecordList);
-        map.put("referenceList", referenceList);
+
+        //获取模板关联的引用文档
+        List<ReferenceDoc> referenceList = referenceDocService.list(new QueryWrapper<ReferenceDoc>().eq("template_id", templateId));
+
+        //获取项目成员及角色
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
-        ProjectDetailInfo projectDetailInfo = projectInfoService.getProjectDetailInfo(currentProject);
-        map.put("projectName", projectDetailInfo.getBasicInfo().getName());
-        map.put("projectId", projectDetailInfo.getBasicInfo().getId());
-//        map.put("projectStage", projectDetailInfo.getBasicInfo().getStatus());
-        map.put("requirementProvider", projectDetailInfo.getBasicInfo().getRequirementProvider());
-        map.put("projectSecret", projectDetailInfo.getBasicInfo().getSecretLevel().getValue());
-        map.put("manufacture", projectDetailInfo.getBasicInfo().getManufacture());
-        map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
-        map.put("projectDescription", projectDetailInfo.getBasicInfo().getDescription());
-        map.put("projectProvider", projectDetailInfo.getBasicInfo().getProjectProvider());
+        List<ProjectMember> memberList = projectTeamService.memberRoleList(currentProject);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        map.put("currentDate", calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
+        //获取项目基本信息
+        Project project = projectInfoService.getById(currentProject);
+        if (project == null) {
+            throw new IllegalArgumentException("该项目不存在");
+        }
+
+        //填充数据
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("projectName", project.getName());
+        data.put("projectId", project.getId());
+        data.put("requirementProvider", project.getRequirementProvider());
+        data.put("projectSecret", project.getSecretLevel().getValue());
+        data.put("manufacture", project.getManufacture());
+        data.put("projectProvider", project.getProjectProvider());
+        data.put("projectDescription", project.getDescription());
+        data.put("memberList", memberList);
+        data.put("reviseRecordList", docReviseRecordList);
+        data.put("referenceList", referenceList);
+        data.put("currentDate", (new Date().getYear() + 1900) + "年" + (new Date().getMonth() + 1) + "月");
+        data.put("version", createDocumentParam.getVersion());
+
         //获取模板类型
-        TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(createDocumentParam.getTemplateId()), "所选模板不存在").getType();
+        TemplateTypeEnum templateType = Assert.notNull(docTemplateService.getById(templateId), "所选模板不存在").getType();
 
-        //根据模板id填充特定内容:
+        //切换到项目库
+        DataSourceHolder.setDB(currentProject);
+
+        //根据模板类型填充数据:
         switch (templateType) {
-            default:
-                break;
-//                throw new IllegalArgumentException("未查询到该模板对应数据");
             case SoftwareRequirementsSpecification: {
-                softwareRequirementsSpecificationContext(map, currentProject);
+                softwareRequirementsSpecificationContext(data, currentProject);
                 break;
             }
-
             case SoftwareDevelopment: {
-                softwareDevelopmentContext(map, currentProject);
+                softwareDevelopmentContext(data);
                 break;
             }
             case ConfigurationManagementPlan: {
-                configurationManagementPlanContext(map, currentProject);
+                configurationManagementPlanContext(data);
             }
             case DatabaseDesignNotes: {
-                databaseDesignNotesContext(createDocumentParam, map);
+                databaseDesignNotesContext(createDocumentParam, data);
                 break;
             }
+            case SCTP: {
+                SCTPContext(createDocumentParam.getTestPlanId(), data);
+                break;
+            }
+            case SCTR: {
+                SCTRContext(createDocumentParam.getTestPlanId(), data);
+                break;
+            }
+
+            case SCTD: {
+                SCTDContext(createDocumentParam.getTestPlanId(), data);
+                break;
+            }
+
+            default:
+                break;
         }
-        return map;
+        return data;
     }
 
-    private void configurationManagementPlanContext(HashMap<String, Object> map, String currentProject) {
-        DataSourceHolder.setDB(currentProject);
+    private void SCTDContext(Integer testPlanId, HashMap<String, Object> data) {
+        addHardwareList(data);
+        addSoftwareList(data);
+        addTestUseCase(data);
+    }
+
+    private void SCTPContext(Integer testPlanId, HashMap<String, Object> data) {
+        addHardwareList(data);
+        addSoftwareList(data);
+        addRequirementList(data);
+
+        //获取测试计划信息
+        TestPlan plan = testPlanService.getById(2);
+        if (plan == null)
+            throw new IllegalArgumentException("选择的测试计划不存在!");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        data.put("testPlanStartTime", formatter.format(plan.getStartTime()));
+        data.put("testPlanEndTime", formatter.format(plan.getEndTime()));
+
+        //计算测试活动截止的时间点
+        data.put("testAction1", formatter.format(plan.getStartTime()));
+        data.put("testAction2", formatter.format(plan.getEndTime()));
+        data.put("testAction3", formatter.format(plan.getEndTime()));
+        data.put("testAction4", formatter.format(plan.getEndTime()));
+        Integer days = DateUtil.daysBetween(plan.getStartTime(), plan.getEndTime());
+        if (days > 2) {
+            int round = (int) Math.round((days - 2) * 0.4);
+            data.put("testAction2", formatter.format(DateUtil.addDays(plan.getStartTime(), round)));
+            data.put("testAction3", formatter.format(DateUtil.addDays(plan.getEndTime(), -1)));
+        }
+
+    }
+
+    private void SCTRContext(Integer testPlanId, HashMap<String, Object> data) {
+        addHardwareList(data);
+        //addRequirementList(data);
+
+        //统计bug信息
+        BugStatistics bugStatistics = testBugService.getBugStatistics(2);
+        data.put("bugStatistics",BeanUtils.beanToMap(bugStatistics));
+
+        //统计用例信息
+
+        //获取测试计划信息
+        TestPlan plan = testPlanService.getById(2);
+        if (plan == null)
+            throw new IllegalArgumentException("选择的测试计划不存在!");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        data.put("testPlanStartTime", formatter.format(plan.getStartTime()));
+        data.put("testPlanEndTime", formatter.format(plan.getEndTime()));
+
+        //计算测试活动截止的时间点
+        data.put("testAction1", formatter.format(plan.getStartTime()));
+        data.put("testAction2", formatter.format(plan.getEndTime()));
+        data.put("testAction3", formatter.format(plan.getEndTime()));
+        data.put("testAction4", formatter.format(plan.getEndTime()));
+        Integer days = DateUtil.daysBetween(plan.getStartTime(), plan.getEndTime());
+        if (days > 2) {
+            int round = (int) Math.round((days - 2) * 0.4);
+            data.put("testAction2", formatter.format(DateUtil.addDays(plan.getStartTime(), round)));
+            data.put("testAction3", formatter.format(DateUtil.addDays(plan.getEndTime(), -1)));
+        }
+
+    }
+
+    private void configurationManagementPlanContext(HashMap<String, Object> map) {
         List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
         map.put("softwareList", softwareList);
     }
 
     private void databaseDesignNotesContext(CreateDocumentParam createDocumentParam, HashMap<String, Object> map) {
+        //测试数据库连接
+        DBLinkParam dbLinkParam = new DBLinkParam()
+                .setDbType(createDocumentParam.getDbType())
+                .setDbName(createDocumentParam.getDbName())
+                .setDbPath(createDocumentParam.getDbPath())
+                .setPort(createDocumentParam.getPort())
+                .setUserName(createDocumentParam.getUserName())
+                .setPassword(createDocumentParam.getPassword());
+        testDB(dbLinkParam);
+
         if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
             List<DocDBTableTemp> docDBTableTempList = new ArrayList<>();
-            //连接自定义数据库
-            String dataSourceName = UUID.randomUUID().toString();
-            String url, driverName;
-            if (createDocumentParam.getDbType() == DataBaseTypeEnum.MYSQL) {
-                url = "jdbc:mysql://" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + "/" + createDocumentParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-                driverName = "com.mysql.cj.jdbc.Driver";
-            } else if (createDocumentParam.getDbType() == DataBaseTypeEnum.ORACLE) {
-                url = "jdbc:oracle:thin:@" + createDocumentParam.getDbPath() + ":" + createDocumentParam.getPort() + ":" + createDocumentParam.getDbName();
-                driverName = "oracle.jdbc.driver.OracleDriver";
-            } else {
-                throw new IllegalArgumentException("暂不支持该数据库类型！");
-            }
-            DataSourceHolder.setDB(url, createDocumentParam.getDbName(), createDocumentParam.getUserName(), createDocumentParam.getPassword(), driverName, dataSourceName);
-            try {
-                getDBInfo(createDocumentParam.getDbName());
-            } catch (Exception e) {
-                throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
-            } finally {
-                dynamicDataSource.deleteDataSourceByName(dataSourceName);
-            }
 
-            //数据库中对应的所有表的表名()
-            List<TableByDB> tableList = getDBInfo(createDocumentParam.getDbName());
-            tableList.forEach(table -> {
-                //表结构数据处理
-                List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(table.getName());
-                tableFieldInfoList.stream().forEach(tableFieldInfo -> {
-                    // key=MUL则为外键
-                    //key=PRI 则为主键
-                    if (StringUtils.isNotBlank(tableFieldInfo.fieldKey)) {
-                        if ("PRI".equals(tableFieldInfo.fieldKey)) {
-                            tableFieldInfo.setFieldKey("是");
-                        }
-                        if ("MUL".equals(tableFieldInfo.fieldKey)) {
-                            tableFieldInfo.setFieldKey("否");
-                            tableFieldInfo.setFieldExtra("是");
-                        } else {
-                            tableFieldInfo.setFieldExtra("否");
-                        }
-                    } else {
+            //获取指定数据库中的所有表
+            List<TableInfo> tableList = getAllTables(createDocumentParam.getDbName());
+
+            List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(createDocumentParam.getDbName());
+
+            //表结构对应数据处理
+            tableFieldInfoList.forEach(tableFieldInfo -> {
+                //key=MUL则为外键
+                //key=PRI 则为主键
+                if (StringUtils.isNotBlank(tableFieldInfo.fieldKey)) {
+                    if ("PRI".equals(tableFieldInfo.fieldKey)) {
+                        tableFieldInfo.setFieldKey("是");
+                    }
+                    if ("MUL".equals(tableFieldInfo.fieldKey)) {
                         tableFieldInfo.setFieldKey("否");
+                        tableFieldInfo.setFieldExtra("是");
+                    } else {
                         tableFieldInfo.setFieldExtra("否");
                     }
-                    tableFieldInfo.setFieldNull("YES".equals(tableFieldInfo.fieldNull) ? "是" : "否");
-                });
-                DocDBTableTemp tableTemp = new DocDBTableTemp().setDBTableName(table.name).setDBTableComment(table.comment).setDBTableStructList(tableFieldInfoList);
+                } else {
+                    tableFieldInfo.setFieldKey("否");
+                    tableFieldInfo.setFieldExtra("否");
+                }
+                tableFieldInfo.setFieldNull("YES".equals(tableFieldInfo.fieldNull) ? "是" : "否");
+            });
+
+            //将表结构按表名分组
+            Map<String, List<TableFieldInfo>> allTableInfo = tableFieldInfoList.stream().collect(Collectors.groupingBy(TableFieldInfo::getTableName));
+
+            tableList.forEach(table -> {
+                //表结构数据处理
+//                List<TableFieldInfo> tableFieldInfoList = getTableFieldInfoList(table.getName());
+                DocDBTableTemp tableTemp = new DocDBTableTemp().setDBTableName(table.name).setDBTableComment(table.comment).setDBTableStructList(allTableInfo.get(table.getName()));
                 docDBTableTempList.add(tableTemp);
             });
-            //新建一个表实体类   对应表格头   表格体内的变量    首先有String :tableHead  有List集合放的表数据 List<TableStructure>
-            //把表格实体类封装成 List集合
+
             map.put("docDBTableTemps", docDBTableTempList);
             map.put("DBName", createDocumentParam.getDbName());
-            return;
         }
     }
 
     private void softwareRequirementsSpecificationContext(HashMap<String, Object> map, String currentProject) {
-        DataSourceHolder.setDB(currentProject);
-        //所有modular (树结构)
-        List<DevModular> modularList = devModularService.list();
-        List<DocModular> docModularList = new ArrayList<>();
-
-        //全部开发需求 :所有含开发需求的modular的List集合, devRequirement替换为docRequirement
+        //获取所有开发需求，并转换数据结构
         List<DevRequirement> devRequirementList = devRequirementService.list();
         List<DocRequirement> docRequirementList = new ArrayList<>();
-        devRequirementList.forEach(devRequirement -> {
-            docRequirementList.add(new DocRequirement(devRequirement).setProjectId(map.get("projectId").toString()).setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())));
-        });
-
-        //功能需求
-        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.FUNCTION)).collect(Collectors.groupingBy(DocRequirement::getModularId));
-
-        //用DocModular 将modular中的开发需求属性补充上
-        modularList.forEach(modular -> {
-            docModularList.add(new DocModular(modular).setProjectId(map.get("projectId").toString()));
-        });
-        docModularList.forEach(docModular -> {
-                    if (requirementMap.containsKey(docModular.getId())) {
-                        docModular.setDocRequirements(requirementMap.get(docModular.getId()));
-                    }
-                }
+        devRequirementList.forEach(devRequirement ->
+                docRequirementList.add(new DocRequirement(devRequirement)
+                        .setProjectId(currentProject)
+                        .setPrototype(creatPictureRenderDataList(devRequirement.getPrototype(), devRequirement.getName())))
         );
+
+        //性能需求列表
+        List<DocRequirement> performanceReqList = docRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE))
+                .collect(Collectors.toList());
+
+        //功能需求按模块id分组
+        Map<Integer, List<DocRequirement>> requirementMap = docRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.FUNCTION))
+                .collect(Collectors.groupingBy(DocRequirement::getModularId));
+
+        //获取所有模块列表,转换数据结构并填充需求列表信息
+        List<DevModular> modularList = devModularService.list();
+        List<DocModular> docModularList = new ArrayList<>();
+        modularList.forEach(modular -> {
+            docModularList.add(new DocModular(modular)
+                    .setProjectId(currentProject)
+                    .setDocRequirements(requirementMap.get(modular.getId())));
+        });
+
+        //模块列表转换成树形结构
         List<DocModular> modularTreeList = TreeUtil.treeOut(docModularList, DocModular::getId, DocModular::getParentId, DocModular::getModulars);
 
-        //性能需求
-        List<DocRequirement> performanceReqList = docRequirementList.stream().filter(docRequirementRequirement -> docRequirementRequirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+        //获取外部接口列表，并转换结构
+        List<DevInterface> dev_externalInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
+        List<DocInterface> doc_externalInterfaceList = new ArrayList<>();
+        dev_externalInterfaces.forEach(devInterface -> doc_externalInterfaceList.add(new DocInterface(devInterface, currentProject, map.get("projectName").toString())));
 
-        //如果用hashMap  需要new hash -->key是session  value是hash  这个hash是一个list集合  集合对象包含externalInterface和项目标识   优点是不需要新实体类,缺点是需要把原实体类属性和对象都拉出来放到hash里
-        //如果用新建实体类 ，需要加属性和构造器 ，此处采用方案2
-        List<DocInterface> externalInterfaceList = new ArrayList<>();
-        List<DevInterface> devInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.EXTERNAL_INTERFACE.getCode());
-        if (devInterfaces.size() > 0) {
-            devInterfaces.forEach(devInterface -> externalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
-        }
-        List<DocInterface> internalInterfaceList = new ArrayList<>();
-        List<DevInterface> devInterfaces2 = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
-        if (devInterfaces2.size() > 0) {
-            devInterfaces2.forEach(devInterface -> internalInterfaceList.add(new DocInterface(devInterface, map.get("projectId").toString(), map.get("projectName").toString())));
-        }
-        List<DataRequirement> requirementList = dataRequirementService.list();
-        List<DocDataRequirement>  dataRequirementList=new ArrayList<>();
-        if (requirementList.size()>0){
-            requirementList.forEach(requirement->{
-                    dataRequirementList.add(new DocDataRequirement(requirement));
-            });
-        }
+        //获取内部接口列表，并转换结构
+        List<DevInterface> dev_internalInterfaces = devInterfaceService.devInterfaceListByType(InterfaceTypeEnum.INTERNAL_INTERFACE.getCode());
+        List<DocInterface> doc_internalInterfaceList = new ArrayList<>();
+        dev_internalInterfaces.forEach(devInterface -> doc_internalInterfaceList.add(new DocInterface(devInterface, currentProject, map.get("projectName").toString())));
+
+        //获取数据需求列表，并转换结构
+        List<DataRequirement> dataRequirements = dataRequirementService.list();
+        List<DocDataRequirement> doc_dataRequirementList = new ArrayList<>();
+        dataRequirements.forEach(requirement -> {
+            doc_dataRequirementList.add(new DocDataRequirement(requirement));
+        });
+
+        //获取软硬件需求列表
         List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
         List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
 
         map.put("modularList", modularTreeList);
         map.put("performanceReqList", performanceReqList);
-        map.put("externalInterfaceList", externalInterfaceList);
-        map.put("internalInterfaceList", internalInterfaceList);
-        map.put("dataRequirementList", dataRequirementList);
+        map.put("externalInterfaceList", doc_externalInterfaceList);
+        map.put("internalInterfaceList", doc_internalInterfaceList);
+        map.put("dataRequirementList", doc_dataRequirementList);
         map.put("hardwareList", hardwareList);
         map.put("softwareList", softwareList);
         map.put("docRequirementList", docRequirementList);
-        return;
     }
 
-    private void softwareDevelopmentContext(HashMap<String, Object> map, String currentProject) {
-        DataSourceHolder.setDB(currentProject);
-        List<EnvHardware> docHardwareList = hardwareMapper.selectList(new QueryWrapper<>());
-        List<EnvSoftware> docSoftwareList = softwareMapper.selectList(new QueryWrapper<>());
-        List<DocEnvHardware> hardwareList=new ArrayList<>();
-        List<DocEnvSoftware> softwareList=new ArrayList<>();
-        if (docHardwareList.size()>0){
-            docHardwareList.forEach(hardware -> {hardwareList.add(new DocEnvHardware(hardware));});
-        }
-        if (docSoftwareList.size()>0){
-            docSoftwareList.forEach(software -> {softwareList.add(new DocEnvSoftware(software));});
-        }
-        //项目计划信息获取
+    private void softwareDevelopmentContext(HashMap<String, Object> data) {
+        //获取硬件需求列表，并转换结构
+        addHardwareList(data);
+
+        //获取软件需求列表，并转换结构
+        addSoftwareList(data);
+
+        //获取项目计划列表，并转换数据结构
         List<PlanTask> planTaskList = projectPlanService.getTaskListByWbs();
         List<DocPlanTask> docPlanTaskList = new ArrayList<>();
         planTaskList.forEach(planTask -> {
             docPlanTaskList.add(new DocPlanTask(planTask));
         });
-        map.put("hardwareList", hardwareList);
-        map.put("softwareList", softwareList);
-        map.put("planTaskList", docPlanTaskList);
-        return;
+        data.put("planTaskList", docPlanTaskList);
     }
 
+    private void addTestUseCase(HashMap<String, Object> data) {
+        List<TestUseCase> testUseCaseList = testUseCaseService.list();
+        List<TestUseCase>  deploymentUseCaseList  = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.DEPLOYMENT)).collect(Collectors.toList());
+        List<TestUseCase>  functionUseCaseList    = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.FUNCTION)).collect(Collectors.toList());
+        List<TestUseCase>  performanceUseCaseList = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+        data.put("deploymentUseCaseList", deploymentUseCaseList);
+        data.put("functionUseCaseList", functionUseCaseList);
+        data.put("performanceUseCaseList", performanceUseCaseList);
+    }
+
+    private void addHardwareList(HashMap<String, Object> data) {
+        //获取硬件需求列表，并转换结构
+        List<EnvHardware> hardwareList = hardwareMapper.selectList(new QueryWrapper<>());
+        List<DocEnvHardware> doc_hardwareList = new ArrayList<>();
+        hardwareList.forEach(hardware -> {
+            doc_hardwareList.add(new DocEnvHardware(hardware));
+        });
+        data.put("hardwareList", doc_hardwareList);
+    }
+
+    private void addRequirementList(HashMap<String, Object> data) {
+        //获取所有开发需求，并转换数据结构
+        List<DevRequirement> devRequirementList = devRequirementService.list();
+
+        //功能需求列表
+        List<DevRequirement> functionReqList = devRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.FUNCTION))
+                .collect(Collectors.toList());
+        data.put("functionReqList", functionReqList);
+
+        //性能需求列表
+        List<DevRequirement> performanceReqList = devRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.PERFORMANCE))
+                .collect(Collectors.toList());
+        data.put("performanceReqList", performanceReqList);
+
+        //安装部署需求列表
+        List<DevRequirement> deployReqList = devRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.DEPLOY))
+                .collect(Collectors.toList());
+        data.put("deployReqList", deployReqList);
+
+        //安全需求列表
+        List<DevRequirement> securityReqList = devRequirementList.stream()
+                .filter(requirement -> requirement.getRequirementType().equals(RequirementTypeEnum.SECURITY))
+                .collect(Collectors.toList());
+        data.put("securityReqList", securityReqList);
+
+        //获取接口列表
+        List<DevInterface> interfaceReqList = devInterfaceService.devInterfaceListByType(null);
+        data.put("interfaceReqList", interfaceReqList);
+    }
+
+    private void addSoftwareList(HashMap<String, Object> data) {
+        //获取软件需求列表，并转换结构
+        List<EnvSoftware> softwareList = softwareMapper.selectList(new QueryWrapper<>());
+        List<DocEnvSoftware> doc_softwareList = new ArrayList<>();
+        softwareList.forEach(software -> {
+            doc_softwareList.add(new DocEnvSoftware(software));
+        });
+        data.put("softwareList", doc_softwareList);
+    }
 
     @Override
     public void deleteTemplate(Integer templateId) {
@@ -433,13 +573,50 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
     @Override
-    public List<TableByDB> getDBInfo(String dbName) {
-        return documentMapper.getDBInfo(dbName);
+    public List<TableInfo> getAllTables(String dbName) {
+        return documentMapper.getAllTables(dbName);
     }
 
     @Override
-    public List<TableFieldInfo> getTableFieldInfoList(String tableName) {
-        return documentMapper.getTableStructureList(tableName);
+    public List<TableFieldInfo> getTableFieldInfoList(String DBName) {
+        return documentMapper.getTableStructureList(DBName);
+    }
+
+    @Override
+    public Boolean testDB(DBLinkParam dbLinkParam) {
+        String dataSourceName = UUID.randomUUID().toString();
+        String url, driverName;
+
+        if (dbLinkParam.getDbType() == DataBaseTypeEnum.MYSQL) {
+            url = "jdbc:mysql://" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + "/" + dbLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            driverName = "com.mysql.cj.jdbc.Driver";
+        } else if (dbLinkParam.getDbType() == DataBaseTypeEnum.ORACLE) {
+            url = "jdbc:oracle:thin:@" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + ":" + dbLinkParam.getDbName();
+            driverName = "oracle.jdbc.driver.OracleDriver";
+        } else {
+            throw new IllegalArgumentException("暂不支持该数据库类型！");
+        }
+
+        DataSourceHolder.setDB(url, dbLinkParam.getDbName(), dbLinkParam.getUserName(), dbLinkParam.getPassword(), driverName, dataSourceName);
+        try {
+            getAllTables(dbLinkParam.getDbName());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
+        } finally {
+            dynamicDataSource.deleteDataSourceByName(dataSourceName);
+        }
+        return true;
+    }
+
+    /**
+     * 文档校验
+     */
+    private void documentChecking(Document document) {
+        if (getDocumentByDirectoryId(document.getDirectoryId()) == null)
+            throw new IllegalArgumentException("生成文档所属目录id不存在");
+
+        if (existSameNameDoc(document.getDirectoryId(), document.getName(), "add"))
+            throw new IllegalArgumentException("该目录下已存在同名文档");
     }
 
     /**
@@ -480,7 +657,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
                 byte[] sourceByte = fastFileStorageClient.downloadFile(storePath.getGroup(), storePath.getPath(), new DownloadByteArray());
                 InputStream streamImg = new ByteArrayInputStream(sourceByte);
                 //图片尺寸设置
-                String pictureName=prototype.size()>1?requireName + "原型设计图" + (i + 1):requireName + "原型设计图";
+                String pictureName = prototype.size() > 1 ? requireName + "原型设计图" + (i + 1) : requireName + "原型设计图";
                 pictureList.add(new PoitlPicture().setStreamImg(Pictures.ofStream(streamImg, PictureType.JPEG)
                         .size(585, 305).create()).setPictureName(pictureName));
             }

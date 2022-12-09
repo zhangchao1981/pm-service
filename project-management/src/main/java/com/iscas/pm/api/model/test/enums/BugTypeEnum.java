@@ -15,7 +15,6 @@ public enum BugTypeEnum {
     FUNCTION("FUNCTION", "功能问题"),
     PERFORMANCE("PERFORMANCE", "性能问题"),
     SECURITY("SECURITY", "安全问题"),
-    ADVISE("ADVISE", "优化建议"),
     UIUE_REDUCTION_DEGREE("UIUE_REDUCTION_DEGREE", "UIUE还原度"),
     OTHER("OTHER", "其他");
 

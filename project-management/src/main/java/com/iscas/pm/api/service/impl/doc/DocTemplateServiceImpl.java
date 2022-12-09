@@ -30,9 +30,10 @@ public class DocTemplateServiceImpl extends ServiceImpl<DocTemplateMapper, DocTe
     DocTemplateMapper docTemplateMapper;
 
     @Override
-    public DocTemplate uploadLocalTemplate(DocTemplate docTemplate) throws IOException {
+    public DocTemplate uploadLocalTemplate(DocTemplate docTemplate) {
         if (docTemplateMapper.selectOne(new QueryWrapper<DocTemplate>().eq("name", docTemplate.getName())) != null) {
-            throw new IllegalArgumentException("模板名重复"); }
+            throw new IllegalArgumentException("模板名称不能重复"); }
+
         docTemplate.setCreateTime(new Date());
         docTemplate.setUpdateTime(new Date());
         docTemplateMapper.insert(docTemplate);

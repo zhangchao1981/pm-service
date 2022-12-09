@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class TableFieldInfo {
 
+    public String tableName;
+
     public String fieldName;
 
     public String fieldComment;

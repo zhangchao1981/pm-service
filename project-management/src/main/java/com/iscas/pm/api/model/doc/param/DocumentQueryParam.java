@@ -1,5 +1,6 @@
 package com.iscas.pm.api.model.doc.param;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/9/8.
  */
 @Data
+@ApiModel(value = "项目文档列表查询参数")
 public class DocumentQueryParam {
     @ApiModelProperty(value = "目录id")
     private  Integer directoryId;
@@ -19,7 +21,7 @@ public class DocumentQueryParam {
     private  String  docName;
 
     @ApiModelProperty(value = "当前页",required = true)
-    @NotNull(message = "显示页面的页码不能为空")
+    @NotNull(message = "当前页不能为空")
     @Min(value = 1, message = "当前页码不能小于1")
     private Integer pageNum;
 

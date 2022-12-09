@@ -2,6 +2,7 @@ package com.iscas.pm.api.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.iscas.pm.api.model.test.BugStatistics;
 import com.iscas.pm.api.model.test.TestBug;
 import com.iscas.pm.api.model.test.TestExecuteLog;
 import com.iscas.pm.api.model.test.param.SolveBugParam;
@@ -38,4 +39,6 @@ public interface TestBugService extends IService<TestBug> {
     void closeBug(SolveBugParam param);
 
     List<TestExecuteLog> countTestBugByExecute(List<Integer> executeIdList);
+
+    BugStatistics getBugStatistics(Integer testPlanId);
 }

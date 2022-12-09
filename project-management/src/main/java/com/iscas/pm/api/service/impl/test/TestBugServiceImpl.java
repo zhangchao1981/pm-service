@@ -1,6 +1,7 @@
 package com.iscas.pm.api.service.impl.test;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,7 +10,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iscas.pm.api.mapper.test.TestBugMapper;
 import com.iscas.pm.api.mapper.test.TestBugProcessLogMapper;
 import com.iscas.pm.api.model.test.*;
+import com.iscas.pm.api.model.test.enums.BugInjectStageEnum;
 import com.iscas.pm.api.model.test.enums.BugProcessActionEnum;
+import com.iscas.pm.api.model.test.enums.BugSeverityEnum;
 import com.iscas.pm.api.model.test.enums.BugStatusEnum;
 import com.iscas.pm.api.model.test.param.SolveBugParam;
 import com.iscas.pm.api.model.test.param.TestBugQueryParam;
@@ -296,6 +299,84 @@ public class TestBugServiceImpl extends ServiceImpl<TestBugMapper, TestBug> impl
     @Override
     public List<TestExecuteLog> countTestBugByExecute(List<Integer> executeIdList) {
         return testBugMapper.countTestBugByExecute(executeIdList);
+    }
+
+    @Override
+    public BugStatistics getBugStatistics(Integer testPlanId) {
+        //统计缺陷信息
+        BugStatistics statistics = new BugStatistics();
+        List<TestBug> bugs = testBugMapper.selectList(new QueryWrapper<TestBug>().eq("plan_id", testPlanId));
+        statistics.setBugCount(bugs.size());
+
+        bugs.forEach(bug -> {
+            if (bug.getSeverity() == BugSeverityEnum.DEADLY) {
+                if (bug.getInjectStage() == BugInjectStageEnum.DOCUMENT) {
+                    statistics.setDeadlyDocumentCount(statistics.getDeadlyDocumentCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.BACKEND || bug.getInjectStage() == BugInjectStageEnum.FRONT) {
+                    statistics.setDeadlyCodeCount(statistics.getDeadlyCodeCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.DEV_DESIGN || bug.getInjectStage() == BugInjectStageEnum.PRODUCT_DESIGN) {
+                    statistics.setDeadlyDesignCount(statistics.getDeadlyDesignCount() + 1);
+                } else {
+                    statistics.setDeadlyOtherCount(statistics.getDeadlyOtherCount() + 1);
+                }
+
+                if (bug.getStatus() == BugStatusEnum.CLOSE) {
+                    statistics.setDeadlyCloseCount(statistics.getDeadlyCloseCount() + 1);
+                } else {
+                    statistics.setDeadlyDelayedCount(statistics.getDeadlyDelayedCount() + 1);
+                }
+            } else if (bug.getSeverity() == BugSeverityEnum.CRITICAL) {
+                if (bug.getInjectStage() == BugInjectStageEnum.DOCUMENT) {
+                    statistics.setCriticalDocumentCount(statistics.getCriticalDocumentCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.BACKEND || bug.getInjectStage() == BugInjectStageEnum.FRONT) {
+                    statistics.setCriticalCodeCount(statistics.getCriticalCodeCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.DEV_DESIGN || bug.getInjectStage() == BugInjectStageEnum.PRODUCT_DESIGN) {
+                    statistics.setCriticalDesignCount(statistics.getCriticalDesignCount() + 1);
+                } else {
+                    statistics.setCriticalOtherCount(statistics.getCriticalOtherCount() + 1);
+                }
+
+                if (bug.getStatus() == BugStatusEnum.CLOSE) {
+                    statistics.setCriticalCloseCount(statistics.getCriticalCloseCount() + 1);
+                } else {
+                    statistics.setCriticalDelayedCount(statistics.getCriticalDelayedCount() + 1);
+                }
+            } else if (bug.getSeverity() == BugSeverityEnum.NORMAL) {
+                if (bug.getInjectStage() == BugInjectStageEnum.DOCUMENT) {
+                    statistics.setNormalDocumentCount(statistics.getNormalDocumentCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.BACKEND || bug.getInjectStage() == BugInjectStageEnum.FRONT) {
+                    statistics.setNormalCodeCount(statistics.getNormalCodeCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.DEV_DESIGN || bug.getInjectStage() == BugInjectStageEnum.PRODUCT_DESIGN) {
+                    statistics.setNormalDesignCount(statistics.getNormalDesignCount() + 1);
+                } else {
+                    statistics.setNormalOtherCount(statistics.getNormalOtherCount() + 1);
+                }
+
+                if (bug.getStatus() == BugStatusEnum.CLOSE) {
+                    statistics.setNormalCloseCount(statistics.getNormalCloseCount() + 1);
+                } else {
+                    statistics.setNormalDelayedCount(statistics.getNormalDelayedCount() + 1);
+                }
+            } else if (bug.getSeverity() == BugSeverityEnum.SLIGHT) {
+                if (bug.getInjectStage() == BugInjectStageEnum.DOCUMENT) {
+                    statistics.setSlightDocumentCount(statistics.getSlightDocumentCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.BACKEND || bug.getInjectStage() == BugInjectStageEnum.FRONT) {
+                    statistics.setSlightCodeCount(statistics.getSlightCodeCount() + 1);
+                } else if (bug.getInjectStage() == BugInjectStageEnum.DEV_DESIGN || bug.getInjectStage() == BugInjectStageEnum.PRODUCT_DESIGN) {
+                    statistics.setSlightDesignCount(statistics.getSlightDesignCount() + 1);
+                } else {
+                    statistics.setSlightOtherCount(statistics.getSlightOtherCount() + 1);
+                }
+
+                if (bug.getStatus() == BugStatusEnum.CLOSE) {
+                    statistics.setSlightCloseCount(statistics.getSlightCloseCount() + 1);
+                } else {
+                    statistics.setSlightDelayedCount(statistics.getSlightDelayedCount() + 1);
+                }
+            }
+        });
+
+        return statistics;
     }
 
     private TestBug getChangeInfo(TestBug testBug, TestBug db_testBug) {

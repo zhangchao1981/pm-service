@@ -22,5 +22,5 @@ public interface TestExecuteLogService extends IService<TestExecuteLog> {
     IPage<TestExecuteLog> testExecuteLogPage(TestExecuteLogParam testExecuteLogParam);
 
 
-    List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId);
+    List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId, Integer testPlanId);
 }

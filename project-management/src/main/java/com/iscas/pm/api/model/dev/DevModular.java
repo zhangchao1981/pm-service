@@ -20,6 +20,10 @@ import java.util.List;
 @Data
 public class DevModular implements Serializable {
 
+    public DevModular() {
+        type = String.valueOf(DevTypeEnum.Modular);
+    }
+
     @ApiModelProperty(value = "id", notes = "不需前端传入")
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -48,10 +52,6 @@ public class DevModular implements Serializable {
     @ApiModelProperty(value = "模块描述", required = true)
     @Size(max = 100, message = "模块描述长度不能大于100")
     private String description;
-
-    public DevModular() {
-        type = String.valueOf(DevTypeEnum.Modular);
-    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

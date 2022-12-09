@@ -202,9 +202,9 @@ public class TestController {
     @ApiOperationSupport(order = 14)
     @GetMapping("/testExecuteLogListForSelect")
     @ApiOperation(value = "查询候选用例执行记录列表", notes = "查询指定模块下符合条件的用例执行记录表,以供缺陷选择")
-    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false) Integer modularId, @RequestParam(required = false) Integer executeId) {
+    public List<TestExecuteLog> testExecuteLogListForSelect(@RequestParam(required = false) Integer modularId, @RequestParam(required = false) Integer executeId, @RequestParam(required = false) Integer testPlanId) {
 
-        return testExecuteLogService.testExecuteLogList(modularId, executeId);
+        return testExecuteLogService.testExecuteLogList(modularId, executeId,testPlanId);
     }
 
     @ApiOperationSupport(order = 15)

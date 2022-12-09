@@ -6,9 +6,9 @@ spring:
     name: auth-center
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
-    username: root
-    password: iscas654321
+    url: jdbc:mysql://localhost:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
+    username: lichang
+    password: 123456
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml

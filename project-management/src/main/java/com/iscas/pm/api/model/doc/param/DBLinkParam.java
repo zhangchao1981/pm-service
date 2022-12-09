@@ -3,6 +3,7 @@ package com.iscas.pm.api.model.doc.param;
 import com.iscas.pm.api.model.doc.DataBaseTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/9/27.
  */
 @Data
+@Accessors(chain = true)
 public class DBLinkParam {
 
     @ApiModelProperty(value = "数据库名", required = true)

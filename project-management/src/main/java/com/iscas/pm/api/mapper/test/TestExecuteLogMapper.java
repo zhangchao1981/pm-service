@@ -20,7 +20,7 @@ import java.util.List;
 public interface TestExecuteLogMapper extends BaseMapper<TestExecuteLog> {
     IPage<TestExecuteLog> testExecuteLogPage(Page<TestExecuteLog> page, @Param("testExecuteLogParam") TestExecuteLogParam testExecuteLogParam);
 
-    List<TestExecuteLog> testExecuteLogList(@Param("modularId") Integer modularId, Integer executeId);
+    List<TestExecuteLog> testExecuteLogList(@Param("modularId") Integer modularId, Integer executeId, Integer testPlanId);
 }
 
 

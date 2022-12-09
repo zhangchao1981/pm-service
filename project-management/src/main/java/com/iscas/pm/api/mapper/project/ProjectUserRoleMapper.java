@@ -22,12 +22,11 @@ public interface ProjectUserRoleMapper extends BaseMapper<ProjectUserRole> {
             " WHERE pm_project_user_role.user_id=auth_user.id and project_id=#{projectId}")
     List<ProjectUserRole> getMemberList(String projectId);
 
-    @Select("SELECT auth_role.name as role ,employee_name " +
+    @Select("SELECT a.role,a.employee_name,description FROM" +
+            "(SELECT auth_role.name as role ,GROUP_CONCAT(employee_name) AS employee_name " +
             " FROM  pm_project_user_role , auth_user, auth_role" +
-            " WHERE pm_project_user_role.user_id=auth_user.id and auth_role.id= pm_project_user_role.role_id  and project_id=#{projectId}")
+            " WHERE pm_project_user_role.user_id=auth_user.id and auth_role.id= pm_project_user_role.role_id  and project_id=#{projectId} " +
+            " GROUP BY role) a" +
+            " LEFT JOIN auth_role ON a.role = auth_role.NAME")
     List<ProjectMember> memberRoleList(String projectId);
 }
-
-
-
-

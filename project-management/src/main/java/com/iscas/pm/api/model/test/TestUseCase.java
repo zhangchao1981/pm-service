@@ -61,7 +61,6 @@ public class TestUseCase implements Serializable {
     private UseCaseTypeEnum type;
 
     @ApiModelProperty(value = "前置条件")
-    @Size(max = 500, message = "用例标题长度不能超过500")
     private String precondition;
 
     @TableField(jdbcType = JdbcType.VARCHAR, insertStrategy = NOT_NULL, typeHandler = FastjsonTypeHandler.class)
@@ -75,6 +74,11 @@ public class TestUseCase implements Serializable {
     @ApiModelProperty(value = "所属模块名", required = true )
     @TableField(exist = false)
     private String modularName;
+
+    @ApiModelProperty(value = "输入")
+    @Size(max = 255, message = "输入长度不能超过100")
+    private String input;
+
 
     @ApiModelProperty("创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

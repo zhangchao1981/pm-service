@@ -11,12 +11,12 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @Getter
 public enum BugInjectStageEnum {
-    REQUIREMENT("REQUIREMENT", "需求阶段"),
-    PRODUCT_DESIGN("PRODUCT_DESIGN", "产品设计阶段"),
-    DEV_DESIGN("DEV_DESIGN", "开发设计阶段"),
-    FRONT("FRONT", "编码阶段（前端）"),
-    BACKEND("BACKEND", "编码阶段（后端）"),
-    DEPLOY("DEPLOY", "部署阶段"),
+    DOCUMENT("DOCUMENT", "文档问题"),
+    PRODUCT_DESIGN("PRODUCT_DESIGN", "产品设计问题"),
+    DEV_DESIGN("DEV_DESIGN", "开发设计问题"),
+    FRONT("FRONT", "编码问题（前端）"),
+    BACKEND("BACKEND", "编码问题（后端）"),
+    DEPLOY("DEPLOY", "部署问题"),
     OTHER("OTHER", "其他");
 
     private final String code;

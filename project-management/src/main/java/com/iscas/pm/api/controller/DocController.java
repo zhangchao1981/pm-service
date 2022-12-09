@@ -76,7 +76,7 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/deleteDirectory')")
     public boolean deleteDirectory(@NotNull(message = "目录Id不能为空") @RequestParam Integer id) {
         //首先判断是否有子目录
-        if (directoryService.list(new QueryWrapper<com.iscas.pm.api.model.doc.Directory>().eq(id != 0, "parent_id", id)).size() > 0) {
+        if (directoryService.list(new QueryWrapper<Directory>().eq(id != 0, "parent_id", id)).size() > 0) {
             throw new IllegalArgumentException("该目录仍有子目录存在，不允许删除");
         }
         //没有子目录，直接判断有无文档
@@ -238,10 +238,11 @@ public class DocController {
     @PreAuthorize("hasAuthority('/projectDoc/deleteTemplate')")
     public void deleteTemplate(@NotNull(message = "模板id不能为空")@RequestParam Integer templateId) {
         DataSourceHolder.setDB(DataSourceHolder.DEFAULT_DATASOURCE);
-        //是否要校验   receive_recode/ reference有记录   (目前是外键级联删)
+
         if (docTemplateService.getById(templateId)==null){
             throw new IllegalArgumentException("删除模板失败，要删除的模板不存在");
         }
+        //级联删除模板关联的修订记录和引用文档
         docTemplateService.removeById(templateId);
     }
 
@@ -255,7 +256,7 @@ public class DocController {
     }
 
     @PostMapping("/editTemplate")
-    @ApiOperation(value = "修改文档模板", notes = "")
+    @ApiOperation(value = "修改文档模板", notes = "修改文档模板信息")
     @ApiOperationSupport(order = 20)
     @PreAuthorize("hasAuthority('/projectDoc/editTemplate')")
     public boolean editTemplate(@Valid @RequestBody DocTemplate template) {
@@ -266,10 +267,8 @@ public class DocController {
         }
         template.setCreateTime(oldTemplate.getCreateTime());
         template.setUpdateTime(new Date());
-        if (!docTemplateService.updateById(template)) {
-            throw new IllegalArgumentException("要修改的template不存在");
-        }
-        //待添加校验( 存储路径是否改变 改变则删除服务器上的旧文档模板)
+        docTemplateService.updateById(template);
+
         return true;
     }
 
@@ -294,26 +293,7 @@ public class DocController {
     @ApiOperation(value = "测试数据库连接", notes = "测试数据库能否正常连接")
     @ApiOperationSupport(order = 29)
     public Boolean testDB(@RequestBody @Valid DBLinkParam dbLinkParam) {
-        String dataSourceName = UUID.randomUUID().toString();
-        String url, driverName;
-        if (dbLinkParam.getDbType() == DataBaseTypeEnum.MYSQL) {
-            url = "jdbc:mysql://" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + "/" + dbLinkParam.getDbName() + "?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-            driverName = "com.mysql.cj.jdbc.Driver";
-        } else if (dbLinkParam.getDbType() == DataBaseTypeEnum.ORACLE) {
-            url = "jdbc:oracle:thin:@" + dbLinkParam.getDbPath() + ":" + dbLinkParam.getPort() + ":" + dbLinkParam.getDbName();
-            driverName = "oracle.jdbc.driver.OracleDriver";
-        } else {
-            throw new IllegalArgumentException("暂不支持该数据库类型！");
-        }
-        DataSourceHolder.setDB(url, dbLinkParam.getDbName(), dbLinkParam.getUserName(), dbLinkParam.getPassword(), driverName, dataSourceName);
-        try {
-            documentService.getDBInfo(dbLinkParam.getDbName());
-        } catch (Exception e) {
-           throw new IllegalArgumentException("数据库连接失败，请重新确认参数是否正确");
-        } finally {
-            dynamicDataSource.deleteDataSourceByName(dataSourceName);
-        }
-        return true;
+        return documentService.testDB(dbLinkParam);
     }
 
 }

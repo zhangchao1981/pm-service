@@ -17,4 +17,7 @@ public class ProjectMember {
     @ApiModelProperty(value = "角色",required = true)
     private String  role;
 
+    @ApiModelProperty(value = "角色说明",required = true)
+    private String  description;
+
 }

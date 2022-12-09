@@ -29,9 +29,7 @@ public class ProjectTeamServiceImpl extends ServiceImpl<ProjectUserRoleMapper, P
     }
 
     @Override
-    public List<ProjectMember> memberRoleList() {
-        String projectId = DataSourceHolder.getDB().databaseName;
-        DataSourceHolder.setDB("default");
+    public List<ProjectMember> memberRoleList(String projectId) {
         return  projectUserRoleMapper.memberRoleList(projectId);
     }
 

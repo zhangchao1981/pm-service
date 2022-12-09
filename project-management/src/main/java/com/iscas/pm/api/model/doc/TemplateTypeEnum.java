@@ -14,7 +14,10 @@ public enum TemplateTypeEnum {
     DatabaseDesignNotes("DatabaseDesignNotes", "数据库设计说明"),
     QualityAssuranceProgram("QualityAssuranceProgram", "质量保证计划"),
     ConfigurationManagementPlan("ConfigurationManagementPlan", "配置管理计划"),
-    SoftwareRequirementsSpecification("SoftwareRequirementsSpecification", "软件需求规格说明");
+    SoftwareRequirementsSpecification("SoftwareRequirementsSpecification", "软件需求规格说明"),
+    SCTP("SCTP", "配置项测试计划"),
+    SCTD("SCTD", "配置项测试说明"),
+    SCTR("SCTR", "配置项测试报告");
 
     private final String code;
 

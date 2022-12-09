@@ -27,7 +27,6 @@ public class DocReviseRecord {
     private String notes;
 
     @ApiModelProperty(value = "修订日期",required = true)
-
     private String date;
 
     @NotBlank(message = "修改人不能为空")

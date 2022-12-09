@@ -1,6 +1,5 @@
 package com.iscas.pm.api.service.impl.test;
 
-import cn.hutool.core.lang.hash.Hash;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -129,7 +128,7 @@ public class TestExecuteLogServiceImpl extends ServiceImpl<TestExecuteLogMapper,
     }
 
     @Override
-    public List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId) {
-        return testExecuteLogMapper.testExecuteLogList(modularId, executeId);
+    public List<TestExecuteLog> testExecuteLogList(Integer modularId, Integer executeId, Integer testPlanId) {
+        return testExecuteLogMapper.testExecuteLogList(modularId, executeId,testPlanId);
     }
 }

@@ -73,8 +73,7 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan>
                     .collect(Collectors.toMap(
                             PlanBugStatisticParam::getId,
                             PlanBugStatisticParam::getBugAmount));
-            HashMap<Integer, Integer> bugAllAmountList = (HashMap<Integer, Integer>) testBugMapper
-                    .countTestBugByPlan(planIdList, null)
+            HashMap<Integer, Integer> bugAllAmountList = (HashMap<Integer, Integer>) testBugMapper.countTestBugByPlan(planIdList, null)
                     .stream()
                     .collect(Collectors.toMap(
                             PlanBugStatisticParam::getId,

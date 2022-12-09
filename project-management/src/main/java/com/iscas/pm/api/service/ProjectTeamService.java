@@ -16,6 +16,6 @@ public interface ProjectTeamService extends IService<ProjectUserRole> {
 
     List<ProjectUserRole> getMemberList();
 
-    List<ProjectMember> memberRoleList();
+    List<ProjectMember> memberRoleList(String projectId);
 
 }

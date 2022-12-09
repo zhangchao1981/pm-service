@@ -53,6 +53,9 @@
         <if test="executeId !=null">
             and test_execute_log.id=#{executeId}
         </if>
+        <if test="testPlanId !=null">
+            and test_execute_log.plan_id=#{testPlanId}
+        </if>
     </select>
 
 </mapper>
