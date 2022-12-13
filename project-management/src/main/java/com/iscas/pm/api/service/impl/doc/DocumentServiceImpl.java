@@ -504,9 +504,17 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         List<TestUseCase>  deploymentUseCaseList  = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.DEPLOYMENT)).collect(Collectors.toList());
         List<TestUseCase>  functionUseCaseList    = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.FUNCTION)).collect(Collectors.toList());
         List<TestUseCase>  performanceUseCaseList = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.PERFORMANCE)).collect(Collectors.toList());
+        List<TestUseCase>  interfaceUseCaseList = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.INTERFACE)).collect(Collectors.toList());
+        List<TestUseCase>  securityUseCaseList  = testUseCaseList.stream().filter(useCase -> useCase.getType().equals(UseCaseTypeEnum.SECURITY)).collect(Collectors.toList());
+
         data.put("deploymentUseCaseList", deploymentUseCaseList);
         data.put("functionUseCaseList", functionUseCaseList);
         data.put("performanceUseCaseList", performanceUseCaseList);
+        data.put("interfaceUseCaseList", interfaceUseCaseList);
+        data.put("securityUseCaseList", securityUseCaseList);
+
+
+
     }
 
     private void addHardwareList(HashMap<String, Object> data) {

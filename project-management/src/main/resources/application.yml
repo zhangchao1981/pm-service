@@ -10,9 +10,9 @@ spring:
     name: project-management
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
     username: root
-    password: iscas654321
+    password: P@ssw0rd205
 
 
 mybatis-plus:
@@ -48,7 +48,7 @@ logging:
 fdfs:
   connect-timeout: 600  # 连接超时时间
   so-timeout: 1500      # 读取超时时间
-  tracker-list: 192.168.100.246:22122  # tracker服务配置地址列表，替换成自己服务的IP地址，支持多个
+  tracker-list: 127.0.0.1:22122  # tracker服务配置地址列表，替换成自己服务的IP地址，支持多个
   pool:
     jmx-enabled: false
   thumb-image:

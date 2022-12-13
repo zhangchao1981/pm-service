@@ -4,9 +4,9 @@ spring:
     name: time-schedule
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.100.77:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/pm_primary?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
     username: root
-    password: iscas654321
+    password: P@ssw0rd205
 
 
 mybatis-plus:

@@ -14,7 +14,13 @@ public enum UseCaseTypeEnum {
 
     FUNCTION("FUNCTION", "功能测试"),
     PERFORMANCE("PERFORMANCE", "性能测试"),
-    DEPLOYMENT("DEPLOYMENT", "安装部署");
+    DEPLOYMENT("DEPLOYMENT", "安装部署"),
+
+    INTERFACE("INTERFACE","接口测试")  ,
+
+    SECURITY("SECURITY","安全测试");
+
+
 
     private final String code;
     private final String value;
